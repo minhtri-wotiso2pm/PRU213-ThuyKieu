@@ -1,0 +1,9 @@
+INK VALIDATION PASS
+chapter_1: 1500 runs, lines 115-155, max nghi_ngo 85
+chapter_2: 1500 runs, lines 92-128, max nghi_ngo 85
+chapter_3: 1500 runs, lines 37-61, max nghi_ngo 0, tra_loi_kieu_that 1:503 2:492 3:505
+gameplay: deduction_c2, document_contract, document_paper, eavesdrop_c2, eavesdrop_c3, imagine_run, kieu_voice, memory_flash, panic, search_drawer, try_gate, tutorial_house, tutorial_road
+explore: c2_ask, c2_eavesdrop, c2_observe, c2_paper, c3_box, c3_cabinet, c3_drawer, c3_eavesdrop, c3_gate, c3_girl_hong, c3_girl_lam, c3_makieu, c3_window
+cameras: CU_Kieu, CU_Kieu_Eyes, CU_Kieu_Listens, CU_MaGiamSinh, CU_MaKieu, CU_TuBa, Hero_Kieu_Rain, MCU_MeKieu, OTS_Kieu_Box, OTS_Kieu_Cabinet, OTS_Kieu_CoHong, OTS_Kieu_CoLam, OTS_Kieu_Drawer, OTS_Kieu_Gate, OTS_Kieu_MaGiamSinh, OTS_Kieu_Paper, OTS_Kieu_Window, POV_Kieu_MaHands, Reveal_MaGiamSinh, Table_Contract, Wide_LamTri, Wide_Road, Wide_TeaHouse, Wide_TuBaCourtyard, WS_VuongGia
+scenes: Road_Departure, Road_LamTriGate, Road_MaskTest, Road_RestStop, TuBa_Arrival, TuBa_MaKieu, TuBa_Night, VuongGia_BanKyKhe, VuongGia_DemMua
+clues: c2_ban_tay, c2_lam_tri, c2_mau_giay, c2_tu_ba, c3_co_hong, c3_co_lam, c3_cong_khoa, c3_nghe_len, c3_so_no, c3_tu_khoa, c3_van_tu

@@ -96,6 +96,7 @@ Mã Giám Sinh đặt lên bàn một tờ khế đã viết sẵn. Dòng chữ 
 
 * [Đọc kỹ tờ khế trước khi ký.]
     ~ tinh_tao += 1
+    ~ doc_ky_khe = true
     # speaker:Narrator
     Kiều nhận ra một câu lạ: "Người nhận có toàn quyền định đoạt nơi ở và công việc của người giao".
 
@@ -160,6 +161,4 @@ Và nàng quyết định: trước khi cánh cửa ấy khép lại, nàng ph�
 
 
 // ============================================================
-// CHƯƠNG 2 — CÁI GIÁ CỦA MỘT CON NGƯỜI
-// Chủ đề tương tác: Quan sát, bằng chứng và việc tự cứu mình.
-// Thời lượng dự kiến: 4–6 phút.
+// CHƯƠNG 2 — TRÊN ĐƯỜNG THEO MÃ GIÁM SINH: xem Chapter2_TrenDuongTheoMaGiamSinh.ink
