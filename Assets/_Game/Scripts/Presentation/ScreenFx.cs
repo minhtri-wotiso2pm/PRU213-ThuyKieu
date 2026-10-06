@@ -23,6 +23,14 @@ namespace ThuyKieu.Presentation
         [SerializeField] private float _baseVignette = 0.26f;
         [SerializeField] private float _baseSaturation = 6f;
         [SerializeField] private float _baseBloom = 0.6f;
+        [Header("Chapter grade")]
+        [SerializeField] private float _baseContrast = 8f;
+        [SerializeField] private float _baseExposure = 0f;
+        [Tooltip("Filmic tonemapping keeps bright lanterns and skies coloured instead of clipping to white.")]
+        [SerializeField] private bool _filmic;
+        [SerializeField] private float _temperature;
+        [SerializeField] private Color _shadowTint = Color.grey;
+        [SerializeField] private Color _highlightTint = Color.grey;
 
         private Vignette _vignette;
         private ChromaticAberration _chroma;
@@ -55,6 +63,16 @@ namespace ThuyKieu.Presentation
             _vignette.smoothness.Override(0.45f);
             _grain.type.Override(FilmGrainLookup.Medium3);
             _bloom.threshold.Override(0.9f);
+            if (_filmic)
+            {
+                profile.Add<Tonemapping>(true).mode.Override(TonemappingMode.ACES);
+                var balance = profile.Add<WhiteBalance>(true);
+                balance.temperature.Override(_temperature);
+                var split = profile.Add<SplitToning>(true);
+                split.shadows.Override(_shadowTint);
+                split.highlights.Override(_highlightTint);
+                split.balance.Override(-15f);
+            }
 
             var canvasObject = new GameObject("FlashCanvas", typeof(Canvas));
             canvasObject.transform.SetParent(transform, false);
@@ -90,14 +108,14 @@ namespace ThuyKieu.Presentation
 
         private Mood MoodFor(string mood)
         {
-            var m = new Mood { Vignette = _baseVignette, Saturation = _baseSaturation, Bloom = _baseBloom, Filter = _baseFilter, Contrast = 8f };
+            var m = new Mood { Vignette = _baseVignette, Saturation = _baseSaturation, Bloom = _baseBloom, Filter = _baseFilter, Contrast = _baseContrast, Exposure = _baseExposure };
             switch (mood)
             {
                 case "memory": m.Saturation = -70; m.Filter = new Color(1f, 0.86f, 0.62f); m.Vignette = 0.45f; m.Chroma = 0.55f; m.Bloom = 2.2f; m.Grain = 0.35f; break;
                 case "imagine": m.Saturation = -85; m.Filter = new Color(0.72f, 0.82f, 1f); m.Vignette = 0.5f; m.Grain = 0.7f; m.Distortion = -0.15f; break;
-                case "panic": m.Saturation = -35; m.Vignette = 0.5f; m.Chroma = 1f; m.Distortion = -0.25f; m.Contrast = 25f; m.Grain = 0.4f; break;
-                case "spirit": m.Saturation = -55; m.Filter = new Color(1f, 0.88f, 0.55f); m.Vignette = 0.42f; m.Bloom = 3f; m.Exposure = -0.25f; m.Chroma = 0.3f; break;
-                case "tension": m.Vignette = 0.38f; m.Saturation = -10; m.Contrast = 14f; break;
+                case "panic": m.Saturation = -35; m.Vignette = 0.5f; m.Chroma = 1f; m.Distortion = -0.25f; m.Contrast = _baseContrast + 17f; m.Grain = 0.4f; break;
+                case "spirit": m.Saturation = -55; m.Filter = new Color(1f, 0.88f, 0.55f); m.Vignette = 0.42f; m.Bloom = 3f; m.Exposure = _baseExposure - 0.25f; m.Chroma = 0.3f; break;
+                case "tension": m.Vignette = 0.38f; m.Saturation = -10; m.Contrast = _baseContrast + 6f; break;
             }
             return m;
         }

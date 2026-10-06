@@ -22,6 +22,11 @@ namespace ThuyKieu.Gameplay.Chapters
         [SerializeField] private Light _sun;
         [SerializeField] private Color _duskSun = new Color(1f, 0.42f, 0.25f);
         [SerializeField] private Color _duskAmbient = new Color(0.32f, 0.16f, 0.18f);
+        [Tooltip("Ground cone showing where the guard looks: faint in the open yard, strong in forbidden areas or when he is suspicious.")]
+        [SerializeField] private Renderer _visionCone;
+
+        private MaterialPropertyBlock _coneBlock;
+        private float _coneAlpha = 0.06f;
 
         private bool _movedInside, _beckoned;
         private float _barkCooldown;
@@ -77,6 +82,8 @@ namespace ThuyKieu.Gameplay.Chapters
             else if (RestrictedZone.PlayerInside)
                 _director.Hud.SetMeter("Khu vực cấm: " + RestrictedZone.CurrentLabel, 0f, new Color(1f, 0.8f, 0.45f));
 
+            UpdateCone(RestrictedZone.PlayerInside || vision.Awareness > 0.04f || _director.CurrentSequence == "eavesdrop_c3");
+
             if (vision.Spotted)
                 _director.Fail("Bị người canh bắt gặp!", "\"Cô em đi đâu đấy? Về phòng!\" — Hắn lôi bạn về phòng. Hãy quan sát đường tuần của hắn và khom người khi lẻn đi.");
 
@@ -88,6 +95,15 @@ namespace ThuyKieu.Gameplay.Chapters
                 _director.Hud.ShowBark("MaKieu", "Này... cô gái mới. Lại đây, ta có chuyện muốn nói.", 4f);
                 _director.Hud.SetObjective("Một cô gái lạ ở góc sân đang vẫy gọi bạn");
             }
+        }
+
+        private void UpdateCone(bool alert)
+        {
+            if (_visionCone == null) return;
+            _coneBlock ??= new MaterialPropertyBlock();
+            _coneAlpha = Mathf.MoveTowards(_coneAlpha, alert ? 0.2f : 0.06f, Time.deltaTime * 0.5f);
+            _coneBlock.SetColor("_BaseColor", new Color(1f, 0.2f, 0.12f, _coneAlpha));
+            _visionCone.SetPropertyBlock(_coneBlock);
         }
 
         private void OnRestored()
@@ -108,11 +124,16 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             Color sun = _sun.color, ambient = RenderSettings.ambientLight;
             float intensity = _sun.intensity;
+            // Darken a runtime copy of the sky so the shared asset is never modified.
+            Material sky = RenderSettings.skybox != null && RenderSettings.skybox.HasProperty("_Exposure") ? new Material(RenderSettings.skybox) : null;
+            if (sky != null) RenderSettings.skybox = sky;
+            float exposure = sky != null ? sky.GetFloat("_Exposure") : 1f;
             for (float t = 0; t < 1f; t += Time.deltaTime / 3f)
             {
                 _sun.color = Color.Lerp(sun, _duskSun, t);
                 _sun.intensity = Mathf.Lerp(intensity, intensity * 0.55f, t);
                 RenderSettings.ambientLight = Color.Lerp(ambient, _duskAmbient, t);
+                if (sky != null) sky.SetFloat("_Exposure", Mathf.Lerp(exposure, exposure * 0.55f, t));
                 yield return null;
             }
         }

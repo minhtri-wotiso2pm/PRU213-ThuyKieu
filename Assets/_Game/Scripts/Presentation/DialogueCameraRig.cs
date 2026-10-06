@@ -14,6 +14,8 @@ namespace ThuyKieu.Presentation
         [SerializeField] private StoryDirector _director;
         [SerializeField] private ThirdPersonCameraController _camera;
         [SerializeField] private LayerMask _obstruction = 1 << 8;
+        [Tooltip("Distance multiplier matching the dialogue lens: 1 for the gameplay FOV, ~1.5 for a 40° portrait lens.")]
+        [SerializeField] private float _lens = 1f;
 
         private Transform _shot;
         private StoryActor _lastOther;
@@ -95,8 +97,11 @@ namespace ThuyKieu.Presentation
                 toPartner.y = 0;
                 if (toPartner.sqrMagnitude > 0.01f) forward = toPartner.normalized;
             }
-            Vector3 position = head + forward * distance + Vector3.Cross(Vector3.up, forward) * 0.28f + Vector3.up * 0.06f;
-            Vector3 look = head - Vector3.up * 0.08f;
+            Vector3 right = Vector3.Cross(Vector3.up, forward);
+            distance *= _lens;
+            Vector3 position = head + forward * distance + right * 0.28f * _lens + Vector3.up * 0.04f;
+            // Aim past the face towards the camera's side so the speaker sits on a third, looking into the open frame.
+            Vector3 look = head - Vector3.up * (0.1f + 0.04f * distance) + right * 0.11f * distance;
             Apply(Unblock(look, position), Quaternion.LookRotation(look - position));
         }
 
@@ -108,7 +113,7 @@ namespace ThuyKieu.Presentation
             if (direction.sqrMagnitude < 0.01f) direction = from.transform.forward;
             direction.Normalize();
             Vector3 right = Vector3.Cross(Vector3.up, direction);
-            Vector3 position = head - direction * 1.05f + right * 0.48f + Vector3.up * 0.12f;
+            Vector3 position = head - direction * 1.05f * _lens + right * 0.5f * Mathf.Sqrt(_lens) + Vector3.up * 0.12f;
             position = Unblock(head + Vector3.up * 0.1f, position);
             Apply(position, Quaternion.LookRotation(target - position));
         }

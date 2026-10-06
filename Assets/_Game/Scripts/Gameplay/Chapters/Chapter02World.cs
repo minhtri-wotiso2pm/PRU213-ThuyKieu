@@ -15,7 +15,7 @@ namespace ThuyKieu.Gameplay.Chapters
     public class Chapter02World : MonoBehaviour, IChapterSummary
     {
         [System.Serializable]
-        private struct LightingPreset { public string Scene; public Color Sun; public float Intensity; public Vector3 Angles; public Color Ambient; public Color Fog; public float FogDensity; }
+        private struct LightingPreset { public string Scene; public Color Sun; public float Intensity; public Vector3 Angles; public Color Ambient; public Color Fog; public float FogDensity; public Material Sky; }
 
         [SerializeField] private StoryDirector _director;
         [SerializeField] private NavMeshSurface _navMesh;
@@ -275,6 +275,7 @@ namespace ThuyKieu.Gameplay.Chapters
                 RenderSettings.fogColor = preset.Fog;
                 RenderSettings.fogDensity = preset.FogDensity;
                 if (Camera.main != null) Camera.main.backgroundColor = preset.Fog;
+                if (preset.Sky != null) RenderSettings.skybox = preset.Sky;
                 bool night = scene == "Road_LamTriGate";
                 foreach (var light in _nightLights) if (light != null) light.SetActive(night);
                 return;

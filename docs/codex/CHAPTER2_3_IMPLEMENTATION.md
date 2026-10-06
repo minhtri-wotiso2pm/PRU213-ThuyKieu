@@ -105,9 +105,21 @@ Các cô gái và Mã Kiều tạm dùng model Kiều / Mẹ Kiều đổi màu 
 
 ## 6. Âm thanh
 
-Toàn bộ nhạc / ambience / SFX được tổng hợp lúc chạy (`ProceduralAudio`): nhạc gảy kiểu đàn tranh trên âm giai ngũ cung, gió, dế, tiếng xì xào, tim đập, khóa, giấy…
+Toàn bộ nhạc / ambience / SFX được tổng hợp lúc chạy (`ProceduralAudio`): nhạc gảy kiểu đàn tranh trên âm giai ngũ cung, gió nhẹ, chim, dế, ếch, cú, chuông gió, tim đập, khóa, giấy…
+(Lớp "xì xào" cũ của ambience `house` nghe như tiếng quét nhà nên đã bỏ; ambience nay dài 40 s.)
 Muốn thay bằng file thật: chọn `StorySystems/StoryAudio` trong scene → mục **Overrides** → thêm `Id` (ví dụ `road_dusk`, `tuba_warm`, `heartbeat`, `clue`) và gán AudioClip.
 Id nhạc: `road_dusk, road_night, tension_low, stealth, tuba_warm, resolve, none`. Ambience: `road, night, house`.
+
+## 6b. Hình ảnh & camera (bản nâng cấp mỹ thuật)
+
+- **Texture CC0** (Poly Haven, xem `Art/Environment/Textures/CREDITS.md`) phủ bằng shader `ThuyKieu/WorldTriplanarLit` (`Assets/_Game/Shaders`): texture lặp theo mét thế giới nên khối hộp kích thước nào cũng đúng tỉ lệ. Tạo vật liệu bằng `StoryArtKit.Surface(...)`.
+- **Bầu trời HDRI** (`Art/Environment/Sky`) qua `StoryArtKit.Sky` / `UseSky`; Ch2 đổi trời theo preset ánh sáng (chiều → tối → đêm), Ch3 tối dần khi hoàng hôn.
+- **Màu phim**: `ScreenFx` có thêm tonemapping ACES, cân bằng trắng, split-toning (`StoryArtKit.Grade`). SSAO của `PC_Renderer` được tăng.
+- **Chi tiết dựng cảnh** trong `StoryArtKit`: cột có chân tảng, mái có đầu đao/diềm, đèn lồng có nan + tua + đung đưa (`LanternSway`), cửa sổ chấn song, câu đối, mành tre, rèm lụa, chum, chậu cây, đá, cỏ (gộp mesh), lá rơi, bụi nắng, đom đóm.
+- **Camera** (`ThirdPersonCameraController`): lệch vai phải, FOV riêng cho hội thoại, va chạm kéo vào nhanh/nhả ra chậm; vùng `CameraZone` đổi khung hình theo khu vực; tường có `CameraFadeable` được ẩn khi chắn camera thay vì đẩy camera sát lưng. `DialogueCameraRig._lens` bù khoảng cách cho ống kính hội thoại và đặt người nói lệch 1/3 khung.
+- **Chương 1** (scene dựng tay, không tái tạo): menu **ThuyKieu ▸ Chapter 1 ▸ Apply look upgrade** (hoặc `-executeMethod ThuyKieu.Environment.Editor.Chapter01LookUpgrade.ApplyBatch`) — đổi vật liệu sang texture tại chỗ, thêm trời mưa đêm, camera lệch vai, trang trí gian giữa. Chạy lại nhiều lần không sao. Vật liệu của Ch1 nằm ngoài `Materials/Story` (thư mục đó bị xóa khi dựng lại Ch2–3).
+- **Ảnh duyệt nhanh không cần Play**: `-executeMethod ThuyKieu.Core.Editor.StoryLookCapture.Batch -lookOut <thư mục>` chụp camera chính và mọi điểm `CAM_*` / `WS_*` / `LOOK_*` của cả 3 chương.
+- Lưu ý: shader mới **không được** `FallBack` về URP Lit — dự án bật GPU Resident Drawer và fallback đó làm mọi vật dùng Lit thành màu hồng tím khi Play.
 
 ## 7. Ghi chú & giới hạn đã biết
 

@@ -28,14 +28,25 @@ namespace ThuyKieu.Player
         /// <summary>QA autopilot can hold observation without a mouse.</summary>
         public bool ForceObserve { get; set; }
 
-        private void Start() { _targets = FindObjectsByType<ObservableTarget>(); }
+        private ThirdPersonCameraController _orbit;
+
+        private void Start()
+        {
+            _targets = FindObjectsByType<ObservableTarget>();
+            _orbit = _camera.GetComponent<ThirdPersonCameraController>();
+        }
 
         private void Update()
         {
             IsObserving = !_player.ControlLocked && (InputReader.IsObserveHeld || ForceObserve);
             _player.SpeedMultiplier = IsObserving ? 0.45f : 1f;
-            float fov = IsObserving ? _observeFov : _normalFov;
-            _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, _player.ControlLocked ? _normalFov : fov, 1 - Mathf.Exp(-8 * Time.deltaTime));
+            // The orbit camera owns the field of view (zones, dialogue); it only needs to know we are zooming.
+            if (_orbit != null) _orbit.ObserveFov = IsObserving ? _observeFov : 0f;
+            else
+            {
+                float fov = IsObserving ? _observeFov : _normalFov;
+                _camera.fieldOfView = Mathf.Lerp(_camera.fieldOfView, _player.ControlLocked ? _normalFov : fov, 1 - Mathf.Exp(-8 * Time.deltaTime));
+            }
 
             ObservableTarget best = IsObserving ? FindTarget() : null;
             if (best != _focus) { _focus = best; _progress = 0f; }

@@ -32,9 +32,12 @@ namespace ThuyKieu.Presentation
         {
             switch (id)
             {
-                case "road": return Mix(id, 20f, Wind(20f, 0.5f, 31), Crickets(20f, 0.10f, 32));
-                case "night": return Mix(id, 20f, Wind(20f, 0.35f, 33), Crickets(20f, 0.2f, 34));
-                case "house": return Mix(id, 20f, Wind(20f, 0.12f, 35), Murmur(20f, 0.16f, 36));
+                // Countryside at dusk: a soft breeze, birds settling in the bamboo, the first crickets.
+                case "road": return Mix(id, 40f, Breeze(40f, 0.22f, 31), Birds(40f, 0.11f, 4.5f, 37), Crickets(40f, 0.05f, 32));
+                // Night fields: crickets, frogs in the paddies, an owl far off.
+                case "night": return Mix(id, 40f, Breeze(40f, 0.14f, 33), Crickets(40f, 0.13f, 34), Frogs(40f, 0.16f, 38), Owl(40f, 0.06f, 39));
+                // Courtyard house: almost silent room tone, wind chimes on the veranda, sparrows on the roof.
+                case "house": return Mix(id, 40f, RoomTone(40f, 0.05f, 35), Chimes(40f, 0.09f, 36), Birds(40f, 0.05f, 9f, 40));
                 default: return null;
             }
         }
@@ -136,22 +139,6 @@ namespace ThuyKieu.Presentation
 
         // ------------------------------------------------------------------ ambience
 
-        private static float[] Wind(float seconds, float gain, int seed)
-        {
-            var random = new System.Random(seed);
-            int length = (int)(seconds * Rate);
-            var data = new float[length];
-            float low = 0, slow = 0;
-            for (int i = 0; i < length; i++)
-            {
-                low += 0.02f * ((float)(random.NextDouble() * 2 - 1) - low);
-                float t = i / (float)Rate;
-                slow = 0.5f + 0.5f * Mathf.Sin(2 * Mathf.PI * t / seconds * 3f) * Mathf.Sin(2 * Mathf.PI * t / seconds * 1f + 1f);
-                data[i] = low * gain * 4f * (0.4f + 0.6f * slow);
-            }
-            return data;
-        }
-
         private static float[] Crickets(float seconds, float gain, int seed)
         {
             var random = new System.Random(seed);
@@ -172,22 +159,147 @@ namespace ThuyKieu.Presentation
             return data;
         }
 
-        private static float[] Murmur(float seconds, float gain, int seed)
+        /// <summary>Wind as slow, deep swells (two-pole low-pass): no hiss band, so it never reads as sweeping.</summary>
+        private static float[] Breeze(float seconds, float gain, int seed)
         {
             var random = new System.Random(seed);
             int length = (int)(seconds * Rate);
             var data = new float[length];
-            float band = 0, prev = 0;
+            float a = 0, b = 0;
+            float phase = (float)random.NextDouble() * 6f;
             for (int i = 0; i < length; i++)
             {
                 float t = i / (float)Rate;
-                float noise = (float)(random.NextDouble() * 2 - 1);
-                band += 0.08f * (noise - band);
-                float voiced = band - prev;
-                prev = band;
-                float syllables = 0.5f + 0.5f * Mathf.Sin(2 * Mathf.PI * 3.1f * t + Mathf.Sin(t * 0.7f) * 3f);
-                data[i] = voiced * gain * 6f * syllables;
+                a += 0.012f * ((float)(random.NextDouble() * 2 - 1) - a);
+                b += 0.012f * (a - b);
+                // Gusts every ~10 s, locked to the loop length so the seam is invisible.
+                float gust = 0.35f + 0.65f * Mathf.Pow(0.5f + 0.5f * Mathf.Sin(2 * Mathf.PI * t / seconds * 4f + phase), 2f);
+                data[i] = b * gain * 14f * gust;
             }
+            return data;
+        }
+
+        /// <summary>Very low room tone: presence without any audible texture.</summary>
+        private static float[] RoomTone(float seconds, float gain, int seed)
+        {
+            var random = new System.Random(seed);
+            int length = (int)(seconds * Rate);
+            var data = new float[length];
+            float a = 0, b = 0;
+            for (int i = 0; i < length; i++)
+            {
+                a += 0.006f * ((float)(random.NextDouble() * 2 - 1) - a);
+                b += 0.006f * (a - b);
+                data[i] = b * gain * 30f;
+            }
+            return data;
+        }
+
+        /// <summary>Short rising/falling whistles grouped into phrases, about <paramref name="spacing"/> seconds apart.</summary>
+        private static float[] Birds(float seconds, float gain, float spacing, int seed)
+        {
+            var random = new System.Random(seed);
+            int length = (int)(seconds * Rate);
+            var data = new float[length];
+            for (float time = 1f + (float)random.NextDouble() * 2f; time < seconds - 2f; time += spacing * (0.5f + (float)random.NextDouble()))
+            {
+                float near = 0.4f + (float)random.NextDouble() * 0.6f;
+                float baseFrequency = 2600f + (float)random.NextDouble() * 1600f;
+                int notes = 2 + random.Next(5);
+                float start = time;
+                for (int n = 0; n < notes; n++)
+                {
+                    float duration = 0.05f + (float)random.NextDouble() * 0.09f;
+                    float from = baseFrequency * (0.85f + (float)random.NextDouble() * 0.3f);
+                    float to = from * (random.Next(2) == 0 ? 1.35f : 0.75f);
+                    int s0 = (int)(start * Rate), count = (int)(duration * Rate);
+                    float phase = 0;
+                    for (int i = 0; i < count && s0 + i < length; i++)
+                    {
+                        float k = i / (float)count;
+                        phase += 2 * Mathf.PI * Mathf.Lerp(from, to, k) / Rate;
+                        data[s0 + i] += gain * near * Mathf.Sin(phase + 0.6f * Mathf.Sin(phase * 0.5f)) * Mathf.Sin(Mathf.PI * k);
+                    }
+                    start += duration + 0.03f + (float)random.NextDouble() * 0.08f;
+                }
+            }
+            return data;
+        }
+
+        /// <summary>Bronze wind chimes: inharmonic bell partials with long decays, a few strikes per gust.</summary>
+        private static float[] Chimes(float seconds, float gain, int seed)
+        {
+            var random = new System.Random(seed);
+            int length = (int)(seconds * Rate);
+            var data = new float[length + Rate * 5];
+            float[] notes = { 1046.5f, 1174.7f, 1396.9f, 1568f, 1760f };
+            float[] partials = { 1f, 2.76f, 5.4f };
+            float[] weights = { 1f, 0.45f, 0.2f };
+            for (float time = 0.5f; time < seconds; time += 5f + (float)random.NextDouble() * 6f)
+            {
+                int strikes = 1 + random.Next(4);
+                for (int s = 0; s < strikes; s++)
+                {
+                    float frequency = notes[random.Next(notes.Length)];
+                    float velocity = gain * (0.5f + (float)random.NextDouble() * 0.5f);
+                    int s0 = (int)((time + s * (0.15f + (float)random.NextDouble() * 0.35f)) * Rate);
+                    for (int i = 0; i < Rate * 4.5f && s0 + i < data.Length; i++)
+                    {
+                        float t = i / (float)Rate;
+                        float v = 0;
+                        for (int p = 0; p < partials.Length; p++) v += weights[p] * Mathf.Sin(2 * Mathf.PI * frequency * partials[p] * t) * Mathf.Exp(-t * (0.9f + p * 1.6f));
+                        data[s0 + i] += velocity * v * Mathf.Min(1f, i / 30f);
+                    }
+                }
+            }
+            return Loop(data, length);
+        }
+
+        /// <summary>Paddy frogs: low pulsed croaks in short runs, a few voices answering each other.</summary>
+        private static float[] Frogs(float seconds, float gain, int seed)
+        {
+            var random = new System.Random(seed);
+            int length = (int)(seconds * Rate);
+            var data = new float[length];
+            for (int voice = 0; voice < 3; voice++)
+            {
+                float pitch = 280f + voice * 90f + (float)random.NextDouble() * 40f;
+                float level = gain * (1f - voice * 0.25f);
+                for (float time = (float)random.NextDouble() * 3f; time < seconds - 1.5f; time += 1.6f + (float)random.NextDouble() * 3.5f)
+                {
+                    int croaks = 2 + random.Next(4);
+                    for (int c = 0; c < croaks; c++)
+                    {
+                        int s0 = (int)((time + c * 0.26f) * Rate), count = (int)(0.16f * Rate);
+                        for (int i = 0; i < count && s0 + i < length; i++)
+                        {
+                            float t = i / (float)Rate, k = i / (float)count;
+                            float pulse = 0.5f + 0.5f * Mathf.Sin(2 * Mathf.PI * 38f * t);
+                            data[s0 + i] += level * pulse * Mathf.Sin(2 * Mathf.PI * pitch * t) * Mathf.Sin(Mathf.PI * k);
+                        }
+                    }
+                }
+            }
+            return data;
+        }
+
+        /// <summary>A distant owl: two soft hoots, rarely.</summary>
+        private static float[] Owl(float seconds, float gain, int seed)
+        {
+            var random = new System.Random(seed);
+            int length = (int)(seconds * Rate);
+            var data = new float[length];
+            for (float time = 6f + (float)random.NextDouble() * 4f; time < seconds - 3f; time += 14f + (float)random.NextDouble() * 8f)
+                foreach (float offset in new[] { 0f, 0.55f })
+                {
+                    int s0 = (int)((time + offset) * Rate), count = (int)(0.42f * Rate);
+                    for (int i = 0; i < count && s0 + i < length; i++)
+                    {
+                        float t = i / (float)Rate, k = i / (float)count;
+                        float frequency = 390f * (1f - 0.06f * k);
+                        data[s0 + i] += gain * Mathf.Sin(2 * Mathf.PI * frequency * t) * Mathf.Pow(Mathf.Sin(Mathf.PI * k), 1.5f);
+                    }
+                }
             return data;
         }
 

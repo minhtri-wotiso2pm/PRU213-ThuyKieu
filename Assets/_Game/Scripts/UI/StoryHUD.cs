@@ -102,12 +102,16 @@ namespace ThuyKieu.UI
 
         public void SetExploreOptions(IList<string> options)
         {
+            // Keep the list short so it never covers the scene; the rest stays one line away.
+            const int shown = 4;
             int count = options == null ? 0 : options.Count;
+            int lines = count > shown ? shown + 1 : count;
             var header = (RectTransform)_header.transform;
-            header.offsetMin = new Vector2(header.offsetMin.x, header.offsetMax.y - 122 - 25 * count);
+            header.offsetMin = new Vector2(header.offsetMin.x, header.offsetMax.y - 122 - 25 * lines);
             if (count == 0) { _exploreList.text = string.Empty; return; }
             var builder = new StringBuilder();
-            foreach (string option in options) builder.Append("<color=#E8C27A>›</color> ").AppendLine(option);
+            for (int i = 0; i < count && i < shown; i++) builder.Append("<color=#E8C27A>›</color> ").AppendLine(options[i]);
+            if (count > shown) builder.Append("<color=#A89A86><i>+ ").Append(count - shown).AppendLine(" việc khác có thể làm…</i></color>");
             _exploreList.text = builder.ToString();
         }
 

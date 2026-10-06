@@ -110,7 +110,13 @@ namespace ThuyKieu.Core.Editor
             cameraObject.transform.SetPositionAndRotation(playerPosition + Quaternion.Euler(0, playerYaw, 0) * new Vector3(0, 2.4f, -3.8f), Quaternion.Euler(14, playerYaw, 0));
             s.Camera = cameraObject.AddComponent<ThirdPersonCameraController>();
             Set(s.Camera, "target", playerObject.transform.Find("CameraTarget"));
-            Set(s.Camera, "distance", 3.6f);
+            Set(s.Camera, "distance", 3.4f);
+            Set(s.Camera, "_shoulder", 0.42f);
+            Set(s.Camera, "_fov", 55f);
+            Set(s.Camera, "_dialogueFov", 40f);
+            Set(s.Camera, "minPitch", -25f);
+            Set(s.Camera, "maxPitch", 55f);
+            Set(s.Camera, "followSmoothTime", 0.08f);
             Set(s.Camera, "_collisionMask", 1 << EnvironmentLayer);
             Set(s.Player, "cameraTransform", cameraObject.transform);
             s.Fx = cameraObject.AddComponent<ScreenFx>();
@@ -132,6 +138,7 @@ namespace ThuyKieu.Core.Editor
             Set(s.Shots, "_director", s.Director);
             Set(s.Shots, "_camera", s.Camera);
             Set(s.Shots, "_obstruction", 1 << EnvironmentLayer);
+            Set(s.Shots, "_lens", 1.45f);
 
             var audioObject = new GameObject("StoryAudio");
             audioObject.transform.SetParent(s.Root.transform, false);
@@ -408,31 +415,62 @@ namespace ThuyKieu.Core.Editor
             top.transform.localPosition = Vector3.up * 0.06f;
             top.transform.localScale = alongX ? new Vector3(length + 0.5f, 0.22f, 0.3f) : new Vector3(0.3f, 0.22f, length + 0.5f);
             top.GetComponent<Renderer>().sharedMaterial = ridge;
+
+            // Details that make it read as a Vietnamese roof: fascia boards along the eaves,
+            // ridge ends that curl upwards and lifted eave corners (đầu đao).
+            float rad = pitch * Mathf.Deg2Rad;
+            float eaveAcross = half * 0.5f + Mathf.Cos(rad) * slab * 0.5f;
+            float eaveY = -Mathf.Sin(rad) * slab;
+            float halfLength = length * 0.5f;
+            Vector3 Local(float along, float y, float across) => alongX ? new Vector3(along, y, across) : new Vector3(across, y, along);
+            Vector3 Size(float along, float y, float across) => alongX ? new Vector3(along, y, across) : new Vector3(across, y, along);
+            Quaternion Tilt(float angle) => alongX ? Quaternion.Euler(0, 0, angle) : Quaternion.Euler(-angle, 0, 0);
+            for (int side = -1; side <= 1; side += 2)
+            {
+                RoofPart(root.transform, "Fascia", Local(0, eaveY - 0.02f, side * eaveAcross), Size(length, 0.12f, 0.06f), Quaternion.identity, ridge);
+                for (int end = -1; end <= 1; end += 2)
+                    RoofPart(root.transform, "EaveCorner", Local(end * (halfLength - 0.15f), eaveY + 0.08f, side * (eaveAcross - 0.1f)),
+                        Size(0.75f, 0.1f, 0.32f), Tilt(end * 16f), ridge);
+            }
+            for (int end = -1; end <= 1; end += 2)
+            {
+                RoofPart(root.transform, "RidgeCurl", Local(end * (halfLength + 0.35f), 0.2f, 0), Size(0.55f, 0.18f, 0.28f), Tilt(end * 28f), ridge);
+                RoofPart(root.transform, "RidgeFin", Local(end * (halfLength + 0.55f), 0.42f, 0), Size(0.12f, 0.34f, 0.2f), Tilt(end * 12f), ridge);
+            }
             return root;
         }
 
         /// <summary>Hanging paper lantern with an optional warm point light.</summary>
         public static GameObject Lantern(string name, Vector3 position, Color color, Transform parent, float lightRange = 6f, float intensity = 2.2f)
         {
+            // The root is the hook the lantern hangs from, so LanternSway swings it like a pendulum.
+            const float drop = 0.42f;
             var root = new GameObject(name);
             root.transform.SetParent(parent, false);
-            root.transform.position = position;
-            var body = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            body.name = "Body";
-            UnityEngine.Object.DestroyImmediate(body.GetComponent<Collider>());
-            body.transform.SetParent(root.transform, false);
-            body.transform.localScale = new Vector3(0.36f, 0.46f, 0.36f);
-            body.GetComponent<Renderer>().sharedMaterial = Emissive("Lantern_" + ColorUtility.ToHtmlStringRGB(color), color, 2.6f);
-            var cap = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
-            cap.name = "Cap";
-            UnityEngine.Object.DestroyImmediate(cap.GetComponent<Collider>());
-            cap.transform.SetParent(root.transform, false);
-            cap.transform.localPosition = Vector3.up * 0.25f;
-            cap.transform.localScale = new Vector3(0.2f, 0.03f, 0.2f);
-            cap.GetComponent<Renderer>().sharedMaterial = Material("LanternCap", new Color(0.12f, 0.06f, 0.04f));
+            root.transform.position = position + Vector3.up * drop;
+            // Silk over a candle reads deep red; a modest emission keeps the colour under filmic tonemapping.
+            Color silk = new Color(color.r * 0.62f, color.g * 0.2f, color.b * 0.2f);
+            var glow = Emissive("Lantern_" + ColorUtility.ToHtmlStringRGB(color), silk, 1.15f);
+            var frame = Material("LanternFrame", new Color(0.1f, 0.05f, 0.03f), 0.4f);
+            var gold = Material("LanternGold", new Color(0.75f, 0.52f, 0.2f), 0.6f);
+            LanternPart(PrimitiveType.Sphere, "Body", new Vector3(0, -drop, 0), new Vector3(0.38f, 0.44f, 0.38f), glow, root.transform);
+            foreach (float y in new[] { -0.12f, 0f, 0.12f })
+            {
+                float r = 0.38f * Mathf.Sqrt(1f - (y / 0.22f) * (y / 0.22f)) + 0.012f;
+                LanternPart(PrimitiveType.Cylinder, "Rib", new Vector3(0, -drop + y, 0), new Vector3(r, 0.006f, r), frame, root.transform);
+            }
+            LanternPart(PrimitiveType.Cylinder, "Cap", new Vector3(0, -drop + 0.23f, 0), new Vector3(0.2f, 0.035f, 0.2f), frame, root.transform);
+            LanternPart(PrimitiveType.Cylinder, "Base", new Vector3(0, -drop - 0.23f, 0), new Vector3(0.2f, 0.035f, 0.2f), frame, root.transform);
+            LanternPart(PrimitiveType.Cylinder, "Cord", new Vector3(0, -drop * 0.5f + 0.06f, 0), new Vector3(0.012f, drop * 0.5f - 0.06f, 0.012f), frame, root.transform);
+            LanternPart(PrimitiveType.Sphere, "Knot", new Vector3(0, -drop - 0.3f, 0), Vector3.one * 0.05f, gold, root.transform);
+            LanternPart(PrimitiveType.Cylinder, "Tassel", new Vector3(0, -drop - 0.44f, 0), new Vector3(0.05f, 0.12f, 0.05f), Material("LanternTassel", new Color(0.6f, 0.06f, 0.04f), 0.3f), root.transform);
+            root.AddComponent<ThuyKieu.Environment.LanternSway>();
             if (lightRange > 0f)
             {
-                var light = root.AddComponent<Light>();
+                var lightObject = new GameObject("Light");
+                lightObject.transform.SetParent(root.transform, false);
+                lightObject.transform.localPosition = new Vector3(0, -drop, 0);
+                var light = lightObject.AddComponent<Light>();
                 light.type = LightType.Point;
                 light.color = Color.Lerp(color, new Color(1f, 0.7f, 0.4f), 0.5f);
                 light.range = lightRange;
@@ -440,6 +478,30 @@ namespace ThuyKieu.Core.Editor
                 light.shadows = LightShadows.None;
             }
             return root;
+        }
+
+        private static void RoofPart(Transform root, string name, Vector3 local, Vector3 scale, Quaternion rotation, Material material)
+        {
+            var part = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            part.name = name;
+            UnityEngine.Object.DestroyImmediate(part.GetComponent<Collider>());
+            part.transform.SetParent(root, false);
+            part.transform.localPosition = local;
+            part.transform.localRotation = rotation;
+            part.transform.localScale = scale;
+            part.GetComponent<Renderer>().sharedMaterial = material;
+        }
+
+        private static void LanternPart(PrimitiveType type, string name, Vector3 local, Vector3 scale, Material material, Transform parent)
+        {
+            var part = GameObject.CreatePrimitive(type);
+            part.name = name;
+            UnityEngine.Object.DestroyImmediate(part.GetComponent<Collider>());
+            part.transform.SetParent(parent, false);
+            part.transform.localPosition = local;
+            part.transform.localScale = scale;
+            part.GetComponent<Renderer>().sharedMaterial = material;
+            part.GetComponent<Renderer>().shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         }
 
         public static GameObject Prop(string prefabPath, Vector3 position, float yaw, float scale, Transform parent)
