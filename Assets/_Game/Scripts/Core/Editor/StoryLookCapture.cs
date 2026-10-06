@@ -39,6 +39,12 @@ namespace ThuyKieu.Core.Editor
             var camera = Camera.main;
             if (camera == null) return;
             string prefix = Path.GetFileNameWithoutExtension(scenePath).Substring(0, 9);
+            // The chapter grade is a runtime volume built in ScreenFx.Awake; build it here too so stills match Play Mode.
+            // The scene is never saved afterwards.
+            foreach (var fx in UnityEngine.Object.FindObjectsByType<ThuyKieu.Presentation.ScreenFx>())
+                typeof(ThuyKieu.Presentation.ScreenFx).GetMethod("Awake", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)?.Invoke(fx, null);
+            // Throwaway frame: shaders still compiling asynchronously render as cyan placeholders on the first pass.
+            Shoot(camera, Path.Combine(folder, prefix + "_00_main.png"));
             Shoot(camera, Path.Combine(folder, prefix + "_00_main.png"));
             var views = UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include)
                 .Where(t => t.name.StartsWith("CAM_") || t.name.StartsWith("WS_") || t.name.StartsWith("LOOK_"))

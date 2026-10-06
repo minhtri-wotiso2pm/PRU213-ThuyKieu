@@ -49,7 +49,7 @@ namespace ThuyKieu.Core.Editor
             var director = s.Director;
             KieuRoom(world, director, out Transform playerRoom);
             Hall(world);
-            TuBaRoom(world, director, out BoxCollider listenZone, out Transform listenStart, out Transform tuBaSpot, out Transform maSpot);
+            TuBaRoom(world, director, out BoxCollider listenZone, out Transform listenStart, out Transform tuBaSpot, out Transform maSpot, out GameObject tuBaDoor);
             Office(world, director);
             var gateDoor = GateAndCourtyard(world, director);
 
@@ -109,6 +109,11 @@ namespace ThuyKieu.Core.Editor
             Set(patrol, "_vision", vision);
             var cone = VisionCone(guard.transform, eyes, 8f, 80f);
 
+            // Tú Bà and Mã Giám Sinh glance at the side window while they talk: a listener standing up is seen
+            // over the sill, one crouched below it is not. Their sight only works during the eavesdrop.
+            var tuBaSight = RoomSight(tuBa, 1.5f, s.Player);
+            var maSight = RoomSight(ma, 1.62f, s.Player);
+
             // Camera anchors
             Point("CAM_Wide_TuBaCourtyard", new Vector3(-5.5f, 3.4f, -11.2f), 0, world).rotation = Quaternion.Euler(14, 28, 0);
             Point("CAM_CU_Kieu_Listens", new Vector3(5.2f, 1.2f, 4.9f), 0, world).rotation = Quaternion.Euler(6, 40, 0);
@@ -132,6 +137,8 @@ namespace ThuyKieu.Core.Editor
             Set(worldScript, "_maKieuMarker", maKieuGlow);
             Set(worldScript, "_sun", sun);
             Set(worldScript, "_visionCone", cone);
+            Set(worldScript, "_tuBaDoor", tuBaDoor);
+            Set(worldScript, "_roomSensors", new Object[] { tuBaSight, maSight });
 
             // Sequences
             var sequences = new GameObject("Sequences").transform;
@@ -139,8 +146,8 @@ namespace ThuyKieu.Core.Editor
             var tutorial = Child<TutorialSequence>(sequences, "tutorial_house");
             Set(tutorial, "_id", "tutorial_house");
             Set(tutorial, "_body", "<color=#E8C27A>Tự do khám phá</color> ngôi nhà theo thứ tự bạn muốn. Danh sách việc có thể làm hiện ở góc trái.\n\n" +
-                "Sân trong và hành lang là nơi bạn được đi lại. <color=#F08080>Phòng sổ sách</color> và <color=#F08080>cửa sổ phòng Tú Bà</color> là khu vực cấm.\n\n" +
-                "Người canh có <color=#F08080>tầm nhìn hình nón</color> đỏ dưới chân. Ở khu vực cấm, đừng để hắn thấy bạn; <color=#E8C27A>khom người (Ctrl)</color> để khó bị phát hiện, nấp sau bàn ghế, bồn hoa.");
+                "Sân trong, hành lang và phòng bạn là nơi được đi lại. <color=#F08080>Phòng sổ sách</color> và <color=#F08080>lối dưới cửa sổ phòng Tú Bà</color> là khu vực cấm.\n\n" +
+                "Người canh có <color=#F08080>tầm nhìn hình nón</color> đỏ dưới chân, chỉ đáng sợ khi bạn ở khu vực cấm. Nếu hắn nghi, hắn sẽ đi lại gần để xem; <color=#E8C27A>khom người (Ctrl)</color>, nấp sau tường, bồn hoa và canh lúc hắn quay đi.");
             var gate = Child<ActionBeatSequence>(sequences, "try_gate");
             Set(gate, "_id", "try_gate");
             Set(gate, "_gesture", 2);
@@ -165,11 +172,14 @@ namespace ThuyKieu.Core.Editor
             Set(eavesdrop, "_id", "eavesdrop_c3");
             Set(eavesdrop, "_zone", listenZone);
             Set(eavesdrop, "_start", listenStart);
-            Set(eavesdrop, "_sensors", new Object[] { vision });
+            Set(eavesdrop, "_sensors", new Object[] { vision, tuBaSight, maSight });
+            Set(eavesdrop, "_glancers", new Object[] { tuBa, ma });
+            Set(eavesdrop, "_glanceTarget", Point("WindowGlance", new Vector3(7.5f, 1.5f, 6.5f), 0, world));
+            Set(eavesdrop, "_glanceLines", new[] { "Hừm... ngoài cửa sổ có ai đấy?", "Khoan đã. Hình như có tiếng động." });
             Set(eavesdrop, "_guard", patrol);
             Set(eavesdrop, "_seconds", 8f);
-            Set(eavesdrop, "_objective", "Khom người dưới cửa sổ, nấp sau bồn hoa và nghe lén");
-            Set(eavesdrop, "_caughtDetail", "Người canh đã thấy bạn lảng vảng dưới cửa sổ. Canh lúc hắn quay đi và giữ người thấp sau bồn hoa.");
+            Set(eavesdrop, "_objective", "Lẻn qua bồn hoa, khom người dưới bậu cửa sổ phòng Tú Bà và nghe lén");
+            Set(eavesdrop, "_caughtDetail", "Bạn đã bị thấy dưới cửa sổ. Canh lúc người canh quay đi, và luôn khom người: đứng thẳng là người trong phòng nhìn qua bậu cửa thấy ngay.");
             Set(eavesdrop, "_musicAfter", "tuba_warm");
             Fx(sequences, "panic", "panic", "heartbeat", "none", 3.2f, 0.18f, 3);
             Fx(sequences, "kieu_voice", "spirit", "memory", "none", 2f, 0f, 1);
@@ -188,6 +198,24 @@ namespace ThuyKieu.Core.Editor
             Set(fx, "_hold", hold);
             Set(fx, "_shake", shake);
             Set(fx, "_repeatSfx", repeat);
+        }
+
+        /// <summary>Short-range sight for a character in Tú Bà's room, blocked by walls and the window sill.</summary>
+        private static VisionSensor RoomSight(ThuyKieu.Core.Story.StoryActor actor, float eyeHeight, Object player)
+        {
+            var sensor = actor.gameObject.AddComponent<VisionSensor>();
+            var eyes = new GameObject("Eyes").transform;
+            eyes.SetParent(actor.transform, false);
+            eyes.localPosition = Vector3.up * eyeHeight;
+            Set(sensor, "_eyes", eyes);
+            Set(sensor, "_player", player);
+            Set(sensor, "_range", 6f);
+            Set(sensor, "_angle", 70f);
+            Set(sensor, "_secondsToSpot", 0.8f);
+            Set(sensor, "_crouchFactor", 1f);
+            Set(sensor, "_onlyInRestrictedZones", false);
+            Set(sensor, "_occluders", 1 << EnvironmentLayer);
+            return sensor;
         }
 
         /// <summary>Flat translucent cone on the ground showing where the guard looks.</summary>
@@ -340,17 +368,22 @@ namespace ThuyKieu.Core.Editor
                 Block("PlaqueGlyph", new Vector3(-0.84f + i * 0.56f, 3.3f, 9.01f), new Vector3(0.3f, 0.3f, 0.01f), Emissive("CoupletGold", new Color(0.85f, 0.62f, 0.22f), 0.25f), root, false);
         }
 
-        private static void TuBaRoom(Transform world, StoryDirector director, out BoxCollider listenZone, out Transform listenStart, out Transform tuBaSpot, out Transform maSpot)
+        private static void TuBaRoom(Transform world, StoryDirector director, out BoxCollider listenZone, out Transform listenStart, out Transform tuBaSpot, out Transform maSpot, out GameObject door)
         {
             var root = new GameObject("TuBaRoom").transform;
             root.SetParent(world, false);
             Block("Floor", new Vector3(10.5f, 0.02f, 7.8f), new Vector3(6f, 0.04f, 9.4f), _planks, root);
             Fadeable(Block("WallS", new Vector3(10.5f, 1.75f, 3f), new Vector3(6.2f, 3.5f, 0.3f), _plaster, root));
-            // West wall with a window (1.0–2.0 m) and a door.
+            // West wall with a window (sill at 1.2 m: hides a crouching listener, not a standing one) and a door.
             Fadeable(Block("WallW_A", new Vector3(7.5f, 1.75f, 4f), new Vector3(0.3f, 3.5f, 2f), _plaster, root));
-            Fadeable(Block("WallW_WindowLow", new Vector3(7.5f, 0.5f, 6.5f), new Vector3(0.3f, 1f, 3f), _plaster, root));
+            Fadeable(Block("WallW_WindowLow", new Vector3(7.5f, 0.6f, 6.5f), new Vector3(0.3f, 1.2f, 3f), _plaster, root));
             Fadeable(Block("WallW_WindowHigh", new Vector3(7.5f, 2.75f, 6.5f), new Vector3(0.3f, 1.5f, 3f), _plaster, root));
-            Block("WindowFrame", new Vector3(7.42f, 1.5f, 6.5f), new Vector3(0.08f, 1.05f, 3.05f), _red, root, false);
+            // Lamp-lit paper lattice: from the yard it is obvious someone is inside talking.
+            FadeWith(root.Find("WallW_WindowHigh").gameObject, Lattice("TuBaWindow", new Vector3(7.36f, 1.6f, 6.5f), 2.9f, 0.8f, -90f, LatticeFrame(), WindowPaper(), root));
+            // Door: open while they walk in, barred by Chapter03World once both are inside.
+            door = Block("TuBaDoor", new Vector3(7.5f, 1.35f, 10.1f), new Vector3(0.12f, 2.7f, 1.4f), Surface("Ch3GateWood", "planks_brown_10", new Color(0.55f, 0.32f, 0.22f), 1.6f, 0.25f, 1.2f), root);
+            door.isStatic = false;
+            Fadeable(door);
             Fadeable(Block("WallW_B", new Vector3(7.5f, 1.75f, 8.7f), new Vector3(0.3f, 3.5f, 1.4f), _plaster, root));
             Fadeable(Block("WallW_C", new Vector3(7.5f, 1.75f, 11.65f), new Vector3(0.3f, 3.5f, 1.7f), _plaster, root));
             Fadeable(Block("DoorLintel", new Vector3(7.5f, 3.1f, 10.1f), new Vector3(0.32f, 0.8f, 1.4f), _red, root));
@@ -396,10 +429,11 @@ namespace ThuyKieu.Core.Editor
             listenZone = zone.AddComponent<BoxCollider>();
             listenZone.isTrigger = true;
             listenZone.size = new Vector3(1.3f, 1.6f, 3.2f);
+            // The prompt sits at the corner of the planter, outside the forbidden strip: from here the player has to sneak in.
             var spot = new GameObject("WindowListenSpot");
             spot.transform.SetParent(root, false);
-            spot.transform.position = new Vector3(6.9f, 0, 6.5f);
-            Explore(spot, director, "c3_eavesdrop", "Nghe lén dưới cửa sổ phòng Tú Bà", new Vector3(1.4f, 1.4f, 2.8f));
+            spot.transform.position = new Vector3(4.4f, 0, 3.6f);
+            Explore(spot, director, "c3_eavesdrop", "Nghe tiếng nói từ phòng Tú Bà", new Vector3(1.8f, 1.6f, 1.8f));
             listenStart = Point("ListenStart", new Vector3(4.3f, 0.05f, 3.4f), 30, root);
             Zone(root, "Dưới cửa sổ phòng Tú Bà", new Vector3(6.3f, 1f, 6.6f), new Vector3(2.6f, 2f, 4.8f));
         }

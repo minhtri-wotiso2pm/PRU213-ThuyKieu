@@ -45,9 +45,16 @@ namespace ThuyKieu.Gameplay.Stealth
             if (!Patrolling || _waypoints == null || _waypoints.Length == 0) return;
             if (_vision != null && _vision.Awareness > 0.25f && _vision.SeesPlayer)
             {
+                Vector3 look = _vision.Player.transform.position;
+                if (_vision.Awareness > 0.6f)
+                {
+                    // Nearly sure: walk over to check. Losing sight leaves him searching where he last saw the player.
+                    _actor.MoveTo(look, _speed * 1.5f);
+                    _wait = 0f;
+                    return;
+                }
                 // Suspicious: stop and stare at what caught the eye.
                 _actor.Stop();
-                Vector3 look = _vision.Player.transform.position;
                 Vector3 direction = look - transform.position;
                 direction.y = 0;
                 if (direction.sqrMagnitude > 0.01f)

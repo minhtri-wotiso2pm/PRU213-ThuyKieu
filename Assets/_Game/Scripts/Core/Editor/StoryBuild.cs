@@ -38,6 +38,7 @@ namespace ThuyKieu.Core.Editor
             foreach (string path in Generated)
                 if (File.Exists(path) || Directory.Exists(path)) AssetDatabase.DeleteAsset(path);
             AssetDatabase.Refresh();
+            StoryMeshLods.Apply();
             Chapter02Setup.Create();
             Chapter03Setup.Create();
             EditorSceneManager.OpenScene(Chapter02Setup.ScenePath);

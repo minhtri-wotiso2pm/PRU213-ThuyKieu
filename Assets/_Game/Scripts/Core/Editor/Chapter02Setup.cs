@@ -318,7 +318,15 @@ namespace ThuyKieu.Core.Editor
             void Plant(string path, Vector3 position, float yaw, float scale)
             {
                 var plant = Prop(path, position, yaw, scale, root);
-                if (plant != null) foreach (var t in plant.GetComponentsInChildren<Transform>()) t.gameObject.layer = 0;
+                if (plant == null) return;
+                foreach (var t in plant.GetComponentsInChildren<Transform>()) t.gameObject.layer = 0;
+                // The tree models are very dense: favour coarser mesh LODs, and only trees near the road cast shadows.
+                bool nearRoad = Mathf.Abs(position.x - RoadX(position.z)) < 12f;
+                foreach (var renderer in plant.GetComponentsInChildren<Renderer>())
+                {
+                    renderer.meshLodSelectionBias = 2f;
+                    if (!nearRoad) renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                }
             }
             for (float z = -8; z < GateZ - 6; z += 2.6f)
             {

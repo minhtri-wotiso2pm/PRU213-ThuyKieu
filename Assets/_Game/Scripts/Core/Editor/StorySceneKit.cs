@@ -26,6 +26,9 @@ namespace ThuyKieu.Core.Editor
         public const int EnvironmentLayer = 8;
         public const string UIPrefabPath = "Assets/_Game/Prefabs/UI/StoryCanvas.prefab";
         public const string MaterialFolder = "Assets/_Game/Materials/Story";
+        /// <summary>Where generated materials, meshes and textures go. The Chapter 1 upgrade points it at its own folder,
+        /// because the story folder is deleted on every Chapter 2/3 rebuild.</summary>
+        public static string AssetFolder { get; set; } = MaterialFolder;
         public const string FontPath = "Assets/_Game/UI/Fonts/ChapterVietnamese.asset";
 
         public struct Systems
@@ -227,7 +230,7 @@ namespace ThuyKieu.Core.Editor
             visual.transform.SetParent(root.transform, false);
             var model = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(objPath));
             model.transform.SetParent(visual.transform, false);
-            if (relaxArms > 0f) RelaxArms(model, MaterialFolder + "/" + name + "_Relaxed.asset", relaxArms);
+            if (relaxArms > 0f) RelaxArms(model, AssetFolder + "/" + name + "_Relaxed.asset", relaxArms);
             Fit(model, height);
             var material = Material(name + "Static", Color.white);
             var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
@@ -517,7 +520,7 @@ namespace ThuyKieu.Core.Editor
 
         public static Material Material(string name, Color color, float smoothness = 0.15f)
         {
-            string path = MaterialFolder + "/" + name + ".mat";
+            string path = AssetFolder + "/" + name + ".mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material != null) return material;
             material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
@@ -529,7 +532,7 @@ namespace ThuyKieu.Core.Editor
 
         public static Material Emissive(string name, Color color, float intensity)
         {
-            string path = MaterialFolder + "/" + name + ".mat";
+            string path = AssetFolder + "/" + name + ".mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material != null) return material;
             material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
@@ -591,6 +594,10 @@ namespace ThuyKieu.Core.Editor
                 case UnityEngine.Object[] array:
                     field.arraySize = array.Length;
                     for (int i = 0; i < array.Length; i++) field.GetArrayElementAtIndex(i).objectReferenceValue = array[i];
+                    break;
+                case string[] lines:
+                    field.arraySize = lines.Length;
+                    for (int i = 0; i < lines.Length; i++) field.GetArrayElementAtIndex(i).stringValue = lines[i];
                     break;
                 default: throw new InvalidOperationException("Unsupported value for " + property);
             }

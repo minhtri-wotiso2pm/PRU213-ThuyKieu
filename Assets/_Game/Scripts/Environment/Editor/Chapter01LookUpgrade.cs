@@ -1,6 +1,8 @@
 using System;
+using System.IO;
 using ThuyKieu.Core.Editor;
 using ThuyKieu.Player;
+using ThuyKieu.Presentation;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -10,13 +12,16 @@ namespace ThuyKieu.Environment.Editor
     /// <summary>
     /// Targeted art pass on the hand-built Chapter 1 scene (it is never regenerated): converts its blockout
     /// materials to CC0 world-space textures in place, adds the rainy night sky and gives the orbit camera
-    /// the same over-the-shoulder framing as the later chapters. Re-running it is harmless.
+    /// the same over-the-shoulder framing as the later chapters, the same filmic grade (Chapter 1 had no post-processing)
+    /// and the same kind of set dressing: wet grass, pots, jars, stones and a dark grove beyond the walls. Re-running it is harmless.
     ///   -executeMethod ThuyKieu.Environment.Editor.Chapter01LookUpgrade.ApplyBatch
     /// </summary>
     public static class Chapter01LookUpgrade
     {
         private const string EnvironmentMaterials = "Assets/_Game/Materials/Chapter01Environment";
         private const string SetupMaterials = "Assets/_Game/Materials";
+        // Generated meshes/materials for the Chapter 1 dressing (the story folder is wiped by the Chapter 2/3 rebuild).
+        private const string LookAssets = "Assets/_Game/Materials/Chapter01Look";
 
         [MenuItem("ThuyKieu/Chapter 1/Apply look upgrade")]
         public static void Apply()
@@ -46,6 +51,15 @@ namespace ThuyKieu.Environment.Editor
                 StorySceneKit.Set(orbit, "followSmoothTime", 0.08f);
             }
             Decorate();
+            Directory.CreateDirectory(LookAssets);
+            AssetDatabase.Refresh();
+            StorySceneKit.AssetFolder = LookAssets;
+            try
+            {
+                Grade(camera);
+                Outdoor();
+            }
+            finally { StorySceneKit.AssetFolder = StorySceneKit.MaterialFolder; }
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
@@ -102,6 +116,88 @@ namespace ThuyKieu.Environment.Editor
                 Piece(root, "Jar", corner + Vector3.up * 0.34f, new Vector3(0.56f, 0.68f, 0.56f), glaze, PrimitiveType.Sphere);
                 Piece(root, "JarSmall", corner + new Vector3(corner.x < cx ? 0.55f : -0.55f, 0.22f, 0.1f), new Vector3(0.36f, 0.44f, 0.36f), glaze, PrimitiveType.Sphere);
             }
+        }
+
+        /// <summary>Same filmic pipeline as Chapters 2–3, graded for a cold rainy night with warm lamp highlights.</summary>
+        private static void Grade(Camera camera)
+        {
+            if (camera == null) return;
+            if (!camera.TryGetComponent(out UnityEngine.Rendering.Universal.UniversalAdditionalCameraData urp))
+                urp = camera.gameObject.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
+            urp.renderPostProcessing = true;
+            if (!camera.TryGetComponent(out ScreenFx fx)) fx = camera.gameObject.AddComponent<ScreenFx>();
+            StorySceneKit.Set(fx, "_camera", camera);
+            StorySceneKit.Set(fx, "_baseVignette", 0.27f);
+            StorySceneKit.Set(fx, "_baseBloom", 0.75f);
+            StoryArtKit.Grade(fx, 0.95f, 9f, 4f, -6f, new Color(0.4f, 0.47f, 0.6f), new Color(0.72f, 0.57f, 0.42f));
+        }
+
+        /// <summary>
+        /// Courtyard dressing in the Chapter 2/3 style, rebuilt on every run: wet grass along the walls, potted plants
+        /// by the door, water jars and stones in the corners, rain mist, and bamboo and palms standing dark beyond the walls.
+        /// Nothing here blocks the player's routes (path, well, door, gate).
+        /// </summary>
+        private static void Outdoor()
+        {
+            var courtyard = FindDeep("Courtyard");
+            if (courtyard == null) return;
+            var old = courtyard.Find("LookOutdoor");
+            if (old != null) UnityEngine.Object.DestroyImmediate(old.gameObject);
+            var root = new GameObject("LookOutdoor").transform;
+            root.SetParent(courtyard, true);
+
+            var grass = new GameObject("Grass").transform;
+            grass.SetParent(root, false);
+            var random = new System.Random(17);
+            StoryArtKit.Grass("Ch1WetGrass", grass, new Rect(-9.2f, -13.4f, 18.4f, 12.6f), 4200, p =>
+            {
+                if (Mathf.Abs(p.x) < 2.1f) return false;                                   // stone path and gate
+                if (new Vector2(p.x - 6.5f, p.y + 5.8f).magnitude < 1.7f) return false;    // well
+                if (p.y > -3.6f && Mathf.Abs(p.x) < 7.2f) return false;                    // house front and porch
+                float edge = Mathf.Min(9.3f - Mathf.Abs(p.x), p.y + 13.5f);
+                // Weeds push up where the paving meets the walls, barely anywhere else.
+                return random.NextDouble() < (edge < 1.2f ? 0.9f : edge < 2.4f ? 0.2f : 0.015f);
+            }, 23, 0.42f, new Color(0.36f, 0.5f, 0.3f), new Color(0.44f, 0.52f, 0.32f), "Ch1GrassBlades");
+
+            int seed = 40;
+            foreach (var pot in new[] { new Vector3(-2.7f, 0f, -3.9f), new Vector3(2.7f, 0f, -3.9f), new Vector3(-8.6f, 0f, -12.6f), new Vector3(8.6f, 0f, -12.4f) })
+                StoryArtKit.PottedPlant(pot, 0.95f, root, seed++, seed % 2 == 0);
+            StoryArtKit.Jars(new Vector3(-8.4f, 0f, -2.6f), 3, root, 7);
+            StoryArtKit.Jars(new Vector3(8.5f, 0f, -9.6f), 2, root, 9);
+            for (int i = 0; i < 7; i++)
+            {
+                float side = i % 2 == 0 ? -1f : 1f;
+                StoryArtKit.Rock(new Vector3(side * (8.7f - (i % 3) * 0.3f), -0.05f, -12.8f + i * 1.6f), new Vector3(0.55f, 0.35f, 0.5f) * (0.8f + (i % 3) * 0.25f), i * 53f, root, i % 4);
+            }
+
+            // A grove standing black against the rain beyond the low courtyard walls: depth instead of a void.
+            string[] trees = { "Assets/_Game/Prefabs/Vegetation/Bamboo.prefab", "Assets/_Game/Prefabs/Vegetation/Bamboo.prefab", "Assets/_Game/Prefabs/Vegetation/ArecaPalm.prefab", "Assets/_Game/Prefabs/Vegetation/BananaTree.prefab" };
+            var grove = new GameObject("Grove").transform;
+            grove.SetParent(root, false);
+            var place = new System.Random(5);
+            void Tree(Vector3 position)
+            {
+                var tree = StorySceneKit.Prop(trees[place.Next(trees.Length)], position, place.Next(360), 0.9f + (float)place.NextDouble() * 0.6f, grove);
+                if (tree == null) return;
+                foreach (var renderer in tree.GetComponentsInChildren<Renderer>())
+                {
+                    renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+                    renderer.meshLodSelectionBias = 2f;
+                }
+                foreach (var collider in tree.GetComponentsInChildren<Collider>()) UnityEngine.Object.DestroyImmediate(collider);
+            }
+            foreach (float side in new[] { -1f, 1f })
+                for (float z = -15f; z <= 9f; z += 3.2f)
+                {
+                    if (side < 0f && z > -5.5f) continue; // the family side wing stands there
+                    Tree(new Vector3(side * (11.2f + (float)place.NextDouble() * 3.5f), 0f, z + (float)place.NextDouble() * 1.5f));
+                }
+            for (float x = -8f; x <= 8f; x += 3.4f) Tree(new Vector3(x + (float)place.NextDouble(), 0f, 11.6f + (float)place.NextDouble() * 2.5f));
+            for (float x = -9f; x <= 9f; x += 4.5f) if (Mathf.Abs(x) > 2.5f) Tree(new Vector3(x, 0f, -16.5f - (float)place.NextDouble() * 2f));
+
+            // Review viewpoint for StoryLookCapture (an empty transform; nothing uses it at runtime).
+            StorySceneKit.Point("LOOK_Courtyard", new Vector3(6.5f, 3.4f, -13.2f), 0f, root).rotation = Quaternion.Euler(16f, -22f, 0f);
+            StoryArtKit.Dust("RainMist", new Vector3(0f, 0.8f, -7.5f), new Vector3(18f, 1.4f, 11f), root, new Color(0.62f, 0.7f, 0.82f, 0.22f), 120);
         }
 
         private static Transform FindDeep(string name)

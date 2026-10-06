@@ -31,10 +31,14 @@ Tú Bà: Con cứ xem nơi này như nhà.
 # camera:CU_MaGiamSinh
 Mã Giám Sinh: Bà... à, mẹ cứ dạy bảo nàng. Ta có chút việc cần thưa với mẹ.
 
+# speaker:Narrator
+# camera:CU_TuBa
+Hắn rút trong tay áo ra một tờ giấy gấp tư, đưa cho Tú Bà. Mụ liếc qua, rồi chìa cho người canh: "Đem cất vào chỗ cũ."
+
 # speaker:Kieu
 # emotion:controlled
 # camera:CU_Kieu
-Kiều: (Mẹ? Hắn gọi mụ là mẹ. Mã Giám Sinh làm gì có mẹ ở Lâm Tri.)
+Kiều: (Mẹ? Hắn gọi mụ là mẹ. Mã Giám Sinh làm gì có mẹ ở Lâm Tri. Và tờ giấy kia là gì?)
 
 # speaker:TuBa
 # emotion:warm_fake
@@ -145,7 +149,7 @@ Cánh cổng không nhúc nhích. Ổ khóa đồng to bằng nắm tay — và 
 
 # speaker:NguoiCanh
 # emotion:cold
-Người canh: (vọng vào) Cô em muốn đi đâu? Cổng này chỉ mở cho khách.
+Người canh: (quát từ giữa sân) Cô em muốn đi đâu? Cổng này chỉ mở cho khách, mà chìa thì ở ngoài kia.
 
 ~ c3_kiem_cua = true
 ~ c3_viec += 1
@@ -160,6 +164,7 @@ Khóa từ bên ngoài. Nhà người ta khóa cửa để giữ trộm ở ngo�
 # camera:OTS_Kieu_Window
 Cửa sổ phòng Kiều chạm hoa sen rất đẹp. Kiều đẩy thử — phía sau lớp gỗ chạm là chấn song sắt, đóng đinh chặt vào khung.
 
+~ c3_viec += 1
 # speaker:NoiTam
 Đẹp thật. Một cái lồng chim được chạm trổ rất công phu.
 -> c3_hub
@@ -168,31 +173,38 @@ Cửa sổ phòng Kiều chạm hoa sen rất đẹp. Kiều đẩy thử — ph
 === c3_eavesdrop ===
 # speaker:Narrator
 # gameplay:eavesdrop_c3
-Phòng Tú Bà ở cuối hành lang. Khom người, lẻn đến dưới khung cửa sổ, tránh tầm nhìn của người canh.
+Cửa phòng Tú Bà cài then, nhưng cửa sổ bên hông còn hé. Lẻn qua bồn hoa, khom người dưới bậu cửa — đừng để người canh, hay người trong phòng, thấy bạn.
 
 # speaker:MaGiamSinh
 # emotion:angry
 # camera:CU_Kieu_Listens
-Mã Giám Sinh: Bốn trăm năm mươi lạng. Thiếu một đồng ta cũng không giao văn tự.
+Mã Giám Sinh: Bốn trăm năm mươi lạng, như đã hẹn trong thư. Thiếu một đồng ta cũng không đi.
 
 # speaker:TuBa
 # emotion:mocking
-Tú Bà: Ngươi mua có bốn trăm, lãi thế còn kêu? Nhà nó tưởng gả con, ngươi khéo diễn lắm.
+Tú Bà: Ngươi đưa nhà họ Vương có bốn trăm, giờ đòi ta thêm năm mươi lạng công đi đường à?
 
 # speaker:MaGiamSinh
 # emotion:smug
-Mã Giám Sinh: Không khéo thì sao lừa nổi cả nhà họ Vương? Văn tự bán thân đã điểm chỉ, bà cất cho kỹ.
+Mã Giám Sinh: Công diễn tuồng thì đúng hơn. Không khéo thì sao lừa nổi cả nhà họ Vương? Họ còn khóc lóc tiễn con gái về nhà chồng.
 
 # speaker:TuBa
 # emotion:businesslike
-Tú Bà: Ta để trong hộp sơn son ở phòng sổ sách. Chìa tủ thì lúc nào cũng ở thắt lưng ta. Yên tâm.
+Tú Bà: Thôi được. Văn tự ngươi đưa lúc nãy, người canh đã cất vào hộp sơn son bên phòng sổ sách. Bạc thì nằm trong tủ khóa đồng.
+
+# speaker:MaGiamSinh
+Mã Giám Sinh: Thì mở tủ ra đi.
+
+# speaker:TuBa
+# emotion:mocking
+Tú Bà: Chìa ta đeo ở thắt lưng, ngủ cũng không rời. Tối nay ta có khách lớn, lại phải dạy con bé mới quy củ. Xong việc ta trả. Ngươi ngủ lại một đêm, mai hẵng lên đường.
 
 ~ c3_nghe_len = true
 ~ c3_biet_chia_khoa = true
 ~ c3_viec += 1
 # speaker:NoiTam
 # clue:c3_nghe_len
-"Gả con." Cả nhà mình... đã bị lừa trắng trợn như thế.
+"Về nhà chồng." Cả nhà mình khóc tiễn mình... trong một vở tuồng hắn dựng sẵn.
 -> c3_hub
 
 
@@ -216,7 +228,7 @@ Nợ chồng lên nợ. Không ai ở đây trả hết được. Đó mới là
 === c3_box ===
 # speaker:Narrator
 # camera:OTS_Kieu_Box
-Chiếc hộp sơn son không khóa. Tú Bà quá tin vào người canh ngoài sân.
+Chiếc hộp sơn son không khóa. Ở cái nhà mà cổng khóa từ bên ngoài, Tú Bà chẳng cần khóa thêm gì.
 
 # speaker:Narrator
 # gameplay:document_contract

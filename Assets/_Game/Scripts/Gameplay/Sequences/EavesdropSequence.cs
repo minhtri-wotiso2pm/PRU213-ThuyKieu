@@ -17,12 +17,16 @@ namespace ThuyKieu.Gameplay.Sequences
         [SerializeField] private GuardPatrol _guard;
         [SerializeField] private StoryActor[] _glancers;
         [SerializeField] private Transform _glanceTarget;
+        [Tooltip("Optional line each glancer mutters as they turn to look (same order as the glancers): warns the listener to duck.")]
+        [SerializeField] private string[] _glanceLines;
         [SerializeField] private float _seconds = 7f;
         [SerializeField] private string _objective = "Lẻn đến gần và nghe lén";
         [SerializeField] private string _caughtDetail = "Bọn họ đã thấy bạn.";
         [SerializeField] private string _musicAfter;
 
         public float Progress { get; private set; }
+
+        private bool[] _sensorStates;
 
         public override IEnumerator Run(StoryDirector director)
         {
@@ -56,8 +60,11 @@ namespace ThuyKieu.Gameplay.Sequences
                     }
                     else if ((glanceTimer -= Time.deltaTime) <= 0f)
                     {
-                        glancer = _glancers[Random.Range(0, _glancers.Length)];
+                        int pick = Random.Range(0, _glancers.Length);
+                        glancer = _glancers[pick];
                         glancer.FaceTowards(_glanceTarget.position);
+                        if (_glanceLines != null && pick < _glanceLines.Length && !string.IsNullOrEmpty(_glanceLines[pick]))
+                            hud.ShowBark(glancer.SpeakerId, _glanceLines[pick], 1.8f);
                         glanceHold = 1.9f;
                         glanceTimer = Random.Range(4.5f, 7.5f);
                     }
@@ -79,7 +86,7 @@ namespace ThuyKieu.Gameplay.Sequences
             director.SetFreeControl(false);
             player.ForceCrouch = false;
             hud.SetObjective(previousObjective, false);
-            SetSensors(false);
+            RestoreSensors();
             FacePartners();
             if (director.Audio != null)
             {
@@ -106,8 +113,16 @@ namespace ThuyKieu.Gameplay.Sequences
 
         private void SetSensors(bool active)
         {
-            foreach (var sensor in _sensors)
-                if (sensor != null) { sensor.Active = active; sensor.ResetAwareness(); }
+            _sensorStates = new bool[_sensors.Length];
+            for (int i = 0; i < _sensors.Length; i++)
+                if (_sensors[i] != null) { _sensorStates[i] = _sensors[i].Active; _sensors[i].Active = active; _sensors[i].ResetAwareness(); }
+        }
+
+        // Sensors return to whatever they were doing before (the yard guard keeps watching afterwards).
+        private void RestoreSensors()
+        {
+            for (int i = 0; i < _sensors.Length; i++)
+                if (_sensors[i] != null) { _sensors[i].Active = _sensorStates[i]; _sensors[i].ResetAwareness(); }
         }
 
         private void FacePartners()

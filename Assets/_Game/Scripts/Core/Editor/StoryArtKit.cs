@@ -26,9 +26,9 @@ namespace ThuyKieu.Core.Editor
 
         /// <summary>World-space textured material. <paramref name="metresPerTile"/> is the real size one texture repeat covers.</summary>
         public static Material Surface(string name, string texture, Color tint, float metresPerTile, float smoothness = 0.2f,
-            float normal = 1f, float variation = 0.35f, float grime = 0f, string folder = MaterialFolder)
+            float normal = 1f, float variation = 0.35f, float grime = 0f, string folder = null)
         {
-            string path = folder + "/" + name + ".mat";
+            string path = (folder ?? AssetFolder) + "/" + name + ".mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             bool create = material == null;
             if (create) material = new Material(Shader.Find(TriplanarShader));
@@ -70,7 +70,7 @@ namespace ThuyKieu.Core.Editor
         // ------------------------------------------------------------------ sky
 
         /// <summary>Panoramic HDRI skybox (Poly Haven "puresky" images have no ground baked in).</summary>
-        public static Material Sky(string name, string hdr, float exposure, Color tint, float rotation, string folder = MaterialFolder)
+        public static Material Sky(string name, string hdr, float exposure, Color tint, float rotation, string folder = null)
         {
             string texturePath = SkyRoot + "/" + hdr + "_2k.hdr";
             if (AssetImporter.GetAtPath(texturePath) is TextureImporter importer && (importer.mipmapEnabled || importer.maxTextureSize != 2048))
@@ -82,7 +82,7 @@ namespace ThuyKieu.Core.Editor
                 importer.wrapModeV = TextureWrapMode.Clamp;
                 importer.SaveAndReimport();
             }
-            string path = folder + "/" + name + ".mat";
+            string path = (folder ?? AssetFolder) + "/" + name + ".mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material == null) { material = new Material(Shader.Find("Skybox/Panoramic")); AssetDatabase.CreateAsset(material, path); }
             material.SetTexture("_MainTex", AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath));
@@ -281,8 +281,8 @@ namespace ThuyKieu.Core.Editor
 
         private static Mesh RockMesh(int variant)
         {
-            string path = MaterialFolder + "/Rock_" + variant + ".asset";
-            if (RockMeshes.TryGetValue(variant, out Mesh cached) && cached != null) return cached;
+            string path = AssetFolder + "/Rock_" + variant + ".asset";
+            if (RockMeshes.TryGetValue(variant, out Mesh cached) && cached != null && AssetDatabase.GetAssetPath(cached) == path) return cached;
             var existing = AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if (existing != null) return RockMeshes[variant] = existing;
             var temp = GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -343,7 +343,7 @@ namespace ThuyKieu.Core.Editor
                     var mesh = new Mesh { name = name + "_" + m + "_" + chunk };
                     mesh.CombineMeshes(part, true, true);
                     mesh.RecalculateBounds();
-                    AssetDatabase.CreateAsset(mesh, MaterialFolder + "/" + mesh.name + ".asset");
+                    AssetDatabase.CreateAsset(mesh, AssetFolder + "/" + mesh.name + ".asset");
                     var go = new GameObject(mesh.name);
                     go.transform.SetParent(parent, false);
                     go.AddComponent<MeshFilter>().sharedMesh = mesh;
@@ -359,8 +359,8 @@ namespace ThuyKieu.Core.Editor
 
         private static Mesh TuftMesh()
         {
-            if (_tuft != null) return _tuft;
-            string path = MaterialFolder + "/GrassTuft.asset";
+            string path = AssetFolder + "/GrassTuft.asset";
+            if (_tuft != null && AssetDatabase.GetAssetPath(_tuft) == path) return _tuft;
             _tuft = AssetDatabase.LoadAssetAtPath<Mesh>(path);
             if (_tuft != null) return _tuft;
             var vertices = new List<Vector3>();
@@ -390,7 +390,7 @@ namespace ThuyKieu.Core.Editor
 
         private static Material GrassMaterial(string name, Color tint)
         {
-            string path = MaterialFolder + "/" + name + ".mat";
+            string path = AssetFolder + "/" + name + ".mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material != null) return material;
             material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
@@ -548,7 +548,7 @@ namespace ThuyKieu.Core.Editor
 
         private static Material ParticleMaterial(string name, bool additive, string textureName = "SoftDot", Action<Color32[], int> draw = null)
         {
-            string path = MaterialFolder + "/" + name + ".mat";
+            string path = AssetFolder + "/" + name + ".mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material != null) return material;
             material = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
@@ -591,7 +591,7 @@ namespace ThuyKieu.Core.Editor
 
         private static Texture2D GeneratedTexture(string name, Action<Color32[], int> draw, int size = 256)
         {
-            string path = MaterialFolder + "/" + name + ".png";
+            string path = AssetFolder + "/" + name + ".png";
             var existing = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
             if (existing != null) return existing;
             var pixels = new Color32[size * size];
@@ -642,11 +642,11 @@ namespace ThuyKieu.Core.Editor
         private static Material Darken(Material source)
         {
             string name = source.name + "_Dark";
-            var existing = AssetDatabase.LoadAssetAtPath<Material>(MaterialFolder + "/" + name + ".mat");
+            var existing = AssetDatabase.LoadAssetAtPath<Material>(AssetFolder + "/" + name + ".mat");
             if (existing != null) return existing;
             var copy = new Material(source) { name = name };
             copy.SetColor("_BaseColor", source.GetColor("_BaseColor") * 0.55f);
-            AssetDatabase.CreateAsset(copy, MaterialFolder + "/" + name + ".mat");
+            AssetDatabase.CreateAsset(copy, AssetFolder + "/" + name + ".mat");
             return copy;
         }
 
