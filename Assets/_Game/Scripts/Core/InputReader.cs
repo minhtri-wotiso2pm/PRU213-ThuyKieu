@@ -61,6 +61,36 @@ namespace ThuyKieu.Core
             }
         }
 
+        /// <summary>Left Ctrl or C held: crouch / sneak.</summary>
+        public static bool IsCrouchHeld
+        {
+            get
+            {
+                Keyboard keyboard = Keyboard.current;
+                return keyboard != null && (keyboard.leftCtrlKey.isPressed || keyboard.cKey.isPressed);
+            }
+        }
+
+        /// <summary>Right mouse button held: focused observation.</summary>
+        public static bool IsObserveHeld
+        {
+            get
+            {
+                Mouse mouse = Mouse.current;
+                return mouse != null && mouse.rightButton.isPressed;
+            }
+        }
+
+        /// <summary>J pressed this frame: open or close the journal.</summary>
+        public static bool JournalPressedThisFrame
+        {
+            get
+            {
+                Keyboard keyboard = Keyboard.current;
+                return keyboard != null && keyboard.jKey.wasPressedThisFrame;
+            }
+        }
+
         /// <summary>Escape pressed this frame (used to release the cursor in the editor).</summary>
         public static bool CancelPressedThisFrame
         {

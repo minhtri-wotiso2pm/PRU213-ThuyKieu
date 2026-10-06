@@ -23,5 +23,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Game/Scenes/Chapter02_Placeholder.unity
     guid: 0ef1023dba0596b47afc649328e6014b
+  - enabled: 1
+    path: Assets/_Game/Scenes/Chapter02_RoadToMaGiamSinh.unity
+    guid: 910bbf9883caa414bb3edf898fa5c84d
+  - enabled: 1
+    path: Assets/_Game/Scenes/Chapter03_TuBaHouse.unity
+    guid: 85688a5cc19bac544b8e83356f772380
+  - enabled: 1
+    path: Assets/_Game/Scenes/Chapter04_Placeholder.unity
+    guid: 5a0ba22a1808d6f4799c77940da05f65
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

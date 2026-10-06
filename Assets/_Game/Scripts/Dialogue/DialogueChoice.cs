@@ -22,7 +22,17 @@ namespace ThuyKieu.Dialogue
         public DialogueData NextNode => nextNode;
         public string ChoiceId => choiceId;
 
+        /// <summary>Ink choice tags (e.g. "timeout"); empty for ScriptableObject dialogue.</summary>
+        public string[] Tags { get; private set; } = new string[0];
+
         public DialogueChoice() { }
         public DialogueChoice(string text) { choiceText = text; }
+        public DialogueChoice(string text, System.Collections.Generic.IList<string> tags)
+        {
+            choiceText = text;
+            if (tags != null) { Tags = new string[tags.Count]; tags.CopyTo(Tags, 0); }
+        }
+
+        public bool HasTag(string tag) => Array.IndexOf(Tags, tag) >= 0;
     }
 }

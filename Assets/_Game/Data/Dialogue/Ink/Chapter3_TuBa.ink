@@ -337,6 +337,7 @@ Bây giờ thì sao?
     Im lặng cũng là một câu trả lời. Ta đã im lặng suốt mười lăm năm.
 
 - (g2)
+# fx:none
 # speaker:MaKieu
 # emotion:fearful
 # camera:CU_MaKieu

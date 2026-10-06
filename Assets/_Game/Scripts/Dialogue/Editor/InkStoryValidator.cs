@@ -17,7 +17,7 @@ namespace ThuyKieu.Dialogue.Editor
     {
         public const string ReportPath = "Tools/Ink/InkValidationReport.txt";
         private static readonly HashSet<string> KnownKeys = new HashSet<string>
-        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer" };
+        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx" };
         private static readonly HashSet<string> KnownSpeakers = new HashSet<string>
         { "Narrator", "Kieu", "NoiTam", "KieuThat", "TrangSach", "MeKieu", "MaGiamSinh", "TuyTung", "TuBa", "MaKieu", "CoHong", "CoLam", "NguoiCanh" };
 
@@ -72,6 +72,7 @@ namespace ThuyKieu.Dialogue.Editor
                             foreach (string tag in lastTags)
                                 if (tag.Trim() == "gameplay:deduction_c2") story.variablesState["suy_luan"] = random.Next(1, 4);
                             int suspicion = (int)story.variablesState["nghi_ngo"];
+                            if (suspicion < 0 || suspicion > 100) problems.Add("nghi_ngo out of range: " + suspicion + " at " + story.state.currentPathString);
                             maxSuspicion = Math.Max(maxSuspicion, suspicion);
                         }
                         var choices = story.currentChoices;

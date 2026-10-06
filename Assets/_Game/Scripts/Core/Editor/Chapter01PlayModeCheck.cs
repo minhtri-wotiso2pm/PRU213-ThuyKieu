@@ -218,7 +218,7 @@ namespace ThuyKieu.Core.Editor
                         break;
                     case 11:
                         if (elapsed < 0.5f) return;
-                        Check(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Chapter02_Placeholder", "Continue loads Chapter 2 placeholder");
+                        Check(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Chapter02_RoadToMaGiamSinh", "Continue loads Chapter 2 (Trên đường theo Mã Giám Sinh)");
                         Check(InkStatePersistence.Instance != null && !string.IsNullOrEmpty(InkStatePersistence.Instance.StateJson), "Session survives scene transition");
                         Finish(); break;
                 }

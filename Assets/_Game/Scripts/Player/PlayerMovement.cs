@@ -31,9 +31,23 @@ namespace ThuyKieu.Player
         [Tooltip("Use 0 / 0.5 / 1 for idle / walk / run. Leave off for controllers using metres per second.")]
         [SerializeField] private bool _normalizeAnimatorSpeed;
         private static readonly int SpeedParameter = Animator.StringToHash("Speed");
+        private static readonly int CrouchParameter = Animator.StringToHash("Crouch");
+
+        [Header("Crouch (opt-in per chapter)")]
+        [SerializeField] private bool _allowCrouch;
+        [SerializeField] private float _crouchSpeed = 1.15f;
 
         private CharacterController controller;
         private float verticalVelocity;
+        private bool _hasCrouchParameter;
+
+        /// <summary>True while sneaking. Stealth systems read this to lower visibility.</summary>
+        public bool IsCrouching { get; private set; }
+        public bool AllowCrouch { get => _allowCrouch; set => _allowCrouch = value; }
+        /// <summary>Scales walking speed, e.g. while observing. 1 = normal.</summary>
+        public float SpeedMultiplier { get; set; } = 1f;
+        /// <summary>Crouch without input (QA autopilot).</summary>
+        public bool ForceCrouch { get; set; }
 
         /// <summary>Current planar speed in units/second. Useful for the animation team.</summary>
         public float CurrentSpeed { get; private set; }
@@ -47,6 +61,9 @@ namespace ThuyKieu.Player
             controller = GetComponent<CharacterController>();
             if (_animator == null) _animator = GetComponentInChildren<Animator>();
             if (_animator != null) _animator.applyRootMotion = false;
+            if (_animator != null && _animator.runtimeAnimatorController != null)
+                foreach (var parameter in _animator.parameters)
+                    if (parameter.nameHash == CrouchParameter) _hasCrouchParameter = true;
 
             if (cameraTransform == null && Camera.main != null)
             {
@@ -58,8 +75,10 @@ namespace ThuyKieu.Player
         {
             Vector3 moveDirection = GetCameraRelativeDirection(ControlLocked ? Vector2.zero : InputReader.Move);
 
-            bool wantsToRun = InputReader.IsRunHeld && moveDirection.sqrMagnitude > 0f;
-            float speed = wantsToRun ? runSpeed : walkSpeed;
+            IsCrouching = _allowCrouch && !ControlLocked && (InputReader.IsCrouchHeld || ForceCrouch);
+            bool wantsToRun = !IsCrouching && InputReader.IsRunHeld && moveDirection.sqrMagnitude > 0f;
+            float speed = IsCrouching ? _crouchSpeed : wantsToRun ? runSpeed : walkSpeed * SpeedMultiplier;
+            if (_hasCrouchParameter) _animator.SetBool(CrouchParameter, IsCrouching);
 
             RotateTowards(moveDirection);
             ApplyGravity();
@@ -82,6 +101,15 @@ namespace ThuyKieu.Player
                         : 0.5f + Mathf.InverseLerp(walkSpeed, runSpeed, CurrentSpeed) * 0.5f;
                 _animator.SetFloat(SpeedParameter, animationSpeed, _animationSmoothTime, Time.deltaTime);
             }
+        }
+
+        /// <summary>Moves the character instantly (checkpoints, cutscenes). CharacterController would otherwise override it.</summary>
+        public void Teleport(Vector3 position, Quaternion rotation)
+        {
+            controller.enabled = false;
+            transform.SetPositionAndRotation(position, rotation);
+            controller.enabled = true;
+            verticalVelocity = 0f;
         }
 
         /// <summary>Projects the 2D input onto the horizontal plane of the camera.</summary>

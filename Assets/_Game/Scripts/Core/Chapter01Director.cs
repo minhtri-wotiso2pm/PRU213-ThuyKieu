@@ -148,8 +148,8 @@ namespace ThuyKieu.Core
         }
         public void ContinueAfterChapter()
         {
-            if (Application.CanStreamedLevelBeLoaded("Chapter02_CaiGiaCuaMotConNguoi"))
-                SceneManager.LoadScene("Chapter02_CaiGiaCuaMotConNguoi");
+            if (Application.CanStreamedLevelBeLoaded("Chapter02_RoadToMaGiamSinh"))
+                SceneManager.LoadScene("Chapter02_RoadToMaGiamSinh");
             else SceneManager.LoadScene("Chapter02_Placeholder");
             Debug.Log("Chapter 1 Complete");
         }

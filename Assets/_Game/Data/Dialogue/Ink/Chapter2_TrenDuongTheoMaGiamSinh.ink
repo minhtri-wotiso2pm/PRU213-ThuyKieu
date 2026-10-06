@@ -47,13 +47,13 @@ Nhưng sách là sách. Ở đây, hắn đang cười rất tử tế. Mình ph
 
 === c2_road ===
 // Hub khám phá: mọi lựa chọn đều được chọn bằng hành động trong thế giới 3D.
-* {not mm_ban_tay} [Quan sát cách Mã Giám Sinh cư xử #explore:c2_observe]
+* {not mm_ban_tay} [Quan sát kỹ Mã Giám Sinh (giữ chuột phải) #explore:c2_observe]
     -> c2_observe
 * {not mm_hoi_duong} [Bắt chuyện, hỏi hắn đang đưa mình đi đâu #explore:c2_ask]
     -> c2_ask
 * {not mm_mau_giay} [Nhặt mẩu giấy rơi trên đường #explore:c2_paper]
     -> c2_paper
-* {manh_moi >= 2} [Lén nghe Mã Giám Sinh nói chuyện sau quán nước #explore:c2_eavesdrop]
+* {manh_moi >= 2} [Nghỉ chân ở quán nước ven đường #explore:c2_eavesdrop]
     -> c2_eavesdrop
 
 
@@ -103,7 +103,7 @@ Hỏi thế nào để hắn trả lời thật, mà không biết mình đang d
     ~ tinh_tao += 1
 
 * [Hỏi thẳng: "Rốt cuộc công tử đưa ta đi đâu?"]
-    ~ nghi_ngo += 25
+    ~ nghi_ngo = MIN(nghi_ngo + 25, 100)
     # speaker:Kieu
     # emotion:firm
     Kiều: Rốt cuộc công tử đưa ta đi đâu?
@@ -117,7 +117,7 @@ Hỏi thế nào để hắn trả lời thật, mà không biết mình đang d
     Hỏng rồi, hắn bắt đầu để ý. Lần sau phải mềm mỏng hơn.
 
 * [Giả vờ than mệt: "Đường xa quá, thiếp mỏi chân rồi..." #timeout]
-    ~ nghi_ngo -= 10
+    ~ nghi_ngo = MAX(nghi_ngo - 10, 0)
     # speaker:Kieu
     # emotion:soft_firm
     Kiều: Đường xa quá, thiếp mỏi chân rồi... Còn bao lâu nữa hả công tử?
@@ -163,7 +163,7 @@ Mã Giám Sinh: Nàng nhặt được gì đấy?
 Nhanh lên. Trả hay giữ?
 
 * [Đưa lại, giả vờ chưa đọc: "Hình như công tử đánh rơi." #timeout]
-    ~ nghi_ngo -= 5
+    ~ nghi_ngo = MAX(nghi_ngo - 5, 0)
     # speaker:Kieu
     # emotion:calm
     Kiều: Hình như công tử đánh rơi. Chữ nhỏ quá, thiếp chẳng đọc được.
@@ -176,7 +176,7 @@ Nhanh lên. Trả hay giữ?
     Hắn nhét mẩu giấy vào sâu trong ngực áo. Nhưng Kiều đã nhớ từng chữ.
 
 * [Lén giấu vào tay áo: "Chỉ là lá khô thôi."]
-    ~ nghi_ngo += 15
+    ~ nghi_ngo = MIN(nghi_ngo + 15, 100)
     ~ giu_mau_giay = true
     # speaker:Kieu
     # emotion:controlled
@@ -270,6 +270,7 @@ Ghép các manh mối đã thu thập để xác nhận sự thật.
 
 === c2_decision ===
 # speaker:NoiTam
+# fx:tension
 # music:tension_low
 Bây giờ... phải làm gì?
 
@@ -295,6 +296,7 @@ Bây giờ... phải làm gì?
 
 
 === c2_mask ===
+# fx:none
 # scene:Road_MaskTest
 # speaker:MaGiamSinh
 # emotion:suspicious
@@ -307,12 +309,12 @@ Thở đều. Mỉm cười.
 
 * [Mỉm cười: "Thiếp đi tìm chỗ rửa mặt cho tỉnh." #timeout]
     ~ gia_vo += 1
-    ~ nghi_ngo -= 10
+    ~ nghi_ngo = MAX(nghi_ngo - 10, 0)
     # speaker:Kieu
     # emotion:calm
     Kiều: Thiếp đi tìm chỗ rửa mặt cho tỉnh. Đường bụi quá.
 * [Lắp bắp: "Thiếp... thiếp không nghe thấy gì cả!"]
-    ~ nghi_ngo += 20
+    ~ nghi_ngo = MIN(nghi_ngo + 20, 100)
     # speaker:Kieu
     # emotion:pained
     Kiều: Thiếp... thiếp không nghe thấy gì cả!
@@ -320,7 +322,7 @@ Thở đều. Mỉm cười.
     # emotion:irritated_hidden
     Mã Giám Sinh: Ta có hỏi nàng nghe thấy gì đâu?
 * [Hỏi vặn: "Công tử với người kia bàn chuyện gì mà phải giấu?"]
-    ~ nghi_ngo += 30
+    ~ nghi_ngo = MIN(nghi_ngo + 30, 100)
     # speaker:Kieu
     # emotion:cold
     Kiều: Công tử với người kia bàn chuyện gì mà phải giấu thiếp?
@@ -339,7 +341,7 @@ Câu này là thử mình.
 
 * [Cúi đầu e thẹn: "Phận gái theo chồng, chàng đi đâu thiếp theo đó." #timeout]
     ~ gia_vo += 1
-    ~ nghi_ngo -= 10
+    ~ nghi_ngo = MAX(nghi_ngo - 10, 0)
     # speaker:Kieu
     # emotion:soft_firm
     Kiều: Phận gái theo chồng, chàng đi đâu thiếp theo đó.
@@ -349,7 +351,7 @@ Câu này là thử mình.
     # emotion:sad_controlled
     Kiều: Thiếp chỉ mong cha được bình an. Còn lại... thiếp không dám mong gì.
 * [Lạnh nhạt: "Mong hay không thì có khác gì đâu."]
-    ~ nghi_ngo += 15
+    ~ nghi_ngo = MIN(nghi_ngo + 15, 100)
     # speaker:Kieu
     # emotion:cold
     Kiều: Mong hay không thì có khác gì đâu.
@@ -365,7 +367,7 @@ Mã Giám Sinh: Nàng biết điều như vậy là tốt. Người biết đi�
 
 * [Rót chén trà mời hắn: "Công tử đi đường cũng mệt, dùng chén trà." #timeout]
     ~ gia_vo += 1
-    ~ nghi_ngo -= 15
+    ~ nghi_ngo = MAX(nghi_ngo - 15, 0)
     # speaker:Kieu
     # emotion:calm
     Kiều: Công tử đi đường cũng mệt, dùng chén trà cho ấm.

@@ -1,0 +1,474 @@
+using System.IO;
+using ThuyKieu.Core.Story;
+using ThuyKieu.Gameplay.Chapters;
+using ThuyKieu.Gameplay.Sequences;
+using ThuyKieu.Gameplay.Stealth;
+using ThuyKieu.UI;
+using TMPro;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using static ThuyKieu.Core.Editor.StorySceneKit;
+
+namespace ThuyKieu.Core.Editor
+{
+    /// <summary>
+    /// Builds Chapter03_TuBaHouse: a lantern-hung courtyard house that looks like a home and works like a cage —
+    /// Kiều's room, the girls, Tú Bà's room with a window behind a planter, the ledger office and a gate locked from outside.
+    /// </summary>
+    public static class Chapter03Setup
+    {
+        public const string ScenePath = "Assets/_Game/Scenes/Chapter03_TuBaHouse.unity";
+        public const string PlaceholderPath = "Assets/_Game/Scenes/Chapter04_Placeholder.unity";
+
+        private static Material _floor, _plaster, _red, _wood, _tiles, _ridge;
+
+        [MenuItem("ThuyKieu/Chapter 3/Create playable scene")]
+        public static void Create()
+        {
+            var scene = NewScene(ScenePath);
+            var shared = StoryAnimationSetup.Controller();
+            var s = CreateSystems(3, "Tú Bà", "chapter_3", "Chapter04_Placeholder", new Vector3(0, 0.05f, -9.6f), 0f, "house");
+            s.CameraComponent.backgroundColor = new Color(0.78f, 0.66f, 0.58f);
+            var world = new GameObject("World").transform;
+            var nav = NavMesh(world);
+            _floor = Material("Ch3Stone", new Color(0.44f, 0.41f, 0.37f));
+            _plaster = Material("Ch3Plaster", new Color(0.8f, 0.71f, 0.58f));
+            _red = Material("Ch3Lacquer", new Color(0.52f, 0.07f, 0.05f), 0.45f);
+            _wood = Material("Ch3DarkWood", new Color(0.22f, 0.11f, 0.06f), 0.3f);
+            _tiles = Material("Ch3Tiles", new Color(0.26f, 0.12f, 0.1f));
+            _ridge = Material("Ch3Ridge", new Color(0.18f, 0.08f, 0.07f));
+
+            Shell(world);
+            var director = s.Director;
+            KieuRoom(world, director, out Transform playerRoom);
+            Hall(world);
+            TuBaRoom(world, director, out BoxCollider listenZone, out Transform listenStart, out Transform tuBaSpot, out Transform maSpot);
+            Office(world, director);
+            var gateDoor = GateAndCourtyard(world, director);
+
+            // Characters
+            var tuBa = StaticActor("TuBa", "TuBa", "Assets/_Game/Art/Characters/TuBa/StaticV2/TuBa.obj",
+                "Assets/_Game/Art/Characters/TuBa/StaticV2/texture_pbr_20250901.png", 1.62f, new Vector3(0, 0, -6.4f), 180f, 42f);
+            var ma = RiggedActor("MaGiamSinh", "MaGiamSinh", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
+                "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.78f, new Vector3(1.7f, 0, -8.6f), -60f, Color.white, shared);
+            var hong = RiggedActor("CoHong", "CoHong", "Assets/_Game/Art/Characters/ThuyKieu/Models/ThuyKieu_Rigged.fbx",
+                "Assets/_Game/Art/Characters/ThuyKieu/Tectures", 1.6f, new Vector3(-1.5f, 0, -1.9f), -120f, new Color(1f, 0.72f, 0.8f), shared);
+            var lam = RiggedActor("CoLam", "CoLam", "Assets/_Game/Art/Characters/MeThuyKieu/Models/MeThuyKieu_Rigged.fbx",
+                "Assets/_Game/Art/Characters/MeThuyKieu/Tectures", 1.6f, new Vector3(-6.1f, 0, -1.5f), 90f, new Color(0.7f, 0.82f, 1f), shared);
+            var maKieu = RiggedActor("MaKieu", "MaKieu", "Assets/_Game/Art/Characters/ThuyKieu/Models/ThuyKieu_Rigged.fbx",
+                "Assets/_Game/Art/Characters/ThuyKieu/Tectures", 1.64f, new Vector3(-10.4f, 0, -9.4f), 45f, new Color(0.72f, 0.6f, 0.85f), shared);
+            var guard = StaticActor("NguoiCanh", "NguoiCanh", "Assets/_Game/Art/Characters/LinhCanh/Static/LinhCanh.obj",
+                "Assets/_Game/Art/Characters/LinhCanh/Static/texture_pbr_20250901.png", 1.76f, new Vector3(2.5f, 0, -7.5f), 0f);
+
+            Explore(hong.gameObject, director, "c3_girl_hong", "Nói chuyện với cô gái áo hồng", Vector3.one * 1.9f);
+            Explore(lam.gameObject, director, "c3_girl_lam", "Nói chuyện với cô gái áo lam", Vector3.one * 1.9f);
+            Explore(maKieu.gameObject, director, "c3_makieu", "Đến gặp cô gái lạ", Vector3.one * 1.9f);
+            var maKieuGlow = new GameObject("MaKieuGlow");
+            maKieuGlow.transform.SetParent(maKieu.transform, false);
+            maKieuGlow.transform.localPosition = new Vector3(0, 2.4f, 0.4f);
+            var glow = maKieuGlow.AddComponent<Light>();
+            glow.type = LightType.Point; glow.color = new Color(0.75f, 0.55f, 1f); glow.range = 4f; glow.intensity = 2.5f;
+
+            // Guard: patrol between the courtyard, the office door and the windows.
+            var vision = guard.gameObject.AddComponent<VisionSensor>();
+            var eyes = Point("Eyes", guard.transform.position + Vector3.up * 1.62f, 0, guard.transform);
+            Set(vision, "_eyes", eyes);
+            Set(vision, "_player", s.Player);
+            Set(vision, "_range", 8f);
+            Set(vision, "_angle", 80f);
+            Set(vision, "_secondsToSpot", 1.4f);
+            Set(vision, "_onlyInRestrictedZones", true);
+            Set(vision, "_occluders", 1 << EnvironmentLayer);
+            var patrolRoot = new GameObject("GuardRoute").transform;
+            patrolRoot.SetParent(world, false);
+            var route = new Object[]
+            {
+                Point("A_Courtyard", new Vector3(0.5f, 0, -7.5f), 0, patrolRoot),
+                Point("B_OfficeDoor", new Vector3(5.6f, 0, -4.6f), 90, patrolRoot),
+                Point("C_Centre", new Vector3(0.8f, 0, 2.6f), 0, patrolRoot),
+                Point("D_Hall", new Vector3(2.0f, 0, 9.4f), 0, patrolRoot)
+            };
+            var patrol = guard.gameObject.AddComponent<GuardPatrol>();
+            Set(patrol, "_waypoints", route);
+            Set(patrol, "_vision", vision);
+            VisionCone(guard.transform, eyes, 8f, 80f);
+
+            // Camera anchors
+            Point("CAM_Wide_TuBaCourtyard", new Vector3(-5.5f, 3.4f, -11.2f), 0, world).rotation = Quaternion.Euler(14, 28, 0);
+            Point("CAM_CU_Kieu_Listens", new Vector3(5.2f, 1.2f, 4.9f), 0, world).rotation = Quaternion.Euler(6, 40, 0);
+
+            // Sun & atmosphere
+            var sun = Sun("Sun", new Color(1f, 0.86f, 0.68f), 1.15f, new Vector3(40, -35, 0));
+            RenderSettings.ambientLight = new Color(0.45f, 0.38f, 0.35f);
+            RenderSettings.fogColor = new Color(0.78f, 0.66f, 0.58f);
+            RenderSettings.fogDensity = 0.008f;
+
+            var worldScript = s.Root.AddComponent<Chapter03World>();
+            Set(worldScript, "_director", director);
+            Set(worldScript, "_navMesh", nav);
+            Set(worldScript, "_tuBa", tuBa);
+            Set(worldScript, "_ma", ma);
+            Set(worldScript, "_maKieu", maKieu);
+            Set(worldScript, "_guard", patrol);
+            Set(worldScript, "_tuBaRoom", tuBaSpot);
+            Set(worldScript, "_maRoom", maSpot);
+            Set(worldScript, "_playerRoom", playerRoom);
+            Set(worldScript, "_maKieuMarker", maKieuGlow);
+            Set(worldScript, "_sun", sun);
+
+            // Sequences
+            var sequences = new GameObject("Sequences").transform;
+            sequences.SetParent(s.Root.transform, false);
+            var tutorial = Child<TutorialSequence>(sequences, "tutorial_house");
+            Set(tutorial, "_id", "tutorial_house");
+            Set(tutorial, "_body", "<color=#E8C27A>Tự do khám phá</color> ngôi nhà theo thứ tự bạn muốn. Danh sách việc có thể làm hiện ở góc trái.\n\n" +
+                "Sân trong và hành lang là nơi bạn được đi lại. <color=#F08080>Phòng sổ sách</color> và <color=#F08080>cửa sổ phòng Tú Bà</color> là khu vực cấm.\n\n" +
+                "Người canh có <color=#F08080>tầm nhìn hình nón</color> đỏ dưới chân. Ở khu vực cấm, đừng để hắn thấy bạn; <color=#E8C27A>khom người (Ctrl)</color> để khó bị phát hiện, nấp sau bàn ghế, bồn hoa.");
+            var gate = Child<ActionBeatSequence>(sequences, "try_gate");
+            Set(gate, "_id", "try_gate");
+            Set(gate, "_gesture", 2);
+            Set(gate, "_sfx", "lock_rattle");
+            Set(gate, "_shake", 0.2f);
+            Set(gate, "_animatedProp", gateDoor);
+            Set(gate, "_propOffset", new Vector3(0, 0, -0.05f));
+            var drawer = Child<ActionBeatSequence>(sequences, "search_drawer");
+            Set(drawer, "_id", "search_drawer");
+            Set(drawer, "_gesture", 6);
+            Set(drawer, "_sfx", "paper");
+            Set(drawer, "_shake", 0f);
+            var contract = Child<DocumentSequence>(sequences, "document_contract");
+            Set(contract, "_id", "document_contract");
+            Set(contract, "_view", s.Hud.GetComponent<DocumentView>());
+            Set(contract, "_title", "VĂN TỰ BÁN THÂN");
+            Set(contract, "_body", "Người bán: <b>Mã Giám Sinh</b>, người huyện Lâm Thanh.\nNgười mua: <b>Tú Bà</b>, chủ lầu xanh Lâm Tri.\n\n" +
+                "Người bị bán: <b>Vương Thúy Kiều</b>, mười lăm tuổi,\nbiết chữ, giỏi đàn, giỏi thơ.\n\nGiá bán: <b>bốn trăm năm mươi lạng bạc</b>.\n" +
+                "Từ nay người mua toàn quyền định đoạt nơi ở\nvà công việc của người bị bán.\n\nĐiểm chỉ làm bằng.");
+            Set(contract, "_sealed", true);
+            var eavesdrop = Child<EavesdropSequence>(sequences, "eavesdrop_c3");
+            Set(eavesdrop, "_id", "eavesdrop_c3");
+            Set(eavesdrop, "_zone", listenZone);
+            Set(eavesdrop, "_start", listenStart);
+            Set(eavesdrop, "_sensors", new Object[] { vision });
+            Set(eavesdrop, "_guard", patrol);
+            Set(eavesdrop, "_seconds", 8f);
+            Set(eavesdrop, "_objective", "Khom người dưới cửa sổ, nấp sau bồn hoa và nghe lén");
+            Set(eavesdrop, "_caughtDetail", "Người canh đã thấy bạn lảng vảng dưới cửa sổ. Canh lúc hắn quay đi và giữ người thấp sau bồn hoa.");
+            Set(eavesdrop, "_musicAfter", "tuba_warm");
+            Fx(sequences, "panic", "panic", "heartbeat", "none", 3.2f, 0.18f, 3);
+            Fx(sequences, "kieu_voice", "spirit", "memory", "none", 2f, 0f, 1);
+
+            Save(scene, ScenePath);
+            CreatePlaceholder();
+        }
+
+        private static void Fx(Transform parent, string id, string mood, string sfx, string music, float hold, float shake, int repeat)
+        {
+            var fx = Child<FxSequence>(parent, id);
+            Set(fx, "_id", id);
+            Set(fx, "_mood", mood);
+            Set(fx, "_sfx", sfx);
+            Set(fx, "_music", music);
+            Set(fx, "_hold", hold);
+            Set(fx, "_shake", shake);
+            Set(fx, "_repeatSfx", repeat);
+        }
+
+        /// <summary>Flat translucent cone on the ground showing where the guard looks.</summary>
+        private static void VisionCone(Transform guard, Transform eyes, float range, float angle)
+        {
+            var cone = new GameObject("VisionCone");
+            cone.transform.SetParent(eyes, false);
+            cone.transform.localPosition = new Vector3(0, -1.58f, 0);
+            var mesh = new Mesh { name = "GuardVisionCone" };
+            int segments = 20;
+            var vertices = new Vector3[segments + 2];
+            var triangles = new int[segments * 3];
+            vertices[0] = Vector3.zero;
+            for (int i = 0; i <= segments; i++)
+            {
+                float a = Mathf.Deg2Rad * (-angle * 0.5f + angle * i / segments);
+                vertices[i + 1] = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a)) * range;
+                if (i < segments) { triangles[i * 3] = 0; triangles[i * 3 + 1] = i + 1; triangles[i * 3 + 2] = i + 2; }
+            }
+            mesh.vertices = vertices;
+            mesh.triangles = triangles;
+            mesh.RecalculateNormals();
+            AssetDatabase.CreateAsset(mesh, MaterialFolder + "/Ch3VisionCone.asset");
+            cone.AddComponent<MeshFilter>().sharedMesh = mesh;
+            var material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+            material.SetFloat("_Surface", 1);
+            material.SetFloat("_Blend", 0);
+            material.SetOverrideTag("RenderType", "Transparent");
+            material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
+            material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
+            material.SetInt("_ZWrite", 0);
+            material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+            material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
+            material.SetColor("_BaseColor", new Color(1f, 0.2f, 0.12f, 0.16f));
+            AssetDatabase.CreateAsset(material, MaterialFolder + "/Ch3VisionCone.mat");
+            var renderer = cone.AddComponent<MeshRenderer>();
+            renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            cone.transform.localPosition += Vector3.up * 0.02f;
+        }
+
+        // ------------------------------------------------------------------ architecture
+
+        private static void Shell(Transform world)
+        {
+            Block("CourtyardFloor", new Vector3(0, -0.1f, 0), new Vector3(28f, 0.2f, 26f), _floor, world);
+            Block("WallNorth", new Vector3(0, 2f, 12.6f), new Vector3(28f, 4f, 0.4f), _plaster, world);
+            Block("WallEast", new Vector3(13.6f, 2f, 0), new Vector3(0.4f, 4f, 25.6f), _plaster, world);
+            Block("WallWest", new Vector3(-13.6f, 2f, 0), new Vector3(0.4f, 4f, 25.6f), _plaster, world);
+            Block("WallSouthL", new Vector3(-8f, 2f, -12.6f), new Vector3(12f, 4f, 0.4f), _plaster, world);
+            Block("WallSouthR", new Vector3(8f, 2f, -12.6f), new Vector3(12f, 4f, 0.4f), _plaster, world);
+            foreach (var (x, z, w, d) in new[] { (0f, 12.4f, 28f, 1f), (0f, -12.4f, 28f, 1f) })
+                Block("WallCap", new Vector3(x, 4.1f, z), new Vector3(w, 0.2f, d), _tiles, world);
+            Block("WallCapE", new Vector3(13.6f, 4.1f, 0), new Vector3(1f, 0.2f, 25.6f), _tiles, world);
+            Block("WallCapW", new Vector3(-13.6f, 4.1f, 0), new Vector3(1f, 0.2f, 25.6f), _tiles, world);
+            // Paving pattern and the central path.
+            var path = Material("Ch3PathStone", new Color(0.52f, 0.49f, 0.44f));
+            Block("CentrePath", new Vector3(0, 0.005f, -2f), new Vector3(2.4f, 0.01f, 21f), path, world, false);
+        }
+
+        private static void KieuRoom(Transform world, StoryDirector director, out Transform spawn)
+        {
+            var root = new GameObject("KieuRoom").transform;
+            root.SetParent(world, false);
+            Block("Floor", new Vector3(-10.5f, 0.02f, 7.8f), new Vector3(6f, 0.04f, 9.4f), _wood, root);
+            Block("WallS", new Vector3(-10.5f, 1.75f, 3f), new Vector3(6.2f, 3.5f, 0.3f), _plaster, root);
+            Block("WallE_South", new Vector3(-7.5f, 1.75f, 4.5f), new Vector3(0.3f, 3.5f, 3f), _plaster, root);
+            Block("WallE_North", new Vector3(-7.5f, 1.75f, 9.95f), new Vector3(0.3f, 3.5f, 5.1f), _plaster, root);
+            Block("DoorLintel", new Vector3(-7.5f, 3.1f, 6.7f), new Vector3(0.32f, 0.8f, 1.4f), _red, root);
+            Prop("Assets/_Game/Prefabs/Props/Bed.prefab", new Vector3(-12.2f, 0, 10.4f), 90, 1f, root);
+            Prop("Assets/_Game/Prefabs/Props/OilLamp.prefab", new Vector3(-8.2f, 0, 11.6f), 0, 1f, root);
+            Prop("Assets/_Game/Prefabs/Props/CeramicJar.prefab", new Vector3(-12.9f, 0, 3.6f), 0, 1f, root);
+            Lantern("RoomLamp", new Vector3(-13.15f, 2.1f, 8f), new Color(1f, 0.55f, 0.3f), root, 7f, 1.6f);
+            // Furnishing: a rug, a lacquered folding screen and a dressing table make the cage look like a home.
+            Block("Rug", new Vector3(-10.4f, 0.045f, 6.4f), new Vector3(2.8f, 0.01f, 1.9f), Material("Ch3Rug", new Color(0.5f, 0.12f, 0.1f)), root, false);
+            Block("RugBorder", new Vector3(-10.4f, 0.04f, 6.4f), new Vector3(3.0f, 0.008f, 2.1f), Material("Ch3RugBorder", new Color(0.72f, 0.55f, 0.22f)), root, false);
+            for (int i = 0; i < 4; i++)
+            {
+                var panel = Block("ScreenPanel", new Vector3(-12.9f + i * 0.02f, 0.95f, 5.0f + i * 0.62f), new Vector3(0.05f, 1.8f, 0.6f), _red, root, false, i % 2 == 0 ? 12f : -12f);
+                Block("ScreenPaper", panel.transform.position + new Vector3(0.03f, 0.05f, 0), new Vector3(0.02f, 1.4f, 0.48f), Material("Ch3ScreenPaper", new Color(0.92f, 0.86f, 0.72f)), root, false, i % 2 == 0 ? 12f : -12f);
+            }
+            Block("DressingTable", new Vector3(-8.3f, 0.4f, 9.6f), new Vector3(0.6f, 0.8f, 1.2f), _wood, root);
+            Block("Mirror", new Vector3(-8.15f, 1.15f, 9.6f), new Vector3(0.05f, 0.7f, 0.55f), Material("Ch3Bronze", new Color(0.7f, 0.55f, 0.3f), 0.85f), root, false);
+            Prop("Assets/_Game/Prefabs/Props/CeramicJar.prefab", new Vector3(-8.3f, 0.8f, 9.2f), 0, 0.35f, root);
+            // Carved lotus window over iron bars (c3_window).
+            Block("WindowFrame", new Vector3(-10.5f, 1.7f, 12.38f), new Vector3(1.8f, 1.3f, 0.08f), _red, root, false);
+            for (float x = -0.75f; x <= 0.76f; x += 0.25f)
+                Block("Bar", new Vector3(-10.5f + x, 1.7f, 12.33f), new Vector3(0.04f, 1.2f, 0.04f), Material("Ch3Iron", new Color(0.12f, 0.12f, 0.13f), 0.6f), root, false);
+            var window = new GameObject("WindowSpot");
+            window.transform.SetParent(root, false);
+            window.transform.position = new Vector3(-10.5f, 0, 11.4f);
+            Explore(window, director, "c3_window", "Xem cửa sổ", new Vector3(1.8f, 1.6f, 1.4f));
+            Point("Focus_Window", new Vector3(-10.5f, 1.7f, 12.3f), 0, root);
+            spawn = Point("PlayerRoomSpawn", new Vector3(-9.6f, 0.05f, 6.7f), 90, root);
+            // Veranda pillars along the west wing.
+            for (float z = -10; z <= 2; z += 3f) Cylinder("VerandaPillar", new Vector3(-6.6f, 0, z), 0.16f, 3.2f, _red, root);
+            Block("VerandaBeam", new Vector3(-6.6f, 3.25f, -4f), new Vector3(0.25f, 0.2f, 13f), _wood, root, false);
+            Hide(Roof("VerandaEave", new Vector3(-9.6f, 4.2f, -4f), 8f, 13.5f, 22f, _tiles, _ridge, root, false), new Vector3(-9.6f, 1.5f, -4f), new Vector3(8f, 4f, 13.5f));
+            Hide(Roof("RoomEave", new Vector3(-10.6f, 4.4f, 7.8f), 6.6f, 10f, 24f, _tiles, _ridge, root, false), new Vector3(-10.5f, 1.5f, 7.8f), new Vector3(6f, 4f, 9.4f));
+        }
+
+        private static void Hall(Transform world)
+        {
+            var root = new GameObject("MainHall").transform;
+            root.SetParent(world, false);
+            Block("HallFloor", new Vector3(0, 0.1f, 10.8f), new Vector3(14f, 0.2f, 3.6f), _wood, root);
+            for (int i = -2; i <= 2; i++) Cylinder("HallPillar", new Vector3(i * 3f, 0, 9.1f), 0.18f, 3.6f, _red, root);
+            Block("Balcony", new Vector3(0, 3.7f, 10.8f), new Vector3(14f, 0.25f, 3.6f), _wood, root, false);
+            Block("BalconyRail", new Vector3(0, 4.25f, 9.1f), new Vector3(14f, 0.8f, 0.1f), _red, root, false);
+            Block("UpperFacade", new Vector3(0, 5.4f, 12.2f), new Vector3(14f, 3.2f, 0.4f), _plaster, root, false);
+            Roof("HallRoof", new Vector3(0, 7.7f, 10.8f), 15.4f, 4.6f, 26f, _tiles, _ridge, root);
+            Prop("Assets/_Game/Prefabs/Props/Altar.prefab", new Vector3(0, 0.2f, 11.8f), 180, 1f, root);
+            Prop("Assets/_Game/Prefabs/Props/TableSet.prefab", new Vector3(-3.5f, 0.2f, 10.8f), 0, 1f, root);
+            for (int i = -2; i <= 2; i++) Lantern("HallLantern", new Vector3(i * 3f + 1.5f, 3.1f, 8.8f), new Color(1f, 0.16f, 0.1f), root, i % 2 == 0 ? 6f : 0f, 1.8f);
+            // Strings of lanterns across the courtyard.
+            for (float z = -8; z <= 4; z += 6f)
+                for (float x = -6; x <= 6; x += 3f)
+                    Lantern("CourtLantern", new Vector3(x, 3.4f + Mathf.Abs(x) * 0.05f, z), new Color(1f, 0.2f, 0.12f), root, 0f, 0f);
+        }
+
+        private static void TuBaRoom(Transform world, StoryDirector director, out BoxCollider listenZone, out Transform listenStart, out Transform tuBaSpot, out Transform maSpot)
+        {
+            var root = new GameObject("TuBaRoom").transform;
+            root.SetParent(world, false);
+            Block("Floor", new Vector3(10.5f, 0.02f, 7.8f), new Vector3(6f, 0.04f, 9.4f), _wood, root);
+            Block("WallS", new Vector3(10.5f, 1.75f, 3f), new Vector3(6.2f, 3.5f, 0.3f), _plaster, root);
+            // West wall with a window (1.0–2.0 m) and a door.
+            Block("WallW_A", new Vector3(7.5f, 1.75f, 4f), new Vector3(0.3f, 3.5f, 2f), _plaster, root);
+            Block("WallW_WindowLow", new Vector3(7.5f, 0.5f, 6.5f), new Vector3(0.3f, 1f, 3f), _plaster, root);
+            Block("WallW_WindowHigh", new Vector3(7.5f, 2.75f, 6.5f), new Vector3(0.3f, 1.5f, 3f), _plaster, root);
+            Block("WindowFrame", new Vector3(7.42f, 1.5f, 6.5f), new Vector3(0.08f, 1.05f, 3.05f), _red, root, false);
+            Block("WallW_B", new Vector3(7.5f, 1.75f, 8.7f), new Vector3(0.3f, 3.5f, 1.4f), _plaster, root);
+            Block("WallW_C", new Vector3(7.5f, 1.75f, 11.65f), new Vector3(0.3f, 3.5f, 1.7f), _plaster, root);
+            Block("DoorLintel", new Vector3(7.5f, 3.1f, 10.1f), new Vector3(0.32f, 0.8f, 1.4f), _red, root);
+            Prop("Assets/_Game/Prefabs/Props/TableSet.prefab", new Vector3(11f, 0, 6.2f), 0, 1f, root);
+            Lantern("TuBaLamp", new Vector3(13.15f, 2.1f, 7f), new Color(1f, 0.25f, 0.15f), root, 7f, 1.8f);
+            Hide(Roof("TuBaEave", new Vector3(10.6f, 4.4f, 7.8f), 6.6f, 10f, 24f, _tiles, _ridge, root, false), new Vector3(10.5f, 1.5f, 7.8f), new Vector3(6f, 4f, 9.4f));
+            tuBaSpot = Point("TuBaSpot", new Vector3(10.4f, 0, 6.9f), 270, root);
+            maSpot = Point("MaSpot", new Vector3(9.8f, 0, 5.1f), 300, root);
+
+            // Planter shielding the window from the courtyard (1.25 m hides a crouching listener from the patrol route).
+            var planter = Material("Ch3Planter", new Color(0.36f, 0.3f, 0.26f));
+            Block("Planter", new Vector3(4.9f, 0.625f, 6.6f), new Vector3(0.7f, 1.25f, 4.4f), planter, root);
+            var bloom = Material("Ch3Blossom", new Color(0.95f, 0.45f, 0.6f));
+            var leaf = Material("Ch3Leaf", new Color(0.2f, 0.36f, 0.16f));
+            var random = new System.Random(33);
+            for (float z = 4.6f; z <= 8.6f; z += 0.22f)
+            {
+                var bush = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                bush.name = "Shrub";
+                Object.DestroyImmediate(bush.GetComponent<Collider>());
+                bush.transform.SetParent(root, false);
+                float size = 0.26f + (float)random.NextDouble() * 0.16f;
+                bush.transform.position = new Vector3(4.9f + ((float)random.NextDouble() - 0.5f) * 0.3f, 1.27f + size * 0.25f, z);
+                bush.transform.localScale = new Vector3(size, size * 0.8f, size);
+                bush.GetComponent<Renderer>().sharedMaterial = leaf;
+                if (random.NextDouble() < 0.45)
+                {
+                    var flower = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                    flower.name = "Blossom";
+                    Object.DestroyImmediate(flower.GetComponent<Collider>());
+                    flower.transform.SetParent(root, false);
+                    flower.transform.position = bush.transform.position + new Vector3(((float)random.NextDouble() - 0.5f) * 0.15f, size * 0.38f, 0);
+                    flower.transform.localScale = Vector3.one * 0.09f;
+                    flower.GetComponent<Renderer>().sharedMaterial = bloom;
+                }
+            }
+
+            var zone = new GameObject("ListenZone");
+            zone.transform.SetParent(root, false);
+            zone.transform.position = new Vector3(6.6f, 0.8f, 6.5f);
+            zone.layer = 2;
+            listenZone = zone.AddComponent<BoxCollider>();
+            listenZone.isTrigger = true;
+            listenZone.size = new Vector3(1.3f, 1.6f, 3.2f);
+            var spot = new GameObject("WindowListenSpot");
+            spot.transform.SetParent(root, false);
+            spot.transform.position = new Vector3(6.9f, 0, 6.5f);
+            Explore(spot, director, "c3_eavesdrop", "Nghe lén dưới cửa sổ phòng Tú Bà", new Vector3(1.4f, 1.4f, 2.8f));
+            listenStart = Point("ListenStart", new Vector3(4.3f, 0.05f, 3.4f), 30, root);
+            Zone(root, "Dưới cửa sổ phòng Tú Bà", new Vector3(6.3f, 1f, 6.6f), new Vector3(2.6f, 2f, 4.8f));
+        }
+
+        private static void Office(Transform world, StoryDirector director)
+        {
+            var root = new GameObject("LedgerOffice").transform;
+            root.SetParent(world, false);
+            Block("Floor", new Vector3(10.5f, 0.02f, -7.2f), new Vector3(6f, 0.04f, 10.4f), _wood, root);
+            Block("WallN", new Vector3(10.5f, 1.75f, -2f), new Vector3(6.2f, 3.5f, 0.3f), _plaster, root);
+            Block("WallW_South", new Vector3(7.5f, 1.75f, -8.95f), new Vector3(0.3f, 3.5f, 7.1f), _plaster, root);
+            Block("WallW_North", new Vector3(7.5f, 1.75f, -2.9f), new Vector3(0.3f, 3.5f, 1.8f), _plaster, root);
+            Block("DoorLintel", new Vector3(7.5f, 3.1f, -4.6f), new Vector3(0.32f, 0.8f, 1.6f), _red, root);
+            Hide(Roof("OfficeEave", new Vector3(10.6f, 4.4f, -7.2f), 6.6f, 11f, 24f, _tiles, _ridge, root, false), new Vector3(10.5f, 1.5f, -7.2f), new Vector3(6f, 4f, 10.4f));
+            Lantern("OfficeLamp", new Vector3(13.15f, 2.1f, -7f), new Color(1f, 0.6f, 0.3f), root, 7f, 1.4f);
+
+            Block("Desk", new Vector3(11.6f, 0.475f, -7.2f), new Vector3(0.9f, 0.95f, 1.9f), _wood, root);
+            Block("Ledger", new Vector3(11.6f, 0.97f, -7.4f), new Vector3(0.35f, 0.05f, 0.45f), Material("Ch3LedgerCover", new Color(0.3f, 0.2f, 0.12f)), root, false);
+            var drawer = new GameObject("DrawerSpot");
+            drawer.transform.SetParent(root, false);
+            drawer.transform.position = new Vector3(10.6f, 0, -7.2f);
+            Explore(drawer, director, "c3_drawer", "Lục ngăn kéo bàn", new Vector3(1.2f, 1.4f, 1.6f));
+            Point("Focus_Drawer", new Vector3(11.6f, 0.9f, -7.2f), 0, root);
+
+            Block("SideTable", new Vector3(8.5f, 0.4f, -10.9f), new Vector3(1.2f, 0.8f, 0.7f), _wood, root);
+            Block("LacquerBox", new Vector3(8.5f, 0.93f, -10.9f), new Vector3(0.48f, 0.26f, 0.34f), Material("Ch3LacquerBox", new Color(0.7f, 0.08f, 0.06f), 0.75f), root, false);
+            var box = new GameObject("BoxSpot");
+            box.transform.SetParent(root, false);
+            box.transform.position = new Vector3(8.5f, 0, -10f);
+            Explore(box, director, "c3_box", "Mở hộp gỗ sơn son", new Vector3(1.3f, 1.4f, 1.2f));
+            Point("Focus_Box", new Vector3(8.5f, 1f, -10.9f), 0, root);
+
+            Prop("Assets/_Game/Prefabs/Props/Cabinet.prefab", new Vector3(12.9f, 0, -3.2f), 270, 1f, root);
+            var cabinet = new GameObject("CabinetSpot");
+            cabinet.transform.SetParent(root, false);
+            cabinet.transform.position = new Vector3(12f, 0, -3.2f);
+            Explore(cabinet, director, "c3_cabinet", "Thử mở tủ khóa đồng", new Vector3(1.2f, 1.4f, 1.4f));
+            Point("Focus_Cabinet", new Vector3(12.9f, 1.2f, -3.2f), 0, root);
+
+            Zone(root, "Phòng sổ sách", new Vector3(10.5f, 1f, -7.25f), new Vector3(5.8f, 2f, 10.2f));
+        }
+
+        private static Transform GateAndCourtyard(Transform world, StoryDirector director)
+        {
+            var root = new GameObject("GateAndCourtyard").transform;
+            root.SetParent(world, false);
+            var door = Block("GateDoors", new Vector3(0, 2f, -12.6f), new Vector3(4f, 4f, 0.25f), Material("Ch3GateWood", new Color(0.28f, 0.12f, 0.06f), 0.3f), root);
+            Block("GateSeam", new Vector3(0, 2f, -12.45f), new Vector3(0.05f, 3.9f, 0.05f), _ridge, root, false);
+            Block("GateLock", new Vector3(0, 1.4f, -12.42f), new Vector3(0.28f, 0.18f, 0.08f), Emissive("Ch3Brass", new Color(0.8f, 0.6f, 0.25f), 0.4f), root, false);
+            Block("GatePillarL", new Vector3(-2.3f, 2.4f, -12.6f), new Vector3(0.6f, 4.8f, 0.6f), _red, root);
+            Block("GatePillarR", new Vector3(2.3f, 2.4f, -12.6f), new Vector3(0.6f, 4.8f, 0.6f), _red, root);
+            Roof("GateRoof", new Vector3(0, 5.7f, -12.6f), 6.2f, 2.2f, 26f, _tiles, _ridge, root);
+            Lantern("GateLanternL", new Vector3(-1.6f, 3.3f, -12.1f), new Color(1f, 0.16f, 0.1f), root, 6f, 1.6f);
+            Lantern("GateLanternR", new Vector3(1.6f, 3.3f, -12.1f), new Color(1f, 0.16f, 0.1f), root, 0f, 0f);
+            var gateSpot = new GameObject("GateSpot");
+            gateSpot.transform.SetParent(root, false);
+            gateSpot.transform.position = new Vector3(0, 0, -11.6f);
+            Explore(gateSpot, director, "c3_gate", "Kiểm tra cổng chính", new Vector3(3f, 1.6f, 1.2f));
+            Point("Focus_Gate", new Vector3(0, 1.6f, -12.4f), 0, root);
+
+            Prop("Assets/_Game/Prefabs/Props/Well.prefab", new Vector3(-3f, 0, -3f), 0, 1f, root);
+            var pot = Material("Ch3Pot", new Color(0.45f, 0.22f, 0.12f));
+            var leaf = Material("Ch3Leaf", new Color(0.2f, 0.36f, 0.16f));
+            foreach (var p in new[] { new Vector3(-4.5f, 0, 6f), new Vector3(4.5f, 0, -9f), new Vector3(-4.6f, 0, -9.5f), new Vector3(3.5f, 0, 1.5f) })
+            {
+                Cylinder("Pot", p, 0.35f, 0.6f, pot, root);
+                var plant = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+                plant.name = "Shrub";
+                Object.DestroyImmediate(plant.GetComponent<Collider>());
+                plant.transform.SetParent(root, false);
+                plant.transform.position = p + Vector3.up * 0.95f;
+                plant.transform.localScale = new Vector3(0.9f, 0.8f, 0.9f);
+                plant.GetComponent<Renderer>().sharedMaterial = leaf;
+            }
+            Block("MaKieuBench", new Vector3(-11.3f, 0.4f, -10.4f), new Vector3(1.6f, 0.12f, 0.45f), _wood, root);
+            return door.transform;
+        }
+
+        private static void Hide(GameObject roof, Vector3 centre, Vector3 size)
+        {
+            foreach (var t in roof.GetComponentsInChildren<Transform>()) t.gameObject.layer = 0;
+            var hider = roof.AddComponent<ThuyKieu.Environment.RoofHider>();
+            Set(hider, "_centre", centre);
+            Set(hider, "_size", size);
+        }
+
+        private static void Zone(Transform parent, string label, Vector3 centre, Vector3 size)
+        {
+            var go = new GameObject("RestrictedZone_" + label);
+            go.transform.SetParent(parent, false);
+            go.transform.position = centre;
+            go.layer = 2;
+            var box = go.AddComponent<BoxCollider>();
+            box.isTrigger = true;
+            box.size = size;
+            var zone = go.AddComponent<RestrictedZone>();
+            Set(zone, "_label", label);
+        }
+
+        private static void CreatePlaceholder()
+        {
+            if (File.Exists(PlaceholderPath)) return;
+            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            var camera = new GameObject("Main Camera", typeof(Camera)) { tag = "MainCamera" };
+            camera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
+            camera.GetComponent<Camera>().backgroundColor = new Color(0.03f, 0.02f, 0.04f);
+            var canvas = new GameObject("Canvas", typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler));
+            canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+            var text = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
+            text.transform.SetParent(canvas.transform, false);
+            var rect = (RectTransform)text.transform;
+            rect.anchorMin = new Vector2(0.1f, 0.2f); rect.anchorMax = new Vector2(0.9f, 0.8f); rect.offsetMin = rect.offsetMax = Vector2.zero;
+            var tmp = text.GetComponent<TextMeshProUGUI>();
+            tmp.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
+            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.fontSize = 40;
+            tmp.text = "<color=#E8C27A>CHƯƠNG 4</color>\nKHÔNG CÒN ĐƯỜNG LUI\n\n<size=26>Chương 2 và 3 đã hoàn thành. Lựa chọn của bạn đã được lưu.\nChương 4 đang được phát triển.</size>";
+            Save(scene, PlaceholderPath);
+        }
+    }
+}

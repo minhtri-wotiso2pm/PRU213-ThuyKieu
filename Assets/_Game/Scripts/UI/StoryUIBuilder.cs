@@ -1,0 +1,300 @@
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace ThuyKieu.UI
+{
+    /// <summary>
+    /// Creates the story canvas hierarchy (HUD, cinematic dialogue, journal, document reader,
+    /// deduction board, chapter/fail cards). Views locate their parts by these names in Awake,
+    /// so the generated object can be saved as a prefab and restyled in the Inspector.
+    /// </summary>
+    public static class StoryUIBuilder
+    {
+        public static readonly Color Ink = new Color(0.035f, 0.03f, 0.045f, 0.9f);
+        public static readonly Color Gold = new Color(1f, 0.8f, 0.45f);
+        public static readonly Color Paper = new Color(0.9f, 0.83f, 0.66f, 1f);
+        public static readonly Color Vermilion = new Color(0.72f, 0.16f, 0.12f);
+        private static TMP_FontAsset _font;
+
+        public static GameObject Build(TMP_FontAsset font)
+        {
+            _font = font;
+            var root = new GameObject("StoryCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+            var canvas = root.GetComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 10;
+            var scaler = root.GetComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.matchWidthOrHeight = 0.5f;
+            Transform t = root.transform;
+
+            // Cinematic bars
+            var bars = Rect(t, "Letterbox", Vector2.zero, Vector2.one);
+            Image(Rect(bars, "Top", new Vector2(0, 1), new Vector2(1, 1)), Color.black).rectTransform.pivot = new Vector2(0.5f, 1);
+            Image(Rect(bars, "Bottom", new Vector2(0, 0), new Vector2(1, 0)), Color.black).rectTransform.pivot = new Vector2(0.5f, 0);
+
+            BuildHud(t);
+            BuildDialogue(t);
+            BuildJournal(t);
+            BuildDocument(t);
+            BuildDeduction(t);
+            BuildCards(t);
+
+            var fade = Image(Rect(t, "Fade", Vector2.zero, Vector2.one), Color.black);
+            fade.gameObject.AddComponent<CanvasGroup>().alpha = 1f;
+            fade.raycastTarget = false;
+
+            root.AddComponent<StoryHUD>();
+            root.AddComponent<StoryDialogueView>();
+            root.AddComponent<JournalView>();
+            root.AddComponent<DocumentView>();
+            root.AddComponent<DeductionView>();
+            return root;
+        }
+
+        private static void BuildHud(Transform parent)
+        {
+            var hud = Rect(parent, "HUD", Vector2.zero, Vector2.one);
+            // Header grows with the number of open options (StoryHUD sets its height), children use pixel offsets.
+            var header = Panel(hud, "Header", new Vector2(0.018f, 1f), new Vector2(0.4f, 1f), new Color(0, 0, 0, 0.42f), 14);
+            header.pivot = new Vector2(0.5f, 1f);
+            header.offsetMin = new Vector2(0, -27 - 130);
+            header.offsetMax = new Vector2(0, -27);
+            var chapterLabel = Text(header, "ChapterLabel", "", 20, new Vector2(0, 1), new Vector2(1, 1), Gold);
+            chapterLabel.fontStyle = FontStyles.Bold | FontStyles.UpperCase;
+            Pixels(chapterLabel.rectTransform, -10, -42);
+            var objective = Text(header, "Objective", "", 27, new Vector2(0, 1), new Vector2(1, 1), Color.white);
+            objective.alignment = TextAlignmentOptions.TopLeft;
+            Pixels(objective.rectTransform, -42, -112);
+            var list = Text(header, "ExploreList", "", 20, new Vector2(0, 0), new Vector2(1, 1), new Color(0.86f, 0.86f, 0.82f));
+            list.alignment = TextAlignmentOptions.TopLeft;
+            list.rectTransform.offsetMin = new Vector2(16, 8);
+            list.rectTransform.offsetMax = new Vector2(-16, -112);
+            Text(hud, "Controls", "", 19, new Vector2(0.018f, 0.01f), new Vector2(0.7f, 0.05f), new Color(1, 1, 1, 0.55f));
+
+            var prompt = Panel(hud, "Prompt", new Vector2(0.39f, 0.29f), new Vector2(0.61f, 0.345f), new Color(0, 0, 0, 0.7f), 14);
+            Text(prompt, "Text", "", 24, Vector2.zero, Vector2.one, Color.white).alignment = TextAlignmentOptions.Center;
+
+            var meter = Panel(hud, "Meter", new Vector2(0.38f, 0.905f), new Vector2(0.62f, 0.975f), new Color(0, 0, 0, 0.55f), 14);
+            Text(meter, "Label", "", 20, new Vector2(0.04f, 0.5f), new Vector2(0.96f, 1f), Color.white).alignment = TextAlignmentOptions.Center;
+            var track = Image(Rect(meter, "Track", new Vector2(0.06f, 0.18f), new Vector2(0.94f, 0.42f)), new Color(1, 1, 1, 0.15f));
+            Image(Rect(track.transform, "Fill", Vector2.zero, new Vector2(0f, 1f)), Gold);
+
+            var observe = Rect(hud, "Observe", new Vector2(0.4f, 0.42f), new Vector2(0.6f, 0.58f));
+            var reticle = Text(observe, "Reticle", "[        ]", 54, new Vector2(0, 0.35f), new Vector2(1, 0.85f), new Color(1, 1, 1, 0.75f));
+            reticle.alignment = TextAlignmentOptions.Center;
+            Text(observe, "Label", "", 21, new Vector2(0, 0.12f), new Vector2(1, 0.35f), Gold).alignment = TextAlignmentOptions.Center;
+            var observeTrack = Image(Rect(observe, "Track", new Vector2(0.25f, 0.04f), new Vector2(0.75f, 0.1f)), new Color(1, 1, 1, 0.2f));
+            Image(Rect(observeTrack.transform, "Fill", Vector2.zero, new Vector2(0f, 1f)), Gold);
+
+            var toast = Panel(hud, "Toast", new Vector2(0.7f, 0.83f), new Vector2(0.982f, 0.94f), new Color(0.05f, 0.04f, 0.03f, 0.88f), 14);
+            Image(Rect(toast, "Accent", new Vector2(0, 0.12f), new Vector2(0.012f, 0.88f)), Gold);
+            Text(toast, "Title", "", 18, new Vector2(0.05f, 0.56f), new Vector2(0.97f, 0.95f), Gold).fontStyle = FontStyles.Bold;
+            Text(toast, "Body", "", 23, new Vector2(0.05f, 0.05f), new Vector2(0.97f, 0.58f), Color.white);
+
+            var bark = Rect(hud, "Bark", new Vector2(0.2f, 0.12f), new Vector2(0.8f, 0.2f));
+            var barkText = Text(bark, "Text", "", 27, Vector2.zero, Vector2.one, Color.white);
+            barkText.alignment = TextAlignmentOptions.Center;
+            barkText.outlineWidth = 0.18f;
+            barkText.outlineColor = new Color32(0, 0, 0, 220);
+        }
+
+        private static void BuildDialogue(Transform parent)
+        {
+            var dialogue = Rect(parent, "Dialogue", Vector2.zero, Vector2.one);
+            var panel = Panel(dialogue, "Panel", new Vector2(0.12f, 0.035f), new Vector2(0.88f, 0.255f), Ink, 26);
+            Image(Rect(panel, "Rule", new Vector2(0.03f, 0.74f), new Vector2(0.97f, 0.745f)), new Color(Gold.r, Gold.g, Gold.b, 0.35f));
+            Text(panel, "Name", "", 27, new Vector2(0.03f, 0.75f), new Vector2(0.7f, 0.97f), Gold).fontStyle = FontStyles.Bold;
+            var body = Text(panel, "Body", "", 30, new Vector2(0.03f, 0.08f), new Vector2(0.97f, 0.72f), Color.white);
+            body.alignment = TextAlignmentOptions.TopLeft;
+            body.lineSpacing = 6;
+
+            var inner = Text(dialogue, "Inner", "", 33, new Vector2(0.14f, 0.07f), new Vector2(0.86f, 0.27f), new Color(0.84f, 0.92f, 1f));
+            inner.fontStyle = FontStyles.Italic;
+            inner.alignment = TextAlignmentOptions.Center;
+            inner.outlineWidth = 0.2f;
+            inner.outlineColor = new Color32(0, 0, 0, 200);
+
+            var spirit = Text(dialogue, "Spirit", "", 46, new Vector2(0.08f, 0.62f), new Vector2(0.92f, 0.86f), Gold);
+            spirit.alignment = TextAlignmentOptions.Center;
+            spirit.fontStyle = FontStyles.Italic;
+            spirit.characterSpacing = 4;
+            spirit.outlineWidth = 0.12f;
+            spirit.outlineColor = new Color32(80, 40, 0, 200);
+
+            var verse = Panel(dialogue, "Verse", new Vector2(0.14f, 0.42f), new Vector2(0.86f, 0.6f), new Color(Paper.r, Paper.g, Paper.b, 0.93f), 26);
+            var verseText = Text(verse, "Text", "", 36, new Vector2(0.04f, 0.06f), new Vector2(0.96f, 0.94f), new Color(0.22f, 0.12f, 0.06f));
+            verseText.alignment = TextAlignmentOptions.Center;
+            verseText.fontStyle = FontStyles.Italic;
+
+            Text(dialogue, "Hint", "Space / Click  »", 19, new Vector2(0.72f, 0.0f), new Vector2(0.88f, 0.034f), new Color(1, 1, 1, 0.5f)).alignment = TextAlignmentOptions.Right;
+
+            var choices = Rect(dialogue, "Choices", new Vector2(0.52f, 0.28f), new Vector2(0.95f, 0.66f));
+            var layout = choices.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 10; layout.childAlignment = TextAnchor.LowerRight;
+            layout.childControlHeight = true; layout.childControlWidth = true; layout.childForceExpandHeight = false;
+            var timer = Image(Rect(choices, "Timer", Vector2.zero, Vector2.one), new Color(1, 1, 1, 0.15f));
+            var timerSize = timer.gameObject.AddComponent<LayoutElement>();
+            timerSize.minHeight = 6; timerSize.preferredHeight = 6;
+            Image(Rect(timer.transform, "Fill", Vector2.zero, Vector2.one), Vermilion);
+            var template = Panel(choices, "Template", Vector2.zero, Vector2.one, new Color(0.06f, 0.05f, 0.07f, 0.92f), 14);
+            template.gameObject.AddComponent<Button>();
+            var size = template.gameObject.AddComponent<LayoutElement>();
+            size.minHeight = 58; size.preferredHeight = 58;
+            Image(Rect(template, "Accent", new Vector2(0, 0.15f), new Vector2(0.008f, 0.85f)), Gold);
+            var label = Text(template, "Label", "", 25, new Vector2(0.03f, 0), new Vector2(0.98f, 1), Color.white);
+            label.alignment = TextAlignmentOptions.MidlineLeft;
+            template.gameObject.SetActive(false);
+
+        }
+
+        private static void BuildJournal(Transform parent)
+        {
+            var journal = Image(Rect(parent, "Journal", Vector2.zero, Vector2.one), new Color(0, 0, 0, 0.65f)).transform;
+            var panel = Panel(journal, "Panel", new Vector2(0.2f, 0.1f), new Vector2(0.8f, 0.9f), new Color(Paper.r, Paper.g, Paper.b, 0.97f), 26);
+            Text(panel, "Title", "SỔ TAY MANH MỐI", 38, new Vector2(0.05f, 0.88f), new Vector2(0.95f, 0.97f), new Color(0.35f, 0.12f, 0.06f)).fontStyle = FontStyles.Bold;
+            Image(Rect(panel, "Rule", new Vector2(0.05f, 0.875f), new Vector2(0.95f, 0.879f)), new Color(0.35f, 0.12f, 0.06f, 0.5f));
+            var list = Text(panel, "List", "", 24, new Vector2(0.05f, 0.08f), new Vector2(0.95f, 0.86f), new Color(0.15f, 0.1f, 0.06f));
+            list.alignment = TextAlignmentOptions.TopLeft;
+            list.lineSpacing = 4;
+            Text(panel, "Hint", "J / Esc: đóng sổ tay", 19, new Vector2(0.05f, 0.015f), new Vector2(0.95f, 0.07f), new Color(0.3f, 0.2f, 0.1f, 0.8f)).alignment = TextAlignmentOptions.Right;
+            journal.gameObject.SetActive(false);
+        }
+
+        private static void BuildDocument(Transform parent)
+        {
+            var document = Image(Rect(parent, "Document", Vector2.zero, Vector2.one), new Color(0, 0, 0, 0.72f)).transform;
+            var paper = Panel(document, "Paper", new Vector2(0.3f, 0.1f), new Vector2(0.7f, 0.9f), Paper, 14);
+            var title = Text(paper, "Title", "", 34, new Vector2(0.08f, 0.84f), new Vector2(0.92f, 0.95f), new Color(0.3f, 0.1f, 0.05f));
+            title.alignment = TextAlignmentOptions.Center; title.fontStyle = FontStyles.Bold;
+            var body = Text(paper, "Body", "", 28, new Vector2(0.1f, 0.18f), new Vector2(0.9f, 0.82f), new Color(0.16f, 0.1f, 0.06f));
+            body.alignment = TextAlignmentOptions.Top; body.lineSpacing = 10;
+            var seal = Panel(paper, "Seal", new Vector2(0.7f, 0.04f), new Vector2(0.86f, 0.16f), Vermilion, 26);
+            Text(seal, "Text", "ẤN", 30, Vector2.zero, Vector2.one, Paper).alignment = TextAlignmentOptions.Center;
+            Text(document, "Hint", "E / Space: cất giấy", 21, new Vector2(0.3f, 0.03f), new Vector2(0.7f, 0.08f), new Color(1, 1, 1, 0.7f)).alignment = TextAlignmentOptions.Center;
+            document.gameObject.SetActive(false);
+        }
+
+        private static void BuildDeduction(Transform parent)
+        {
+            var deduction = Image(Rect(parent, "Deduction", Vector2.zero, Vector2.one), new Color(0.02f, 0.01f, 0.02f, 0.82f)).transform;
+            var panel = Panel(deduction, "Panel", new Vector2(0.17f, 0.12f), new Vector2(0.83f, 0.88f), new Color(0.07f, 0.05f, 0.06f, 0.96f), 26);
+            Text(panel, "Title", "GHÉP MẢNH SỰ THẬT", 36, new Vector2(0.05f, 0.87f), new Vector2(0.75f, 0.97f), Gold).fontStyle = FontStyles.Bold;
+            Text(panel, "Progress", "", 22, new Vector2(0.7f, 0.87f), new Vector2(0.95f, 0.97f), new Color(1, 1, 1, 0.6f)).alignment = TextAlignmentOptions.Right;
+            var question = Text(panel, "Question", "", 31, new Vector2(0.05f, 0.66f), new Vector2(0.95f, 0.85f), Color.white);
+            question.alignment = TextAlignmentOptions.TopLeft;
+            var options = Rect(panel, "Options", new Vector2(0.05f, 0.2f), new Vector2(0.95f, 0.64f));
+            var layout = options.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 12; layout.childControlHeight = true; layout.childControlWidth = true; layout.childForceExpandHeight = false;
+            var template = Panel(options, "Template", Vector2.zero, Vector2.one, new Color(1, 1, 1, 0.06f), 14);
+            template.gameObject.AddComponent<Button>();
+            var size = template.gameObject.AddComponent<LayoutElement>();
+            size.minHeight = 64; size.preferredHeight = 64;
+            Text(template, "Label", "", 25, new Vector2(0.03f, 0), new Vector2(0.97f, 1), Color.white).alignment = TextAlignmentOptions.MidlineLeft;
+            template.gameObject.SetActive(false);
+            var verdict = Text(panel, "Verdict", "", 40, new Vector2(0.05f, 0.03f), new Vector2(0.95f, 0.18f), Vermilion);
+            verdict.alignment = TextAlignmentOptions.Center; verdict.fontStyle = FontStyles.Bold;
+            deduction.gameObject.SetActive(false);
+        }
+
+        private static void BuildCards(Transform parent)
+        {
+            var cards = Rect(parent, "Cards", Vector2.zero, Vector2.one);
+
+            var chapter = Image(Rect(cards, "Chapter", Vector2.zero, Vector2.one), Color.black).transform;
+            chapter.gameObject.AddComponent<CanvasGroup>();
+            var number = Text(chapter, "Number", "", 30, new Vector2(0.1f, 0.56f), new Vector2(0.9f, 0.64f), Gold);
+            number.alignment = TextAlignmentOptions.Center; number.characterSpacing = 10;
+            var title = Text(chapter, "Title", "", 66, new Vector2(0.1f, 0.42f), new Vector2(0.9f, 0.56f), Color.white);
+            title.alignment = TextAlignmentOptions.Center; title.fontStyle = FontStyles.Bold;
+            Image(Rect(chapter, "Rule", new Vector2(0.44f, 0.405f), new Vector2(0.56f, 0.408f)), Gold);
+            var subtitle = Text(chapter, "Line", "THÚY KIỀU: NGHỊCH MỆNH", 22, new Vector2(0.1f, 0.33f), new Vector2(0.9f, 0.39f), new Color(1, 1, 1, 0.55f));
+            subtitle.alignment = TextAlignmentOptions.Center; subtitle.characterSpacing = 4;
+            chapter.gameObject.SetActive(false);
+
+            var tutorial = Panel(cards, "Tutorial", new Vector2(0.3f, 0.3f), new Vector2(0.7f, 0.72f), new Color(0.05f, 0.04f, 0.05f, 0.95f), 26);
+            Text(tutorial, "Title", "HƯỚNG DẪN", 30, new Vector2(0.06f, 0.82f), new Vector2(0.94f, 0.95f), Gold).fontStyle = FontStyles.Bold;
+            var tutorialBody = Text(tutorial, "Body", "", 25, new Vector2(0.06f, 0.18f), new Vector2(0.94f, 0.8f), Color.white);
+            tutorialBody.alignment = TextAlignmentOptions.TopLeft; tutorialBody.lineSpacing = 12;
+            Text(tutorial, "Hint", "E / Space: đã hiểu", 20, new Vector2(0.06f, 0.04f), new Vector2(0.94f, 0.14f), new Color(1, 1, 1, 0.6f)).alignment = TextAlignmentOptions.Right;
+            tutorial.gameObject.SetActive(false);
+
+            var fail = Image(Rect(cards, "Fail", Vector2.zero, Vector2.one), new Color(0.25f, 0.02f, 0.02f, 0.78f)).transform;
+            var headline = Text(fail, "Headline", "", 58, new Vector2(0.1f, 0.5f), new Vector2(0.9f, 0.62f), new Color(1f, 0.85f, 0.8f));
+            headline.alignment = TextAlignmentOptions.Center; headline.fontStyle = FontStyles.Bold;
+            var detail = Text(fail, "Detail", "", 27, new Vector2(0.15f, 0.38f), new Vector2(0.85f, 0.5f), new Color(1, 1, 1, 0.8f));
+            detail.alignment = TextAlignmentOptions.Center;
+            Text(fail, "Hint", "Quay lại điểm lưu gần nhất...", 21, new Vector2(0.1f, 0.3f), new Vector2(0.9f, 0.36f), new Color(1, 1, 1, 0.5f)).alignment = TextAlignmentOptions.Center;
+            fail.gameObject.SetActive(false);
+
+            var complete = Image(Rect(cards, "Complete", Vector2.zero, Vector2.one), new Color(0, 0, 0, 0.82f)).transform;
+            var completePanel = Panel(complete, "Panel", new Vector2(0.25f, 0.16f), new Vector2(0.75f, 0.84f), new Color(0.06f, 0.05f, 0.06f, 0.97f), 26);
+            var completeTitle = Text(completePanel, "Title", "", 40, new Vector2(0.06f, 0.8f), new Vector2(0.94f, 0.95f), Gold);
+            completeTitle.alignment = TextAlignmentOptions.Center; completeTitle.fontStyle = FontStyles.Bold;
+            var lines = Text(completePanel, "Lines", "", 25, new Vector2(0.1f, 0.25f), new Vector2(0.9f, 0.78f), Color.white);
+            lines.alignment = TextAlignmentOptions.TopLeft; lines.lineSpacing = 10;
+            var button = Panel(completePanel, "Continue", new Vector2(0.32f, 0.06f), new Vector2(0.68f, 0.18f), Vermilion, 14);
+            button.gameObject.AddComponent<Button>();
+            Text(button, "Label", "Tiếp tục", 28, Vector2.zero, Vector2.one, Color.white).alignment = TextAlignmentOptions.Center;
+            complete.gameObject.SetActive(false);
+        }
+
+        // ------------------------------------------------------------------ primitives
+
+        public static RectTransform Rect(Transform parent, string name, Vector2 min, Vector2 max)
+        {
+            var go = new GameObject(name, typeof(RectTransform));
+            go.transform.SetParent(parent, false);
+            var rect = (RectTransform)go.transform;
+            rect.anchorMin = min; rect.anchorMax = max;
+            rect.offsetMin = rect.offsetMax = Vector2.zero;
+            return rect;
+        }
+
+        /// <summary>Top-anchored child: a band between two pixel offsets from the parent top, with side padding.</summary>
+        private static void Pixels(RectTransform rect, float top, float bottom)
+        {
+            rect.offsetMin = new Vector2(16, bottom);
+            rect.offsetMax = new Vector2(-16, top);
+        }
+
+        private static Image Image(RectTransform rect, Color color)
+        {
+            var image = rect.gameObject.AddComponent<Image>();
+            image.color = color;
+            return image;
+        }
+
+        private static RectTransform Panel(Transform parent, string name, Vector2 min, Vector2 max, Color color, int radius)
+        {
+            var rect = Rect(parent, name, min, max);
+            Image(rect, color);
+            rect.gameObject.AddComponent<RoundedImage>().SetRadius(radius);
+            return rect;
+        }
+
+        private static TextMeshProUGUI Text(Transform parent, string name, string value, float size, Vector2 min, Vector2 max, Color color)
+        {
+            var rect = Rect(parent, name, min, max);
+            var text = rect.gameObject.AddComponent<TextMeshProUGUI>();
+            if (_font != null) text.font = _font;
+            text.text = value;
+            text.fontSize = size;
+            text.color = color;
+            text.raycastTarget = false;
+            text.alignment = TextAlignmentOptions.MidlineLeft;
+            text.margin = new Vector4(6, 2, 6, 2);
+            return text;
+        }
+
+        /// <summary>Finds a named descendant component; logs instead of throwing so a restyled prefab degrades gracefully.</summary>
+        public static T Find<T>(Transform root, string path) where T : Component
+        {
+            var child = root.Find(path);
+            if (child == null) { Debug.LogWarning("[StoryUI] Missing " + path, root); return null; }
+            return child.GetComponent<T>();
+        }
+    }
+}

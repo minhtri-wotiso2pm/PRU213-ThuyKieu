@@ -27,11 +27,29 @@ namespace ThuyKieu.Dialogue
         private string _inkSpeaker = "Dẫn chuyện";
         public Func<string[], bool> InkPauseBeforeLine;
         public Func<string[], bool> InkStopBeforeLine;
+        /// <summary>Asked when the player advances past a line; true closes the dialogue so a blocking sequence can run.</summary>
+        public Func<string[], bool> InkBlockAfterLine;
         public event Action<string[]> InkTagsChanged;
+        /// <summary>Raised just before the dialogue closes because every pending choice is an #explore choice.</summary>
+        public event Action InkExploreReached;
         public bool IsDialogueActive => _inkActive || CurrentNode != null;
+        public string CurrentSpeakerId { get; private set; } = "Narrator";
+        public string[] CurrentInkTags { get; private set; } = new string[0];
+
+        /// <summary>True when the story waits on choices that the world, not the dialogue UI, resolves.</summary>
+        public bool InkAtExploreChoices
+        {
+            get
+            {
+                if (InkStory == null || InkStory.canContinue || InkStory.currentChoices.Count == 0) return false;
+                foreach (var choice in InkStory.currentChoices)
+                    if (choice.tags == null || !choice.tags.Exists(t => t.StartsWith("explore:"))) return false;
+                return true;
+            }
+        }
 
         /// <summary>True when the last line of the node is on screen and choices should show.</summary>
-        public bool IsAtChoicePoint => _inkActive ? InkStory.currentChoices.Count > 0 : IsDialogueActive
+        public bool IsAtChoicePoint => _inkActive ? InkStory.currentChoices.Count > 0 && !InkAtExploreChoices : IsDialogueActive
                                        && CurrentNode.HasChoices
                                        && CurrentLineIndex >= CurrentNode.Lines.Count - 1;
 
@@ -101,7 +119,14 @@ namespace ThuyKieu.Dialogue
         {
             if (_inkActive)
             {
-                if (!IsAtChoicePoint) AdvanceInk();
+                if (IsAtChoicePoint) return;
+                if (InkBlockAfterLine != null && InkBlockAfterLine(CurrentInkTags))
+                {
+                    CurrentInkTags = new string[0];
+                    EndDialogue();
+                    return;
+                }
+                AdvanceInk();
                 return;
             }
             if (!IsDialogueActive)
@@ -228,6 +253,8 @@ namespace ThuyKieu.Dialogue
             _pendingText = null;
             _pendingTags = null;
             _inkSpeaker = "Dẫn chuyện";
+            CurrentSpeakerId = "Narrator";
+            CurrentInkTags = new string[0];
         }
 
         public void ResumeInk(Action onComplete = null)
@@ -263,7 +290,12 @@ namespace ThuyKieu.Dialogue
                 PublishInkLine();
                 return;
             }
-            if (InkStory.currentChoices.Count > 0) PublishInkChoices();
+            if (InkAtExploreChoices)
+            {
+                InkExploreReached?.Invoke();
+                EndDialogue();
+            }
+            else if (InkStory.currentChoices.Count > 0) PublishInkChoices();
             else EndDialogue();
         }
 
@@ -272,14 +304,10 @@ namespace ThuyKieu.Dialogue
             foreach (string tag in _pendingTags)
             {
                 if (!tag.StartsWith("speaker:")) continue;
-                switch (tag.Substring(8).Trim())
-                {
-                    case "Kieu": _inkSpeaker = "Thúy Kiều"; break;
-                    case "MeKieu": _inkSpeaker = "Mẹ Kiều"; break;
-                    case "MaGiamSinh": _inkSpeaker = "Mã Giám Sinh"; break;
-                    default: _inkSpeaker = "Dẫn chuyện"; break;
-                }
+                CurrentSpeakerId = tag.Substring(8).Trim();
+                _inkSpeaker = SpeakerCatalog.Get(CurrentSpeakerId).DisplayName;
             }
+            CurrentInkTags = _pendingTags;
             InkTagsChanged?.Invoke(_pendingTags);
             LineChanged?.Invoke(_inkSpeaker, _pendingText);
             _pendingText = null;
@@ -288,8 +316,10 @@ namespace ThuyKieu.Dialogue
 
         private void PublishInkChoices()
         {
+            if (InkAtExploreChoices) { ChoicesChanged?.Invoke(new DialogueChoice[0]); return; }
             var choices = new DialogueChoice[InkStory.currentChoices.Count];
-            for (int i = 0; i < choices.Length; i++) choices[i] = new DialogueChoice(InkStory.currentChoices[i].text);
+            for (int i = 0; i < choices.Length; i++)
+                choices[i] = new DialogueChoice(InkStory.currentChoices[i].text, InkStory.currentChoices[i].tags);
             ChoicesChanged?.Invoke(choices);
         }
     }

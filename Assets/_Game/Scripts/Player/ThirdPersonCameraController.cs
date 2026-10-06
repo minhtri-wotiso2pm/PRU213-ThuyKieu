@@ -40,6 +40,17 @@ namespace ThuyKieu.Player
         private Transform _dialogueCue;
         public void SetDialogueCue(Transform preset) { _dialogueCue = preset; }
 
+        /// <summary>Places the orbit camera behind the target at the given yaw without smoothing (after teleports).</summary>
+        public void SnapBehindTarget(float yawDegrees, float pitchDegrees = 14f)
+        {
+            yaw = yawDegrees;
+            pitch = Mathf.Clamp(pitchDegrees, minPitch, maxPitch);
+            followVelocity = Vector3.zero;
+            if (target == null) return;
+            Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
+            transform.SetPositionAndRotation(target.position + targetOffset - rotation * Vector3.forward * distance, rotation);
+        }
+
         private void Awake()
         {
             if (target == null)
