@@ -23,6 +23,7 @@ namespace ThuyKieu.Gameplay.Sequences
             yield return new WaitForSeconds(director.Autopilot ? 0f : 0.9f);
             if (kieu != null) kieu.SetTalking(false, 0);
             if (_prop != null) _prop.SetActive(false);
+            yield return null; // after DialogueCursorController re-locks on dialogue end
             director.CameraController.SetCursorLocked(false);
             _view.FastMode = director.Autopilot;
             yield return _view.Show(_title, _body, _sealed);

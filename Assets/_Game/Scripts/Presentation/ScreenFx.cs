@@ -10,7 +10,6 @@ namespace ThuyKieu.Presentation
     /// memory (sepia flash), imagine (cold, grainy), panic (pulsing vignette, distortion),
     /// spirit (golden, bloomy). Uses a runtime URP Volume plus a white flash overlay and camera shake.
     /// </summary>
-    [DefaultExecutionOrder(1000)]
     public class ScreenFx : MonoBehaviour
     {
         private struct Mood

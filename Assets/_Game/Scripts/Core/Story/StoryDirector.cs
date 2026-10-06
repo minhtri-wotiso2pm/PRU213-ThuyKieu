@@ -96,7 +96,10 @@ namespace ThuyKieu.Core.Story
         {
             Story = new Ink.Runtime.Story(_compiledInk.text);
             if (InkStatePersistence.Instance != null && InkStatePersistence.Instance.TryGetStateFor(_chapterNumber, out string saved))
+            {
                 Story.state.LoadJson(saved);
+                _clues.AddRange(InkStatePersistence.Instance.Clues);
+            }
             else
                 Story.ChoosePathString(_entryKnot);
 
@@ -233,7 +236,12 @@ namespace ThuyKieu.Core.Story
         {
             ChapterComplete = true;
             SetFreeControl(false);
-            if (InkStatePersistence.Instance != null) InkStatePersistence.Instance.Save(Story, _chapterNumber + 1);
+            if (InkStatePersistence.Instance != null)
+            {
+                InkStatePersistence.Instance.Save(Story, _chapterNumber + 1);
+                InkStatePersistence.Instance.Clues.Clear();
+                InkStatePersistence.Instance.Clues.AddRange(_clues);
+            }
             var summary = GetComponent<IChapterSummary>();
             var lines = summary != null ? summary.SummaryLines(Story).ToList() : new List<string>();
             if (_audio != null) _audio.PlaySfx("chapter_complete");

@@ -57,7 +57,7 @@ namespace ThuyKieu.UI
                 {
                     if (FastMode && Time.realtimeSinceStartup - shown >= ThuyKieu.Core.Story.StoryCapture.Hold) _picked = UnityEngine.Random.Range(0, question.Options.Length);
                     var keyboard = Keyboard.current;
-                    for (int i = 0; i < _buttons.Count && keyboard != null; i++)
+                    for (int i = 0; i < _buttons.Count && keyboard != null && !PauseMenuView.IsPaused; i++)
                         if (keyboard[Key.Digit1 + i].wasPressedThisFrame) _picked = i;
                     yield return null;
                 }

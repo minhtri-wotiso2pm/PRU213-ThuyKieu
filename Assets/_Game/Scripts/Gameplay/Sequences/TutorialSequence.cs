@@ -14,6 +14,7 @@ namespace ThuyKieu.Gameplay.Sequences
         {
             director.Hud.FastMode = director.Autopilot;
             if (!string.IsNullOrEmpty(_controlsHint)) director.Hud.SetControls(_controlsHint);
+            yield return null; // after DialogueCursorController re-locks on dialogue end
             director.CameraController.SetCursorLocked(false);
             yield return director.Hud.TutorialCard(_body);
         }

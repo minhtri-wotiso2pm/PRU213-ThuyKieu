@@ -30,6 +30,7 @@ namespace ThuyKieu.UI
         private float _barTarget, _barHeight, _barkTimer, _toastTimer;
         private bool _dialogueMode, _meterRequested;
         private Action _onContinue;
+        private float _completeShownAt;
 
         /// <summary>QA autopilot shortens cards and waits.</summary>
         public bool FastMode { get; set; }
@@ -72,7 +73,7 @@ namespace ThuyKieu.UI
             _continue = StoryUIBuilder.Find<Button>(t, "Cards/Complete/Panel/Continue");
             _fade = StoryUIBuilder.Find<CanvasGroup>(t, "Fade");
             _barkRoot = t.Find("HUD/Bark").gameObject;
-            _overlays = new[] { t.Find("Journal").gameObject, t.Find("Document").gameObject, t.Find("Deduction").gameObject, _tutorial, _fail, _complete, _chapterCard };
+            _overlays = new[] { t.Find("Pause").gameObject, t.Find("Journal").gameObject, t.Find("Document").gameObject, t.Find("Deduction").gameObject, _tutorial, _fail, _complete, _chapterCard };
             _continue.onClick.AddListener(() => { var callback = _onContinue; _onContinue = null; callback?.Invoke(); });
 
             _prompt.SetActive(false);
@@ -173,6 +174,8 @@ namespace ThuyKieu.UI
 
             if (_toastTimer > 0f) { _toastTimer -= Time.unscaledDeltaTime; if (_toastTimer <= 0f) NextToast(); }
             if (_barkTimer > 0f) { _barkTimer -= Time.unscaledDeltaTime; if (_barkTimer <= 0f) _bark.text = string.Empty; }
+            if (_complete.activeSelf && _onContinue != null && Time.unscaledTime - _completeShownAt > 0.8f && ConfirmPressed()) { var callback = _onContinue; _onContinue = null; callback(); }
+            if (_complete.activeSelf && Cursor.lockState == CursorLockMode.Locked) { Cursor.lockState = CursorLockMode.None; Cursor.visible = true; }
 
             var target = _interaction != null && !_dialogueMode ? _interaction.CurrentTarget : null;
             bool showPrompt = target != null;
@@ -214,7 +217,7 @@ namespace ThuyKieu.UI
             _tutorialBody.text = body;
             _tutorial.SetActive(true);
             yield return new WaitForSecondsRealtime(FastMode ? ThuyKieu.Core.Story.StoryCapture.Hold : 0.6f);
-            while (!FastMode && !ThuyKieu.Core.InputReader.InteractPressedThisFrame && !ConfirmPressed()) yield return null;
+            while (!FastMode && (PauseMenuView.IsPaused || (!ThuyKieu.Core.InputReader.InteractPressedThisFrame && !ConfirmPressed()))) yield return null;
             _tutorial.SetActive(false);
         }
 
@@ -235,6 +238,7 @@ namespace ThuyKieu.UI
             foreach (string line in lines) builder.Append("<color=#E8C27A>•</color> ").AppendLine(line);
             _completeLines.text = builder.ToString();
             _onContinue = onContinue;
+            _completeShownAt = Time.unscaledTime;
             _complete.SetActive(true);
         }
 

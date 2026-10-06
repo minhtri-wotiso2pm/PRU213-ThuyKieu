@@ -40,7 +40,6 @@ namespace ThuyKieu.Gameplay.Chapters
         public bool Glancing => _glanceHold > 0f;
         public int Waypoint => _waypoint;
 
-
         private void OnEnable()
         {
             _director.SceneChanged += OnScene;

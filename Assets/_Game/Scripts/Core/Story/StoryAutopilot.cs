@@ -40,6 +40,18 @@ namespace ThuyKieu.Core.Story
             }
         }
 
+        /// <summary>Player builds: "-autopilotScene &lt;name&gt;" jumps straight to a chapter for automated runs.</summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void Boot()
+        {
+            if (!Enabled) return;
+            var args = System.Environment.GetCommandLineArgs();
+            int index = Array.IndexOf(args, "-autopilotScene");
+            if (index < 0 || index + 1 >= args.Length) return;
+            string scene = args[index + 1];
+            if (SceneManager.GetActiveScene().name != scene && Application.CanStreamedLevelBeLoaded(scene)) SceneManager.LoadScene(scene);
+        }
+
         private void Start()
         {
             if (!Enabled) { enabled = false; return; }
@@ -124,6 +136,7 @@ namespace ThuyKieu.Core.Story
                 if (_director.InExplore)
                 {
                     if (capture && exploreShots < 2) { yield return new WaitForSecondsRealtime(1.5f); StoryCapture.Shot(prefix + "explore_" + ++exploreShots); }
+                    if (capture && exploreShots == 2 && _director.Clues.Count > 0 && !_menusShot) yield return CaptureMenus(prefix);
                     yield return Explore(capture);
                 }
                 yield return null;
@@ -145,6 +158,26 @@ namespace ThuyKieu.Core.Story
             Finish("PASS");
         }
 
+        private bool _menusShot;
+
+        private IEnumerator CaptureMenus(string prefix)
+        {
+            _menusShot = true;
+            var journal = FindAnyObjectByType<JournalView>();
+            if (journal != null && _director.InExplore)
+            {
+                journal.Open();
+                yield return new WaitForSecondsRealtime(0.6f);
+                StoryCapture.Shot(prefix + "journal");
+                journal.Close();
+            }
+            var pause = FindAnyObjectByType<PauseMenuView>();
+            if (pause == null) yield break;
+            pause.Pause();
+            yield return new WaitForSecondsRealtime(0.5f);
+            StoryCapture.Shot(prefix + "pause");
+            pause.Resume();
+        }
 
         private static readonly string[] HubEnders = { "c2_eavesdrop", "c3_makieu" };
         private bool _failTested;

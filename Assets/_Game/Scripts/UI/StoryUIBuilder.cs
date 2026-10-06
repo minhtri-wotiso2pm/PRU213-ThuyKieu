@@ -41,6 +41,7 @@ namespace ThuyKieu.UI
             BuildDocument(t);
             BuildDeduction(t);
             BuildCards(t);
+            BuildPause(t);
 
             var fade = Image(Rect(t, "Fade", Vector2.zero, Vector2.one), Color.black);
             fade.gameObject.AddComponent<CanvasGroup>().alpha = 1f;
@@ -51,6 +52,7 @@ namespace ThuyKieu.UI
             root.AddComponent<JournalView>();
             root.AddComponent<DocumentView>();
             root.AddComponent<DeductionView>();
+            root.AddComponent<PauseMenuView>();
             return root;
         }
 
@@ -199,6 +201,29 @@ namespace ThuyKieu.UI
             deduction.gameObject.SetActive(false);
         }
 
+        private static void BuildPause(Transform parent)
+        {
+            var pause = Image(Rect(parent, "Pause", Vector2.zero, Vector2.one), new Color(0.02f, 0.01f, 0.02f, 0.78f)).transform;
+            var panel = Panel(pause, "Panel", new Vector2(0.36f, 0.2f), new Vector2(0.64f, 0.8f), new Color(0.07f, 0.05f, 0.06f, 0.97f), 26);
+            var title = Text(panel, "Title", "TẠM DỪNG", 40, new Vector2(0.08f, 0.84f), new Vector2(0.92f, 0.96f), Gold);
+            title.alignment = TextAlignmentOptions.Center; title.fontStyle = FontStyles.Bold;
+            string[] names = { "Resume", "Journal", "Controls", "Restart", "Quit" };
+            string[] labels = { "Tiếp tục", "Sổ tay manh mối", "Điều khiển", "Chơi lại chương", "Thoát game" };
+            for (int i = 0; i < names.Length; i++)
+            {
+                float top = 0.8f - i * 0.135f;
+                var button = Panel(panel, names[i], new Vector2(0.12f, top - 0.11f), new Vector2(0.88f, top), i == 0 ? Vermilion : new Color(1, 1, 1, 0.07f), 14);
+                button.gameObject.AddComponent<Button>();
+                Text(button, "Label", labels[i], 26, Vector2.zero, Vector2.one, Color.white).alignment = TextAlignmentOptions.Center;
+            }
+            var controls = Panel(panel, "ControlsText", new Vector2(1.04f, 0.1f), new Vector2(1.9f, 0.9f), new Color(0.07f, 0.05f, 0.06f, 0.97f), 26);
+            var text = Text(controls, "Text", "<color=#E8C27A>WASD</color>  di chuyển\n<color=#E8C27A>Shift</color>  chạy\n<color=#E8C27A>Ctrl / C</color>  khom người, rón rén\n" +
+                "<color=#E8C27A>Chuột</color>  xoay camera\n<color=#E8C27A>Chuột phải</color>  quan sát\n<color=#E8C27A>E</color>  tương tác\n<color=#E8C27A>Space / Click</color>  tiếp lời thoại\n" +
+                "<color=#E8C27A>1–4</color>  chọn câu trả lời\n<color=#E8C27A>J</color>  sổ tay manh mối\n<color=#E8C27A>Esc</color>  tạm dừng", 24, new Vector2(0.08f, 0.05f), new Vector2(0.92f, 0.95f), Color.white);
+            text.alignment = TextAlignmentOptions.TopLeft; text.lineSpacing = 14;
+            pause.gameObject.SetActive(false);
+        }
+
         private static void BuildCards(Transform parent)
         {
             var cards = Rect(parent, "Cards", Vector2.zero, Vector2.one);
@@ -237,7 +262,7 @@ namespace ThuyKieu.UI
             lines.alignment = TextAlignmentOptions.TopLeft; lines.lineSpacing = 10;
             var button = Panel(completePanel, "Continue", new Vector2(0.32f, 0.06f), new Vector2(0.68f, 0.18f), Vermilion, 14);
             button.gameObject.AddComponent<Button>();
-            Text(button, "Label", "Tiếp tục", 28, Vector2.zero, Vector2.one, Color.white).alignment = TextAlignmentOptions.Center;
+            Text(button, "Label", "Tiếp tục  <size=18><color=#FFD8C8>(Enter)</color></size>", 28, Vector2.zero, Vector2.one, Color.white).alignment = TextAlignmentOptions.Center;
             complete.gameObject.SetActive(false);
         }
 

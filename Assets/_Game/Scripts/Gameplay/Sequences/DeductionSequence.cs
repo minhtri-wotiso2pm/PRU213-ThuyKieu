@@ -16,6 +16,7 @@ namespace ThuyKieu.Gameplay.Sequences
 
         public override IEnumerator Run(StoryDirector director)
         {
+            yield return null; // after DialogueCursorController re-locks on dialogue end
             director.CameraController.SetCursorLocked(false);
             if (director.Audio != null) director.Audio.PlayMusic("tension_low");
             var questions = new List<DeductionView.Question>

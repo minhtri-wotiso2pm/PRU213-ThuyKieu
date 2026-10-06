@@ -14,6 +14,8 @@ namespace ThuyKieu.UI
         private StoryDirector _director;
 
         public bool IsOpen => _root.activeSelf;
+        /// <summary>Frame the journal closed on, so the same Esc press does not also open the pause menu.</summary>
+        public int ClosedFrame { get; private set; } = -1;
 
         private void Awake()
         {
@@ -27,15 +29,18 @@ namespace ThuyKieu.UI
         {
             if (_director == null) return;
             if (IsOpen && (InputReader.JournalPressedThisFrame || InputReader.CancelPressedThisFrame)) { Close(); return; }
-            if (!IsOpen && InputReader.JournalPressedThisFrame && _director.InExplore && !_director.IsBusy) Open();
+            if (!IsOpen && InputReader.JournalPressedThisFrame && _director.InExplore && !_director.IsBusy && !PauseMenuView.IsPaused) Open();
         }
 
         public void Open()
         {
             var builder = new StringBuilder();
             if (_director.Clues.Count == 0) builder.Append("<i>Chưa có manh mối nào. Hãy quan sát, lắng nghe và đặt câu hỏi.</i>");
+            string chapter = null;
             foreach (string id in _director.Clues)
             {
+                string group = id.StartsWith("c2_") ? "CHƯƠNG 2 · TRÊN ĐƯỜNG" : id.StartsWith("c3_") ? "CHƯƠNG 3 · NHÀ TÚ BÀ" : "KHÁC";
+                if (group != chapter) { chapter = group; builder.Append("<size=20><color=#8A5A2A>").Append(group).Append("</color></size>\n"); }
                 ClueCatalog.TryGet(id, out string title, out string body);
                 builder.Append("<b><color=#5A1E0E>").Append(title).Append("</color></b>\n").Append(body).Append("\n\n");
             }
@@ -49,6 +54,7 @@ namespace ThuyKieu.UI
         public void Close()
         {
             _root.SetActive(false);
+            ClosedFrame = Time.frameCount;
             if (_director.InExplore) _director.SetFreeControl(true);
         }
     }

@@ -172,7 +172,7 @@ namespace ThuyKieu.UI
 
         private void Update()
         {
-            if (_manager == null || !_manager.IsDialogueActive || _active == null) return;
+            if (_manager == null || !_manager.IsDialogueActive || _active == null || PauseMenuView.IsPaused) return;
             if (_visible < _length)
             {
                 _visible += Time.unscaledDeltaTime * _charactersPerSecond;

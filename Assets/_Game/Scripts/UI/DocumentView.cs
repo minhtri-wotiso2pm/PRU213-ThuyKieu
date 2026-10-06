@@ -37,7 +37,7 @@ namespace ThuyKieu.UI
             }
             _paper.localScale = Vector3.one;
             yield return new WaitForSecondsRealtime(FastMode ? ThuyKieu.Core.Story.StoryCapture.Hold : 1.0f);
-            while (!FastMode && !Confirm()) yield return null;
+            while (!FastMode && (PauseMenuView.IsPaused || !Confirm())) yield return null;
             _root.SetActive(false);
         }
 

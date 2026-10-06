@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using ThuyKieu.Core.Story;
@@ -49,6 +49,30 @@ namespace ThuyKieu.Core.Editor
             catch (Exception exception) { Debug.LogException(exception); EditorApplication.Exit(1); }
         }
 
+        public const string WindowsBuildPath = "../Builds/Windows/ThuyKieu.exe"; // outside the repository
+
+        [MenuItem("ThuyKieu/Story/Build Windows (Chapters 1–3)")]
+        public static void BuildWindows()
+        {
+            var scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
+            var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
+            {
+                scenes = scenes,
+                locationPathName = WindowsBuildPath,
+                target = BuildTarget.StandaloneWindows64,
+                options = BuildOptions.None
+            });
+            Debug.Log("[Build] " + report.summary.result + " · " + report.summary.totalErrors + " errors · " +
+                      (report.summary.totalSize / (1024 * 1024)) + " MB · " + report.summary.totalTime);
+            if (report.summary.result != UnityEditor.Build.Reporting.BuildResult.Succeeded) throw new Exception("Build failed");
+        }
+
+        public static void BuildWindowsBatch()
+        {
+            try { BuildWindows(); EditorApplication.Exit(0); }
+            catch (Exception exception) { Debug.LogException(exception); EditorApplication.Exit(1); }
+        }
+
         public static void PlaytestBatch()
         {
             var args = System.Environment.GetCommandLineArgs();
@@ -62,7 +86,6 @@ namespace ThuyKieu.Core.Editor
             EditorApplication.update += WatchPlaytest;
             EditorApplication.EnterPlaymode();
         }
-
 
         private const string RegressionKey = "ThuyKieu.Chapter1Regression";
 
