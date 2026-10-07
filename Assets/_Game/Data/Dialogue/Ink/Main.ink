@@ -1,7 +1,8 @@
 // ============================================================
 // THÚY KIỀU: NGHỊCH MỆNH
 // Kịch bản chính — Chương 1 (Gia Biến), Chương 2 (Trên đường theo Mã Giám Sinh),
-// Chương 3 (Tú Bà). Ink cũ Chương 2–4 lưu tại Legacy/ (không còn được include).
+// Chương 3 (Tú Bà), Chương 4 (Không còn đường lui), Chương 5 (Đào thoát), Chương 6 (Kim Trọng).
+// Ink cũ Chương 2–4 lưu tại Legacy/ (không còn được include).
 //
 // Hợp đồng tag với Unity:
 //   # speaker:<id>  # emotion:<id>  # camera:<id>  # scene:<id>  # music:<id>  # sfx:<id>
@@ -9,7 +10,8 @@
 //   # timer:<giây>  (đặt trên dòng ngay trước lựa chọn → lựa chọn có giới hạn thời gian)
 //   Tag trên choice: #explore:<id> (chọn bằng tương tác trong thế giới), #timeout (mặc định khi hết giờ)
 // Speaker: Narrator, Kieu, NoiTam (ý nghĩ nhân vật hiện đại), KieuThat (giọng Kiều thật), TrangSach (câu thơ ký ức),
-//          MeKieu, MaGiamSinh, TuyTung, TuBa, MaKieu, CoHong, CoLam, NguoiCanh
+//          MeKieu, MaGiamSinh, TuyTung, TuBa, MaKieu, CoHong, CoLam, NguoiCanh,
+//          KimTrong, BaHangNuoc, ThuLai, ChuHieuBac, GiaNhan
 // ============================================================
 
 // --- Chương 1 ---
@@ -41,16 +43,63 @@ VAR c3_biet_chia_khoa = false
 VAR c3_bi_bat = 0         // số lần bị người canh bắt gặp (Unity ghi)
 VAR tra_loi_kieu_that = 0 // 1 nhận sai · 2 không bỏ cuộc · 3 im lặng
 
+// --- Chương 4 ---
+VAR c4_viec = 0           // số việc đã làm trong đêm
+VAR c4_canh_giac = 0      // 0–2: Tú Bà cảnh giác thế nào sau buổi "dạy quy củ" (Unity: người canh nhạy hơn)
+VAR c4_biet_no = false    // đã hỏi ra số nợ
+VAR c4_quan_sat = false   // đã quan sát lịch đi lại của Tú Bà
+VAR c4_chia_khoa = false  // đã lấy chùm chìa
+VAR c4_khe_uoc_mg = false // đã lấy giao kèo Mã Giám Sinh – Tú Bà
+VAR c4_van_tu = 0         // văn tự bán thân: 0 để lại · 1 mang theo · 2 đốt
+VAR c4_tien = 0           // 0 không lấy · 1 lộ phí · 2 cả túi bạc có dấu
+VAR c4_so_no = false      // đã xé trang sổ nợ
+VAR c4_cua_sau = false    // đã tìm ra cửa sau
+VAR c4_gap_co_lam = false
+VAR c4_ru_co_lam = false  // rủ cô gái áo lam cùng trốn
+VAR c4_bi_bat = 0         // số lần bị bắt gặp (Unity ghi)
+
+// --- Chương 5 ---
+VAR c5_lang_le = 0        // 0–3: lẻn ra êm đến đâu (Unity ghi)
+VAR c5_bi_bat = 0         // số lần bị bắt khi chạy (Unity ghi)
+VAR c5_duong = 0          // 1 ngõ tắt · 2 chợ đêm (Unity ghi)
+VAR c5_xo_do = 0          // số vật cản đã xô đổ (Unity ghi)
+VAR c5_qte = 0            // 0–3: rượt đuổi trong rừng tre (Unity ghi)
+VAR c5_co_lam_thoat = false // cô gái áo lam thoát cùng (Unity ghi)
+
+// --- Chương 6 ---
+VAR kt_tin_tuong = 0      // độ tin tưởng của Kim Trọng
+VAR kt_biet_xuyen_khong = false
+VAR c6_doi_chieu = 0      // 0–3: đối chiếu giấy tờ (Unity ghi)
+VAR c6_thu = 0            // số lần đưa sai bằng chứng với nhân chứng hiện tại
+VAR c6_xong = 0           // số nơi đã đến trên phố
+VAR c6_ba_nuoc_xong = false
+VAR c6_thu_lai_xong = false
+VAR c6_hieu_bac_xong = false
+VAR c6_co_lam_xong = false
+VAR nc_ba_nuoc = false
+VAR nc_thu_lai = false
+VAR nc_co_lam = false
+VAR c6_ho_so = 0          // 0–4: số nhóm bằng chứng đã đủ
+
+// --- Hồ sơ cho Chương 7 ---
+VAR ev_khe_uoc = false    // giao kèo Mã Giám Sinh – Tú Bà
+VAR ev_nhan_chung = 0     // số nhân chứng
+VAR ev_giay_no = false    // trang sổ nợ
+VAR ev_tien = false       // bằng chứng tiền bạc (bạc có dấu hoặc sổ hiệu bạc)
+
 INCLUDE Chapter1_GiaBien.ink
 INCLUDE Chapter2_TrenDuongTheoMaGiamSinh.ink
 INCLUDE Chapter3_TuBa.ink
+INCLUDE Chapter4_KhongConDuongLui.ink
+INCLUDE Chapter5_DaoThoat.ink
+INCLUDE Chapter6_KimTrong.ink
 
 -> chapter_1
 
 
-=== chapter_4 ===
-# chapter:4
-# scene:TuBa_Night
+=== chapter_7 ===
+# chapter:7
+# scene:Final_Confrontation
 # speaker:Narrator
-CHƯƠNG 4 — KHÔNG CÒN ĐƯỜNG LUI. (Đang được phát triển.)
+CHƯƠNG 7 — NGHỊCH MỆNH. (Đang được phát triển.)
 -> END

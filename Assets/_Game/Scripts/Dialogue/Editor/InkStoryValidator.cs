@@ -19,7 +19,8 @@ namespace ThuyKieu.Dialogue.Editor
         private static readonly HashSet<string> KnownKeys = new HashSet<string>
         { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx" };
         private static readonly HashSet<string> KnownSpeakers = new HashSet<string>
-        { "Narrator", "Kieu", "NoiTam", "KieuThat", "TrangSach", "MeKieu", "MaGiamSinh", "TuyTung", "TuBa", "MaKieu", "CoHong", "CoLam", "NguoiCanh" };
+        { "Narrator", "Kieu", "NoiTam", "KieuThat", "TrangSach", "MeKieu", "MaGiamSinh", "TuyTung", "TuBa", "MaKieu", "CoHong", "CoLam", "NguoiCanh",
+          "KimTrong", "BaHangNuoc", "ThuLai", "ChuHieuBac", "GiaNhan" };
 
         [MenuItem("ThuyKieu/Dialogue/Validate Ink branches")]
         public static void RunMenu()
@@ -51,14 +52,14 @@ namespace ThuyKieu.Dialogue.Editor
             var cameras = new SortedSet<string>();
             var scenes = new SortedSet<string>();
             var clues = new SortedSet<string>();
-            foreach (string entry in new[] { "chapter_1", "chapter_2", "chapter_3" })
+            foreach (string entry in new[] { "chapter_1", "chapter_2", "chapter_3", "chapter_4", "chapter_5", "chapter_6" })
             {
                 int runs = 1500, maxLines = 0, minLines = int.MaxValue, maxSuspicion = 0;
                 var answers = new Dictionary<int, int>();
                 for (int run = 0; run < runs; run++)
                 {
                     var story = new Ink.Runtime.Story(json);
-                    if (entry != "chapter_1") story.ChoosePathString(entry);
+                    if (entry != "chapter_1") { RandomisePriorChapters(story, entry, random); story.ChoosePathString(entry); }
                     int lines = 0, guard = 0;
                     while (guard++ < 4000)
                     {
@@ -69,10 +70,12 @@ namespace ThuyKieu.Dialogue.Editor
                             lines++;
                             lastTags = story.currentTags.ToArray();
                             foreach (string tag in lastTags) CheckTag(tag, problems, gameplay, cameras, scenes, clues);
-                            foreach (string tag in lastTags)
-                                if (tag.Trim() == "gameplay:deduction_c2") story.variablesState["suy_luan"] = random.Next(1, 4);
+                            foreach (string tag in lastTags) SimulateSequence(tag.Trim(), story, random);
                             int suspicion = (int)story.variablesState["nghi_ngo"];
                             if (suspicion < 0 || suspicion > 100) problems.Add("nghi_ngo out of range: " + suspicion + " at " + story.state.currentPathString);
+                            if ((int)story.variablesState["tien"] < 0) problems.Add("tien negative at " + story.state.currentPathString);
+                            int dossier = (int)story.variablesState["c6_ho_so"];
+                            if (dossier < 0 || dossier > 4) problems.Add("c6_ho_so out of range: " + dossier);
                             maxSuspicion = Math.Max(maxSuspicion, suspicion);
                         }
                         var choices = story.currentChoices;
@@ -92,16 +95,18 @@ namespace ThuyKieu.Dialogue.Editor
                         story.ChooseChoiceIndex(random.Next(choices.Count));
                     }
                     if (story.canContinue || story.currentChoices.Count > 0) problems.Add(entry + " run " + run + " exceeded guard");
-                    if (entry == "chapter_3")
+                    if (entry == "chapter_3" || entry == "chapter_6")
                     {
-                        int answer = (int)story.variablesState["tra_loi_kieu_that"];
+                        // Chapter 3: how the player answered the real Kiều; Chapter 6: how complete the dossier is.
+                        int answer = (int)story.variablesState[entry == "chapter_3" ? "tra_loi_kieu_that" : "c6_ho_so"];
                         answers[answer] = answers.TryGetValue(answer, out int count) ? count + 1 : 1;
                     }
+                    if (entry == "chapter_4" && !(bool)story.variablesState["c4_khe_uoc_mg"]) problems.Add("chapter_4 ended without the Mã–Tú Bà contract");
                     maxLines = Math.Max(maxLines, lines);
                     minLines = Math.Min(minLines, lines);
                 }
                 log.AppendLine($"{entry}: {runs} runs, lines {minLines}-{maxLines}, max nghi_ngo {maxSuspicion}" +
-                               (answers.Count > 0 ? ", tra_loi_kieu_that " + string.Join(" ", answers.OrderBy(a => a.Key).Select(a => a.Key + ":" + a.Value)) : ""));
+                               (answers.Count > 0 ? (entry == "chapter_3" ? ", tra_loi_kieu_that " : ", c6_ho_so ") + string.Join(" ", answers.OrderBy(a => a.Key).Select(a => a.Key + ":" + a.Value)) : ""));
             }
             log.AppendLine("gameplay: " + string.Join(", ", gameplay));
             log.AppendLine("explore: " + string.Join(", ", explore));
@@ -115,6 +120,51 @@ namespace ThuyKieu.Dialogue.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(ReportPath));
             File.WriteAllText(ReportPath, report, new UTF8Encoding(false));
             return distinct.Count == 0;
+        }
+
+        /// <summary>Stands in for the Unity sequences that write story variables.</summary>
+        private static void SimulateSequence(string tag, Ink.Runtime.Story story, System.Random random)
+        {
+            var v = story.variablesState;
+            switch (tag)
+            {
+                case "gameplay:deduction_c2": v["suy_luan"] = random.Next(1, 4); break;
+                case "gameplay:sneak_out": v["c5_lang_le"] = random.Next(0, 4); break;
+                case "gameplay:chase_alley": v["c5_duong"] = random.Next(1, 3); v["c5_xo_do"] = random.Next(0, 5); break;
+                case "gameplay:chase_forest":
+                    int qte = random.Next(0, 4);
+                    v["c5_qte"] = qte;
+                    v["c5_co_lam_thoat"] = (bool)v["c4_ru_co_lam"] && qte >= 2;
+                    break;
+                case "gameplay:doi_chieu": v["c6_doi_chieu"] = random.Next(0, 4); break;
+            }
+        }
+
+        /// <summary>Chapters played from their own entry start with random outcomes of the chapters before them.</summary>
+        private static void RandomisePriorChapters(Ink.Runtime.Story story, string entry, System.Random random)
+        {
+            var v = story.variablesState;
+            int chapter = entry[entry.Length - 1] - '0';
+            if (chapter > 2) { v["giu_mau_giay"] = random.Next(2) == 0; v["mm_nghe_len"] = random.Next(2) == 0; v["doc_ky_khe"] = random.Next(2) == 0; }
+            if (chapter > 3) { v["c3_khe_uoc"] = random.Next(2) == 0; v["c3_so_no"] = random.Next(2) == 0; }
+            if (chapter > 4)
+            {
+                v["c4_ru_co_lam"] = random.Next(2) == 0;
+                v["c4_tien"] = random.Next(0, 3);
+                v["tien"] = (int)v["c4_tien"] == 2 ? 450 : (int)v["c4_tien"] == 1 ? 5 : 0;
+                v["c4_van_tu"] = random.Next(0, 3);
+                v["c4_canh_giac"] = random.Next(0, 3);
+                v["ev_khe_uoc"] = true;
+                v["c4_khe_uoc_mg"] = true;
+                v["ev_tien"] = (int)v["c4_tien"] == 2;
+                v["ev_giay_no"] = v["c4_so_no"] = random.Next(2) == 0;
+            }
+            if (chapter > 5)
+            {
+                int qte = random.Next(0, 4);
+                v["c5_qte"] = qte;
+                v["c5_co_lam_thoat"] = (bool)v["c4_ru_co_lam"] && qte >= 2;
+            }
         }
 
         private static void CheckTag(string raw, List<string> problems, ISet<string> gameplay, ISet<string> cameras, ISet<string> scenes, ISet<string> clues)
