@@ -1,12 +1,9 @@
-using System.IO;
 using ThuyKieu.Core.Story;
 using ThuyKieu.Gameplay.Chapters;
 using ThuyKieu.Gameplay.Sequences;
 using ThuyKieu.Gameplay.Stealth;
 using ThuyKieu.UI;
-using TMPro;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 using static ThuyKieu.Core.Editor.StorySceneKit;
 using static ThuyKieu.Core.Editor.StoryArtKit;
@@ -20,22 +17,36 @@ namespace ThuyKieu.Core.Editor
     public static class Chapter03Setup
     {
         public const string ScenePath = "Assets/_Game/Scenes/Chapter03_TuBaHouse.unity";
-        public const string PlaceholderPath = "Assets/_Game/Scenes/Chapter04_Placeholder.unity";
 
         private static Material _floor, _plaster, _red, _wood, _tiles, _ridge, _planks, _stone;
 
-        [MenuItem("ThuyKieu/Chapter 3/Create playable scene")]
-        public static void Create()
+        /// <summary>
+        /// Chapter 4 rebuilds this house at night: the back door is cut into the west wall, daytime-only
+        /// interactions are skipped and the office ones are renamed for the night's tasks.
+        /// </summary>
+        public static bool Night { get; set; }
+
+        private static readonly System.Collections.Generic.Dictionary<string, (string Id, string Label)> NightExplore =
+            new System.Collections.Generic.Dictionary<string, (string, string)>
+            {
+                { "c3_drawer", ("c4_ledger", "Xé trang sổ nợ trong ngăn bàn") },
+                { "c3_cabinet", ("c4_cabinet", "Mở tủ khóa đồng") }
+            };
+
+        /// <summary>Explore anchor for the house: Chapter 3 ids by day, their Chapter 4 counterparts (or nothing) at night.</summary>
+        private static void HouseExplore(GameObject go, StoryDirector director, string id, string label, Vector3 size)
         {
-            var scene = NewScene(ScenePath);
-            var shared = StoryAnimationSetup.Controller();
-            var s = CreateSystems(3, "Tú Bà", "chapter_3", "Chapter04_Placeholder", new Vector3(0, 0.05f, -9.6f), 0f, "house");
-            s.CameraComponent.backgroundColor = new Color(0.78f, 0.66f, 0.58f);
-            // Late-afternoon warmth that turns to dusk later: honeyed highlights, rose-violet shadows.
-            Grade(s.Fx, 0.2f, 12f, 6f, 9f, new Color(0.5f, 0.4f, 0.55f), new Color(0.7f, 0.55f, 0.42f));
-            UseSky(s.CameraComponent, Sky("Ch3Sky", "kloppenheim_06_puresky", 1.05f, new Color(0.52f, 0.5f, 0.48f), 210f));
-            var world = new GameObject("World").transform;
-            var nav = NavMesh(world);
+            if (Night)
+            {
+                if (!NightExplore.TryGetValue(id, out var night)) return;
+                (id, label) = night;
+            }
+            Explore(go, director, id, label, size);
+        }
+
+        /// <summary>Shared surfaces of the house (assets are reused by name).</summary>
+        public static void InitMaterials()
+        {
             _floor = Surface("Ch3Courtyard", "brick_floor", new Color(0.92f, 0.78f, 0.7f), 2.2f, 0.18f, 1.1f, 0.4f);
             _plaster = Surface("Ch3Plaster", "plastered_wall_02", new Color(0.98f, 0.88f, 0.72f), 2.6f, 0.08f, 1.2f, 0.5f, 1f);
             _red = Surface("Ch3Lacquer", "lacquered_cherry_wood", new Color(1f, 0.38f, 0.32f), 1.2f, 0.5f, 0.8f, 0.2f);
@@ -44,6 +55,30 @@ namespace ThuyKieu.Core.Editor
             _tiles = Surface("Ch3Tiles", "clay_roof_tiles_02", new Color(0.62f, 0.42f, 0.38f), 1.4f, 0.25f, 1.2f, 0.35f);
             _ridge = Material("Ch3Ridge", new Color(0.18f, 0.08f, 0.07f));
             _stone = Surface("Ch3StoneBase", "japanese_stone_wall", new Color(0.82f, 0.8f, 0.76f), 1.6f, 0.15f, 1f, 0.4f, 0.5f);
+        }
+
+        public static Material Plaster => _plaster;
+        public static Material Wood => _wood;
+        public static Material Planks => _planks;
+        public static Material Stone => _stone;
+        public static Material Lacquer => _red;
+        public static Material Tiles => _tiles;
+        public static Material Ridge => _ridge;
+
+        [MenuItem("ThuyKieu/Chapter 3/Create playable scene")]
+        public static void Create()
+        {
+            Night = false;
+            var scene = NewScene(ScenePath);
+            var shared = StoryAnimationSetup.Controller();
+            var s = CreateSystems(3, "Tú Bà", "chapter_3", Chapter04Setup.SceneName, new Vector3(0, 0.05f, -9.6f), 0f, "house");
+            s.CameraComponent.backgroundColor = new Color(0.78f, 0.66f, 0.58f);
+            // Late-afternoon warmth that turns to dusk later: honeyed highlights, rose-violet shadows.
+            Grade(s.Fx, 0.2f, 12f, 6f, 9f, new Color(0.5f, 0.4f, 0.55f), new Color(0.7f, 0.55f, 0.42f));
+            UseSky(s.CameraComponent, Sky("Ch3Sky", "kloppenheim_06_puresky", 1.05f, new Color(0.52f, 0.5f, 0.48f), 210f));
+            var world = new GameObject("World").transform;
+            var nav = NavMesh(world);
+            InitMaterials();
 
             Shell(world);
             var director = s.Director;
@@ -185,10 +220,9 @@ namespace ThuyKieu.Core.Editor
             Fx(sequences, "kieu_voice", "spirit", "memory", "none", 2f, 0f, 1);
 
             Save(scene, ScenePath);
-            CreatePlaceholder();
         }
 
-        private static void Fx(Transform parent, string id, string mood, string sfx, string music, float hold, float shake, int repeat)
+        internal static void Fx(Transform parent, string id, string mood, string sfx, string music, float hold, float shake, int repeat)
         {
             var fx = Child<FxSequence>(parent, id);
             Set(fx, "_id", id);
@@ -201,7 +235,7 @@ namespace ThuyKieu.Core.Editor
         }
 
         /// <summary>Short-range sight for a character in Tú Bà's room, blocked by walls and the window sill.</summary>
-        private static VisionSensor RoomSight(ThuyKieu.Core.Story.StoryActor actor, float eyeHeight, Object player)
+        internal static VisionSensor RoomSight(ThuyKieu.Core.Story.StoryActor actor, float eyeHeight, Object player)
         {
             var sensor = actor.gameObject.AddComponent<VisionSensor>();
             var eyes = new GameObject("Eyes").transform;
@@ -219,12 +253,12 @@ namespace ThuyKieu.Core.Editor
         }
 
         /// <summary>Flat translucent cone on the ground showing where the guard looks.</summary>
-        private static Renderer VisionCone(Transform guard, Transform eyes, float range, float angle)
+        internal static Renderer VisionCone(Transform guard, Transform eyes, float range, float angle, string assetName = "Ch3VisionCone")
         {
             var cone = new GameObject("VisionCone");
             cone.transform.SetParent(eyes, false);
             cone.transform.localPosition = new Vector3(0, -1.58f, 0);
-            var mesh = new Mesh { name = "GuardVisionCone" };
+            var mesh = new Mesh { name = assetName };
             int segments = 20;
             var vertices = new Vector3[segments + 2];
             var triangles = new int[segments * 3];
@@ -238,7 +272,7 @@ namespace ThuyKieu.Core.Editor
             mesh.vertices = vertices;
             mesh.triangles = triangles;
             mesh.RecalculateNormals();
-            AssetDatabase.CreateAsset(mesh, MaterialFolder + "/Ch3VisionCone.asset");
+            AssetDatabase.CreateAsset(mesh, MaterialFolder + "/" + assetName + ".asset");
             cone.AddComponent<MeshFilter>().sharedMesh = mesh;
             var material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
             material.SetFloat("_Surface", 1);
@@ -250,7 +284,7 @@ namespace ThuyKieu.Core.Editor
             material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
             material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
             material.SetColor("_BaseColor", new Color(1f, 0.2f, 0.12f, 0.12f));
-            AssetDatabase.CreateAsset(material, MaterialFolder + "/Ch3VisionCone.mat");
+            AssetDatabase.CreateAsset(material, MaterialFolder + "/" + assetName + ".mat");
             var renderer = cone.AddComponent<MeshRenderer>();
             renderer.sharedMaterial = material;
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -260,12 +294,19 @@ namespace ThuyKieu.Core.Editor
 
         // ------------------------------------------------------------------ architecture
 
-        private static void Shell(Transform world)
+        internal static void Shell(Transform world)
         {
             Block("CourtyardFloor", new Vector3(0, -0.1f, 0), new Vector3(28f, 0.2f, 26f), _floor, world);
             Block("WallNorth", new Vector3(0, 2f, 12.6f), new Vector3(28f, 4f, 0.4f), _plaster, world);
             Block("WallEast", new Vector3(13.6f, 2f, 0), new Vector3(0.4f, 4f, 25.6f), _plaster, world);
-            Block("WallWest", new Vector3(-13.6f, 2f, 0), new Vector3(0.4f, 4f, 25.6f), _plaster, world);
+            if (!Night) Block("WallWest", new Vector3(-13.6f, 2f, 0), new Vector3(0.4f, 4f, 25.6f), _plaster, world);
+            else
+            {
+                // The kitchen's back door (z -10.25 to -8.95) opens onto the back yard of Chapter 5.
+                Block("WallWest", new Vector3(-13.6f, 2f, 1.88f), new Vector3(0.4f, 4f, 21.65f), _plaster, world);
+                Block("WallWestSouth", new Vector3(-13.6f, 2f, -11.53f), new Vector3(0.4f, 4f, 2.55f), _plaster, world);
+                Block("BackDoorLintel", new Vector3(-13.6f, 3.2f, -9.6f), new Vector3(0.42f, 1.6f, 1.3f), _plaster, world);
+            }
             Block("WallSouthL", new Vector3(-8f, 2f, -12.6f), new Vector3(12f, 4f, 0.4f), _plaster, world);
             Block("WallSouthR", new Vector3(8f, 2f, -12.6f), new Vector3(12f, 4f, 0.4f), _plaster, world);
             foreach (var (x, z, w, d) in new[] { (0f, 12.4f, 28f, 1f), (0f, -12.4f, 28f, 1f) })
@@ -287,7 +328,7 @@ namespace ThuyKieu.Core.Editor
                 Block("PathKerb", new Vector3(side * 1.25f, 0.03f, -2f), new Vector3(0.12f, 0.06f, 21f), _stone, world, false);
         }
 
-        private static void KieuRoom(Transform world, StoryDirector director, out Transform spawn)
+        internal static void KieuRoom(Transform world, StoryDirector director, out Transform spawn)
         {
             var root = new GameObject("KieuRoom").transform;
             root.SetParent(world, false);
@@ -318,7 +359,7 @@ namespace ThuyKieu.Core.Editor
             var window = new GameObject("WindowSpot");
             window.transform.SetParent(root, false);
             window.transform.position = new Vector3(-10.5f, 0, 11.4f);
-            Explore(window, director, "c3_window", "Xem cửa sổ", new Vector3(1.8f, 1.6f, 1.4f));
+            HouseExplore(window, director, "c3_window", "Xem cửa sổ", new Vector3(1.8f, 1.6f, 1.4f));
             Point("Focus_Window", new Vector3(-10.5f, 1.7f, 12.3f), 0, root);
             spawn = Point("PlayerRoomSpawn", new Vector3(-9.6f, 0.05f, 6.7f), 90, root);
             // Courtyard-facing windows and door couplets ride with their walls when the camera looks through.
@@ -334,7 +375,7 @@ namespace ThuyKieu.Core.Editor
             Hide(Roof("RoomEave", new Vector3(-10.6f, 4.4f, 7.8f), 6.6f, 10f, 24f, _tiles, _ridge, root, false), new Vector3(-10.5f, 1.5f, 7.8f), new Vector3(6f, 4f, 9.4f));
         }
 
-        private static void Hall(Transform world)
+        internal static void Hall(Transform world)
         {
             var root = new GameObject("MainHall").transform;
             root.SetParent(world, false);
@@ -368,7 +409,7 @@ namespace ThuyKieu.Core.Editor
                 Block("PlaqueGlyph", new Vector3(-0.84f + i * 0.56f, 3.3f, 9.01f), new Vector3(0.3f, 0.3f, 0.01f), Emissive("CoupletGold", new Color(0.85f, 0.62f, 0.22f), 0.25f), root, false);
         }
 
-        private static void TuBaRoom(Transform world, StoryDirector director, out BoxCollider listenZone, out Transform listenStart, out Transform tuBaSpot, out Transform maSpot, out GameObject door)
+        internal static void TuBaRoom(Transform world, StoryDirector director, out BoxCollider listenZone, out Transform listenStart, out Transform tuBaSpot, out Transform maSpot, out GameObject door)
         {
             var root = new GameObject("TuBaRoom").transform;
             root.SetParent(world, false);
@@ -422,6 +463,9 @@ namespace ThuyKieu.Core.Editor
                 }
             }
 
+            listenZone = null;
+            listenStart = null;
+            if (Night) return;
             var zone = new GameObject("ListenZone");
             zone.transform.SetParent(root, false);
             zone.transform.position = new Vector3(6.6f, 0.8f, 6.5f);
@@ -433,12 +477,12 @@ namespace ThuyKieu.Core.Editor
             var spot = new GameObject("WindowListenSpot");
             spot.transform.SetParent(root, false);
             spot.transform.position = new Vector3(4.4f, 0, 3.6f);
-            Explore(spot, director, "c3_eavesdrop", "Nghe tiếng nói từ phòng Tú Bà", new Vector3(1.8f, 1.6f, 1.8f));
+            HouseExplore(spot, director, "c3_eavesdrop", "Nghe tiếng nói từ phòng Tú Bà", new Vector3(1.8f, 1.6f, 1.8f));
             listenStart = Point("ListenStart", new Vector3(4.3f, 0.05f, 3.4f), 30, root);
             Zone(root, "Dưới cửa sổ phòng Tú Bà", new Vector3(6.3f, 1f, 6.6f), new Vector3(2.6f, 2f, 4.8f));
         }
 
-        private static void Office(Transform world, StoryDirector director)
+        internal static void Office(Transform world, StoryDirector director)
         {
             var root = new GameObject("LedgerOffice").transform;
             root.SetParent(world, false);
@@ -455,7 +499,7 @@ namespace ThuyKieu.Core.Editor
             var drawer = new GameObject("DrawerSpot");
             drawer.transform.SetParent(root, false);
             drawer.transform.position = new Vector3(10.6f, 0, -7.2f);
-            Explore(drawer, director, "c3_drawer", "Lục ngăn kéo bàn", new Vector3(1.2f, 1.4f, 1.6f));
+            HouseExplore(drawer, director, "c3_drawer", "Lục ngăn kéo bàn", new Vector3(1.2f, 1.4f, 1.6f));
             Point("Focus_Drawer", new Vector3(11.6f, 0.9f, -7.2f), 0, root);
 
             Block("SideTable", new Vector3(8.5f, 0.4f, -10.9f), new Vector3(1.2f, 0.8f, 0.7f), _wood, root);
@@ -463,14 +507,14 @@ namespace ThuyKieu.Core.Editor
             var box = new GameObject("BoxSpot");
             box.transform.SetParent(root, false);
             box.transform.position = new Vector3(8.5f, 0, -10f);
-            Explore(box, director, "c3_box", "Mở hộp gỗ sơn son", new Vector3(1.3f, 1.4f, 1.2f));
+            HouseExplore(box, director, "c3_box", "Mở hộp gỗ sơn son", new Vector3(1.3f, 1.4f, 1.2f));
             Point("Focus_Box", new Vector3(8.5f, 1f, -10.9f), 0, root);
 
             Prop("Assets/_Game/Prefabs/Props/Cabinet.prefab", new Vector3(12.9f, 0, -3.2f), 270, 1f, root);
             var cabinet = new GameObject("CabinetSpot");
             cabinet.transform.SetParent(root, false);
             cabinet.transform.position = new Vector3(12f, 0, -3.2f);
-            Explore(cabinet, director, "c3_cabinet", "Thử mở tủ khóa đồng", new Vector3(1.2f, 1.4f, 1.4f));
+            HouseExplore(cabinet, director, "c3_cabinet", "Thử mở tủ khóa đồng", new Vector3(1.2f, 1.4f, 1.4f));
             Point("Focus_Cabinet", new Vector3(12.9f, 1.2f, -3.2f), 0, root);
             FadeWith(root.Find("WallN").gameObject, Lattice("CourtWindow", new Vector3(10.5f, 1.7f, -1.83f), 1.6f, 1.2f, 0f, LatticeFrame(), WindowPaper(), root));
             FadeWith(root.Find("WallW_South").gameObject, Lattice("CourtWindow", new Vector3(7.33f, 1.8f, -9.6f), 1.4f, 1.1f, -90f, LatticeFrame(), WindowPaper(), root));
@@ -478,7 +522,7 @@ namespace ThuyKieu.Core.Editor
             Zone(root, "Phòng sổ sách", new Vector3(10.5f, 1f, -7.25f), new Vector3(5.8f, 2f, 10.2f));
         }
 
-        private static Transform GateAndCourtyard(Transform world, StoryDirector director)
+        internal static Transform GateAndCourtyard(Transform world, StoryDirector director)
         {
             var root = new GameObject("GateAndCourtyard").transform;
             root.SetParent(world, false);
@@ -503,7 +547,7 @@ namespace ThuyKieu.Core.Editor
             var gateSpot = new GameObject("GateSpot");
             gateSpot.transform.SetParent(root, false);
             gateSpot.transform.position = new Vector3(0, 0, -11.6f);
-            Explore(gateSpot, director, "c3_gate", "Kiểm tra cổng chính", new Vector3(3f, 1.6f, 1.2f));
+            HouseExplore(gateSpot, director, "c3_gate", "Kiểm tra cổng chính", new Vector3(3f, 1.6f, 1.2f));
             Point("Focus_Gate", new Vector3(0, 1.6f, -12.4f), 0, root);
 
             Prop("Assets/_Game/Prefabs/Props/Well.prefab", new Vector3(-3f, 0, -3f), 0, 1f, root);
@@ -511,7 +555,7 @@ namespace ThuyKieu.Core.Editor
             foreach (var p in new[] { new Vector3(-4.5f, 0, 6f), new Vector3(4.5f, 0, -9f), new Vector3(-4.6f, 0, -9.5f), new Vector3(3.5f, 0, 1.5f) })
                 PottedPlant(p, 1.1f, root, seed++, seed % 2 == 0);
             Dressing(root);
-            Block("MaKieuBench", new Vector3(-11.3f, 0.4f, -10.4f), new Vector3(1.6f, 0.12f, 0.45f), _wood, root);
+            if (!Night) Block("MaKieuBench", new Vector3(-11.3f, 0.4f, -10.4f), new Vector3(1.6f, 0.12f, 0.45f), _wood, root);
             return door.transform;
         }
 
@@ -548,11 +592,11 @@ namespace ThuyKieu.Core.Editor
 
             // Trees soften the corners.
             Prop("Assets/_Game/Prefabs/Vegetation/BananaTree.prefab", new Vector3(12.3f, 0, 0.4f), 40, 0.9f, root);
-            Prop("Assets/_Game/Prefabs/Vegetation/ArecaPalm.prefab", new Vector3(-12.6f, 0, -12f), 0, 0.85f, root);
+            if (!Night) Prop("Assets/_Game/Prefabs/Vegetation/ArecaPalm.prefab", new Vector3(-12.6f, 0, -12f), 0, 0.85f, root); // the kitchen stands there at night
             Prop("Assets/_Game/Prefabs/Vegetation/BananaTree.prefab", new Vector3(-12.4f, 0, 1.9f), 200, 0.75f, root);
 
             Leaves("CourtyardLeaves", new Vector3(0, 5f, -2f), new Vector3(22f, 1f, 18f), root, new Color(0.55f, 0.5f, 0.2f), 18);
-            Dust("CourtyardMotes", new Vector3(0, 1.8f, -1f), new Vector3(20f, 3f, 18f), root, new Color(1f, 0.85f, 0.62f, 0.3f), 160);
+            if (!Night) Dust("CourtyardMotes", new Vector3(0, 1.8f, -1f), new Vector3(20f, 3f, 18f), root, new Color(1f, 0.85f, 0.62f, 0.3f), 160);
             Dust("HallMotes", new Vector3(0, 1.8f, 10.8f), new Vector3(13f, 2.5f, 3f), root, new Color(1f, 0.75f, 0.5f, 0.35f), 60);
         }
 
@@ -567,7 +611,7 @@ namespace ThuyKieu.Core.Editor
             Set(hider, "_size", size);
         }
 
-        private static void Zone(Transform parent, string label, Vector3 centre, Vector3 size)
+        internal static void Zone(Transform parent, string label, Vector3 centre, Vector3 size)
         {
             var go = new GameObject("RestrictedZone_" + label);
             go.transform.SetParent(parent, false);
@@ -578,27 +622,6 @@ namespace ThuyKieu.Core.Editor
             box.size = size;
             var zone = go.AddComponent<RestrictedZone>();
             Set(zone, "_label", label);
-        }
-
-        private static void CreatePlaceholder()
-        {
-            if (File.Exists(PlaceholderPath)) return;
-            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            var camera = new GameObject("Main Camera", typeof(Camera)) { tag = "MainCamera" };
-            camera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
-            camera.GetComponent<Camera>().backgroundColor = new Color(0.03f, 0.02f, 0.04f);
-            var canvas = new GameObject("Canvas", typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler));
-            canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
-            var text = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
-            text.transform.SetParent(canvas.transform, false);
-            var rect = (RectTransform)text.transform;
-            rect.anchorMin = new Vector2(0.1f, 0.2f); rect.anchorMax = new Vector2(0.9f, 0.8f); rect.offsetMin = rect.offsetMax = Vector2.zero;
-            var tmp = text.GetComponent<TextMeshProUGUI>();
-            tmp.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.fontSize = 40;
-            tmp.text = "<color=#E8C27A>CHƯƠNG 4</color>\nKHÔNG CÒN ĐƯỜNG LUI\n\n<size=26>Chương 2 và 3 đã hoàn thành. Lựa chọn của bạn đã được lưu.\nChương 4 đang được phát triển.</size>";
-            Save(scene, PlaceholderPath);
         }
     }
 }

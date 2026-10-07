@@ -23,6 +23,8 @@ namespace ThuyKieu.Dialogue.Editor
         private static readonly Regex GlanceLines = new Regex("_glanceLines\",\\s*new\\[\\]\\s*\\{([^}]*)\\}");
         private static readonly Regex Quoted = new Regex("\"((?:[^\"\\\\]|\\\\.)*)\"");
         private static readonly string[] Glancers = { "TuBa", "MaGiamSinh", "TuyTung" };
+        // Shout lists picked at random at runtime (ChaseSequence.Shouts → the pursuing servants).
+        private static readonly Regex ShoutList = new Regex(@"Shouts\s*=\s*\{([^}]*)\}");
 
         [MenuItem("ThuyKieu/Dialogue/Export voice manifest")]
         public static void RunMenu() { Debug.Log(Export()); }
@@ -39,7 +41,7 @@ namespace ThuyKieu.Dialogue.Editor
             string json = File.ReadAllText(InkStoryCompiler.Output, Encoding.UTF8);
             var lines = new Dictionary<string, (string Speaker, string Text, string Source)>();
             var random = new System.Random(7213);
-            foreach (string entry in new[] { "chapter_1", "chapter_2", "chapter_3" })
+            foreach (string entry in new[] { "chapter_1", "chapter_2", "chapter_3", "chapter_4", "chapter_5", "chapter_6" })
                 for (int run = 0; run < RunsPerChapter; run++)
                     Walk(json, entry, random, lines);
 
@@ -48,6 +50,9 @@ namespace ThuyKieu.Dialogue.Editor
                 string code = File.ReadAllText(file, Encoding.UTF8);
                 foreach (Match match in BarkCall.Matches(code))
                     Add(lines, match.Groups[1].Value, Unescape(match.Groups[2].Value), "bark");
+                foreach (Match match in ShoutList.Matches(code))
+                    foreach (Match quoted in Quoted.Matches(match.Groups[1].Value))
+                        Add(lines, "GiaNhan", Unescape(quoted.Groups[1].Value), "bark");
                 foreach (Match match in GlanceLines.Matches(code))
                     foreach (Match quoted in Quoted.Matches(match.Groups[1].Value))
                         foreach (string speaker in Glancers)
@@ -76,7 +81,7 @@ namespace ThuyKieu.Dialogue.Editor
         private static void Walk(string json, string entry, System.Random random, Dictionary<string, (string, string, string)> lines)
         {
             var story = new Ink.Runtime.Story(json);
-            if (entry != "chapter_1") story.ChoosePathString(entry);
+            if (entry != "chapter_1") { InkStoryValidator.RandomisePriorChapters(story, entry, random); story.ChoosePathString(entry); }
             string speaker = "Narrator";
             for (int guard = 0; guard < 4000; guard++)
             {
@@ -88,7 +93,7 @@ namespace ThuyKieu.Dialogue.Editor
                     {
                         string tag = raw.Trim();
                         if (tag.StartsWith("chapter:")) speaker = "Narrator";
-                        if (tag == "gameplay:deduction_c2") story.variablesState["suy_luan"] = random.Next(1, 4);
+                        InkStoryValidator.SimulateSequence(tag, story, random);
                     }
                     // DialogueManager skips blank lines without reading their tags.
                     if (string.IsNullOrWhiteSpace(text)) continue;

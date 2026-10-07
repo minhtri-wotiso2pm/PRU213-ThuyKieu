@@ -39,6 +39,11 @@ VOICES = {
     "TuyTung":    (MALE, "+4%", "-8Hz"),
     "NguoiCanh":  (MALE, "+2%", "-14Hz"),
     "Narrator":   (MALE, "-10%", "-6Hz"),
+    "KimTrong":   (MALE, "-2%", "+5Hz"),      # young scholar: warm, a little lighter
+    "ThuLai":     (MALE, "+2%", "-3Hz"),
+    "ChuHieuBac": (MALE, "-8%", "-11Hz"),
+    "GiaNhan":    (MALE, "+8%", "+0Hz"),
+    "BaHangNuoc": (FEMALE, "-10%", "-12Hz"),
 }
 
 

@@ -16,19 +16,19 @@ namespace ThuyKieu.UI
     /// </summary>
     public class StoryHUD : MonoBehaviour
     {
-        private RectTransform _barTop, _barBottom, _meterFill, _observeFill;
-        private GameObject _header, _prompt, _meter, _observe, _toast, _tutorial, _fail, _complete, _chapterCard, _barkRoot;
+        private RectTransform _barTop, _barBottom, _meterFill, _observeFill, _gaugeFill, _qteFill;
+        private GameObject _header, _prompt, _meter, _observe, _toast, _tutorial, _fail, _complete, _chapterCard, _barkRoot, _gauge, _qte;
         private GameObject[] _overlays;
         private TMP_Text _chapterLabel, _objective, _exploreList, _controls, _promptText, _meterLabel, _observeLabel,
             _toastTitle, _toastBody, _bark, _tutorialBody, _failHeadline, _failDetail, _completeTitle, _completeLines,
-            _cardNumber, _cardTitle;
-        private Image _meterFillImage;
-        private CanvasGroup _fade, _chapterGroup;
+            _cardNumber, _cardTitle, _gaugeLabel, _qteKey, _qteCaption;
+        private Image _meterFillImage, _gaugeFillImage;
+        private CanvasGroup _fade, _chapterGroup, _toastGroup;
         private Button _continue;
         private PlayerInteraction _interaction;
         private readonly Queue<(string, string)> _toasts = new Queue<(string, string)>();
         private float _barTarget, _barHeight, _barkTimer, _toastTimer;
-        private bool _dialogueMode, _meterRequested;
+        private bool _dialogueMode, _meterRequested, _gaugeRequested;
         private Action _onContinue;
         private float _completeShownAt;
 
@@ -55,6 +55,8 @@ namespace ThuyKieu.UI
             _observeLabel = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Observe/Label");
             _observeFill = StoryUIBuilder.Find<RectTransform>(t, "HUD/Observe/Track/Fill");
             _toast = t.Find("HUD/Toast").gameObject;
+            _toastGroup = _toast.GetComponent<CanvasGroup>();
+            if (_toastGroup == null) _toastGroup = _toast.AddComponent<CanvasGroup>();
             _toastTitle = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Toast/Title");
             _toastBody = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Toast/Body");
             _bark = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Bark/Text");
@@ -73,13 +75,24 @@ namespace ThuyKieu.UI
             _continue = StoryUIBuilder.Find<Button>(t, "Cards/Complete/Panel/Continue");
             _fade = StoryUIBuilder.Find<CanvasGroup>(t, "Fade");
             _barkRoot = t.Find("HUD/Bark").gameObject;
-            _overlays = new[] { t.Find("Pause").gameObject, t.Find("Journal").gameObject, t.Find("Document").gameObject, t.Find("Deduction").gameObject, _tutorial, _fail, _complete, _chapterCard };
+            _gauge = t.Find("HUD/Gauge").gameObject;
+            _gaugeLabel = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Gauge/Label");
+            _gaugeFill = StoryUIBuilder.Find<RectTransform>(t, "HUD/Gauge/Track/Fill");
+            _gaugeFillImage = _gaugeFill.GetComponent<Image>();
+            _qte = t.Find("HUD/Qte").gameObject;
+            _qteKey = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Qte/Key");
+            _qteCaption = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Qte/Caption");
+            _qteFill = StoryUIBuilder.Find<RectTransform>(t, "HUD/Qte/Track/Fill");
+            _overlays = new[] { t.Find("Pause").gameObject, t.Find("Journal").gameObject, t.Find("Document").gameObject, t.Find("Deduction").gameObject,
+                t.Find("Dossier").gameObject, _tutorial, _fail, _complete, _chapterCard };
             _continue.onClick.AddListener(() => { var callback = _onContinue; _onContinue = null; callback?.Invoke(); });
 
             _prompt.SetActive(false);
             _meter.SetActive(false);
             _observe.SetActive(false);
             _toast.SetActive(false);
+            _gauge.SetActive(false);
+            _qte.SetActive(false);
             _bark.text = string.Empty;
             _fade.alpha = 1f;
             _fade.blocksRaycasts = false;
@@ -130,6 +143,27 @@ namespace ThuyKieu.UI
             _meterFillImage.color = color;
         }
 
+        /// <summary>Small bottom gauge (stamina, visibility). Call every frame while visible.</summary>
+        public void SetGauge(string label, float value, Color color)
+        {
+            _gaugeRequested = true;
+            _gaugeLabel.text = label;
+            _gaugeFill.anchorMax = new Vector2(Mathf.Clamp01(value), 1f);
+            _gaugeFillImage.color = color;
+        }
+
+        /// <summary>Quick-time prompt; <paramref name="remaining"/> is the share of the window left (0–1).</summary>
+        public void ShowQte(string key, string caption, float remaining, Color tint)
+        {
+            if (!_qte.activeSelf) _qte.SetActive(true);
+            _qteKey.text = key;
+            _qteKey.color = tint;
+            _qteCaption.text = caption;
+            _qteFill.anchorMax = new Vector2(Mathf.Clamp01(remaining), 1f);
+        }
+
+        public void HideQte() { if (_qte.activeSelf) _qte.SetActive(false); }
+
         public void SetObserve(bool observing, string label, float progress)
         {
             if (_observe.activeSelf != observing) _observe.SetActive(observing);
@@ -172,10 +206,14 @@ namespace ThuyKieu.UI
             bool overlay = System.Array.Exists(_overlays, o => o.activeSelf);
             _header.SetActive(!_dialogueMode && !overlay);
             _barkRoot.SetActive(!_dialogueMode && !overlay);
+            _toastGroup.alpha = overlay ? 0f : 1f; // documents and boards cover the screen; toasts wait underneath
             _controls.gameObject.SetActive(!_dialogueMode);
 
             if (_meter.activeSelf != _meterRequested) _meter.SetActive(_meterRequested);
             _meterRequested = false;
+            bool gauge = _gaugeRequested && !_dialogueMode && !overlay;
+            if (_gauge.activeSelf != gauge) _gauge.SetActive(gauge);
+            _gaugeRequested = false;
 
             if (_toastTimer > 0f) { _toastTimer -= Time.unscaledDeltaTime; if (_toastTimer <= 0f) NextToast(); }
             if (_barkTimer > 0f) { _barkTimer -= Time.unscaledDeltaTime; if (_barkTimer <= 0f) _bark.text = string.Empty; }

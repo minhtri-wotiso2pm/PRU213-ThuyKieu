@@ -26,6 +26,11 @@ namespace ThuyKieu.Presentation
                 case "resolve": return Score(id, 28f, 164.81f, MajorPenta, 0.8f, 0.6f, 0.18f, 3, 16);
                 // Chapter 1 farewell: slow, low minor phrases over a soft drone.
                 case "sad_strings": return Score(id, 36f, 110f, MinorPenta, 1.45f, 0.5f, 0.2f, 1, 17);
+                // Chapters 4–6.
+                case "chase": return Chase(id, 24f, 110f, 20);
+                case "temple": return Score(id, 34f, 220f, MajorPenta, 1.3f, 0.42f, 0.14f, 1, 18);
+                case "study": return Score(id, 30f, 174.61f, MajorPenta, 0.95f, 0.45f, 0.1f, 2, 19);
+                case "street": return Score(id, 26f, 196f, MajorPenta, 0.42f, 0.5f, 0.06f, 2, 21);
                 default: return null;
             }
         }
@@ -43,6 +48,12 @@ namespace ThuyKieu.Presentation
                 // Night rain on tiles and the yard, with far thunder now and then.
                 case "rain": return Mix(id, 40f, Rain(40f, 0.3f, 41), Thunder(40f, 0.35f, 42));
                 case "wind": return Mix(id, 40f, Breeze(40f, 0.3f, 43));
+                // The house at night: crickets, the guests' music far off in the hall.
+                case "night_house": return Mix(id, 40f, RoomTone(40f, 0.05f, 44), Crickets(40f, 0.1f, 45), Distant(40f, 0.06f, 46), Murmur(40f, 0.035f, 4, 47));
+                case "forest_rain": return Mix(id, 40f, Rain(40f, 0.34f, 48), Breeze(40f, 0.22f, 49), Thunder(40f, 0.3f, 50));
+                case "market_night": return Mix(id, 40f, Murmur(40f, 0.07f, 10, 51), Crickets(40f, 0.05f, 52), Distant(40f, 0.035f, 53));
+                case "temple": return Mix(id, 40f, Birds(40f, 0.09f, 3.5f, 54), Breeze(40f, 0.08f, 55), Bell(40f, 0.12f, 56));
+                case "street": return Mix(id, 40f, Murmur(40f, 0.09f, 14, 57), Birds(40f, 0.05f, 7f, 58), Breeze(40f, 0.06f, 59));
                 default: return null;
             }
         }
@@ -65,6 +76,19 @@ namespace ThuyKieu.Presentation
                 case "ui": data = Notes(new[] { 1318.5f }, 0f, 0.12f, 0.25f); break;
                 case "step": data = Thud(0.18f, random); break;
                 case "door": data = Add(Thud(0.4f, random), Clicks(0.4f, 3, 0.3f, random)); break;
+                case "slap": data = Noise(0.16f, 0.9f, 0.95f, random); break;
+                case "lock_open": data = Add(Clicks(0.5f, 3, 0.55f, random), Thud(0.3f, random)); break;
+                case "fire": data = Add(Swell(1.2f, random), Clicks(1.6f, 14, 0.25f, random)); break;
+                case "dog": data = Bark(random); break;
+                case "gong": data = Gong(3.5f); break;
+                case "knock": data = Add(Add(Thud(0.3f, random), Delay(Thud(0.3f, random), 0.22f)), Delay(Thud(0.3f, random), 0.44f)); break;
+                case "clatter": data = Add(Clicks(1.1f, 16, 0.5f, random), Thud(0.5f, random)); break;
+                case "creak": data = Creak(1.2f); break;
+                case "snore": data = Swell(1.4f, random); break;
+                case "stumble": data = Add(Thud(0.45f, random), Noise(0.35f, 0.4f, 0.5f, random)); break;
+                case "whoosh": data = Swell(0.45f, random); break;
+                case "qte_ok": data = Notes(new[] { 880f, 1318.5f }, 0.05f, 0.5f, 0.35f); break;
+                case "qte_fail": data = Bend(180f, 120f, 0.5f, 0.6f); break;
                 default: return null;
             }
             return Clip(id, data);
@@ -358,7 +382,151 @@ namespace ThuyKieu.Presentation
             return data;
         }
 
+        /// <summary>Running music: a driving drum pulse under quick minor plucks.</summary>
+        private static AudioClip Chase(string name, float seconds, float root, int seed)
+        {
+            var random = new System.Random(seed);
+            int length = (int)(seconds * Rate);
+            var buffer = new float[length + Rate * 4];
+            const float beat = 0.4f; // 150 bpm
+            for (int b = 0; b * beat < seconds; b++)
+            {
+                int start = (int)(b * beat * Rate);
+                for (int i = 0; i < Rate * 0.25f && start + i < buffer.Length; i++)
+                {
+                    float t = i / (float)Rate;
+                    buffer[start + i] += (b % 4 == 0 ? 0.55f : 0.35f) * Mathf.Sin(2 * Mathf.PI * (70f - t * 80f) * t) * Mathf.Exp(-t * 16f);
+                }
+                if (b % 2 == 1)
+                {
+                    float filtered = 0f;
+                    for (int i = 0; i < Rate * 0.12f && start + i < buffer.Length; i++)
+                    {
+                        filtered += 0.6f * ((float)(random.NextDouble() * 2 - 1) - filtered);
+                        buffer[start + i] += 0.16f * filtered * Mathf.Exp(-i / (Rate * 0.03f));
+                    }
+                }
+            }
+            int note = 0;
+            for (float time = 0.1f; time < seconds; time += beat * 0.5f)
+            {
+                if (random.NextDouble() < 0.25) continue;
+                note = Mathf.Clamp(note + random.Next(-2, 3), 0, 9);
+                float frequency = root * 2f * Mathf.Pow(2f, (MinorPenta[note % 5] + 12 * (note / 5)) / 12f);
+                Pluck(buffer, (int)(time * Rate), frequency, 0.3f, 1.1f, random);
+            }
+            Reverb(buffer, 0.2f);
+            return Clip(name, Loop(buffer, length));
+        }
+
+        /// <summary>Plucked music far away behind walls: sparse, dull and quiet.</summary>
+        private static float[] Distant(float seconds, float gain, int seed)
+        {
+            var random = new System.Random(seed);
+            var data = new float[(int)(seconds * Rate) + Rate * 3];
+            for (float time = 0.3f; time < seconds; time += 0.5f + (float)random.NextDouble() * 0.6f)
+                Pluck(data, (int)(time * Rate), 196f * Mathf.Pow(2f, MajorPenta[random.Next(5)] / 12f) * (random.NextDouble() < 0.3 ? 2f : 1f), gain, 1.8f, random);
+            float low = 0f;
+            for (int i = 0; i < data.Length; i++) { low += 0.08f * (data[i] - low); data[i] = low * 3f; }
+            return data;
+        }
+
+        /// <summary>Crowd murmur: several "voices" of band-passed noise rising and falling at speech rate.</summary>
+        private static float[] Murmur(float seconds, float gain, int voices, int seed)
+        {
+            var random = new System.Random(seed);
+            int length = (int)(seconds * Rate);
+            var data = new float[length];
+            for (int v = 0; v < voices; v++)
+            {
+                float low = 0, lower = 0, rate = 3f + (float)random.NextDouble() * 3f, offset = (float)random.NextDouble() * 10f;
+                float width = 0.12f + (float)random.NextDouble() * 0.1f;
+                for (int i = 0; i < length; i++)
+                {
+                    float t = i / (float)Rate + offset;
+                    float white = (float)(random.NextDouble() * 2 - 1);
+                    low += width * (white - low);
+                    lower += 0.02f * (low - lower);
+                    float syllables = Mathf.Max(0f, Mathf.Sin(t * rate * Mathf.PI)) * (0.5f + 0.5f * Mathf.Sin(t * 0.37f + v));
+                    data[i] += (low - lower) * gain * syllables;
+                }
+            }
+            return data;
+        }
+
+        /// <summary>A temple bell struck now and then.</summary>
+        private static float[] Bell(float seconds, float gain, int seed)
+        {
+            var random = new System.Random(seed);
+            var data = new float[(int)(seconds * Rate)];
+            for (float time = 3f; time < seconds - 6f; time += 12f + (float)random.NextDouble() * 8f)
+            {
+                var strike = Gong(6f);
+                int start = (int)(time * Rate);
+                for (int i = 0; i < strike.Length && start + i < data.Length; i++) data[start + i] += strike[i] * gain;
+            }
+            return data;
+        }
+
         // ------------------------------------------------------------------ effects
+
+        private static float[] Delay(float[] source, float seconds)
+        {
+            int offset = (int)(seconds * Rate);
+            var data = new float[source.Length + offset];
+            for (int i = 0; i < source.Length; i++) data[offset + i] = source[i];
+            return data;
+        }
+
+        /// <summary>Two gruff barks: a falling formant over noise.</summary>
+        private static float[] Bark(System.Random random)
+        {
+            var data = new float[(int)(0.9f * Rate)];
+            foreach (float at in new[] { 0f, 0.38f })
+            {
+                int start = (int)(at * Rate);
+                float phase = 0f, filtered = 0f;
+                for (int i = 0; i < Rate * 0.22f && start + i < data.Length; i++)
+                {
+                    float k = i / (Rate * 0.22f);
+                    phase += 2 * Mathf.PI * Mathf.Lerp(520f, 260f, k) / Rate;
+                    filtered += 0.5f * ((float)(random.NextDouble() * 2 - 1) - filtered);
+                    data[start + i] += (Mathf.Sin(phase) * 0.6f + Mathf.Sin(phase * 2.03f) * 0.3f + filtered * 0.35f) * Mathf.Min(1f, k * 20f) * (1 - k);
+                }
+            }
+            return data;
+        }
+
+        /// <summary>Inharmonic metal partials with a long decay (gong, bell).</summary>
+        private static float[] Gong(float seconds)
+        {
+            var data = new float[(int)(seconds * Rate)];
+            float[] partials = { 1f, 1.48f, 2.21f, 2.76f, 3.9f };
+            for (int i = 0; i < data.Length; i++)
+            {
+                float t = i / (float)Rate;
+                float sum = 0f;
+                for (int p = 0; p < partials.Length; p++) sum += Mathf.Sin(2 * Mathf.PI * 110f * partials[p] * t) * Mathf.Exp(-t * (0.7f + p * 0.6f)) / (p + 1);
+                data[i] = sum * 0.7f * Mathf.Min(1f, t * 200f);
+            }
+            return data;
+        }
+
+        /// <summary>A wooden door hinge: a slow, wavering low squeal.</summary>
+        private static float[] Creak(float seconds)
+        {
+            var data = new float[(int)(seconds * Rate)];
+            float phase = 0f;
+            for (int i = 0; i < data.Length; i++)
+            {
+                float k = i / (float)data.Length;
+                phase += 2 * Mathf.PI * (180f + 90f * Mathf.Sin(k * 9f) + 40f * k) / Rate;
+                float saw = 2f * Mathf.Repeat(phase / (2 * Mathf.PI), 1f) - 1f;
+                data[i] = saw * 0.35f * Mathf.Sin(k * Mathf.PI) * (0.6f + 0.4f * Mathf.Sin(k * 70f));
+            }
+            return data;
+        }
+
 
         private static float[] Notes(float[] frequencies, float spacing, float seconds, float gain, float delay = 0f)
         {

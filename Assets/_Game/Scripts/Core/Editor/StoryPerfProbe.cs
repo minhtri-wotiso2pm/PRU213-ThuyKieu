@@ -36,13 +36,13 @@ namespace ThuyKieu.Core.Editor
             catch (Exception exception) { Debug.LogException(exception); EditorApplication.Exit(1); }
         }
 
-        [MenuItem("ThuyKieu/Tools/Perf probe (Ch1-3)")]
+        [MenuItem("ThuyKieu/Tools/Perf probe (Ch1-6)")]
         public static void RunFromMenu() => Debug.Log(Run());
 
         public static string Run()
         {
             var report = new StringBuilder();
-            foreach (string scene in new[] { Chapter01Setup.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath })
+            foreach (string scene in new[] { Chapter01Setup.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath, Chapter04Setup.ScenePath, Chapter05Setup.ScenePath, Chapter06Setup.ScenePath })
                 Probe(scene, report);
             return report.ToString();
         }

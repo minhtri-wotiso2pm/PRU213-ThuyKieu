@@ -28,6 +28,11 @@ namespace ThuyKieu.Dialogue
                 case "CoHong": return new Entry("Cô gái áo hồng", new Color(1f, 0.66f, 0.78f), SpeakerStyle.Spoken);
                 case "CoLam": return new Entry("Cô gái áo lam", new Color(0.6f, 0.78f, 1f), SpeakerStyle.Spoken);
                 case "NguoiCanh": return new Entry("Người canh", new Color(0.8f, 0.6f, 0.45f), SpeakerStyle.Spoken);
+                case "KimTrong": return new Entry("Kim Trọng", new Color(0.55f, 0.82f, 0.95f), SpeakerStyle.Spoken);
+                case "BaHangNuoc": return new Entry("Bà hàng nước", new Color(0.9f, 0.76f, 0.55f), SpeakerStyle.Spoken);
+                case "ThuLai": return new Entry("Thư lại", new Color(0.78f, 0.74f, 0.62f), SpeakerStyle.Spoken);
+                case "ChuHieuBac": return new Entry("Chủ hiệu bạc", new Color(0.95f, 0.85f, 0.45f), SpeakerStyle.Spoken);
+                case "GiaNhan": return new Entry("Gia nhân", new Color(0.72f, 0.72f, 0.72f), SpeakerStyle.Spoken);
                 case "NoiTam": return new Entry("Nội tâm", new Color(0.82f, 0.9f, 1f), SpeakerStyle.Inner);
                 case "KieuThat": return new Entry("Thúy Kiều thật", new Color(1f, 0.84f, 0.45f), SpeakerStyle.Spirit);
                 case "TrangSach": return new Entry("Truyện Kiều", new Color(0.93f, 0.86f, 0.7f), SpeakerStyle.Verse);

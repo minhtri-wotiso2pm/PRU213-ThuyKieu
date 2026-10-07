@@ -463,6 +463,35 @@ namespace ThuyKieu.Core.Editor
             return ps;
         }
 
+        /// <summary>
+        /// Rain streaks falling in a box around <paramref name="parent"/> (usually the camera), simulated in world space so
+        /// they stay put while the camera moves. Created stopped; the chapter starts it when the story says it rains.
+        /// </summary>
+        public static ParticleSystem Rain(string name, Transform parent, int rate = 1400)
+        {
+            var ps = Particles(name, parent.position + Vector3.up * 9f, parent, ParticleMaterial("ParticleRain", false));
+            var main = ps.main;
+            main.playOnAwake = false;
+            main.startLifetime = 0.9f;
+            main.startSpeed = new ParticleSystem.MinMaxCurve(16f, 20f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.025f, 0.04f);
+            main.startColor = new Color(0.75f, 0.82f, 0.95f, 0.38f);
+            main.maxParticles = rate * 2;
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            var emission = ps.emission;
+            emission.rateOverTime = rate;
+            var shape = ps.shape;
+            shape.shapeType = ParticleSystemShapeType.Box;
+            shape.scale = new Vector3(26f, 26f, 0.5f); // local Z points down after the 90° tilt
+            shape.rotation = new Vector3(90f, 0f, 0f);
+            var renderer = ps.GetComponent<ParticleSystemRenderer>();
+            renderer.renderMode = ParticleSystemRenderMode.Stretch;
+            renderer.velocityScale = 0.045f;
+            renderer.lengthScale = 1f;
+            ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            return ps;
+        }
+
         /// <summary>Blinking fireflies over fields and water at night.</summary>
         public static ParticleSystem Fireflies(string name, Vector3 centre, Vector3 size, Transform parent, int count = 60)
         {

@@ -7,7 +7,7 @@ Nhánh git: `feature/chapter02-03`.
 
 | Cách | Làm gì |
 |---|---|
-| Chơi nối từ Chương 1 | Mở `Assets/_Game/Scenes/Chapter01_GiaBien.unity` → Play. Hết Ch1 bấm **Tiếp tục** → Ch2 → Ch3 → màn chờ Ch4. Lựa chọn ở Ch1 (ví dụ đọc kỹ khế) được mang sang. |
+| Chơi nối từ Chương 1 | Mở `Assets/_Game/Scenes/Chapter01_GiaBien.unity` → Play. Hết Ch1 bấm **Tiếp tục** → Ch2 → Ch3 → Ch4–6 (xem `CHAPTER4_6_IMPLEMENTATION.md`). Lựa chọn ở Ch1 (ví dụ đọc kỹ khế) được mang sang. |
 | Vào thẳng Chương 2 | Mở `Chapter02_RoadToMaGiamSinh.unity` → Play (truyện tự bắt đầu từ knot `chapter_2`). |
 | Vào thẳng Chương 3 | Mở `Chapter03_TuBaHouse.unity` → Play (knot `chapter_3`). |
 
@@ -78,7 +78,7 @@ Ink cũ Ch2–4 (cốt truyện trước) lưu ở `Data/Dialogue/Ink/Legacy/`, 
 
 ## 4. Dựng lại scene & kiểm thử
 
-Scene Ch2, Ch3, Ch4 (placeholder), `StoryCanvas.prefab`, `StoryShared.controller` và `Materials/Story/*` đều **sinh bằng code**.
+Scene Ch2–Ch6, màn chờ Ch7, `StoryCanvas.prefab`, `StoryShared.controller` và `Materials/Story/*` đều **sinh bằng code**.
 Sửa script setup xong: menu **ThuyKieu ▸ Story ▸ Rebuild Chapter 2 and 3 scenes** (chỉ xóa và tạo lại đúng các asset sinh ra này).
 
 | Kiểm thử | Lệnh (Editor đóng, chạy từ thư mục project) |
@@ -130,5 +130,5 @@ Id nhạc: `road_dusk, road_night, tension_low, stealth, tuba_warm, resolve, non
 
 - Font `ChapterVietnamese` là TMP **Dynamic**: khi Play trong Editor, TMP tự thêm glyph và đánh dấu asset đã sửa. Đây là hành vi bình thường; có thể bỏ qua thay đổi đó khi commit.
 - Model tĩnh không có cử chỉ thoại; khi thay bản rig sẽ tự có (controller `StoryShared`).
-- Chương 4 hiện là màn chờ (`Chapter04_Placeholder`); trạng thái Ink và manh mối đã được lưu sẵn để Ch4 tiếp tục.
+- Chương 4–6 đã làm xong (tài liệu riêng `CHAPTER4_6_IMPLEMENTATION.md`); màn chờ hiện là `Chapter07_Placeholder`.
 - Prologue hiện đại do nhóm khác phụ trách; Ch2–3 đã dùng giọng nội tâm (`NoiTam`) và giọng Kiều thật (`KieuThat`) để khớp khung truyện.

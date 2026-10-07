@@ -60,6 +60,7 @@ namespace ThuyKieu.Core.Story
 
         public Ink.Runtime.Story Story { get; private set; }
         public int ChapterNumber => _chapterNumber;
+        public string NextScene => _nextScene;
         public string ChapterTitle => _chapterTitle;
         public bool InExplore { get; private set; }
         public bool IsBusy => _busy;
@@ -307,6 +308,7 @@ namespace ThuyKieu.Core.Story
         public int GetInt(string variable) => Story.variablesState[variable] is int value ? value : 0;
         public bool GetBool(string variable) => Story.variablesState[variable] is bool value ? value : GetInt(variable) != 0;
         public void SetInt(string variable, int value) => Story.variablesState[variable] = value;
+        public void SetBool(string variable, bool value) => Story.variablesState[variable] = value;
 
         public StoryActor FindActor(string speakerId)
         {

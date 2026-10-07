@@ -55,6 +55,13 @@ namespace ThuyKieu.Player
         /// <summary>True while the run input is held and the character is actually moving.</summary>
         public bool IsRunning { get; private set; }
         public bool ControlLocked { get; set; }
+        /// <summary>Inside a hiding place: guards cannot see the player.</summary>
+        public bool IsHidden { get; set; }
+        /// <summary>Stamina or story beats can forbid sprinting.</summary>
+        public bool CanRun { get; set; } = true;
+        /// <summary>Story-driven movement (cinematic runs): while set, this direction and <see cref="ScriptedSpeed"/> replace the input.</summary>
+        public Vector3? ScriptedMove { get; set; }
+        public float ScriptedSpeed { get; set; } = 5.5f;
 
         private void Awake()
         {
@@ -73,11 +80,11 @@ namespace ThuyKieu.Player
 
         private void Update()
         {
-            Vector3 moveDirection = GetCameraRelativeDirection(ControlLocked ? Vector2.zero : InputReader.Move);
+            Vector3 moveDirection = ScriptedMove.HasValue ? Flat(ScriptedMove.Value) : GetCameraRelativeDirection(ControlLocked ? Vector2.zero : InputReader.Move);
 
-            IsCrouching = _allowCrouch && !ControlLocked && (InputReader.IsCrouchHeld || ForceCrouch);
-            bool wantsToRun = !IsCrouching && InputReader.IsRunHeld && moveDirection.sqrMagnitude > 0f;
-            float speed = IsCrouching ? _crouchSpeed : wantsToRun ? runSpeed : walkSpeed * SpeedMultiplier;
+            IsCrouching = _allowCrouch && !ControlLocked && !ScriptedMove.HasValue && (InputReader.IsCrouchHeld || ForceCrouch);
+            bool wantsToRun = ScriptedMove.HasValue ? ScriptedSpeed > walkSpeed : !IsCrouching && CanRun && InputReader.IsRunHeld && moveDirection.sqrMagnitude > 0f;
+            float speed = ScriptedMove.HasValue ? ScriptedSpeed : IsCrouching ? _crouchSpeed : wantsToRun ? runSpeed : walkSpeed * SpeedMultiplier;
             if (_hasCrouchParameter) _animator.SetBool(CrouchParameter, IsCrouching);
 
             RotateTowards(moveDirection);
@@ -110,6 +117,12 @@ namespace ThuyKieu.Player
             transform.SetPositionAndRotation(position, rotation);
             controller.enabled = true;
             verticalVelocity = 0f;
+        }
+
+        private static Vector3 Flat(Vector3 direction)
+        {
+            direction.y = 0f;
+            return direction.sqrMagnitude > 0.0001f ? direction.normalized : Vector3.zero;
         }
 
         /// <summary>Projects the 2D input onto the horizontal plane of the camera.</summary>

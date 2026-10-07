@@ -30,7 +30,16 @@ EditorBuildSettings:
     path: Assets/_Game/Scenes/Chapter03_TuBaHouse.unity
     guid: 85688a5cc19bac544b8e83356f772380
   - enabled: 1
-    path: Assets/_Game/Scenes/Chapter04_Placeholder.unity
-    guid: 5a0ba22a1808d6f4799c77940da05f65
+    path: Assets/_Game/Scenes/Chapter04_TuBaNight.unity
+    guid: 1962ba359b00ae1428ce8e3d5710a07c
+  - enabled: 1
+    path: Assets/_Game/Scenes/Chapter05_Escape.unity
+    guid: 9a169de324da76b4b88b8013bf07bc3b
+  - enabled: 1
+    path: Assets/_Game/Scenes/Chapter06_KimTrong.unity
+    guid: cb2c56975f76fe04a95b639a2b1e3b6c
+  - enabled: 1
+    path: Assets/_Game/Scenes/Chapter07_Placeholder.unity
+    guid: 94167aa092f431d498f3d1271529e620
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

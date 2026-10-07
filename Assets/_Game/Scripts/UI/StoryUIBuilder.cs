@@ -40,6 +40,7 @@ namespace ThuyKieu.UI
             BuildJournal(t);
             BuildDocument(t);
             BuildDeduction(t);
+            BuildDossier(t);
             BuildCards(t);
             BuildPause(t);
 
@@ -52,6 +53,7 @@ namespace ThuyKieu.UI
             root.AddComponent<JournalView>();
             root.AddComponent<DocumentView>();
             root.AddComponent<DeductionView>();
+            root.AddComponent<DossierView>();
             root.AddComponent<PauseMenuView>();
             return root;
         }
@@ -95,6 +97,20 @@ namespace ThuyKieu.UI
             Image(Rect(toast, "Accent", new Vector2(0, 0.12f), new Vector2(0.012f, 0.88f)), Gold);
             Text(toast, "Title", "", 18, new Vector2(0.05f, 0.56f), new Vector2(0.97f, 0.95f), Gold).fontStyle = FontStyles.Bold;
             Text(toast, "Body", "", 23, new Vector2(0.05f, 0.05f), new Vector2(0.97f, 0.58f), Color.white);
+
+            // Secondary gauge under the action (stamina while running, visibility while sneaking).
+            var gauge = Panel(hud, "Gauge", new Vector2(0.4f, 0.065f), new Vector2(0.6f, 0.11f), new Color(0, 0, 0, 0.5f), 14);
+            Text(gauge, "Label", "", 17, new Vector2(0.03f, 0.45f), new Vector2(0.97f, 1f), new Color(1, 1, 1, 0.85f)).alignment = TextAlignmentOptions.Center;
+            var gaugeTrack = Image(Rect(gauge, "Track", new Vector2(0.05f, 0.16f), new Vector2(0.95f, 0.38f)), new Color(1, 1, 1, 0.15f));
+            Image(Rect(gaugeTrack.transform, "Fill", Vector2.zero, new Vector2(1f, 1f)), Gold);
+
+            // Quick-time prompt: the key to press, what it does and how long is left.
+            var qte = Panel(hud, "Qte", new Vector2(0.43f, 0.4f), new Vector2(0.57f, 0.6f), new Color(0.05f, 0.03f, 0.03f, 0.82f), 26);
+            var key = Text(qte, "Key", "", 64, new Vector2(0.05f, 0.4f), new Vector2(0.95f, 0.95f), Gold);
+            key.alignment = TextAlignmentOptions.Center; key.fontStyle = FontStyles.Bold;
+            Text(qte, "Caption", "", 20, new Vector2(0.04f, 0.18f), new Vector2(0.96f, 0.42f), Color.white).alignment = TextAlignmentOptions.Center;
+            var qteTrack = Image(Rect(qte, "Track", new Vector2(0.1f, 0.07f), new Vector2(0.9f, 0.13f)), new Color(1, 1, 1, 0.18f));
+            Image(Rect(qteTrack.transform, "Fill", Vector2.zero, new Vector2(1f, 1f)), Vermilion);
 
             var bark = Rect(hud, "Bark", new Vector2(0.2f, 0.12f), new Vector2(0.8f, 0.2f));
             var barkText = Text(bark, "Text", "", 27, Vector2.zero, Vector2.one, Color.white);
@@ -201,6 +217,51 @@ namespace ThuyKieu.UI
             deduction.gameObject.SetActive(false);
         }
 
+        /// <summary>Kim Trọng's desk: two documents side by side and a question about where they contradict;
+        /// also the final dossier with its four kinds of evidence.</summary>
+        private static void BuildDossier(Transform parent)
+        {
+            var dossier = Image(Rect(parent, "Dossier", Vector2.zero, Vector2.one), new Color(0.02f, 0.01f, 0.02f, 0.85f)).transform;
+            var panel = Panel(dossier, "Panel", new Vector2(0.08f, 0.06f), new Vector2(0.92f, 0.94f), new Color(0.08f, 0.06f, 0.05f, 0.97f), 26);
+            Text(panel, "Title", "", 34, new Vector2(0.04f, 0.9f), new Vector2(0.7f, 0.98f), Gold).fontStyle = FontStyles.Bold;
+            Text(panel, "Progress", "", 22, new Vector2(0.7f, 0.9f), new Vector2(0.96f, 0.98f), new Color(1, 1, 1, 0.6f)).alignment = TextAlignmentOptions.Right;
+            foreach (var (name, min, max) in new[] { ("Left", new Vector2(0.04f, 0.47f), new Vector2(0.49f, 0.89f)), ("Right", new Vector2(0.51f, 0.47f), new Vector2(0.96f, 0.89f)) })
+            {
+                var paper = Panel(panel, name, min, max, Paper, 14);
+                var docTitle = Text(paper, "Title", "", 25, new Vector2(0.05f, 0.82f), new Vector2(0.95f, 0.97f), new Color(0.35f, 0.1f, 0.05f));
+                docTitle.alignment = TextAlignmentOptions.Center; docTitle.fontStyle = FontStyles.Bold;
+                var docBody = Text(paper, "Body", "", 21, new Vector2(0.06f, 0.04f), new Vector2(0.94f, 0.8f), new Color(0.16f, 0.1f, 0.06f));
+                docBody.alignment = TextAlignmentOptions.TopLeft; docBody.lineSpacing = 4;
+            }
+            var question = Text(panel, "Question", "", 26, new Vector2(0.04f, 0.37f), new Vector2(0.96f, 0.46f), Color.white);
+            question.alignment = TextAlignmentOptions.MidlineLeft;
+            var options = Rect(panel, "Options", new Vector2(0.04f, 0.1f), new Vector2(0.96f, 0.36f));
+            var layout = options.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 8; layout.childControlHeight = true; layout.childControlWidth = true; layout.childForceExpandHeight = false;
+            var template = Panel(options, "Template", Vector2.zero, Vector2.one, new Color(1, 1, 1, 0.06f), 14);
+            template.gameObject.AddComponent<Button>();
+            var size = template.gameObject.AddComponent<LayoutElement>();
+            size.minHeight = 50; size.preferredHeight = 50;
+            Text(template, "Label", "", 22, new Vector2(0.02f, 0), new Vector2(0.98f, 1), Color.white).alignment = TextAlignmentOptions.MidlineLeft;
+            template.gameObject.SetActive(false);
+            var verdict = Text(panel, "Verdict", "", 30, new Vector2(0.04f, 0.015f), new Vector2(0.96f, 0.095f), Vermilion);
+            verdict.alignment = TextAlignmentOptions.Center; verdict.fontStyle = FontStyles.Bold;
+            // Summary mode: four evidence slots.
+            var slots = Rect(panel, "Slots", new Vector2(0.04f, 0.12f), new Vector2(0.96f, 0.88f));
+            for (int i = 0; i < 4; i++)
+            {
+                var slot = Panel(slots, "Slot" + i, new Vector2(0.01f + i * 0.25f, 0.05f), new Vector2(0.24f + i * 0.25f, 0.95f), new Color(1, 1, 1, 0.06f), 18);
+                var slotTitle = Text(slot, "Title", "", 26, new Vector2(0.06f, 0.82f), new Vector2(0.94f, 0.96f), Gold);
+                slotTitle.alignment = TextAlignmentOptions.Center; slotTitle.fontStyle = FontStyles.Bold;
+                var mark = Text(slot, "Mark", "", 90, new Vector2(0.06f, 0.55f), new Vector2(0.94f, 0.82f), Color.white);
+                mark.alignment = TextAlignmentOptions.Center;
+                var slotBody = Text(slot, "Body", "", 20, new Vector2(0.08f, 0.05f), new Vector2(0.92f, 0.55f), new Color(1, 1, 1, 0.85f));
+                slotBody.alignment = TextAlignmentOptions.Top;
+            }
+            slots.gameObject.SetActive(false);
+            dossier.gameObject.SetActive(false);
+        }
+
         private static void BuildPause(Transform parent)
         {
             var pause = Image(Rect(parent, "Pause", Vector2.zero, Vector2.one), new Color(0.02f, 0.01f, 0.02f, 0.78f)).transform;
@@ -218,7 +279,7 @@ namespace ThuyKieu.UI
             }
             var controls = Panel(panel, "ControlsText", new Vector2(1.04f, 0.1f), new Vector2(1.9f, 0.9f), new Color(0.07f, 0.05f, 0.06f, 0.97f), 26);
             var text = Text(controls, "Text", "<color=#E8C27A>WASD</color>  di chuyển\n<color=#E8C27A>Shift</color>  chạy\n<color=#E8C27A>Ctrl / C</color>  khom người, rón rén\n" +
-                "<color=#E8C27A>Chuột</color>  xoay camera\n<color=#E8C27A>Chuột phải</color>  quan sát\n<color=#E8C27A>E</color>  tương tác\n<color=#E8C27A>Space / Click</color>  tiếp lời thoại\n" +
+                "<color=#E8C27A>Chuột</color>  xoay camera\n<color=#E8C27A>Chuột phải</color>  quan sát\n<color=#E8C27A>E</color>  tương tác · trốn\n<color=#E8C27A>Q</color>  ném sỏi đánh lạc hướng\n<color=#E8C27A>Space / Click</color>  tiếp lời thoại\n" +
                 "<color=#E8C27A>1–4</color>  chọn câu trả lời\n<color=#E8C27A>J</color>  sổ tay manh mối\n<color=#E8C27A>Esc</color>  tạm dừng", 24, new Vector2(0.08f, 0.05f), new Vector2(0.92f, 0.95f), Color.white);
             text.alignment = TextAlignmentOptions.TopLeft; text.lineSpacing = 14;
             pause.gameObject.SetActive(false);

@@ -61,6 +61,33 @@ namespace ThuyKieu.Core
             }
         }
 
+        /// <summary>E held (hold-to-act interactions: pickpocketing, pushing a door).</summary>
+        public static bool IsInteractHeld
+        {
+            get
+            {
+                Keyboard keyboard = Keyboard.current;
+                return keyboard != null && keyboard.eKey.isPressed;
+            }
+        }
+
+        /// <summary>Q pressed this frame: throw a pebble.</summary>
+        public static bool ThrowPressedThisFrame
+        {
+            get
+            {
+                Keyboard keyboard = Keyboard.current;
+                return keyboard != null && keyboard.qKey.wasPressedThisFrame;
+            }
+        }
+
+        /// <summary>Any key pressed this frame (quick-time prompts).</summary>
+        public static bool KeyPressedThisFrame(Key key)
+        {
+            Keyboard keyboard = Keyboard.current;
+            return keyboard != null && keyboard[key].wasPressedThisFrame;
+        }
+
         /// <summary>Left Ctrl or C held: crouch / sneak.</summary>
         public static bool IsCrouchHeld
         {

@@ -50,6 +50,13 @@ namespace ThuyKieu.Player
         private Transform _dialogueCue;
         public void SetDialogueCue(Transform preset) { _dialogueCue = preset; }
 
+        /// <summary>Hard cut to a shot (no blend): for shots on the far side of a wall, which a blend would get stuck on.</summary>
+        public void CutTo(Transform preset)
+        {
+            _dialogueCue = preset;
+            if (preset != null) transform.SetPositionAndRotation(preset.position, preset.rotation);
+        }
+
         /// <summary>Observation zoom requested by ObserveMode (0 = none). Tightens framing over the shoulder.</summary>
         public float ObserveFov { get; set; }
 

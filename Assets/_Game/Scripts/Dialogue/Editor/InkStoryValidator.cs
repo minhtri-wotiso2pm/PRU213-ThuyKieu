@@ -123,7 +123,7 @@ namespace ThuyKieu.Dialogue.Editor
         }
 
         /// <summary>Stands in for the Unity sequences that write story variables.</summary>
-        private static void SimulateSequence(string tag, Ink.Runtime.Story story, System.Random random)
+        internal static void SimulateSequence(string tag, Ink.Runtime.Story story, System.Random random)
         {
             var v = story.variablesState;
             switch (tag)
@@ -141,7 +141,7 @@ namespace ThuyKieu.Dialogue.Editor
         }
 
         /// <summary>Chapters played from their own entry start with random outcomes of the chapters before them.</summary>
-        private static void RandomisePriorChapters(Ink.Runtime.Story story, string entry, System.Random random)
+        internal static void RandomisePriorChapters(Ink.Runtime.Story story, string entry, System.Random random)
         {
             var v = story.variablesState;
             int chapter = entry[entry.Length - 1] - '0';
