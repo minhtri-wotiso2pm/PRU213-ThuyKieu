@@ -19,7 +19,7 @@ namespace ThuyKieu.Dialogue.Editor
     {
         public const string ManifestPath = "Tools/Voice/voice_manifest.json";
         private const int RunsPerChapter = 2500;
-        private static readonly Regex BarkCall = new Regex("(?:ShowBark|Bark)\\(\"(\\w+)\",\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
+        private static readonly Regex BarkCall = new Regex("(?:ShowBark|Bark|Say)\\(\"(\\w+)\",\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
         private static readonly Regex GlanceLines = new Regex("_glanceLines\",\\s*new\\[\\]\\s*\\{([^}]*)\\}");
         private static readonly Regex Quoted = new Regex("\"((?:[^\"\\\\]|\\\\.)*)\"");
         private static readonly string[] Glancers = { "TuBa", "MaGiamSinh", "TuyTung" };
@@ -41,9 +41,9 @@ namespace ThuyKieu.Dialogue.Editor
             string json = File.ReadAllText(InkStoryCompiler.Output, Encoding.UTF8);
             var lines = new Dictionary<string, (string Speaker, string Text, string Source)>();
             var random = new System.Random(7213);
-            foreach (string entry in new[] { "chapter_1", "chapter_2", "chapter_3", "chapter_4", "chapter_5", "chapter_6" })
+            foreach (var (entry, chapter) in InkStoryValidator.Entries)
                 for (int run = 0; run < RunsPerChapter; run++)
-                    Walk(json, entry, random, lines);
+                    Walk(json, entry, chapter, random, lines);
 
             foreach (string file in Directory.GetFiles("Assets/_Game/Scripts", "*.cs", SearchOption.AllDirectories))
             {
@@ -78,10 +78,9 @@ namespace ThuyKieu.Dialogue.Editor
         }
 
         /// <summary>One random playthrough. A new chapter scene resets the speaker to the narrator, as SetInkStory does.</summary>
-        private static void Walk(string json, string entry, System.Random random, Dictionary<string, (string, string, string)> lines)
+        private static void Walk(string json, string entry, int chapter, System.Random random, Dictionary<string, (string, string, string)> lines)
         {
-            var story = new Ink.Runtime.Story(json);
-            if (entry != "chapter_1") { InkStoryValidator.RandomisePriorChapters(story, entry, random); story.ChoosePathString(entry); }
+            var story = InkStoryValidator.Start(json, entry, chapter, random);
             string speaker = "Narrator";
             for (int guard = 0; guard < 4000; guard++)
             {

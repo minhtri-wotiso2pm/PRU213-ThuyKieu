@@ -39,7 +39,7 @@ namespace ThuyKieu.UI
             string chapter = null;
             foreach (string id in _director.Clues)
             {
-                string group = id.StartsWith("c2_") ? "CHƯƠNG 2 · TRÊN ĐƯỜNG" : id.StartsWith("c3_") ? "CHƯƠNG 3 · NHÀ TÚ BÀ" : id.StartsWith("c4_") ? "CHƯƠNG 4 · ĐÊM Ở LẦU TÚ BÀ" : id.StartsWith("c6_") ? "CHƯƠNG 6 · HỒ SƠ" : "KHÁC";
+                string group = id.StartsWith("pl_") ? "MỞ ĐẦU · PHÒNG KIỀU" : id.StartsWith("c2_") ? "CHƯƠNG 2 · TRÊN ĐƯỜNG" : id.StartsWith("c3_") ? "CHƯƠNG 3 · NHÀ TÚ BÀ" : id.StartsWith("c4_") ? "CHƯƠNG 4 · ĐÊM Ở LẦU TÚ BÀ" : id.StartsWith("c6_") ? "CHƯƠNG 6 · HỒ SƠ" : id.StartsWith("c7_") ? "CHƯƠNG 7 · HUYỆN ĐƯỜNG" : "KHÁC";
                 if (group != chapter) { chapter = group; builder.Append("<size=20><color=#8A5A2A>").Append(group).Append("</color></size>\n"); }
                 ClueCatalog.TryGet(id, out string title, out string body);
                 builder.Append("<b><color=#5A1E0E>").Append(title).Append("</color></b>\n").Append(body).Append("\n\n");

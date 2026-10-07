@@ -1,7 +1,9 @@
 // ============================================================
 // THÚY KIỀU: NGHỊCH MỆNH
-// Kịch bản chính — Chương 1 (Gia Biến), Chương 2 (Trên đường theo Mã Giám Sinh),
-// Chương 3 (Tú Bà), Chương 4 (Không còn đường lui), Chương 5 (Đào thoát), Chương 6 (Kim Trọng).
+// Kịch bản chính — Mở đầu (Trang sách), Chương 1 (Gia Biến), Chương 2 (Trên đường theo Mã Giám Sinh),
+// Chương 3 (Tú Bà), Chương 4 (Không còn đường lui), Chương 5 (Đào thoát), Chương 6 (Kim Trọng),
+// Chương 7 (Nghịch Mệnh), Kết (Trở lại lớp học).
+// Điểm vào: Mở đầu chạy knot "prologue" (scene Chapter00_Prologue); chơi thẳng Chương 1 thì bắt đầu từ gốc.
 // Ink cũ Chương 2–4 lưu tại Legacy/ (không còn được include).
 //
 // Hợp đồng tag với Unity:
@@ -11,8 +13,18 @@
 //   Tag trên choice: #explore:<id> (chọn bằng tương tác trong thế giới), #timeout (mặc định khi hết giờ)
 // Speaker: Narrator, Kieu, NoiTam (ý nghĩ nhân vật hiện đại), KieuThat (giọng Kiều thật), TrangSach (câu thơ ký ức),
 //          MeKieu, MaGiamSinh, TuyTung, TuBa, MaKieu, CoHong, CoLam, NguoiCanh,
-//          KimTrong, BaHangNuoc, ThuLai, ChuHieuBac, GiaNhan
+//          KimTrong, BaHangNuoc, ThuLai, ChuHieuBac, GiaNhan,
+//          HocSinh (nhân vật chính ở thời hiện đại, hiển thị "Tôi"), Ngan, CoGiao, VuongOng, VuongQuan, QuanSai,
+//          QuanHuyen, NhaDich
 // ============================================================
+
+// --- Mở đầu ---
+VAR pl_che_kieu = 0       // 1 "dễ, sẽ làm tốt hơn" · 2 "phải có cách khác" · 3 "Kiều cam chịu" / im lặng
+VAR pl_vat = 0            // số vật đã xem trong phòng Kiều
+VAR pl_guong = false
+VAR pl_dan = false
+VAR pl_tho = false
+VAR pl_hanh_dong = 0      // khi quan sai đến: 1 lao ra cản · 2 hỏi tội danh · 3 đứng nhìn ghi nhớ
 
 // --- Chương 1 ---
 VAR tinh_tao = 0
@@ -86,6 +98,21 @@ VAR ev_khe_uoc = false    // giao kèo Mã Giám Sinh – Tú Bà
 VAR ev_nhan_chung = 0     // số nhân chứng
 VAR ev_giay_no = false    // trang sổ nợ
 VAR ev_tien = false       // bằng chứng tiền bạc (bạc có dấu hoặc sổ hiệu bạc)
+VAR c6_so_bac = false     // đã xem được sổ hiệu bạc Phúc Ký
+
+// --- Chương 7 ---
+VAR c7_viec = 0           // số việc chuẩn bị trước cổng huyện đường
+VAR c7_nhan_chung_vung = false // đã động viên các nhân chứng (không ai lùi bước khi Tú Bà dọa)
+VAR c7_ke_hoach_kt = false     // đã bàn kế với Kim Trọng (chàng cứu nguy một lần khi quan mất kiên nhẫn)
+VAR c7_biet_hoi_lo = false     // thấy Tú Bà đút lót nha dịch
+VAR c7_lui = 0            // nhân chứng lùi bước sau lời dọa: 1 chị Lam · 2 bà hàng nước · 3 thư lại
+VAR c7_r1 = 0             // điểm vòng đối chất 1–3 (Unity ghi)
+VAR c7_r2 = 0
+VAR c7_r3 = 0
+VAR c7_diem = 0           // tổng điểm đối chất (Unity ghi)
+VAR c7_long_tin = 0       // lòng tin của quan huyện khi kết thúc, 0–100 (Unity ghi)
+VAR c7_that_bai = 0       // số lần quan mất kiên nhẫn, phải làm lại vòng (Unity ghi)
+VAR c7_ket = 0            // sắc thái kết: 1 chật vật · 2 ấm · 3 trọn vẹn
 
 INCLUDE Chapter1_GiaBien.ink
 INCLUDE Chapter2_TrenDuongTheoMaGiamSinh.ink
@@ -93,13 +120,10 @@ INCLUDE Chapter3_TuBa.ink
 INCLUDE Chapter4_KhongConDuongLui.ink
 INCLUDE Chapter5_DaoThoat.ink
 INCLUDE Chapter6_KimTrong.ink
+INCLUDE Prologue_TrangSach.ink
+INCLUDE Chapter7_NghichMenh.ink
+INCLUDE Epilogue_LopHoc.ink
 
 -> chapter_1
 
 
-=== chapter_7 ===
-# chapter:7
-# scene:Final_Confrontation
-# speaker:Narrator
-CHƯƠNG 7 — NGHỊCH MỆNH. (Đang được phát triển.)
--> END

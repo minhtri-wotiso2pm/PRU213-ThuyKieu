@@ -383,6 +383,7 @@ Chủ hiệu bạc: Đổi bạc hay cầm đồ? ...Hỏi sổ sách của khá
 
 = c6_hieu_bac_ok
 ~ ev_tien = true
+~ c6_so_bac = true
 # speaker:ChuHieuBac
 Chủ hiệu bạc: Đây. Ngày mười bốn tháng Tư, người nhà Tú Bà lấy ra bốn trăm năm mươi lạng nén, giao cho "Mã công tử". Người nhận điểm chỉ.
 # speaker:NoiTam

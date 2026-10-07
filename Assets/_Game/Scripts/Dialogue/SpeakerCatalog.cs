@@ -33,6 +33,15 @@ namespace ThuyKieu.Dialogue
                 case "ThuLai": return new Entry("Thư lại", new Color(0.78f, 0.74f, 0.62f), SpeakerStyle.Spoken);
                 case "ChuHieuBac": return new Entry("Chủ hiệu bạc", new Color(0.95f, 0.85f, 0.45f), SpeakerStyle.Spoken);
                 case "GiaNhan": return new Entry("Gia nhân", new Color(0.72f, 0.72f, 0.72f), SpeakerStyle.Spoken);
+                case "ChiLam": return new Entry("Chị Lam", new Color(0.6f, 0.78f, 1f), SpeakerStyle.Spoken);
+                case "HocSinh": return new Entry("Tôi", new Color(0.72f, 0.9f, 1f), SpeakerStyle.Spoken);
+                case "Ngan": return new Entry("Ngân", new Color(1f, 0.72f, 0.55f), SpeakerStyle.Spoken);
+                case "CoGiao": return new Entry("Cô giáo", new Color(0.86f, 0.8f, 0.96f), SpeakerStyle.Spoken);
+                case "VuongOng": return new Entry("Vương Ông", new Color(0.92f, 0.83f, 0.6f), SpeakerStyle.Spoken);
+                case "VuongQuan": return new Entry("Vương Quan", new Color(0.7f, 0.9f, 0.74f), SpeakerStyle.Spoken);
+                case "QuanSai": return new Entry("Quan sai", new Color(0.88f, 0.56f, 0.45f), SpeakerStyle.Spoken);
+                case "QuanHuyen": return new Entry("Quan huyện", new Color(0.98f, 0.62f, 0.34f), SpeakerStyle.Spoken);
+                case "NhaDich": return new Entry("Nha dịch", new Color(0.76f, 0.66f, 0.56f), SpeakerStyle.Spoken);
                 case "NoiTam": return new Entry("Nội tâm", new Color(0.82f, 0.9f, 1f), SpeakerStyle.Inner);
                 case "KieuThat": return new Entry("Thúy Kiều thật", new Color(1f, 0.84f, 0.45f), SpeakerStyle.Spirit);
                 case "TrangSach": return new Entry("Truyện Kiều", new Color(0.93f, 0.86f, 0.7f), SpeakerStyle.Verse);

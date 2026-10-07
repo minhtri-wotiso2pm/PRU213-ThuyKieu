@@ -44,6 +44,15 @@ VOICES = {
     "ChuHieuBac": (MALE, "-8%", "-11Hz"),
     "GiaNhan":    (MALE, "+8%", "+0Hz"),
     "BaHangNuoc": (FEMALE, "-10%", "-12Hz"),
+    "ChiLam":     (FEMALE, "-2%", "+4Hz"),    # same woman as CoLam, now with her name
+    "HocSinh":    (FEMALE, "+4%", "+2Hz"),    # the modern student speaking aloud
+    "Ngan":       (FEMALE, "+10%", "+8Hz"),   # chatty deskmate
+    "CoGiao":     (FEMALE, "-6%", "-6Hz"),
+    "VuongOng":   (MALE, "-14%", "-16Hz"),
+    "VuongQuan":  (MALE, "+8%", "+14Hz"),     # Kiều's younger brother
+    "QuanSai":    (MALE, "+4%", "-12Hz"),
+    "QuanHuyen":  (MALE, "-10%", "-18Hz"),
+    "NhaDich":    (MALE, "+2%", "-10Hz"),
 }
 
 

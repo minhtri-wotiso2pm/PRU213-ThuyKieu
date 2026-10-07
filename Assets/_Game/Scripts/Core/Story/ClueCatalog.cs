@@ -29,6 +29,11 @@ namespace ThuyKieu.Core.Story
                 case "c6_so_hon_thu": title = "Sổ hôn thú của huyện"; body = "Thư lại xác nhận Mã Giám Sinh vào sổ hôn thú bốn lần trong một năm, và bằng \"giám sinh\" của hắn là bằng mua."; return true;
                 case "c6_so_hieu_bac": title = "Sổ hiệu bạc Phúc Ký"; body = "Ngày mười bốn tháng Tư, người nhà Tú Bà lấy bốn trăm năm mươi lạng giao cho \"Mã công tử\", người nhận điểm chỉ."; return true;
                 case "c6_co_lam": title = "Nhân chứng: chị Lam"; body = "Ba năm trong lầu Tú Bà, một món nợ không bao giờ trả hết. Chị sẽ kể lại trước huyện đường."; return true;
+                case "pl_guong": title = "Gương mặt trong gương đồng"; body = "Mình đang ở trong thân xác Thúy Kiều, đúng vào ngày nhà họ Vương gặp nạn."; return true;
+                case "pl_thu_kim_trong": title = "Thư của Kim Trọng"; body = "Chàng đi hộ tang chú ở Liêu Dương nửa năm. Trong sách, lúc chàng trở về thì mọi chuyện đã quá muộn."; return true;
+                case "c7_nhan_chung": title = "Những người dám đứng ra"; body = "Các nhân chứng đã được động viên trước khi vào công đường. Tú Bà quát cũng không làm họ lùi bước."; return true;
+                case "c7_kim_trong": title = "Kế của Kim Trọng"; body = "Chỉ đưa bằng chứng khi chắc chắn lời khai sai ở đâu. Nếu quan mất kiên nhẫn, Kim Trọng sẽ đứng ra cứu nguy một lần."; return true;
+                case "c7_hoi_lo": title = "Túi gấm đổi tay"; body = "Trước cổng công đường, Tú Bà dúi một túi gấm cho nha dịch. Người \"làm ăn lương thiện\" thì cần gì đút lót?"; return true;
                 default: title = id; body = string.Empty; return false;
             }
         }
