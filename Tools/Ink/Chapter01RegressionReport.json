@@ -101,7 +101,7 @@
         "PASS: Shared Sitting Talking",
         "PASS: Shared Sit To Stand transition",
         "PASS: Seated sequence returns to Idle without moving the actor root",
-        "PASS: Audio sources are environment/UI only; no dialogue or character voice sources",
+        "PASS: Audio sources are environment/UI or the shared voice player only",
         "PASS: Vietnamese glyph coverage",
         "PASS: Continue loads Chapter 2 (Trên đường theo Mã Giám Sinh)",
         "PASS: Session survives scene transition"

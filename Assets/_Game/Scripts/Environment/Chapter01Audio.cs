@@ -1,11 +1,12 @@
 using ThuyKieu.Core;
 using ThuyKieu.Dialogue;
 using ThuyKieu.Player;
+using ThuyKieu.Presentation;
 using UnityEngine;
 
 namespace ThuyKieu.Environment
 {
-    // Scene-local presentation. Empty clip slots remain silent until real assets are assigned.
+    // Scene-local presentation. Empty clip slots fall back to ProceduralAudio until real assets are assigned.
     public sealed class Chapter01Audio : MonoBehaviour
     {
         [SerializeField] private Chapter01Director _director;
@@ -25,7 +26,29 @@ namespace ThuyKieu.Environment
         private void Start()
         {
             if (_player != null) _controller = _player.GetComponent<CharacterController>();
+            FillMissingClips();
             StartLoop(_musicSource); StartLoop(_rainSource); StartLoop(_windSource);
+        }
+
+        /// <summary>Slots without recorded audio use the synthesised placeholders shared with Chapters 2–3.</summary>
+        private void FillMissingClips()
+        {
+            FillLoop(_musicSource, ProceduralAudio.Music("sad_strings"));
+            FillLoop(_rainSource, ProceduralAudio.Ambience("rain"));
+            FillLoop(_windSource, ProceduralAudio.Ambience("wind"));
+            if (_paper == null) _paper = ProceduralAudio.Sfx("paper");
+            if (_doorOpen == null) _doorOpen = ProceduralAudio.Sfx("door");
+            if (_doorClose == null) _doorClose = ProceduralAudio.Sfx("door");
+            if (_uiConfirm == null) _uiConfirm = ProceduralAudio.Sfx("ui");
+            if (_woodStep == null) _woodStep = ProceduralAudio.Sfx("step");
+            if (_stoneStep == null) _stoneStep = ProceduralAudio.Sfx("step");
+        }
+
+        private static void FillLoop(AudioSource source, AudioClip clip)
+        {
+            if (source == null || source.clip != null) return;
+            source.clip = clip;
+            source.spatialBlend = 0f;
         }
         private void OnDisable()
         {

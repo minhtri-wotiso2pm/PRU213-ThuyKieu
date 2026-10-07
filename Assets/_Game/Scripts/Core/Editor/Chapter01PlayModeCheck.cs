@@ -202,7 +202,9 @@ namespace ThuyKieu.Core.Editor
                             Check(_cryingChecked && _arguingChecked && _agreeingChecked && _disagreeChecked && _lookingChecked && _pickupChecked, "All Chapter 1 emotion and interaction animations exercised");
                             VerifySeatedAnimations();
                             var environmentAudio = UnityEngine.Object.FindAnyObjectByType<ThuyKieu.Environment.Chapter01Audio>();
-                            Check(UnityEngine.Object.FindObjectsByType<AudioSource>().All(s => environmentAudio != null && s.transform.IsChildOf(environmentAudio.transform)), "Audio sources are environment/UI only; no dialogue or character voice sources");
+                            // Voice-over plays only through the global VoicePlayer; no other character or dialogue sources.
+                            var voice = UnityEngine.Object.FindAnyObjectByType<ThuyKieu.Dialogue.VoicePlayer>();
+                            Check(UnityEngine.Object.FindObjectsByType<AudioSource>().All(s => (environmentAudio != null && s.transform.IsChildOf(environmentAudio.transform)) || (voice != null && s.transform.IsChildOf(voice.transform))), "Audio sources are environment/UI or the shared voice player only");
                             var font = UnityEngine.Object.FindObjectsByType<TMP_Text>(FindObjectsInactive.Include).First().font;
                             Check("Thúy Kiều Mẹ Mã Giám Sinh CHƯƠNG HOÀN THÀNH".All(c => font.HasCharacter(c)), "Vietnamese glyph coverage");
                             _director.ContinueAfterChapter(); Next(11);

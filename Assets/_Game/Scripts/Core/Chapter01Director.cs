@@ -28,6 +28,8 @@ namespace ThuyKieu.Core
         public Stage CurrentStage { get; private set; }
         public bool DialogueActive => _dialogue.IsDialogueActive;
         public event Action<string, string> CueReceived;
+        private bool _continuing;
+        private float _completeShownAt;
 
         private IEnumerator Start()
         {
@@ -143,11 +145,24 @@ namespace ThuyKieu.Core
         {
             SetStage(Stage.Complete, "CHƯƠNG 1 HOÀN THÀNH");
             InkStatePersistence.Instance.Save(_dialogue.InkStory);
+            _completeShownAt = Time.unscaledTime;
             _completionPanel.SetActive(true);
             SetLocked(true);
         }
+        private void LateUpdate()
+        {
+            if (!_completionPanel.activeSelf) return;
+            // DialogueCursorController re-locks the cursor when the final dialogue ends; keep it free for the button.
+            if (Cursor.lockState == CursorLockMode.Locked) _camera.SetCursorLocked(false);
+            var keyboard = UnityEngine.InputSystem.Keyboard.current;
+            if (Time.unscaledTime - _completeShownAt > 0.8f && keyboard != null && (keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame))
+                ContinueAfterChapter();
+        }
+
         public void ContinueAfterChapter()
         {
+            if (_continuing) return;
+            _continuing = true;
             if (Application.CanStreamedLevelBeLoaded("Chapter02_RoadToMaGiamSinh"))
                 SceneManager.LoadScene("Chapter02_RoadToMaGiamSinh");
             else SceneManager.LoadScene("Chapter02_Placeholder");

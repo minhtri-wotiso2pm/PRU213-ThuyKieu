@@ -151,6 +151,7 @@ namespace ThuyKieu.UI
             var entry = SpeakerCatalog.Get(speakerId);
             _bark.text = "<color=#" + ColorUtility.ToHtmlStringRGB(entry.Color) + ">" + entry.DisplayName + ":</color> " + text;
             _barkTimer = duration;
+            VoicePlayer.PlayBark(speakerId, text);
         }
 
         private void NextToast()

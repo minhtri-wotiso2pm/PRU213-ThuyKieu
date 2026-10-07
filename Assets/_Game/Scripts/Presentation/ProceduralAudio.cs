@@ -24,6 +24,8 @@ namespace ThuyKieu.Presentation
                 case "stealth": return Tension(id, 20f, 82.41f, 14);
                 case "tuba_warm": return Score(id, 30f, 196f, MajorPenta, 0.62f, 0.5f, 0.08f, 1, 15);
                 case "resolve": return Score(id, 28f, 164.81f, MajorPenta, 0.8f, 0.6f, 0.18f, 3, 16);
+                // Chapter 1 farewell: slow, low minor phrases over a soft drone.
+                case "sad_strings": return Score(id, 36f, 110f, MinorPenta, 1.45f, 0.5f, 0.2f, 1, 17);
                 default: return null;
             }
         }
@@ -38,6 +40,9 @@ namespace ThuyKieu.Presentation
                 case "night": return Mix(id, 40f, Breeze(40f, 0.14f, 33), Crickets(40f, 0.13f, 34), Frogs(40f, 0.16f, 38), Owl(40f, 0.06f, 39));
                 // Courtyard house: almost silent room tone, wind chimes on the veranda, sparrows on the roof.
                 case "house": return Mix(id, 40f, RoomTone(40f, 0.05f, 35), Chimes(40f, 0.09f, 36), Birds(40f, 0.05f, 9f, 40));
+                // Night rain on tiles and the yard, with far thunder now and then.
+                case "rain": return Mix(id, 40f, Rain(40f, 0.3f, 41), Thunder(40f, 0.35f, 42));
+                case "wind": return Mix(id, 40f, Breeze(40f, 0.3f, 43));
                 default: return null;
             }
         }
@@ -278,6 +283,56 @@ namespace ThuyKieu.Presentation
                             data[s0 + i] += level * pulse * Mathf.Sin(2 * Mathf.PI * pitch * t) * Mathf.Sin(Mathf.PI * k);
                         }
                     }
+                }
+            }
+            return data;
+        }
+
+        /// <summary>Steady rain: a band-limited hiss that breathes slowly, plus scattered drops on tiles.</summary>
+        private static float[] Rain(float seconds, float gain, int seed)
+        {
+            var random = new System.Random(seed);
+            int length = (int)(seconds * Rate);
+            var data = new float[length];
+            float low = 0, lower = 0;
+            for (int i = 0; i < length; i++)
+            {
+                float t = i / (float)Rate;
+                float white = (float)(random.NextDouble() * 2 - 1);
+                low += 0.35f * (white - low);
+                lower += 0.08f * (low - lower);
+                // Low-passed noise minus its darker part: a soft band without hiss or rumble.
+                float swell = 0.8f + 0.2f * Mathf.Sin(2 * Mathf.PI * t / seconds * 3f);
+                data[i] = (low - lower) * gain * swell;
+            }
+            for (int d = 0; d < seconds * 14; d++)
+            {
+                int start = random.Next(length);
+                float frequency = 1400f + (float)random.NextDouble() * 2600f;
+                float level = gain * (0.15f + (float)random.NextDouble() * 0.35f);
+                for (int i = 0; i < Rate * 0.03f && start + i < length; i++)
+                    data[start + i] += level * Mathf.Sin(2 * Mathf.PI * frequency * i / Rate) * Mathf.Exp(-i / (Rate * 0.004f));
+            }
+            return data;
+        }
+
+        /// <summary>Distant thunder: a slow low rumble every 15–25 s.</summary>
+        private static float[] Thunder(float seconds, float gain, int seed)
+        {
+            var random = new System.Random(seed);
+            int length = (int)(seconds * Rate);
+            var data = new float[length];
+            for (float time = 8f + (float)random.NextDouble() * 4f; time < seconds - 6f; time += 15f + (float)random.NextDouble() * 10f)
+            {
+                int s0 = (int)(time * Rate), count = (int)(5f * Rate);
+                float a = 0, b = 0;
+                for (int i = 0; i < count && s0 + i < length; i++)
+                {
+                    float k = i / (float)count;
+                    a += 0.01f * ((float)(random.NextDouble() * 2 - 1) - a);
+                    b += 0.01f * (a - b);
+                    float envelope = Mathf.Min(1f, k * 12f) * Mathf.Exp(-k * 4f) * (0.7f + 0.3f * Mathf.Sin(k * 40f));
+                    data[s0 + i] += b * gain * 40f * envelope;
                 }
             }
             return data;
