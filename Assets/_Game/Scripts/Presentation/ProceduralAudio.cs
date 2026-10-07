@@ -110,6 +110,8 @@ namespace ThuyKieu.Presentation
                 case "gavel": data = Add(Thud(0.35f, random), Delay(Clicks(0.25f, 2, 0.6f, random), 0.01f)); break;
                 case "objection": data = Add(Drum(0.7f), Notes(new[] { 392f, 587.33f }, 0.06f, 0.8f, 0.45f)); break;
                 case "wrong": data = Bend(196f, 146.83f, 0.6f, 0.55f); break;
+                // A few plucked notes of the hồ cầm, the opening of a sad "Bạc mệnh" phrase in a minor pentatonic.
+                case "dan": data = Notes(new[] { 293.66f, 349.23f, 392f, 349.23f, 293.66f, 261.63f, 220f }, 0.42f, 3.4f, 0.42f); break;
                 default: return null;
             }
             return Clip(id, data);

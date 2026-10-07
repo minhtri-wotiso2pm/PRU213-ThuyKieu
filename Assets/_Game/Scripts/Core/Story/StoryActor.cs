@@ -29,7 +29,25 @@ namespace ThuyKieu.Core.Story
         private float _lyingHeight;
 
         public string SpeakerId => _speakerId;
-        public Vector3 HeadPosition => transform.position + Vector3.up * _headHeight;
+        /// <summary>
+        /// Eye level of the visible body: the rig's head bone when there is one (so seated, kneeling or lying actors are
+        /// framed where their face really is), otherwise the standing head height above the root.
+        /// </summary>
+        public Vector3 HeadPosition
+        {
+            get
+            {
+                if (_animator != null && _animator.isActiveAndEnabled && _animator.isHuman)
+                {
+                    var head = _animator.GetBoneTransform(HumanBodyBones.Head);
+                    if (head != null) return head.position + Vector3.up * 0.07f;
+                }
+                return transform.position + Vector3.up * _headHeight;
+            }
+        }
+
+        /// <summary>Feet-to-crown capsule axis used by cameras to keep bystanders out of a shot.</summary>
+        public float StandingHeight => _headHeight + 0.15f;
         public NavMeshAgent Agent => _agent;
         public bool IsMoving => _agent != null && _agent.enabled && _agent.isOnNavMesh && !_agent.isStopped
                                 && (_agent.pathPending || _agent.remainingDistance > _agent.stoppingDistance + 0.05f);

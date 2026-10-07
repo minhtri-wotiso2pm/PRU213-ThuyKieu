@@ -128,6 +128,8 @@ namespace ThuyKieu.Gameplay.Chapters
         private void OnTag(string key, string value)
         {
             if (key == "gameplay" && value == "book_glow" && _bookGlow != null) _bookGlow.SetActive(true);
+            // Picking up the hồ cầm: a few notes ring out.
+            if (key == "camera" && value == "Dan" && _director.Audio != null) _director.Audio.PlaySfx("dan");
             // The gong at the gate: the officials burst into the courtyard.
             if (key == "sfx" && value == "gong" && !_officials[0].gameObject.activeSelf) StartCoroutine(OfficialsArrive());
         }

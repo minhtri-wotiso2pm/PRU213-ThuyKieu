@@ -22,6 +22,9 @@ namespace ThuyKieu.Core.Story
             }
         }
 
+        /// <summary>-autopilotCaptureLines: shoot every dialogue line (camera review) instead of one per speaker style.</summary>
+        public static bool EveryLine => System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-autopilotCaptureLines") >= 0;
+
         public static void Shot(string name, int width = 1600, int height = 900)
         {
             string folder = Directory;
@@ -39,6 +42,7 @@ namespace ThuyKieu.Core.Story
                 canvases[i].planeDistance = camera.nearClipPlane + 0.05f + 0.01f * canvases[i].sortingOrder / 100f;
             }
             Canvas.ForceUpdateCanvases();
+            ThuyKieu.Environment.PlanarMirror.RenderAllFor(camera, width, height);
             var texture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32);
             var previous = camera.targetTexture;
             camera.targetTexture = texture;

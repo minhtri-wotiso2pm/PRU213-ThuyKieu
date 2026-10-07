@@ -219,7 +219,7 @@ namespace ThuyKieu.Core.Story
         }
 
         /// <summary>Called by world interactions: picks the matching #explore choice and resumes the story.</summary>
-        public bool ChooseExplore(string id, Transform focus = null)
+        public bool ChooseExplore(string id, Transform focus = null, Transform standPoint = null)
         {
             if (!IsExploreAvailable(id)) return false;
             var option = _exploreOptions.First(o => o.Id == id);
@@ -228,7 +228,8 @@ namespace ThuyKieu.Core.Story
             if (_hud != null) _hud.SetExploreOptions(null);
             ExploreChanged?.Invoke(false);
             SetFreeControl(false);
-            if (focus != null && _playerActor != null) _playerActor.FaceInstant(focus.position);
+            if (standPoint != null && _player != null) _player.Teleport(standPoint.position, standPoint.rotation);
+            else if (focus != null && _playerActor != null) _playerActor.FaceInstant(focus.position);
             Story.ChooseChoiceIndex(option.Index);
             _dialogue.ResumeInk();
             return true;

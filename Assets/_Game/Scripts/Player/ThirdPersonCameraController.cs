@@ -47,7 +47,9 @@ namespace ThuyKieu.Player
         private Vector3 followVelocity;
         [SerializeField] private LayerMask _collisionMask;
         public bool ControlLocked { get; set; }
-        private Transform _dialogueCue;
+        private Transform _dialogueCue, _lastCue;
+        private Vector3 _lastCuePosition;
+        private Quaternion _lastCueRotation;
         public void SetDialogueCue(Transform preset) { _dialogueCue = preset; }
 
         /// <summary>Hard cut to a shot (no blend): for shots on the far side of a wall, which a blend would get stuck on.</summary>
@@ -112,6 +114,22 @@ namespace ThuyKieu.Player
                 Vector3 shotPosition = _dialogueCue.position;
                 if (target != null && _dialogueCue.IsChildOf(target.root))
                     shotPosition = ResolveObstruction(target.position, shotPosition);
+                // A new shot is a cut, as in film: blending across the room drags the lens through people and walls
+                // (and a wall on the way leaves it stuck). Only small reframings, with nothing in between, glide.
+                bool newShot = _dialogueCue != _lastCue || (shotPosition - _lastCuePosition).sqrMagnitude > 0.04f
+                               || Quaternion.Angle(_dialogueCue.rotation, _lastCueRotation) > 4f;
+                _lastCue = _dialogueCue;
+                _lastCuePosition = shotPosition;
+                _lastCueRotation = _dialogueCue.rotation;
+                if (newShot && (Vector3.Distance(transform.position, shotPosition) > 1.2f
+                                || Quaternion.Angle(transform.rotation, _dialogueCue.rotation) > 35f
+                                || ResolveObstruction(transform.position, shotPosition) != shotPosition))
+                {
+                    transform.SetPositionAndRotation(shotPosition, _dialogueCue.rotation);
+                    if (_dialogueFov > 0f) BlendFov(_dialogueFov, 1000f);
+                    _collisionDistance = -1f;
+                    return;
+                }
                 Vector3 nextPosition = Vector3.Lerp(transform.position, shotPosition, 1 - Mathf.Exp(-5 * Time.deltaTime));
                 transform.position = ResolveObstruction(transform.position, nextPosition);
                 transform.rotation = Quaternion.Slerp(transform.rotation, _dialogueCue.rotation, 1 - Mathf.Exp(-5 * Time.deltaTime));
@@ -119,6 +137,7 @@ namespace ThuyKieu.Player
                 _collisionDistance = -1f;
                 return;
             }
+            _lastCue = null;
             if (target == null)
             {
                 return;

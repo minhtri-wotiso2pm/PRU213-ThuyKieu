@@ -128,3 +128,53 @@ Game giờ chơi trọn một vòng: **Mở đầu → Chương 1 … 7 → Kế
 - **Lồng tiếng**: 751 câu (312 câu mới), 0 lỗi.
 - **Hiệu năng** (`StoryPerfProbe`, 1080p, góc camera chính): Mở đầu 9,6 ms · Ch7 6,9 ms · Kết 7,0 ms, ngang các chương trước.
 - **Chưa kiểm được bằng tay**: cảm giác đối chất (độ khó, nhịp đọc lời khai), tư thế ngồi của nhân vật trong lớp học, chỉnh độ phân giải trên máy thật.
+
+## 7. Lượt chỉnh hình ảnh, camera và độ chân thật (P24)
+
+### Camera hội thoại (dùng chung mọi chương Ch2 → Kết)
+- **Cắt cảnh thay vì trượt**: khi đổi sang góc máy mới, camera cắt thẳng (`ThirdPersonCameraController`). Trước đây camera trượt qua phòng nên xuyên qua người, kẹt vào tường, có lúc ra ngoài trời. Chỉ những lần chỉnh khung nhỏ, không có vật cản ở giữa, mới còn trượt mượt.
+- **Né người đứng chắn** (`DialogueCameraRig.Compose`):
+  - Nếu có người đứng giữa ống kính và người đang nói, góc máy xoay quanh người nói để tìm góc trống.
+  - Người vẫn còn chắn sẽ bị ẩn khỏi khung hình trong câu đó (vẫn giữ bóng đổ), giống cách game điện ảnh làm.
+  - Góc đặt sẵn (`CAM_*`) cũng tự ẩn người đứng sát ống kính hoặc chắn người nói.
+- **Đầu thật của nhân vật**: `StoryActor.HeadPosition` lấy xương đầu của rig. Người ngồi, quỳ, nằm được quay đúng mặt, không còn nhắm vào khoảng không cao 1,55 m.
+- **Quay qua vai chỉ khi đứng gần** (< 4,2 m). Xa hơn thì quay cận mặt người nói.
+- Người nói không có mặt trong cảnh: camera giữ trên Kiều đang nghe.
+- **Điểm đứng khi tương tác** (`ExploreTarget._standPoint`): soi gương, nhìn ra cửa sổ, mở sách. Nhân vật bước tới đứng đúng chỗ, quay đúng hướng.
+
+### Gương thật
+- `PlanarMirror` + shader `ThuyKieu/StoryMirror`: camera phản chiếu qua mặt gương, cắt phần sau gương bằng mặt phẳng xiên. Gương đồng có màu đồng, hơi mờ, tối dần ra mép.
+- Chỉ render khi gương nằm trong khung hình và camera ở gần (≤ 9 m).
+- Ảnh QA cũng render lại gương theo kích thước ảnh chụp.
+- Đặt gương mới bằng `StoryPropKit.Vanity` (bàn trang điểm có gương đồng).
+
+### Mở đầu
+- **Sửa lỗi gốc của nữ sinh**: thân thể nữ sinh trước đây bị đặt sai (cách lớp học hàng trăm mét, dưới đất), nên cảnh Kết không thấy nhân vật chính. Nguyên nhân là `StorySceneKit.Body` căn chỉnh model theo toạ độ thế giới; giờ căn chỉnh ở gốc toạ độ rồi mới gắn vào người chơi.
+- **Lớp học**:
+  - Nền gạch granito (texture sinh bằng code).
+  - Cờ đỏ sao vàng, thời khóa biểu, lịch, ghế giáo viên, bình chữa cháy, chai nước trên bàn.
+  - Ánh sáng quyển sách và chữ "Cảm ơn." chỉ hiện khi đến lượt.
+- **Phòng Kiều**:
+  - Bàn trang điểm với gương đồng thật. Soi gương là thấy mặt Kiều qua vai.
+  - Cây hồ cầm đầy đủ (thân, cần, trục, phím, dây) dựa vách; xem đàn có tiếng gảy (`sfx dan`).
+  - Lá thư Kim Trọng đọc được trên bàn viết, kèm bút, nghiên, giấy, bình hoa đào.
+  - Khung thêu, tranh treo, kệ tường, chân nến, trần gỗ có xà.
+  - Nắng xiên qua song cửa đổ bóng hoa văn xuống sàn, kèm bụi lơ lửng.
+- Cánh cổng có va chạm để camera không dí vào gỗ.
+
+### Chương 7
+- **Kiều thật**:
+  - Kiều quay về khoảng sân trống trước cổng, bóng Kiều hiện ở đó.
+  - Kim Trọng lùi ra sau vai Kiều.
+  - Góc quay ngang chọn phía không ai chắn và phông nền trống. Ai còn chắn thì ẩn.
+  - Ánh sáng ấm, sương nhẹ.
+- **Góc máy mới**: cổng huyện đường (trước đây nằm ngoài tường), nhân chứng, trống kêu oan, toàn cảnh công đường (trước bị cột che), cận cảnh quan huyện trên án thư (`CAM_CU_QuanHuyen`).
+- **Công đường**:
+  - Nắng sớm chiếu vào từ cửa trước, đèn phụ, đèn chiếu án thư.
+  - Xà và đòn tay trần, khung bình phong sơn son viền vàng.
+  - Biển "TÚC TĨNH / HỒI TỴ", chiếu quỳ, ghế thư lại, lư hương, đèn lồng, cờ phướn.
+- Nhân chứng chưa được gọi mà lên tiếng "từ đám đông" (bà hàng nước) sẽ bước vào công đường.
+- Chậu cây ở cổng dời khỏi chỗ cả nhà đoàn tụ.
+
+### QA
+- `-autopilotCaptureLines` chụp **mọi câu thoại** (đánh số `C7_L012_QuanHuyen.png`…), kèm log vị trí camera và đầu người nói. Dùng để rà góc máy.

@@ -237,11 +237,15 @@ namespace ThuyKieu.Core.Editor
             var importer = AssetImporter.GetAtPath(fbxPath) as ModelImporter;
             if (importer != null && importer.animationType != ModelImporterAnimationType.Human)
             { importer.animationType = ModelImporterAnimationType.Human; importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel; importer.SaveAndReimport(); }
+            // Fit at the world origin (Fit works in world space), then hang the body under its root, cancelling any
+            // scale on the root so the body keeps its fitted height.
             var holder = new GameObject(name);
-            holder.transform.SetParent(root, false);
             var model = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath));
             model.transform.SetParent(holder.transform, false);
             Fit(model, height);
+            holder.transform.SetParent(root, false);
+            Vector3 rootScale = root.lossyScale;
+            holder.transform.localScale = new Vector3(1f / rootScale.x, 1f / rootScale.y, 1f / rootScale.z);
             var animator = model.GetComponentInChildren<Animator>();
             animator.runtimeAnimatorController = controller;
             animator.applyRootMotion = false;

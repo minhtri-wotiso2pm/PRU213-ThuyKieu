@@ -122,7 +122,15 @@ namespace ThuyKieu.Core.Story
                     }
                     else
                     {
-                        if (capture && styles.Add(SpeakerCatalog.Get(dialogue.CurrentSpeakerId).Style))
+                        if (capture && StoryCapture.EveryLine)
+                        {
+                            // Camera review: every line, numbered, so each dialogue shot can be checked for framing.
+                            yield return new WaitForSecondsRealtime(1.3f);
+                            StoryCapture.Shot(prefix + "L" + lines.ToString("000") + "_" + dialogue.CurrentSpeakerId, 800, 450);
+                            var speakerActor = _director.FindActor(dialogue.CurrentSpeakerId);
+                            Log.Add($"  L{lines:000} {dialogue.CurrentSpeakerId} cam {Camera.main.transform.position:F2} head {(speakerActor != null ? speakerActor.HeadPosition.ToString("F2") : "-")} root {(speakerActor != null ? speakerActor.transform.position.ToString("F2") : "-")}");
+                        }
+                        else if (capture && styles.Add(SpeakerCatalog.Get(dialogue.CurrentSpeakerId).Style))
                         {
                             yield return new WaitForSecondsRealtime(1.8f);
                             StoryCapture.Shot(prefix + "line_" + SpeakerCatalog.Get(dialogue.CurrentSpeakerId).Style);

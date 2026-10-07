@@ -7,14 +7,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ClassFloor
-  m_Shader: {fileID: 4800000, guid: 73a060cdb0d92314e821534cabab829a, type: 3}
+  m_Name: StoryMirror_FFE0A8
+  m_Shader: {fileID: 4800000, guid: bfc127a56257514469d1469921cf4fe8, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 1
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -23,24 +23,16 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 08290170db78b904a9f0b19a748f0349, type: 3}
-        m_Scale: {x: 0.8333333, y: 0.8333333}
-        m_Offset: {x: 0, y: 0}
-    - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: a90c043122032e84b9625defbada05e2, type: 3}
+    - _ReflectionTex:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BumpScale: 0.6
-    - _Cutoff: 0.5
-    - _Metallic: 0
-    - _OcclusionStrength: 0
-    - _Parallax: 0.2
-    - _Smoothness: 0.35
-    - _Surface: 0
+    - _Haze: 0.14
+    - _RimDarken: 0.45
     m_Colors:
-    - _BaseColor: {r: 0.96, g: 0.92, b: 0.84, a: 1}
+    - _BaseColor: {r: 1, g: 0.88, b: 0.66, a: 1}
+    - _HazeColor: {r: 0.54999995, g: 0.41999996, b: 0.24999997, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

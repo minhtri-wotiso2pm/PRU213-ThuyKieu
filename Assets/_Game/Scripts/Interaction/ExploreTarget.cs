@@ -15,6 +15,8 @@ namespace ThuyKieu.Interaction
         [Tooltip("Hidden until the world calls Reveal() (e.g. a paper that has not fallen yet).")]
         [SerializeField] private bool _startHidden;
         [SerializeField] private GameObject _highlight;
+        [Tooltip("Optional: where the player steps to (and faces) when using this, e.g. in front of a mirror.")]
+        [SerializeField] private Transform _standPoint;
 
         private bool _revealed;
 
@@ -29,7 +31,7 @@ namespace ThuyKieu.Interaction
 
         public void Interact()
         {
-            if (IsAvailable) _director.ChooseExplore(_exploreId, transform);
+            if (IsAvailable) _director.ChooseExplore(_exploreId, transform, _standPoint);
         }
 
         private void Update()

@@ -47,8 +47,8 @@ namespace ThuyKieu.Core.Editor
             var classmates = Classmates(room, shared);
             Explore(Anchor(world, "BoardTarget", room.BoardAnchor.position), director, "pl_board", "Đọc mấy câu thơ trên bảng", new Vector3(2.4f, 1.6f, 1.2f));
             Explore(ngan.gameObject, director, "pl_ngan", "Nói chuyện với Ngân", Vector3.one * 1.8f);
-            Explore(Anchor(world, "WindowTarget", room.WindowAnchor.position), director, "pl_window", "Nhìn ra cửa sổ", new Vector3(1.2f, 1.6f, 1.8f));
-            Explore(Anchor(world, "BookTarget", room.Seat.position + new Vector3(0, 0, 0.1f)), director, "pl_book", "Cất quyển Truyện Kiều vào cặp", new Vector3(1.2f, 1.6f, 1.2f));
+            Set(Explore(Anchor(world, "WindowTarget", room.WindowAnchor.position), director, "pl_window", "Nhìn ra cửa sổ", new Vector3(1.2f, 1.6f, 1.8f)), "_standPoint", room.WindowStand);
+            Set(Explore(Anchor(world, "BookTarget", room.Seat.position + new Vector3(0, 0, 0.1f)), director, "pl_book", "Cất quyển Truyện Kiều vào cặp", new Vector3(1.2f, 1.6f, 1.2f)), "_standPoint", room.Seat);
 
             // ------------------------------------------------------------ the Vương house
             Ground(world);
@@ -242,38 +242,60 @@ namespace ThuyKieu.Core.Editor
                 var panel = Block("ScreenPanel", new Vector3(-7.2f, 0.9f, 4.0f + i * 0.55f), new Vector3(0.05f, 1.7f, 0.52f), _red, root, false, i % 2 == 0 ? 12f : -12f);
                 Block("ScreenSilk", panel.transform.position + new Vector3(0.03f, 0.05f, 0), new Vector3(0.02f, 1.3f, 0.42f), Material("PlScreenSilk", new Color(0.9f, 0.84f, 0.7f)), root, false, i % 2 == 0 ? 12f : -12f);
             }
-            // Bronze mirror on its stand (pl_guong).
-            var bronze = Material("PlBronze", new Color(0.72f, 0.56f, 0.3f), 0.9f);
-            Block("MirrorStand", new Vector3(-9.7f, 0.45f, 1.0f), new Vector3(0.4f, 0.9f, 0.5f), _wood, root);
-            var disc = Cylinder("MirrorDisc", new Vector3(-9.6f, 1.3f, 1.0f), 0.24f, 0.03f, bronze, root, false);
-            disc.transform.rotation = Quaternion.Euler(0, 0, 90f);
-            disc.transform.position = new Vector3(-9.55f, 1.4f, 1.0f);
+            // Dressing table with the bronze mirror (pl_guong). The mirror really reflects: standing at it, Kiều sees her face.
+            var mirrorFace = StoryPropKit.Vanity(new Vector3(-9.72f, 0.06f, 1.0f), 90f, root, 41);
+            var mirrorStand = Point("MirrorStand", new Vector3(-9.02f, 0.06f, 1.0f), 270f, root);
             var mirror = new GameObject("MirrorTarget");
             mirror.transform.SetParent(root, false);
-            mirror.transform.position = new Vector3(-9.0f, 0.06f, 1.1f);
-            Explore(mirror, director, "pl_guong", "Soi chiếc gương đồng", new Vector3(1.2f, 1.6f, 1.2f));
-            Point("Focus_Mirror", new Vector3(-9.55f, 1.4f, 1.0f), 0, root);
-            Look("CAM_Mirror", new Vector3(-9.45f, 1.48f, 1.05f), new Vector3(-8.75f, 1.45f, 1.15f), root);
+            mirror.transform.position = new Vector3(-9.1f, 0.06f, 1.0f);
+            var mirrorTarget = Explore(mirror, director, "pl_guong", "Soi chiếc gương đồng", new Vector3(1.2f, 1.6f, 1.2f));
+            Set(mirrorTarget, "_standPoint", mirrorStand);
+            Point("Focus_Mirror", mirrorFace.position, 0, root);
+            // Over her right shoulder into the glass: the back of her head in the foreground, her face in the mirror.
+            Look("CAM_Mirror", new Vector3(-8.45f, 1.63f, 1.33f), mirrorFace.position + new Vector3(0f, 0.02f, 0.07f), root);
+            var glow = new GameObject("MirrorFill");
+            glow.transform.SetParent(root, false);
+            glow.transform.position = new Vector3(-9.35f, 1.75f, 0.55f);
+            var fill = glow.AddComponent<Light>();
+            fill.type = LightType.Point; fill.color = new Color(1f, 0.88f, 0.72f); fill.range = 2.2f; fill.intensity = 0.9f; fill.shadows = LightShadows.None;
             // The hồ cầm leaning against the west wall (pl_dan).
-            var body = Cylinder("DanBody", new Vector3(-9.85f, 0.06f, 3.1f), 0.11f, 0.16f, _red, root, false);
-            body.transform.rotation = Quaternion.Euler(0, 0, -12f);
-            var neck = Block("DanNeck", new Vector3(-9.82f, 0.75f, 3.1f), new Vector3(0.035f, 1.25f, 0.035f), _wood, root, false);
-            neck.transform.rotation = Quaternion.Euler(0, 0, -12f);
-            Block("DanString", new Vector3(-9.79f, 0.75f, 3.1f), new Vector3(0.004f, 1.2f, 0.004f), Material("PlString", new Color(0.9f, 0.85f, 0.7f), 0.6f), root, false);
+            StoryPropKit.HoCam(new Vector3(-9.78f, 0.06f, 3.1f), 90f, root);
             var dan = new GameObject("DanTarget");
             dan.transform.SetParent(root, false);
             dan.transform.position = new Vector3(-9.2f, 0.06f, 3.1f);
             Explore(dan, director, "pl_dan", "Cây hồ cầm", new Vector3(1.2f, 1.6f, 1.2f));
-            Look("CAM_Dan", new Vector3(-8.8f, 1.35f, 2.4f), new Vector3(-9.8f, 0.8f, 3.1f), root);
+            Look("CAM_Dan", new Vector3(-8.9f, 1.2f, 2.5f), new Vector3(-9.8f, 0.62f, 3.12f), root);
             // Writing desk under the window, Kim Trọng's letter on it (pl_tho).
             StoryPropKit.LowTable(new Vector3(-8.2f, 0.06f, 0.55f), 0f, root, false, 7);
-            Block("Letter", new Vector3(-8.25f, 0.43f, 0.55f), new Vector3(0.24f, 0.004f, 0.3f), Material("PlLetter", new Color(0.93f, 0.88f, 0.74f)), root, false, 12f);
-            Block("InkStone", new Vector3(-7.85f, 0.44f, 0.5f), new Vector3(0.12f, 0.03f, 0.18f), Material("PlInk", new Color(0.05f, 0.05f, 0.06f), 0.7f), root, false);
+            Block("Letter", new Vector3(-8.3f, 0.45f, 0.55f), new Vector3(0.26f, 0.004f, 0.34f), Material("PlLetter", new Color(0.9f, 0.85f, 0.72f)), root, false, 12f);
+            ClassroomKit.WorldText(root, "LetterText", "<i>Chú ta mất ở Liêu Dương,\nta phải đi hộ tang nửa năm.\nLời thề dưới trăng,\nta không quên.</i>\n<size=80%>— Kim Trọng</size>",
+                new Vector3(-8.3f, 0.454f, 0.55f), 192f, new Vector2(0.22f, 0.3f), 0.022f, new Color(0.15f, 0.1f, 0.08f), true);
+            Block("PaperStack", new Vector3(-7.95f, 0.455f, 0.68f), new Vector3(0.22f, 0.02f, 0.28f), Material("PlPaperStack", new Color(0.88f, 0.84f, 0.74f)), root, false, -6f);
+            Block("InkStone", new Vector3(-7.85f, 0.46f, 0.4f), new Vector3(0.12f, 0.03f, 0.18f), Material("PlInk", new Color(0.05f, 0.05f, 0.06f), 0.7f), root, false);
+            Block("Brush", new Vector3(-8.0f, 0.48f, 0.36f), new Vector3(0.012f, 0.012f, 0.22f), _wood, root, false, 70f);
+            StoryPropKit.FlowerVase(new Vector3(-8.62f, 0.445f, 0.4f), root, 5, 0.7f);
             var desk = new GameObject("DeskTarget");
             desk.transform.SetParent(root, false);
             desk.transform.position = new Vector3(-8.2f, 0.06f, 1.25f);
             Explore(desk, director, "pl_tho", "Bàn viết bên cửa sổ", new Vector3(1.2f, 1.6f, 1.2f));
-            Look("CAM_Desk", new Vector3(-7.7f, 1.45f, 1.5f), new Vector3(-8.25f, 0.42f, 0.55f), root);
+            Look("CAM_Desk", new Vector3(-7.7f, 1.2f, 1.25f), new Vector3(-8.28f, 0.42f, 0.55f), root);
+            // A girl's room: her embroidery by the window, a painting, a shelf, a candle by the bed, a beamed ceiling.
+            StoryPropKit.EmbroideryFrame(new Vector3(-7.25f, 0.06f, 1.55f), 225f, root, 9);
+            StoryPropKit.Scroll(new Vector3(-9.98f, 1.75f, 2.2f), 90f, root, 13);
+            StoryPropKit.WallShelf(new Vector3(-6.53f, 1.55f, 4.75f), 270f, 1.1f, root, 17);
+            StoryPropKit.Candle(new Vector3(-9.65f, 0.06f, 3.95f), root, 0f, 0.9f, 1.05f);
+            Block("Ceiling", new Vector3(-8.25f, 3.18f, 3f), new Vector3(3.8f, 0.05f, 6.2f), _planks, root, false);
+            for (int i = 0; i < 4; i++)
+                Block("CeilingBeam", new Vector3(-8.25f, 3.08f, 0.6f + i * 1.6f), new Vector3(3.8f, 0.14f, 0.16f), _wood, root, false);
+            // Morning sun through the lattice window: a shadowed beam lays the lattice pattern across the floor.
+            var sunBeam = new GameObject("WindowSun");
+            sunBeam.transform.SetParent(root, false);
+            sunBeam.transform.position = new Vector3(-7.7f, 3.0f, -1.7f);
+            sunBeam.transform.rotation = Quaternion.LookRotation(new Vector3(-8.5f, 0.1f, 1.9f) - sunBeam.transform.position);
+            var beam = sunBeam.AddComponent<Light>();
+            beam.type = LightType.Spot; beam.color = new Color(1f, 0.88f, 0.66f); beam.intensity = 12f; beam.range = 7f;
+            beam.spotAngle = 48f; beam.innerSpotAngle = 30f; beam.shadows = LightShadows.Soft;
+            Dust("WindowDust", new Vector3(-8.3f, 1.2f, 1.2f), new Vector3(1.2f, 1.6f, 1.8f), root, new Color(1f, 0.9f, 0.7f, 0.35f), 60);
             // Door out to the courtyard (pl_san).
             var door = new GameObject("DoorTarget");
             door.transform.SetParent(root, false);
@@ -286,7 +308,7 @@ namespace ThuyKieu.Core.Editor
             day.transform.SetParent(root, false);
             day.transform.position = new Vector3(-8.2f, 2.4f, 2.6f);
             var light = day.AddComponent<Light>();
-            light.type = LightType.Point; light.color = new Color(1f, 0.9f, 0.76f); light.range = 6f; light.intensity = 1.1f; light.shadows = LightShadows.None;
+            light.type = LightType.Point; light.color = new Color(1f, 0.9f, 0.76f); light.range = 6f; light.intensity = 1.4f; light.shadows = LightShadows.None;
             Look("CAM_Wide_KieuRoom", new Vector3(-6.9f, 2.3f, 0.6f), new Vector3(-8.8f, 0.7f, 4.6f), root);
             wake = Point("WakeSpot", new Vector3(-8.2f, 0.08f, 3.4f), 165f, root);
         }
@@ -305,7 +327,7 @@ namespace ThuyKieu.Core.Editor
             foreach (float x in new[] { -1.7f, 1.7f }) Pillar("GatePost", new Vector3(x, 0, -7f), 0.18f, 3f, _red, _stone, root);
             Roof("GateRoof", new Vector3(0f, 3.4f, -7f), 4.4f, 1.8f, 26f, _tiles, _ridge, root);
             foreach (int side in new[] { -1, 1 })
-                Block("GateLeaf", new Vector3(side * 1.95f, 1.2f, -6.3f), new Vector3(0.08f, 2.3f, 1.4f), _wood, root, false, side * 8f);
+                Block("GateLeaf", new Vector3(side * 1.95f, 1.2f, -6.3f), new Vector3(0.08f, 2.3f, 1.4f), _wood, root, true, side * 8f);
             Couplets(new Vector3(-1.9f, 1.7f, -7.25f), new Vector3(1.9f, 1.7f, -7.25f), 180f, root);
             gate = Point("GatePoint", new Vector3(0f, 0f, -8.5f), 0f, root);
 

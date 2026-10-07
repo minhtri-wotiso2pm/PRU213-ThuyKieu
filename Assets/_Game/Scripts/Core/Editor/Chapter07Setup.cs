@@ -125,11 +125,13 @@ namespace ThuyKieu.Core.Editor
             var reunionFather = Point("ReunionFather", new Vector3(0.1f, 0f, -11.4f), 0f, marks);
             var reunionBrother = Point("ReunionBrother", new Vector3(1.2f, 0f, -11.2f), 340f, marks);
             var reunionMother = Point("ReunionMother", new Vector3(-0.9f, 0f, -11.3f), 20f, marks);
-            Look("CAM_Wide_YamenGate", new Vector3(-6f, 3.2f, -15f), new Vector3(1f, 1.2f, -5f), world);
-            Look("CAM_Witnesses", new Vector3(-4.6f, 1.8f, -6.2f), new Vector3(-8.2f, 1.3f, -3.6f), world);
-            Look("CAM_Drum", new Vector3(0.6f, 1.9f, -1.4f), new Vector3(2.6f, 1.4f, 1.4f), world);
-            Look("CAM_Wide_Hall", new Vector3(-3.6f, 3.4f, 7.4f), new Vector3(0.4f, 1.4f, 15.5f), world);
+            Look("CAM_Wide_YamenGate", new Vector3(-4.6f, 2.6f, -10.7f), new Vector3(0.9f, 1.15f, -5.2f), world);
+            Look("CAM_Witnesses", new Vector3(-5.5f, 1.65f, -3.7f), new Vector3(-8.4f, 1.35f, -3.6f), world);
+            Look("CAM_Drum", new Vector3(-0.5f, 1.6f, -1.3f), new Vector3(2.6f, 1.3f, 0.9f), world);
+            Look("CAM_Wide_Hall", new Vector3(1.1f, 2.7f, 9.3f), new Vector3(0f, 1.6f, 16.8f), world);
+            Look("CAM_CU_QuanHuyen", new Vector3(0.42f, 2.2f, 15.25f), new Vector3(-0.05f, 1.95f, 17.55f), world);
             var spiritCamera = Point("CAM_Spirit", new Vector3(0f, 1.6f, -8f), 0f, world);
+            var spiritSpot = Point("SpiritSpot", new Vector3(0f, 0f, -7.3f), 180f, marks);
             Zone("Hall", new Vector3(0f, 2f, 14f), new Vector3(14f, 5f, 12f), 3f, 0.35f, 58f, 0.4f, world);
 
             // ------------------------------------------------------------ light
@@ -153,6 +155,7 @@ namespace ThuyKieu.Core.Editor
             Set(worldScript, "_mother", mother);
             Set(worldScript, "_apparition", apparition);
             Set(worldScript, "_spiritCamera", spiritCamera);
+            Set(worldScript, "_spiritSpot", spiritSpot);
             Set(worldScript, "_magistrate", magistrate);
             Set(worldScript, "_sun", sun);
             Set(worldScript, "_gatePlayer", gatePlayer);
@@ -261,7 +264,7 @@ namespace ThuyKieu.Core.Editor
             Block("OuterPlaque", new Vector3(0f, 3.7f, -12.2f), new Vector3(2.6f, 0.6f, 0.06f), Material("Ch7Plaque", new Color(0.12f, 0.08f, 0.05f), 0.5f), root, false);
             ClassroomKit.WorldText(root, "OuterPlaqueText", "<b>HUYỆN ĐƯỜNG LÂM TRI</b>", new Vector3(0f, 3.7f, -12.24f), 0f, new Vector2(2.5f, 0.5f), 0.26f, new Color(0.9f, 0.72f, 0.3f));
             foreach (int side in new[] { -1, 1 })
-                Block("OuterGateLeaf", new Vector3(side * 2.1f, 1.5f, -11.1f), new Vector3(0.1f, 3f, 1.6f), _red, root, false, side * 10f);
+                Block("OuterGateLeaf", new Vector3(side * 2.1f, 1.5f, -11.1f), new Vector3(0.1f, 3f, 1.6f), _red, root, true, side * 10f);
             StoryPropKit.StoneLantern(new Vector3(-3.4f, 0f, -13.4f), 0f, root);
             StoryPropKit.StoneLantern(new Vector3(3.4f, 0f, -13.4f), 0f, root);
         }
@@ -295,8 +298,8 @@ namespace ThuyKieu.Core.Editor
             StoryPropKit.NoticeBoard(new Vector3(-4.6f, 0f, 0.8f), 180f, root, 77);
             StoryPropKit.StoneLantern(new Vector3(-4.6f, 0f, -3f), 0f, root);
             StoryPropKit.StoneLantern(new Vector3(4.6f, 0f, -3f), 0f, root);
-            PottedPlant(new Vector3(-1.9f, 0f, -11f), 1f, root, 701, true);
-            PottedPlant(new Vector3(1.9f, 0f, -11f), 1f, root, 702, true);
+            PottedPlant(new Vector3(-3.3f, 0f, -11.3f), 1f, root, 701, true);
+            PottedPlant(new Vector3(3.3f, 0f, -11.3f), 1f, root, 702, true);
             Prop("Assets/_Game/Prefabs/Vegetation/ArecaPalm.prefab", new Vector3(-6.5f, 0f, -8.6f), 20, 1f, root);
             Prop("Assets/_Game/Prefabs/Vegetation/BananaTree.prefab", new Vector3(6.8f, 0f, -9.4f), 50, 0.9f, root);
             Leaves("CourtLeaves", new Vector3(0f, 4f, -4f), new Vector3(18f, 1f, 10f), root, new Color(0.6f, 0.52f, 0.2f), 12);
@@ -351,10 +354,60 @@ namespace ThuyKieu.Core.Editor
                 lamp.transform.SetParent(root, false);
                 lamp.transform.position = new Vector3(x, 3.4f, 13f);
                 var light = lamp.AddComponent<Light>();
-                light.type = LightType.Point; light.color = new Color(1f, 0.82f, 0.6f); light.range = 9f; light.intensity = 1.2f; light.shadows = LightShadows.None;
+                light.type = LightType.Point; light.color = new Color(1f, 0.82f, 0.6f); light.range = 10f; light.intensity = 2.2f; light.shadows = LightShadows.None;
             }
+            HallLighting(root);
+            HallDressing(root);
             Lantern("HallLantern", new Vector3(-2.4f, 3.9f, 9f), new Color(1f, 0.3f, 0.18f), root, 0f, 0f);
             Lantern("HallLantern", new Vector3(2.4f, 3.9f, 9f), new Color(1f, 0.3f, 0.18f), root, 0f, 0f);
+        }
+
+        /// <summary>Morning light falling in through the open front, a fill under the ceiling and a key on the bench.</summary>
+        private static void HallLighting(Transform root)
+        {
+            Light Add(string name, Vector3 at, Vector3 aim, LightType type, Color color, float intensity, float range, float angle, LightShadows shadows)
+            {
+                var go = new GameObject(name);
+                go.transform.SetParent(root, false);
+                go.transform.position = at;
+                go.transform.rotation = Quaternion.LookRotation(aim - at);
+                var light = go.AddComponent<Light>();
+                light.type = type; light.color = color; light.intensity = intensity; light.range = range; light.shadows = shadows;
+                if (type == LightType.Spot) { light.spotAngle = angle; light.innerSpotAngle = angle * 0.55f; }
+                return light;
+            }
+            Add("HallDaylight", new Vector3(0f, 4.2f, 6.4f), new Vector3(0f, 0.5f, 13.5f), LightType.Spot, new Color(1f, 0.9f, 0.74f), 14f, 16f, 70f, LightShadows.Soft);
+            Add("HallFill", new Vector3(0f, 3.9f, 12.6f), new Vector3(0f, 0f, 12.6f), LightType.Point, new Color(1f, 0.86f, 0.7f), 1.8f, 11f, 0f, LightShadows.None);
+            Add("BenchKey", new Vector3(1.6f, 4.2f, 14.2f), new Vector3(0f, 1.9f, 17.6f), LightType.Spot, new Color(1f, 0.84f, 0.62f), 9f, 8f, 38f, LightShadows.Soft);
+        }
+
+        /// <summary>The furniture of a working courtroom.</summary>
+        private static void HallDressing(Transform root)
+        {
+            // Ceiling beams and purlins: the hall stops reading as a flat box.
+            for (int i = 0; i < 5; i++)
+                Block("HallBeam", new Vector3(0f, 4.38f, 9.4f + i * 2.4f), new Vector3(15.6f, 0.22f, 0.24f), _wood, root, false);
+            foreach (float x in new[] { -4.8f, 0f, 4.8f })
+                Block("HallPurlin", new Vector3(x, 4.28f, 14.2f), new Vector3(0.18f, 0.16f, 11.4f), _wood, root, false);
+            // The screen behind the bench in a lacquered frame with a gilt edge.
+            Block("ScreenFrame", new Vector3(0f, 2.6f, 19.6f), new Vector3(6.4f, 3.5f, 0.08f), _red, root, false);
+            Block("ScreenGilt", new Vector3(0f, 2.6f, 19.57f), new Vector3(6.2f, 3.3f, 0.02f), Material("Ch7Gilt", new Color(0.78f, 0.58f, 0.22f), 0.7f), root, false);
+            // "Silence" and "Withdraw" placards on poles either side of the dais, as in every yamen.
+            StoryPropKit.Placard(new Vector3(-3.4f, 0.5f, 16.6f), 180f, root, "TÚC TĨNH");
+            StoryPropKit.Placard(new Vector3(-4.1f, 0.5f, 16.9f), 180f, root, "HỒI TỴ");
+            StoryPropKit.Placard(new Vector3(3.4f, 0.5f, 16.6f), 180f, root, "TÚC TĨNH");
+            StoryPropKit.Placard(new Vector3(4.1f, 0.5f, 16.9f), 180f, root, "HỒI TỴ");
+            // A reed mat where the plaintiff kneels, the clerk's stool, an incense burner on the bench end.
+            Block("PlaintiffMat", new Vector3(0f, 0.515f, 12.4f), new Vector3(1.1f, 0.012f, 0.8f), Material("Ch7Mat", new Color(0.72f, 0.6f, 0.36f), 0.1f), root, false);
+            StoryPropKit.Stool(new Vector3(-5f, 0.5f, 14.4f), 0f, root);
+            StoryPropKit.Stool(new Vector3(5f, 0.5f, 14.4f), 0f, root);
+            Block("Brush", new Vector3(-4.8f, 1.34f, 15.05f), new Vector3(0.02f, 0.02f, 0.2f), _wood, root, false, 20f);
+            StoryPropKit.IncenseBurner(new Vector3(1.4f, 1.7f, 16.75f), root);
+            for (int i = -1; i <= 1; i += 2)
+            {
+                Lantern("HallLantern", new Vector3(i * 4.8f, 3.85f, 12.6f), new Color(1f, 0.3f, 0.18f), root, 0f, 0f);
+                Block("HallBannerSide", new Vector3(i * 7.7f, 2.6f, 12f), new Vector3(0.02f, 2.2f, 0.7f), Material("Ch7Banner", new Color(0.7f, 0.08f, 0.06f), 0.2f), root, false);
+            }
         }
 
         /// <summary>The street outside the outer gate where the family comes back from the prison.</summary>

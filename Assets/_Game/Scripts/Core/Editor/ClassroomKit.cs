@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using ThuyKieu.Core.Story;
 using TMPro;
 using UnityEditor;
@@ -24,7 +25,7 @@ namespace ThuyKieu.Core.Editor
             public Transform TeacherSpot;
             public Transform Door;          // where people walk out
             public Transform BookAnchor;    // the open Truyện Kiều on her desk
-            public Transform BoardAnchor, WindowAnchor;
+            public Transform BoardAnchor, WindowAnchor, WindowStand;
             public GameObject BookGlow;
             public TMP_Text ThankYou;
             public List<Transform> ClassmateSeats = new List<Transform>();
@@ -45,7 +46,7 @@ namespace ThuyKieu.Core.Editor
 
             var wall = Surface("ClassWall", "plastered_wall_02", new Color(1f, 0.9f, 0.62f), 2.2f, 0.12f, 0.6f, 0.25f);
             var dado = Material("ClassDado", new Color(0.42f, 0.6f, 0.52f), 0.35f);
-            var floor = Surface("ClassFloor", "monastery_stone_floor", new Color(0.96f, 0.92f, 0.84f), 1.2f, 0.35f, 0.6f, 0.2f);
+            var floor = TerrazzoFloor();
             var ceiling = Material("ClassCeiling", new Color(0.93f, 0.92f, 0.88f), 0.1f);
             var deskWood = Surface("ClassDesk", "planks_brown_10", new Color(0.9f, 0.72f, 0.52f), 0.9f, 0.35f, 0.5f, 0.2f);
             var metal = Material("ClassMetal", new Color(0.18f, 0.2f, 0.22f), 0.5f);
@@ -90,12 +91,86 @@ namespace ThuyKieu.Core.Editor
             Point("Focus_Board", o + new Vector3(0f, 1.6f, 4.45f), 0f, root);
             Look("CAM_Wide_Classroom", o + new Vector3(-4.2f, 2.7f, -4f), o + new Vector3(1.6f, 0.9f, 1.4f), root);
             Look("CAM_Board", o + new Vector3(0.6f, 1.75f, 1.6f), o + new Vector3(-0.2f, 1.7f, 4.5f), root);
-            Look("CAM_Window", o + new Vector3(3.2f, 1.6f, -1.4f), o + new Vector3(8f, 1.7f, 1.6f), root);
+            parts.WindowStand = Point("WindowStand", o + new Vector3(4.42f, 0f, 0.25f), 90f, root);
+            Look("CAM_Window", o + new Vector3(3.55f, 1.62f, -0.55f), o + new Vector3(7.5f, 1.6f, 1.2f), root);
             var book = parts.BookAnchor.position;
-            Look("CAM_Book", book + new Vector3(-0.35f, 0.75f, -0.55f), book + new Vector3(0, 0.02f, 0), root);
+            Look("CAM_Book", book + new Vector3(0.48f, 0.9f, -0.78f), book + new Vector3(0, 0.02f, 0), root);
             Look("CAM_BookClose", book + new Vector3(0.05f, 0.42f, -0.22f), book + new Vector3(0.12f, 0.02f, 0.02f), root);
             Zone("Classroom", o + new Vector3(0, 1.5f, 0), new Vector3(10f, 4f, 9f), 2.4f, 0.32f, 58f, 0.25f, root);
             return parts;
+        }
+
+        /// <summary>Granito (terrazzo) floor like Vietnamese schools: a generated texture of chips in grey cement, 40 cm tiles.</summary>
+        private static Material TerrazzoFloor()
+        {
+            string path = AssetFolder + "/ClassTerrazzo.png";
+            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            if (texture == null)
+            {
+                const int size = 512, tile = 256;
+                var image = new Texture2D(size, size, TextureFormat.RGB24, false);
+                var random = new System.Random(19);
+                var pixels = new Color[size * size];
+                for (int y = 0; y < size; y++)
+                    for (int x = 0; x < size; x++)
+                    {
+                        float n = (float)random.NextDouble() * 0.04f;
+                        int t = (x / tile + y / tile) % 2;
+                        var base0 = t == 0 ? new Color(0.8f, 0.77f, 0.71f) : new Color(0.78f, 0.75f, 0.7f);
+                        pixels[y * size + x] = base0 + new Color(n, n, n);
+                    }
+                Color[] chips = { new Color(0.95f, 0.94f, 0.9f), new Color(0.35f, 0.34f, 0.33f), new Color(0.62f, 0.5f, 0.38f), new Color(0.12f, 0.12f, 0.12f), new Color(0.72f, 0.66f, 0.56f) };
+                for (int i = 0; i < 2600; i++)
+                {
+                    int cx = random.Next(size), cy = random.Next(size), r = 1 + random.Next(4);
+                    var c = chips[random.Next(chips.Length)];
+                    for (int dy = -r; dy <= r; dy++)
+                        for (int dx = -r; dx <= r; dx++)
+                            if (dx * dx + dy * dy <= r * r + random.Next(2))
+                                pixels[((cy + dy + size) % size) * size + (cx + dx + size) % size] = c;
+                }
+                // Grout seams between the tiles.
+                for (int y = 0; y < size; y++)
+                    for (int x = 0; x < size; x++)
+                        if (x % tile < 2 || y % tile < 2) pixels[y * size + x] = new Color(0.58f, 0.55f, 0.5f);
+                image.SetPixels(pixels);
+                File.WriteAllBytes(path, image.EncodeToPNG());
+                Object.DestroyImmediate(image);
+                AssetDatabase.ImportAsset(path);
+                texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+            }
+            var material = Material("ClassTerrazzo", Color.white, 0.45f);
+            material.SetTexture("_BaseMap", texture);
+            material.SetTextureScale("_BaseMap", new Vector2(13f, 11.75f));
+            EditorUtility.SetDirty(material);
+            return material;
+        }
+
+        /// <summary>Flat five-pointed star facing −Z (the flag's star).</summary>
+        private static void Star(Transform root, Vector3 centre, float radius, Material material)
+        {
+            var vertices = new List<Vector3> { Vector3.zero };
+            for (int i = 0; i < 10; i++)
+            {
+                float a = Mathf.PI * 0.5f + i * Mathf.PI / 5f;
+                float r = i % 2 == 0 ? radius : radius * 0.382f;
+                vertices.Add(new Vector3(Mathf.Cos(a) * r, Mathf.Sin(a) * r, 0f));
+            }
+            var triangles = new List<int>();
+            for (int i = 0; i < 10; i++) { triangles.Add(0); triangles.Add(1 + (i + 1) % 10); triangles.Add(1 + i); }
+            var mesh = new Mesh { name = "FlagStar" };
+            mesh.SetVertices(vertices);
+            mesh.SetTriangles(triangles, 0);
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            string meshPath = AssetFolder + "/FlagStar.asset";
+            AssetDatabase.DeleteAsset(meshPath);
+            AssetDatabase.CreateAsset(mesh, meshPath);
+            var go = new GameObject("FlagStar");
+            go.transform.SetParent(root, false);
+            go.transform.position = centre;
+            go.AddComponent<MeshFilter>().sharedMesh = mesh;
+            go.AddComponent<MeshRenderer>().sharedMaterial = material;
         }
 
         public const string StudentModel = "Assets/_Game/Art/Characters/LauXanh1/Rigged/LauXanh1_Rigged.fbx";
@@ -183,6 +258,11 @@ namespace ThuyKieu.Core.Editor
                     if (random.NextDouble() < 0.6)
                         Block("Notebook", d + new Vector3((float)random.NextDouble() * 0.8f - 0.4f, 0.765f, 0), new Vector3(0.21f, 0.01f, 0.29f),
                             Material("ClassNotebook", new Color(0.92f, 0.9f, 0.82f)), root, false, (float)random.NextDouble() * 30f - 15f);
+                    if (random.NextDouble() < 0.3)
+                    {
+                        var bottle = Cylinder("Bottle", d + new Vector3((float)random.NextDouble() * 0.9f - 0.45f, 0.76f, 0.12f), 0.035f, 0.22f, Material("ClassBottle", new Color(0.55f, 0.75f, 0.9f), 0.85f), root, false);
+                        Cylinder("BottleCap", bottle.transform.position + Vector3.up * 0.22f, 0.02f, 0.03f, Material("ClassBottleCap", new Color(0.2f, 0.45f, 0.85f), 0.5f), root, false);
+                    }
                     if (random.NextDouble() < 0.45)
                         Block("Bag", d + new Vector3((float)random.NextDouble() * 0.6f - 0.3f, 0.55f, -0.02f), new Vector3(0.32f, 0.12f, 0.24f), bag[random.Next(bag.Length)], root, false);
                     // Seats face the board (north). The student sits third row, right column, by the window.
@@ -224,8 +304,10 @@ namespace ThuyKieu.Core.Editor
             Sphere("GlowMotes", top + Vector3.up * 0.25f, Vector3.one * 0.05f, Emissive("ClassBookGlow", new Color(1f, 0.85f, 0.5f), 2.2f), glow.transform);
             Dust("GlowDust", top + Vector3.up * 0.3f, new Vector3(0.4f, 0.4f, 0.3f), glow.transform, new Color(1f, 0.85f, 0.5f, 0.6f), 40);
             parts.BookGlow = glow;
+            glow.SetActive(false);
             // Epilogue: "Cảm ơn." in small handwriting at the foot of the right page.
             parts.ThankYou = WorldText(root, "ThankYou", "<i>Cảm ơn.</i>", top + new Vector3(0.12f, 0.025f, -0.1f), 0f, new Vector2(0.16f, 0.04f), 0.02f, new Color(0.45f, 0.08f, 0.05f), true);
+            parts.ThankYou.gameObject.SetActive(false); // written only in the epilogue (RevealSequence)
         }
 
         private static void Dressing(Transform root, Vector3 o, Material metal, Material wood)
@@ -248,6 +330,22 @@ namespace ThuyKieu.Core.Editor
             face.transform.position = o + new Vector3(-4.96f, 2.55f, 1.5f);
             Block("ClockHand", o + new Vector3(-4.94f, 2.6f, 1.5f), new Vector3(0.01f, 0.13f, 0.015f), metal, root, false);
             Block("ClockHand", o + new Vector3(-4.94f, 2.55f, 1.55f), new Vector3(0.01f, 0.015f, 0.1f), metal, root, false);
+            // The national flag above the board's left side, a timetable by the door, the month's calendar, the teacher's
+            // chair, a fire extinguisher.
+            Block("Flag", o + new Vector3(-3.55f, 2.55f, 4.47f), new Vector3(0.9f, 0.6f, 0.02f), Material("ClassFlagRed", new Color(0.78f, 0.06f, 0.05f), 0.2f), root, false);
+            Star(root, o + new Vector3(-3.55f, 2.55f, 4.455f), 0.17f, Material("ClassFlagStar", new Color(1f, 0.85f, 0.1f), 0.2f));
+            Block("Timetable", o + new Vector3(-4.97f, 1.6f, -1.75f), new Vector3(0.01f, 0.75f, 0.6f), Material("ClassNoticeA", new Color(0.95f, 0.93f, 0.85f)), root, false);
+            WorldText(root, "TimetableText", "<b>THỜI KHÓA BIỂU</b>\n<size=70%>Thứ 2: Văn · Toán · Anh\nThứ 3: Lý · Hóa · Sử\nThứ 4: Văn · Sinh · Địa\nThứ 5: Văn · Toán · GDCD\nThứ 6: Anh · Tin · Thể dục</size>",
+                o + new Vector3(-4.96f, 1.6f, -1.75f), 270f, new Vector2(0.56f, 0.7f), 0.05f, new Color(0.15f, 0.15f, 0.2f));
+            Block("Calendar", o + new Vector3(4.2f, 2.1f, 4.47f), new Vector3(0.42f, 0.56f, 0.01f), Material("ClassNoticeA", new Color(0.95f, 0.93f, 0.85f)), root, false);
+            WorldText(root, "CalendarText", "<color=#B01010><b>15</b></color>\n<size=45%>THÁNG 5</size>", o + new Vector3(4.2f, 2.1f, 4.46f), 0f, new Vector2(0.4f, 0.5f), 0.16f, new Color(0.2f, 0.2f, 0.2f));
+            Block("ChairSeat", o + new Vector3(-3.1f, 0.63f, 3.98f), new Vector3(0.44f, 0.04f, 0.42f), wood, root, false);
+            Block("ChairBack", o + new Vector3(-3.1f, 0.92f, 4.18f), new Vector3(0.44f, 0.55f, 0.04f), wood, root, false);
+            foreach (float x in new[] { -0.19f, 0.19f })
+                foreach (float z in new[] { -0.18f, 0.18f })
+                    Block("ChairLeg", o + new Vector3(-3.1f + x, 0.4f, 3.98f + z), new Vector3(0.03f, 0.44f, 0.03f), metal, root, false);
+            var extinguisher = Cylinder("Extinguisher", o + new Vector3(-4.8f, 0f, -2.7f), 0.08f, 0.52f, Material("ClassExtinguisher", new Color(0.8f, 0.08f, 0.06f), 0.6f), root, false);
+            Cylinder("ExtinguisherHead", extinguisher.transform.position + Vector3.up * 0.52f, 0.03f, 0.08f, metal, root, false);
             // A potted plant by the board and the class flag holder.
             PottedPlant(o + new Vector3(4.4f, 0.18f, 3.9f), 0.8f, root, 101);
             PottedPlant(o + new Vector3(-4.4f, 0.18f, 3.9f), 0.7f, root, 102);

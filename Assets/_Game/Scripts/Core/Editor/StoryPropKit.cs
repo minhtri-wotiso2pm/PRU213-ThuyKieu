@@ -14,7 +14,7 @@ namespace ThuyKieu.Core.Editor
     /// laundry lines, haystacks, stone lanterns, torches, an incense burner and street facades.
     /// Each prop is one root object (position + yaw) whose parts are laid out in its local space.
     /// </summary>
-    public static class StoryPropKit
+    public static partial class StoryPropKit
     {
         // ------------------------------------------------------------------ materials
 

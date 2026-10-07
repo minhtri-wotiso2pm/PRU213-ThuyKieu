@@ -25,6 +25,8 @@ namespace ThuyKieu.Gameplay.Chapters
         [SerializeField] private GameObject _apparition;
         [Tooltip("The CAM_Spirit anchor, framed at runtime on Kiều and the apparition.")]
         [SerializeField] private Transform _spiritCamera;
+        [Tooltip("Where the real Kiều appears: open ground in front of the gate, clear of the family and Kim Trọng.")]
+        [SerializeField] private Transform _spiritSpot;
         [SerializeField] private StoryActor _magistrate;
         [SerializeField] private Light _sun;
         [SerializeField] private Transform _gatePlayer, _exit;
@@ -41,6 +43,7 @@ namespace ThuyKieu.Gameplay.Chapters
             _director.SceneChanged += OnScene;
             _director.ExploreChanged += OnExplore;
             _director.CheckpointRestored += OnRestored;
+            _director.TagReceived += OnTag;
         }
 
         private void OnDisable()
@@ -48,6 +51,22 @@ namespace ThuyKieu.Gameplay.Chapters
             _director.SceneChanged -= OnScene;
             _director.ExploreChanged -= OnExplore;
             _director.CheckpointRestored -= OnRestored;
+            _director.TagReceived -= OnTag;
+        }
+
+        /// <summary>
+        /// A witness who was not called still speaks up "from the crowd" at the end of the trial: bring her into the
+        /// hall, at the back of the plaintiffs' side, so the line has a face.
+        /// </summary>
+        private void OnTag(string key, string value)
+        {
+            if (key != "speaker" || !_inHall) return;
+            var witness = value == "BaHangNuoc" ? _baNuoc : value == "ThuLai" ? _thuLai : value == "ChiLam" ? _chiLam : null;
+            if (witness == null || witness.gameObject.activeSelf || _hallWitnesses.Length == 0) return;
+            var spot = _hallWitnesses[_hallWitnesses.Length - 1];
+            witness.gameObject.SetActive(true);
+            witness.EnableNavigation();
+            witness.Place(spot.position + spot.right * 0.9f - spot.forward * 0.6f, spot.rotation);
         }
 
         private IEnumerator Start()
@@ -141,27 +160,81 @@ namespace ThuyKieu.Gameplay.Chapters
             yield return _director.Hud.Fade(0f, 0.9f);
         }
 
-        /// <summary>Time stops: everyone freezes mid-gesture and the real Kiều stands facing the player.</summary>
+        /// <summary>
+        /// Time stops: everyone freezes mid-gesture, Kiều turns towards the open court and the real Kiều stands there
+        /// facing her. The two-shot is taken from whichever side has nobody standing in it (Kim Trọng and the family
+        /// stay behind Kiều, out of the line of sight); anyone still in the way steps out of the picture.
+        /// </summary>
         private void Stillness()
         {
+            var frozen = new List<StoryActor>();
             foreach (var actor in FindObjectsByType<StoryActor>())
             {
                 if (actor.gameObject == _director.Player.gameObject) continue;
                 foreach (var animator in actor.GetComponentsInChildren<Animator>()) animator.speed = 0f;
                 actor.Stop();
+                frozen.Add(actor);
             }
             var player = _director.Player.transform;
-            Vector3 facing = player.forward;
+            Vector3 spot = _spiritSpot != null ? _spiritSpot.position : player.position + player.forward * 2.2f;
+            Vector3 facing = spot - player.position;
             facing.y = 0f;
-            _apparition.transform.SetPositionAndRotation(player.position + facing.normalized * 2.2f, Quaternion.LookRotation(-facing));
+            facing = facing.sqrMagnitude > 0.01f ? facing.normalized : player.forward;
+            _director.Player.Teleport(player.position, Quaternion.LookRotation(facing));
+            // Kim Trọng steps back a pace behind her shoulder (with the family) so he is neither between the two Kiều
+            // nor standing in the background of their shot.
+            Vector3 aside = Vector3.Cross(Vector3.up, facing);
+            Vector3 behind = player.position - facing * 1.4f - aside * 0.9f;
+            _kim.Place(behind, Quaternion.LookRotation(Flat(player.position - behind)));
+            Vector3 apparitionAt = player.position + facing * Mathf.Clamp(Vector3.Distance(Flat(spot), Flat(player.position)), 1.8f, 2.4f);
+            _apparition.transform.SetPositionAndRotation(apparitionAt, Quaternion.LookRotation(-facing));
             _apparition.SetActive(true);
-            // A two-shot from the side: Kiều on the left, the real Kiều on the right.
-            Vector3 middle = player.position + facing.normalized * 1.1f + Vector3.up * 1.45f;
-            Vector3 side = Vector3.Cross(Vector3.up, facing.normalized);
-            _spiritCamera.position = middle - side * 2.6f + Vector3.up * 0.1f - facing.normalized * 0.4f;
-            _spiritCamera.rotation = Quaternion.LookRotation(middle - _spiritCamera.position);
+
+            // A two-shot in profile: test both sides and keep the one with nobody between the lens and the pair.
+            Vector3 middle = (player.position + apparitionAt) * 0.5f + Vector3.up * 1.45f;
+            Vector3 side = Vector3.Cross(Vector3.up, facing);
+            // Far enough back that both fit inside the narrow dialogue lens with air around them (about ±15° each side).
+            float reach = Mathf.Max(3.2f, (Vector3.Distance(Flat(player.position), Flat(apparitionAt)) * 0.5f + 0.35f) / Mathf.Tan(15f * Mathf.Deg2Rad));
+            Vector3 best = Vector3.zero;
+            int fewest = int.MaxValue;
+            foreach (float sign in new[] { -1f, 1f })
+            {
+                Vector3 lens = middle + side * sign * reach + Vector3.up * 0.05f - facing * 0.9f;
+                int blocking = 0;
+                // In front of the pair counts most; behind them (the background of the shot) counts too.
+                foreach (var actor in frozen)
+                {
+                    if (Between(actor, lens, middle, 1.6f)) blocking += 3;
+                    else if (Between(actor, middle, middle + (middle - lens) * 2.5f, 3.2f)) blocking++;
+                }
+                if (Physics.Linecast(middle, lens, 1 << 8, QueryTriggerInteraction.Ignore)) blocking += 10;
+                if (blocking < fewest) { fewest = blocking; best = lens; }
+            }
+            _spiritCamera.position = best;
+            _spiritCamera.rotation = Quaternion.LookRotation(middle - best);
+            foreach (var actor in frozen)
+                if (Between(actor, best, middle, 1.6f) || Vector3.Distance(Flat(actor.transform.position), Flat(apparitionAt)) < 0.8f
+                    || Vector3.Distance(Flat(actor.transform.position), Flat(best)) < 2.5f)
+                    foreach (var renderer in actor.GetComponentsInChildren<Renderer>())
+                        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+
+            // The moment outside time: warm, hazy light instead of the noon glare.
+            if (_sun != null) { _sun.intensity = 1.1f; _sun.color = new Color(1f, 0.84f, 0.62f); }
+            RenderSettings.fogColor = new Color(0.95f, 0.86f, 0.7f);
+            RenderSettings.fogDensity = 0.012f;
             if (_director.Audio != null) _director.Audio.SetAmbience(null);
         }
+
+        /// <summary>Whether an actor stands in the corridor from the lens to the subjects (within <paramref name="width"/>).</summary>
+        private static bool Between(StoryActor actor, Vector3 lens, Vector3 target, float width)
+        {
+            Vector3 a = Flat(lens), b = Flat(target), p = Flat(actor.transform.position);
+            Vector3 ab = b - a;
+            float t = Mathf.Clamp01(Vector3.Dot(p - a, ab) / Mathf.Max(0.0001f, ab.sqrMagnitude));
+            return t > 0.02f && t < 0.98f && Vector3.Distance(p, a + ab * t) < width * 0.5f;
+        }
+
+        private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0f, v.z);
 
         public IEnumerable<string> SummaryLines(Ink.Runtime.Story story)
         {
