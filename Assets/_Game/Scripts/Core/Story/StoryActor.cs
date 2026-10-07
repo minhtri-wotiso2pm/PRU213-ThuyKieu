@@ -25,6 +25,8 @@ namespace ThuyKieu.Core.Story
         private Vector3 _visualBase;
         private Quaternion _visualRotation;
         private float _phase;
+        private bool _lying;
+        private float _lyingHeight;
 
         public string SpeakerId => _speakerId;
         public Vector3 HeadPosition => transform.position + Vector3.up * _headHeight;
@@ -88,6 +90,19 @@ namespace ThuyKieu.Core.Story
             _faceTarget = null;
         }
 
+        /// <summary>
+        /// Lays an unrigged model down on its back (asleep on a bed): navigation off, root placed at the feet with the
+        /// head towards the root's forward, the visual tipped over and lifted onto the bed surface.
+        /// </summary>
+        public void LieDown(Vector3 feet, Quaternion facing, float bedHeight)
+        {
+            if (_agent != null) _agent.enabled = false;
+            transform.SetPositionAndRotation(feet, facing * Quaternion.Euler(0f, 180f, 0f));
+            _faceTarget = null;
+            _lying = _staticVisual != null;
+            _lyingHeight = bedHeight;
+        }
+
         /// <summary>Called once the runtime NavMesh exists.</summary>
         public void EnableNavigation()
         {
@@ -117,6 +132,14 @@ namespace ThuyKieu.Core.Story
         private void AnimateStaticVisual(float speed)
         {
             if (_staticVisual == null) return;
+            if (_lying)
+            {
+                // Slow sleeping breath: the chest rises a few millimetres.
+                _phase += Time.deltaTime * 1.1f;
+                _staticVisual.localPosition = _visualBase + Vector3.up * (_lyingHeight + Mathf.Max(0f, Mathf.Sin(_phase)) * 0.012f);
+                _staticVisual.localRotation = Quaternion.Euler(-90f, 0f, 0f) * _visualRotation;
+                return;
+            }
             _phase += Time.deltaTime * (speed > 0.1f ? 7.5f * Mathf.Clamp(speed / 1.6f, 0.6f, 1.6f) : 1.4f);
             float walk = Mathf.Clamp01(speed / 1.2f);
             float bob = Mathf.Abs(Mathf.Sin(_phase)) * 0.045f * walk + Mathf.Sin(_phase) * 0.006f * (1 - walk);

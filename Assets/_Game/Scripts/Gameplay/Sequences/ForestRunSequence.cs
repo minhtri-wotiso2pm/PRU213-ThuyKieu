@@ -173,13 +173,19 @@ namespace ThuyKieu.Gameplay.Sequences
             done(false);
         }
 
+        /// <summary>
+        /// Leading shot: the camera runs ahead of Kiều, low and off to one side, looking back past her at the
+        /// torches of the pursuers, so the player sees how close they are.
+        /// </summary>
         private void AimCamera(ThuyKieu.Player.PlayerMovement player, float distance)
         {
             Vector3 ahead = PointAt(distance + 3f), behind = PointAt(distance - 3.5f);
             Vector3 forward = (ahead - behind).normalized;
             Vector3 side = Vector3.Cross(Vector3.up, forward);
-            _camera.position = behind + Vector3.up * 1.9f - side * 1.3f;
-            _camera.rotation = Quaternion.LookRotation(player.transform.position + Vector3.up * 1.3f + forward * 2.5f - _camera.position);
+            Vector3 kieu = player.transform.position + Vector3.up * 1.25f;
+            Vector3 chasers = PointAt(distance - 4f) + Vector3.up * 1.2f;
+            _camera.position = PointAt(distance + 4.2f) + Vector3.up * 1.55f + side * 1.5f;
+            _camera.rotation = Quaternion.LookRotation(Vector3.Lerp(kieu, chasers, 0.3f) - _camera.position);
         }
 
         // ------------------------------------------------------------------ rail

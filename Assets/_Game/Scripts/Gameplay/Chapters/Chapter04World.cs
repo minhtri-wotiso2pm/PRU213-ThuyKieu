@@ -26,6 +26,10 @@ namespace ThuyKieu.Gameplay.Chapters
         [SerializeField] private StoryActor _doorGuard;
         [SerializeField] private VisionSensor _doorGuardSight;
         [SerializeField] private Transform _hallSpot, _roomSpot, _playerRoom;
+        [Tooltip("Feet end of the sập where Tú Bà lies down when she dozes; forward points to the pillow.")]
+        [SerializeField] private Transform _sleepSpot;
+        [Tooltip("Key ring at Tú Bà's belt; disappears once Kiều has it.")]
+        [SerializeField] private GameObject _keyRing;
         [SerializeField] private ExploreTarget _keyTarget;
         [SerializeField] private StoryActor[] _guests;
         [SerializeField] private PebbleThrow _pebbles;
@@ -97,6 +101,7 @@ namespace ThuyKieu.Gameplay.Chapters
             if (_barkCooldown > 0f) _barkCooldown -= Time.deltaTime;
             UpdateTuBa();
             UpdateDoorGuard();
+            if (_keyRing != null && _keyRing.activeSelf && _director.GetBool("c4_chia_khoa")) _keyRing.SetActive(false);
             string sequence = _director.CurrentSequence;
             if (sequence == "pickpocket" && _lastSequence != sequence) _tuBaSight.Active = false;
             _lastSequence = sequence;
@@ -114,7 +119,7 @@ namespace ThuyKieu.Gameplay.Chapters
                     _director.Hud.ShowBark(tuBa ? "TuBa" : "NguoiCanh", tuBa ? "Hửm? Đứa nào lảng vảng ngoài kia?" : "Ai... ai đấy? (nấc) Đứng lại!");
                 }
             }
-            else if (RestrictedZone.PlayerInside && !_director.Player.IsHidden)
+            else if (RestrictedZone.PlayerInside && !RestrictedZone.CurrentQuiet && !_director.Player.IsHidden)
                 _director.Hud.SetMeter("Khu vực cấm: " + RestrictedZone.CurrentLabel, 0f, new Color(1f, 0.8f, 0.45f));
 
             if (RestrictedZone.PlayerInside && !_director.Player.IsHidden)
@@ -176,7 +181,8 @@ namespace ThuyKieu.Gameplay.Chapters
             _state = TuBaState.Dozing;
             _tuBaSight.Active = false;
             _tuBaSight.ResetAwareness();
-            _tuBa.Place(_roomSpot.position, _roomSpot.rotation);
+            if (_sleepSpot != null) _tuBa.LieDown(_sleepSpot.position, _sleepSpot.rotation, 0.62f);
+            else _tuBa.Place(_roomSpot.position, _roomSpot.rotation);
             if (_keyTarget != null) _keyTarget.Reveal(true);
             if (_dozeAnnounced) return;
             _dozeAnnounced = true;

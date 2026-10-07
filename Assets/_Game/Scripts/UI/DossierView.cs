@@ -24,6 +24,12 @@ namespace ThuyKieu.UI
             public string Hint;
             /// <summary>Shown after a right pick: what it proves.</summary>
             public string Insight;
+            /// <summary>
+            /// Line mode: the papers are lists of lines and the player points at the contradiction, one line on each
+            /// paper (instead of picking a written answer, which would give the answer away).
+            /// </summary>
+            public string[] LeftLines, RightLines;
+            public int LeftAnswer, RightAnswer;
         }
 
         public struct Slot
@@ -80,12 +86,32 @@ namespace ThuyKieu.UI
                 _leftBody.text = item.LeftBody;
                 _rightTitle.text = item.RightTitle;
                 _rightBody.text = item.RightBody;
-                _question.text = item.Prompt;
-                Build(item.Options);
-                yield return Pick(item.Options.Length, item.Correct);
-                bool right = _picked == item.Correct;
+                bool right;
+                if (item.LeftLines != null && item.RightLines != null)
+                {
+                    // Step 1: a line on the left paper; step 2: the matching line on the right one.
+                    ShowLines(item, -1, -1, false);
+                    _question.text = item.Prompt + "\n<size=80%><color=#E8C27A>1/2</color>  Chọn một dòng trên tờ <b>" + item.LeftTitle + "</b></size>";
+                    Build(Plain(item.LeftLines));
+                    yield return Pick(item.LeftLines.Length, item.LeftAnswer);
+                    int left = _picked;
+                    ShowLines(item, left, -1, false);
+                    _question.text = item.Prompt + "\n<size=80%><color=#E8C27A>2/2</color>  Dòng nào trên tờ <b>" + item.RightTitle + "</b> đối chiếu với nó?</size>";
+                    Build(Plain(item.RightLines));
+                    yield return Pick(item.RightLines.Length, item.RightAnswer);
+                    right = left == item.LeftAnswer && _picked == item.RightAnswer;
+                    ShowLines(item, left, _picked, true);
+                    Mark(item.RightAnswer, _picked);
+                }
+                else
+                {
+                    _question.text = item.Prompt;
+                    Build(item.Options);
+                    yield return Pick(item.Options.Length, item.Correct);
+                    right = _picked == item.Correct;
+                    Mark(item.Correct, _picked);
+                }
                 if (right) score++;
-                Mark(item.Correct, _picked);
                 _question.text = right ? "<color=#9BE39B>Khớp. </color>" + item.Insight : "<color=#F08080>Chưa đúng. </color>" + item.Hint;
                 yield return new WaitForSecondsRealtime(FastMode ? ThuyKieu.Core.Story.StoryCapture.Hold * 0.5f : right ? 2.2f : 3f);
             }
@@ -155,9 +181,46 @@ namespace ThuyKieu.UI
                 var button = Instantiate(_template, _options);
                 button.gameObject.SetActive(true);
                 button.GetComponentInChildren<TMP_Text>().text = "<color=#E8C27A>" + (i + 1) + "</color>   " + options[i];
+                if (options.Length > 3)
+                {
+                    // Line mode lists up to five lines: slimmer rows so they fit the options area.
+                    var row = button.GetComponent<LayoutElement>();
+                    if (row != null) row.minHeight = row.preferredHeight = 40f;
+                    button.GetComponentInChildren<TMP_Text>().fontSize = 19f;
+                }
                 button.onClick.AddListener(() => { if (_picked < 0) _picked = index; });
                 _buttons.Add(button);
             }
+        }
+
+        /// <summary>Writes both papers line by line, marking the player's picks (and, once revealed, the right lines).</summary>
+        private void ShowLines(Comparison item, int left, int right, bool reveal)
+        {
+            _leftBody.text = Lines(item.LeftLines, left, reveal ? item.LeftAnswer : -1);
+            _rightBody.text = Lines(item.RightLines, right, reveal ? item.RightAnswer : -1);
+        }
+
+        private static string Lines(string[] lines, int picked, int answer)
+        {
+            var text = new System.Text.StringBuilder();
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string number = "<color=#9A8160>" + (i + 1) + "</color>  ";
+                string line = lines[i];
+                if (i == answer) line = "<mark=#5FA85F55>" + line + "</mark>";
+                else if (i == picked && answer >= 0) line = "<mark=#C0504D55>" + line + "</mark>";
+                else if (i == picked) line = "<mark=#E8C27A66>" + line + "</mark>";
+                text.Append(number).Append(line).Append('\n');
+            }
+            return text.ToString();
+        }
+
+        /// <summary>Option buttons show the line text without its bold/strike markup noise.</summary>
+        private static string[] Plain(string[] lines)
+        {
+            var result = new string[lines.Length];
+            for (int i = 0; i < lines.Length; i++) result[i] = lines[i].Replace("<b>", "").Replace("</b>", "");
+            return result;
         }
 
         private void Mark(int correct, int picked)

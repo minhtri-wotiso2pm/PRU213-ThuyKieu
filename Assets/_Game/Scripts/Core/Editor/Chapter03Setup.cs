@@ -625,7 +625,7 @@ namespace ThuyKieu.Core.Editor
             Set(hider, "_size", size);
         }
 
-        internal static void Zone(Transform parent, string label, Vector3 centre, Vector3 size)
+        internal static void Zone(Transform parent, string label, Vector3 centre, Vector3 size, bool quiet = false)
         {
             var go = new GameObject("RestrictedZone_" + label);
             go.transform.SetParent(parent, false);
@@ -636,6 +636,7 @@ namespace ThuyKieu.Core.Editor
             box.size = size;
             var zone = go.AddComponent<RestrictedZone>();
             Set(zone, "_label", label);
+            Set(zone, "_quiet", quiet);
         }
     }
 }

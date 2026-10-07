@@ -20,6 +20,8 @@ namespace ThuyKieu.Gameplay.Stealth
         [SerializeField] private bool _onlyInRestrictedZones = true;
         [Tooltip("Crowded street: only a running player stands out.")]
         [SerializeField] private bool _onlyWhenConspicuous;
+        [Tooltip("With the option above: closer than this he knows her face even when she walks (0 = never).")]
+        [SerializeField] private float _recogniseDistance;
         [SerializeField] private LayerMask _occluders = 1 << 8;
 
         public float Awareness { get; private set; }
@@ -47,7 +49,9 @@ namespace ThuyKieu.Gameplay.Stealth
                 float closeness = Mathf.Lerp(2.2f, 0.6f, distance / _range);
                 float stealth = _player.IsCrouching ? _crouchFactor : 1f;
                 float light = LightExposure.Enabled ? Mathf.Lerp(0.45f, 1.3f, LightExposure.At(_player.transform.position + Vector3.up)) : 1f;
-                Awareness = Mathf.Min(1f, Awareness + Time.deltaTime / _secondsToSpot * closeness * stealth * light * Sensitivity);
+                // Picking a walking face out of a crowd takes longer than noticing someone run.
+                float crowd = _onlyWhenConspicuous && !_player.IsRunning ? 0.45f : 1f;
+                Awareness = Mathf.Min(1f, Awareness + Time.deltaTime / _secondsToSpot * closeness * stealth * light * crowd * Sensitivity);
             }
             else Awareness = Mathf.Max(0f, Awareness - Time.deltaTime * 0.35f);
         }
@@ -56,10 +60,10 @@ namespace ThuyKieu.Gameplay.Stealth
         {
             if (_player == null || _player.ControlLocked || _player.IsHidden) return false;
             if (_onlyInRestrictedZones && !RestrictedZone.PlayerInside) return false;
-            if (_onlyWhenConspicuous && !_player.IsRunning) return false;
             Vector3 eye = Eyes.position;
             Vector3 target = _player.transform.position + Vector3.up * (_player.IsCrouching ? 0.8f : 1.4f);
             Vector3 toTarget = target - eye;
+            if (_onlyWhenConspicuous && !_player.IsRunning && toTarget.magnitude > _recogniseDistance) return false;
             if (toTarget.magnitude > _range) return false;
             Vector3 flat = new Vector3(toTarget.x, 0, toTarget.z);
             Vector3 forward = new Vector3(Eyes.forward.x, 0, Eyes.forward.z);

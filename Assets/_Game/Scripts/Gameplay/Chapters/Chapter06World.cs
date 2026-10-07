@@ -50,7 +50,7 @@ namespace ThuyKieu.Gameplay.Chapters
             if (_navMesh != null) _navMesh.BuildNavMesh();
             foreach (var actor in FindObjectsByType<StoryActor>()) actor.EnableNavigation();
             _director.Player.AllowCrouch = false;
-            _director.Hud.SetControls("WASD: đi · E: nói chuyện / tương tác · Chuột phải: quan sát · J: sổ tay · Đừng chạy trên phố");
+            _director.Hud.SetControls("WASD: đi · E: nói chuyện / tương tác / nép · Chuột phải: quan sát · J: sổ tay · Đừng chạy, đừng lại gần người của Tú Bà");
             _kimFollower.Following = false;
             _messenger.gameObject.SetActive(false);
             _searcher.Patrolling = false;
@@ -80,7 +80,7 @@ namespace ThuyKieu.Gameplay.Chapters
                 if (vision.Awareness > 0.5f && _barkCooldown <= 0f) { _barkCooldown = 6f; _director.Hud.ShowBark("NguoiCanh", "Khoan... cô gái đội nón kia, đứng lại xem nào!"); }
             }
             if (vision.Spotted)
-                _director.Fail("Người của Tú Bà nhận ra bạn!", "Trên phố đông người, chạy là bị chú ý. Đi thong thả, cúi đầu, để Kim Trọng đi cạnh.");
+                _director.Fail("Người của Tú Bà nhận ra bạn!", "Trên phố đông người, chạy hay đi sát mặt hắn là bị nhận ra. Thấy dấu ? thì quay đi, nép sau chum hoặc bảng cáo thị, để Kim Trọng đi cạnh.");
         }
 
         private void OnScene(string scene)

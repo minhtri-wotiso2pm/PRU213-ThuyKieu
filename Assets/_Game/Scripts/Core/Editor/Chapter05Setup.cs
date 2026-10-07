@@ -65,6 +65,7 @@ namespace ThuyKieu.Core.Editor
             {
                 var pursuer = RiggedActor("GiaNhan" + i, "GiaNhan", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
                     "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.72f + i * 0.03f, new Vector3(11.5f + i, 0, 2.5f + i * 1.6f), 90f, liveries[i], shared);
+                StoryPropKit.Torch(pursuer.transform, new Vector3(0.32f, 1.2f, 0.22f));
                 pursuers.Add(pursuer);
                 pursuerStarts.Add(Point("PursuerStart" + i, new Vector3(13f + i * 0.8f, 0, 3.2f + i * 0.9f), 90f, world));
             }
@@ -75,6 +76,11 @@ namespace ThuyKieu.Core.Editor
             Look("CAM_Hero_Kieu_Rain", rainSpot.position + new Vector3(2.1f, 1.45f, -0.9f), rainSpot.position + Vector3.up * 1.4f, world);
             Look("CAM_Wide_TempleGate", new Vector3(147.5f, 1.7f, 6.2f), new Vector3(158f, 2.3f, 7f), world);
             var chaseCam = Point("ForestChaseCamera", rail[0].position, 90f, world);
+            // Review viewpoints for StoryLookCapture (not used in play).
+            Look("LOOK_Alley", new Vector3(30f, 1.8f, 4f), new Vector3(42f, 1.4f, 4f), world);
+            Look("LOOK_Market", new Vector3(50f, 2.4f, 25f), new Vector3(62f, 1f, 25f), world);
+            Look("LOOK_Forest", new Vector3(110f, 1.6f, 7.5f), new Vector3(122f, 1.2f, 6f), world);
+            Look("LOOK_YardClose", new Vector3(3f, 1.7f, -3.5f), new Vector3(8f, 1f, 1f), world);
 
             var zones = new GameObject("CameraZones").transform;
             zones.SetParent(world, false);
@@ -158,7 +164,7 @@ namespace ThuyKieu.Core.Editor
             root.SetParent(world, false);
             Block("YardFloor", new Vector3(9f, 0.01f, 0f), new Vector3(18f, 0.02f, 16f), Surface("Ch5Yard", "brown_mud_02", new Color(0.62f, 0.55f, 0.48f), 2.4f, 0.1f), root, false);
             // The back of Tú Bà's house with the kitchen door Kiều just came through.
-            Block("HouseBack", new Vector3(-0.3f, 3f, 0f), new Vector3(0.6f, 6f, 16.4f), _plaster, root);
+            StoryPropKit.TimberFrame(Block("HouseBack", new Vector3(-0.3f, 3f, 0f), new Vector3(0.6f, 6f, 16.4f), _plaster, root), null, 2.2f);
             Block("BackDoorFrame", new Vector3(0.05f, 1.25f, 0f), new Vector3(0.1f, 2.5f, 1.5f), _wood, root, false);
             Block("BackDoorDark", new Vector3(0.02f, 1.2f, 0f), new Vector3(0.05f, 2.35f, 1.25f), Material("Ch5Dark", new Color(0.02f, 0.02f, 0.03f)), root, false);
             Roof("HouseEave", new Vector3(-1.4f, 6.4f, 0f), 3.6f, 17f, 26f, _tiles, _ridge, root, false);
@@ -190,22 +196,14 @@ namespace ThuyKieu.Core.Editor
             Lantern("DoorLantern", new Vector3(0.6f, 2.5f, 1.2f), new Color(1f, 0.45f, 0.22f), root, 4.5f, 1.1f);
 
             // Cover: laundry lines, haystack, woodpile, a chicken coop, jars and a well.
-            for (int line = 0; line < 2; line++)
-            {
-                float z = line == 0 ? -1.4f : 2.2f;
-                foreach (float x in new[] { 5.2f, 12.8f }) Cylinder("LaundryPole", new Vector3(x, 0, z), 0.05f, 2.3f, _wood, root);
-                Block("LaundryRope", new Vector3(9f, 2.2f, z), new Vector3(7.6f, 0.02f, 0.02f), _ridge, root, false);
-                for (int i = 0; i < 4; i++)
-                {
-                    if (line == 1 && i == 2) continue; // a gap to slip through
-                    Block("Cloth", new Vector3(6.4f + i * 1.75f, 1.45f, z), new Vector3(1.4f, 1.45f, 0.04f), i % 2 == 0 ? _cloth : Material("Ch5ClothIndigo", new Color(0.22f, 0.26f, 0.42f)), root);
-                }
-            }
-            var hay = Surface("Ch5Hay", "leafy_grass", new Color(0.95f, 0.8f, 0.45f), 1.2f, 0.05f, 1.4f, 0.4f);
-            Cylinder("Haystack", new Vector3(4.8f, 0f, -6.2f), 1.1f, 1.4f, hay, root);
-            Block("Woodpile", new Vector3(7.2f, 0.6f, 6.9f), new Vector3(2.4f, 1.2f, 0.9f), _wood, root);
+            StoryPropKit.ClothLine(new Vector3(5.2f, 0, -1.4f), new Vector3(12.8f, 0, -1.4f), root, 51);
+            StoryPropKit.ClothLine(new Vector3(5.2f, 0, 2.2f), new Vector3(12.8f, 0, 2.2f), root, 52, 2); // a gap to slip through
+            StoryPropKit.Haystack(new Vector3(4.8f, 0f, -6.2f), 1.1f, 1.7f, root);
+            StoryPropKit.Woodpile(new Vector3(7.2f, 0f, 6.9f), 0f, 2.4f, root, 53, 5);
             Block("Coop", new Vector3(12.5f, 0.6f, -6.9f), new Vector3(2f, 1.2f, 1.4f), _wood, root);
             Roof("CoopRoof", new Vector3(12.5f, 1.45f, -6.9f), 2.3f, 1.7f, 20f, _tiles, _ridge, root);
+            Coop(root, new Vector3(12.5f, 0f, -6.9f));
+            YardDressing(root);
             Prop("Assets/_Game/Prefabs/Props/Well.prefab", new Vector3(9.6f, 0, -4.4f), 0, 1f, root);
             Jars(new Vector3(15.6f, 0, -6.8f), 3, root, 21);
             Jars(new Vector3(2.2f, 0, -6.8f), 2, root, 22);
@@ -221,7 +219,16 @@ namespace ThuyKieu.Core.Editor
             Sphere("Body", dogRoot.transform.position + new Vector3(0, 0.38f, 0), new Vector3(0.38f, 0.36f, 0.75f), fur, dogRoot.transform).transform.localRotation = Quaternion.identity;
             var head = Sphere("Head", dogRoot.transform.TransformPoint(new Vector3(0, 0.58f, 0.42f)), new Vector3(0.26f, 0.24f, 0.32f), fur, dogRoot.transform);
             Sphere("Snout", dogRoot.transform.TransformPoint(new Vector3(0, 0.54f, 0.6f)), new Vector3(0.12f, 0.1f, 0.16f), Material("Ch5Snout", new Color(0.1f, 0.08f, 0.07f)), dogRoot.transform);
+            foreach (var leg in new[] { new Vector3(-0.12f, 0, 0.22f), new Vector3(0.12f, 0, 0.22f), new Vector3(-0.12f, 0, -0.24f), new Vector3(0.12f, 0, -0.24f) })
+                Cylinder("Leg", dogRoot.transform.TransformPoint(leg), 0.045f, 0.28f, fur, dogRoot.transform, false);
+            var tail = Sphere("Tail", dogRoot.transform.TransformPoint(new Vector3(0, 0.5f, -0.42f)), new Vector3(0.06f, 0.06f, 0.26f), fur, dogRoot.transform);
+            tail.transform.localRotation = Quaternion.Euler(-35f, 0, 0);
+            foreach (float x in new[] { -0.08f, 0.08f })
+                Sphere("Ear", dogRoot.transform.TransformPoint(new Vector3(x, 0.72f, 0.38f)), new Vector3(0.07f, 0.1f, 0.04f), fur, head.transform);
             Block("Kennel", new Vector3(16.6f, 0.5f, 7.1f), new Vector3(1.1f, 1f, 1.1f), _wood, root);
+            Roof("KennelRoof", new Vector3(16.6f, 1.25f, 7.1f), 1.4f, 1.4f, 30f, _tiles, _ridge, root);
+            Block("KennelDoor", new Vector3(16.04f, 0.38f, 7.1f), new Vector3(0.02f, 0.55f, 0.45f), Material("Ch5Dark", new Color(0.02f, 0.02f, 0.03f)), root, false);
+            StoryArtKit.Rope(new Vector3(16.1f, 0.4f, 6.9f), new Vector3(15.5f, 0.45f, 6.4f), 0.1f, root);
             dog = dogRoot.AddComponent<DogSentry>();
             Set(dog, "_player", s.Player);
             Set(dog, "_audio", s.Audio);
@@ -263,9 +270,47 @@ namespace ThuyKieu.Core.Editor
             return root;
         }
 
+        /// <summary>Slatted front, a little door and a few hens for the chicken coop.</summary>
+        private static void Coop(Transform root, Vector3 foot)
+        {
+            var slat = Material("Ch5CoopSlat", new Color(0.32f, 0.24f, 0.17f));
+            for (float x = -0.9f; x <= 0.91f; x += 0.18f)
+                Block("CoopSlat", foot + new Vector3(x, 0.6f, 0.72f), new Vector3(0.05f, 1.2f, 0.04f), slat, root, false);
+            Block("CoopDoor", foot + new Vector3(0.45f, 0.35f, 0.74f), new Vector3(0.45f, 0.55f, 0.03f), _wood, root, false);
+            var feathers = new[] { Material("Ch5Hen", new Color(0.55f, 0.38f, 0.22f)), Material("Ch5HenDark", new Color(0.2f, 0.16f, 0.12f)) };
+            var comb = Material("Ch5Comb", new Color(0.7f, 0.1f, 0.08f));
+            foreach (var (dx, dz, yaw) in new[] { (-0.5f, 1.2f, 30f), (0.3f, 1.5f, -60f), (0.9f, 1.05f, 160f) })
+            {
+                var hen = new GameObject("Hen").transform;
+                hen.SetParent(root, false);
+                hen.SetPositionAndRotation(foot + new Vector3(dx, 0, dz), Quaternion.Euler(0, yaw, 0));
+                Sphere("Body", hen.TransformPoint(new Vector3(0, 0.18f, 0)), new Vector3(0.22f, 0.2f, 0.3f), feathers[(int)(dx * 10) & 1], hen);
+                Sphere("Head", hen.TransformPoint(new Vector3(0, 0.33f, 0.13f)), Vector3.one * 0.1f, feathers[(int)(dx * 10) & 1], hen);
+                Sphere("Comb", hen.TransformPoint(new Vector3(0, 0.39f, 0.13f)), new Vector3(0.02f, 0.05f, 0.06f), comb, hen);
+                Sphere("Tail", hen.TransformPoint(new Vector3(0, 0.27f, -0.15f)), new Vector3(0.1f, 0.16f, 0.08f), feathers[1], hen);
+            }
+        }
+
+        /// <summary>Weeds along the walls, puddles, sacks and baskets by the kitchen door, a stone basin by the well.</summary>
+        private static void YardDressing(Transform root)
+        {
+            Grass("Ch5YardWeeds", root, new Rect(0.2f, -7.9f, 17.6f, 15.8f), 1800, p =>
+                p.y < -7.3f || (p.y > 7.3f && p.x > 2f) || (p.x > 17.3f && (p.y < 2.9f || p.y > 5.1f)) || (p.x < 0.9f && Mathf.Abs(p.y) > 1.2f),
+                505, 0.42f, new Color(0.42f, 0.55f, 0.3f), new Color(0.58f, 0.6f, 0.33f), "Ch5Weeds");
+            StoryPropKit.Puddle(new Vector3(3.2f, 0.02f, 0.6f), new Vector2(1.5f, 0.9f), 15f, root);
+            StoryPropKit.Puddle(new Vector3(10.4f, 0.02f, 0.4f), new Vector2(1.1f, 0.8f), -30f, root);
+            StoryPropKit.Puddle(new Vector3(14.6f, 0.02f, -3.2f), new Vector2(1.4f, 1f), 50f, root);
+            StoryPropKit.Sacks(new Vector3(1.4f, 0.01f, -2.8f), 3, root, 54);
+            StoryPropKit.Baskets(new Vector3(1.2f, 0.01f, 3.6f), 90f, root, 55);
+            StoryPropKit.Strings(new Vector3(0.25f, 2.9f, -1.9f), root, 56);
+            Cylinder("WashBasin", new Vector3(8.4f, 0, -5.6f), 0.4f, 0.35f, _stone, root);
+            Cylinder("BasinWater", new Vector3(8.4f, 0.33f, -5.6f), 0.34f, 0.02f, Material("PropPuddle", new Color(0.05f, 0.06f, 0.07f), 0.96f), root, false);
+        }
+
         private static void Wall(Transform parent, Vector3 foot, Vector3 size)
         {
             Block("YardWall", foot + Vector3.up * size.y * 0.5f, size, _plaster, parent);
+            Block("YardWallFooting", foot + Vector3.up * 0.22f, new Vector3(size.x + 0.08f, 0.44f, size.z + 0.08f), _stone, parent, false);
             Block("YardWallCap", foot + Vector3.up * (size.y + 0.08f), new Vector3(size.x + 0.3f, 0.16f, size.z + 0.3f), _tiles, parent, false);
         }
 
@@ -352,12 +397,7 @@ namespace ThuyKieu.Core.Editor
                 Roof("HouseRoof", centre + Vector3.up * (height + 0.75f), Mathf.Abs(along.x) > 0.5f ? width + 0.5f : depth + 0.6f,
                     Mathf.Abs(along.x) > 0.5f ? depth + 0.6f : width + 0.5f, 24f, _tiles, _ridge, parent, Mathf.Abs(along.x) > 0.5f);
                 Vector3 face = from + along * (d + width * 0.5f) + front * 0.02f;
-                Block("Door", face + Vector3.up * 1.05f, Mathf.Abs(along.x) > 0.5f ? new Vector3(1f, 2.1f, 0.05f) : new Vector3(0.05f, 2.1f, 1f), Material("Ch5DoorDark", new Color(0.08f, 0.05f, 0.04f)), parent, false);
-                if (random.NextDouble() < litWindows)
-                {
-                    Vector3 window = face + along * (width * 0.28f) + Vector3.up * 1.7f;
-                    Block("Window", window, Mathf.Abs(along.x) > 0.5f ? new Vector3(0.8f, 0.6f, 0.04f) : new Vector3(0.04f, 0.6f, 0.8f), Emissive("Ch5WindowGlow", new Color(1f, 0.62f, 0.32f), 0.7f), parent, false);
-                }
+                StoryPropKit.Facade(parent, face, front, width, height, random, random.NextDouble() < litWindows, _stone, false);
                 d += width;
             }
         }
@@ -374,9 +414,42 @@ namespace ThuyKieu.Core.Editor
                     Block("StallTable", new Vector3(x, 0.4f, z), new Vector3(2f, 0.8f, 0.9f), _wood, parent);
                     Block("StallCanopy", new Vector3(x, 2.3f, z - side * 0.2f), new Vector3(2.4f, 0.06f, 1.5f), canopy[random.Next(canopy.Length)], parent, false);
                     foreach (float dx in new[] { -1.05f, 1.05f }) Cylinder("StallPole", new Vector3(x + dx, 0, z - side * 0.55f), 0.035f, 2.3f, _wood, parent, false);
-                    for (int g = 0; g < 3; g++)
-                        Block("Goods", new Vector3(x - 0.6f + g * 0.6f, 0.88f, z), new Vector3(0.45f, 0.16f, 0.5f), goods[random.Next(goods.Length)], parent, false);
+                    Goods(parent, new Vector3(x, 0.8f, z), random, goods);
+                    var hanging = Lantern("StallLantern", new Vector3(x + 0.9f, 2.25f, z - side * 0.85f), new Color(1f, 0.3f, 0.15f), parent, 0f, 0f);
+                    hanging.transform.localScale = Vector3.one * 0.7f;
                 }
+        }
+
+        /// <summary>Three heaps on a stall table: fruit, bundled greens, bolts of cloth or small jars.</summary>
+        private static void Goods(Transform parent, Vector3 top, System.Random random, Material[] goods)
+        {
+            Color[] bolts = { new Color(0.6f, 0.15f, 0.12f), new Color(0.2f, 0.28f, 0.45f), new Color(0.7f, 0.6f, 0.35f) };
+            for (int g = 0; g < 3; g++)
+            {
+                Vector3 c = top + new Vector3(-0.6f + g * 0.6f, 0f, 0f);
+                switch (random.Next(4))
+                {
+                    case 0:
+                        for (int i = 0; i < 9; i++)
+                            Sphere("Fruit", c + new Vector3(((i % 3) - 1) * 0.12f, 0.08f + (i / 6) * 0.1f, ((i / 3) % 2 - 0.5f) * 0.14f), Vector3.one * 0.13f, goods[1], parent);
+                        break;
+                    case 1:
+                        for (int i = 0; i < 3; i++)
+                            Fallen(parent, c + new Vector3((i - 1) * 0.14f, 0.06f, -0.2f), c + new Vector3((i - 1) * 0.16f, 0.06f, 0.2f), 0.06f, goods[0]);
+                        break;
+                    case 2:
+                        for (int i = 0; i < 3; i++)
+                        {
+                            float y = 0.07f + (i == 2 ? 0.12f : 0f), z = -0.07f + (i % 2) * 0.13f + (i == 2 ? 0.065f : 0f);
+                            Fallen(parent, c + new Vector3(-0.25f, y, z), c + new Vector3(0.25f, y, z), 0.065f, Material("Ch5Bolt" + i, bolts[i]));
+                        }
+                        break;
+                    default:
+                        Sphere("Jar", c + new Vector3(-0.1f, 0.12f, 0), new Vector3(0.2f, 0.24f, 0.2f), goods[2], parent);
+                        Sphere("Jar", c + new Vector3(0.12f, 0.1f, 0.05f), new Vector3(0.16f, 0.2f, 0.16f), Material("Ch5JarBlue", new Color(0.22f, 0.3f, 0.5f), 0.7f), parent);
+                        break;
+                }
+            }
         }
 
         private static ChaseObstacle Obstacle(Transform parent, StorySceneKit.Systems s, string label, Vector3 foot, Vector3 fall, bool cart)
@@ -446,26 +519,60 @@ namespace ThuyKieu.Core.Editor
                     Quaternion.LookRotation(points[i] - points[i - 1]).eulerAngles.y);
             }
 
-            // Bamboo on both sides (the models are dense: coarse LODs, shadows only right next to the path).
+            // Bamboo: a dense, uneven grove close to the path thinning into a dark wall of culms behind
+            // (the models are heavy: coarse LODs, and shadows only from the clumps right by the path).
             var random = new System.Random(77);
-            for (float x = 90f; x < 152f; x += 2.1f)
+            for (float x = 89f; x < 153f; x += 1.55f)
                 foreach (int side in new[] { -1, 1 })
                 {
-                    float offset = 3.2f + (float)random.NextDouble() * 8f;
-                    var p = new Vector3(x + (float)random.NextDouble(), 0, RailZ(points, x) + side * offset);
-                    var plant = Prop("Assets/_Game/Prefabs/Vegetation/Bamboo.prefab", p, (float)random.NextDouble() * 360f, 0.8f + (float)random.NextDouble() * 0.4f, root);
-                    if (plant == null) continue;
-                    foreach (var t in plant.GetComponentsInChildren<Transform>()) t.gameObject.layer = 0;
-                    foreach (var renderer in plant.GetComponentsInChildren<Renderer>())
-                    {
-                        renderer.meshLodSelectionBias = 2f;
-                        if (offset > 5f) renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                    }
+                    float offset = 2.4f + Mathf.Pow((float)random.NextDouble(), 1.6f) * 9f;
+                    Bamboo(root, new Vector3(x + (float)random.NextDouble() * 1.2f, 0, RailZ(points, x) + side * offset), random, offset > 4.5f);
+                    if (x % 3.1f < 1.55f)
+                        Bamboo(root, new Vector3(x + (float)random.NextDouble() * 2f, 0, RailZ(points, x) + side * (11f + (float)random.NextDouble() * 9f)), random, true, 3f);
                 }
-            // Roots and fallen culms along the path where the quick-time prompts happen.
-            foreach (float x in new[] { 97f, 106f, 117f, 129f, 140f })
-                Rock(new Vector3(x, -0.05f, RailZ(points, x) + 1.6f), new Vector3(0.9f, 0.35f, 0.7f), x * 7f, root, (int)x);
+            Grass("ForestUndergrowth", root, new Rect(88f, -14f, 66f, 40f), 6500, p =>
+            {
+                float d = Mathf.Abs(p.y - RailZ(points, p.x));
+                return d > 1.45f && d < 12f;
+            }, 707, 0.55f, new Color(0.3f, 0.42f, 0.22f), new Color(0.42f, 0.48f, 0.26f), "Ch5Undergrowth");
+            // Fallen culms beside the path; mist lying low between the clumps.
+            var culm = Surface("Ch5Culm", "leafy_grass", new Color(0.62f, 0.62f, 0.4f), 0.5f, 0.2f, 0.8f, 0.3f);
+            for (int i = 0; i < 26; i++)
+            {
+                float x = 90f + (float)random.NextDouble() * 60f;
+                int side = random.NextDouble() < 0.5 ? -1 : 1;
+                Vector3 a = new Vector3(x, 0.06f, RailZ(points, x) + side * (1.8f + (float)random.NextDouble() * 5f));
+                Vector3 b = a + Quaternion.Euler(0, (float)random.NextDouble() * 360f, 0) * Vector3.forward * (1.5f + (float)random.NextDouble() * 2.5f);
+                Fallen(root, a, b, 0.04f, culm);
+            }
             Leaves("BambooLeaves", new Vector3(120f, 6f, 6f), new Vector3(60f, 2f, 20f), root, new Color(0.45f, 0.55f, 0.25f), 40);
+            Dust("ForestMist", new Vector3(120f, 0.5f, 6f), new Vector3(64f, 0.8f, 16f), root, new Color(0.7f, 0.76f, 0.88f, 0.14f), 180);
+            Fireflies("ForestFireflies", new Vector3(120f, 1.2f, 6f), new Vector3(60f, 1.4f, 14f), root, 50);
+
+            // Where the quick-time prompts fire, the obstacle is really there (a little ahead of the prompt).
+            float total = 0f;
+            for (int i = 1; i < points.Length; i++) total += Vector3.Distance(points[i - 1], points[i]);
+            Vector3 Along(float distance)
+            {
+                for (int i = 1; i < points.Length; i++)
+                {
+                    float segment = Vector3.Distance(points[i - 1], points[i]);
+                    if (distance <= segment) return Vector3.Lerp(points[i - 1], points[i], distance / segment);
+                    distance -= segment;
+                }
+                return points[points.Length - 1];
+            }
+            Vector3 jump = Along(0.16f * total + 3f), left = Along(0.34f * total + 3f), right = Along(0.58f * total + 3f), climb = Along(0.8f * total + 3f);
+            Fallen(root, jump + new Vector3(0, 0.14f, -2.2f), jump + new Vector3(0.4f, 0.12f, 2.2f), 0.09f, culm);
+            Rock(jump + new Vector3(0.3f, -0.05f, 1.9f), new Vector3(0.7f, 0.4f, 0.6f), 30f, root, 3);
+            Fallen(root, left + new Vector3(0, 0.1f, -3.2f), left + new Vector3(0.2f, 1.75f, 0.5f), 0.07f, culm);   // leans in from the right: duck left
+            Fallen(root, right + new Vector3(0, 0.1f, 3.2f), right + new Vector3(0.2f, 1.75f, -0.5f), 0.07f, culm); // from the left: dodge right
+            var earth = Surface("Ch5Bank", "brown_mud_02", new Color(0.45f, 0.4f, 0.32f), 2f, 0.15f, 1.2f, 0.4f);
+            foreach (int side in new[] { -1, 1 })
+                Sphere("Bank", climb + new Vector3(1.5f, -0.6f, side * 2.6f), new Vector3(5f, 2.2f, 3.2f), earth, root);
+            var rootWood = Surface("Ch5Root", "dark_wood", new Color(0.5f, 0.42f, 0.34f), 1f, 0.2f);
+            for (int i = 0; i < 4; i++)
+                Fallen(root, climb + new Vector3(i * 0.55f, 0.05f + i * 0.04f, -1.6f), climb + new Vector3(i * 0.55f + 0.2f, 0.05f + i * 0.04f, 1.6f), 0.05f, rootWood);
 
             // Temple gate at the end of the path, where Kiều collapses in the rain.
             var temple = new GameObject("TempleGate").transform;
@@ -477,7 +584,35 @@ namespace ThuyKieu.Core.Editor
             Block("TempleWallL", new Vector3(159f, 1.6f, 2.2f), new Vector3(0.5f, 3.2f, 5.6f), _plaster, temple);
             Block("TempleWallR", new Vector3(159f, 1.6f, 11.8f), new Vector3(0.5f, 3.2f, 5.6f), _plaster, temple);
             Lantern("TempleLantern", new Vector3(158.2f, 3.2f, 7f), new Color(1f, 0.6f, 0.3f), temple, 8f, 1.8f);
+            foreach (float z in new[] { 2.2f, 11.8f })
+            {
+                Block("TempleWallCap", new Vector3(159f, 3.28f, z), new Vector3(0.9f, 0.16f, 5.9f), _tiles, temple, false);
+                Block("TempleWallFooting", new Vector3(159f, 0.25f, z), new Vector3(0.6f, 0.5f, 5.7f), _stone, temple, false);
+            }
+            foreach (float z in new[] { 4.1f, 9.9f }) StoryPropKit.StoneLantern(new Vector3(156.2f, 0f, z), 90f, temple, 4.5f, 1.1f);
+            Block("TempleSign", new Vector3(158.85f, 3.75f, 7f), new Vector3(0.06f, 0.45f, 1.6f), Material("CoupletRed", new Color(0.45f, 0.05f, 0.04f), 0.55f), temple, false);
             rainSpot = Point("RainSpot", new Vector3(150f, 0.05f, 7f), 90f, root);
+        }
+
+        private static void Bamboo(Transform root, Vector3 position, System.Random random, bool noShadow, float lodBias = 2f)
+        {
+            var plant = Prop("Assets/_Game/Prefabs/Vegetation/Bamboo.prefab", position, (float)random.NextDouble() * 360f, 0.75f + (float)random.NextDouble() * 0.6f, root);
+            if (plant == null) return;
+            foreach (var t in plant.GetComponentsInChildren<Transform>()) t.gameObject.layer = 0;
+            foreach (var renderer in plant.GetComponentsInChildren<Renderer>())
+            {
+                renderer.meshLodSelectionBias = lodBias;
+                if (noShadow) renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            }
+        }
+
+        /// <summary>Cylinder lying between two points: fallen culms, roots, produce bundles.</summary>
+        private static void Fallen(Transform root, Vector3 a, Vector3 b, float radius, Material material)
+        {
+            var go = Cylinder("Fallen", Vector3.zero, radius, 1f, material, root, false);
+            go.transform.position = (a + b) * 0.5f;
+            go.transform.rotation = Quaternion.FromToRotation(Vector3.up, (b - a).normalized);
+            go.transform.localScale = new Vector3(radius * 2f, Vector3.Distance(a, b) * 0.5f, radius * 2f);
         }
 
         private static float RailZ(Vector3[] points, float x)
@@ -489,7 +624,7 @@ namespace ThuyKieu.Core.Editor
 
         // ------------------------------------------------------------------ shared bits
 
-        private static void Hide(Transform parent, Object player, string label, Vector3 inside, float yaw)
+        internal static void Hide(Transform parent, Object player, string label, Vector3 inside, float yaw)
         {
             var go = new GameObject("Hide_" + label);
             go.transform.SetParent(parent, false);

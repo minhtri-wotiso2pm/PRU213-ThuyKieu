@@ -57,12 +57,25 @@ namespace ThuyKieu.Core.Editor
                 .OrderBy(t => t.name).ToArray();
             Vector3 position = camera.transform.position;
             Quaternion rotation = camera.transform.rotation;
+            var roofs = UnityEngine.Object.FindObjectsByType<ThuyKieu.Environment.RoofHider>();
             foreach (var view in views)
             {
                 camera.transform.SetPositionAndRotation(view.position, view.rotation);
+                // Play hides a room's roof while the player is inside; do the same for a camera inside the room.
+                foreach (var roof in roofs) SetRoof(roof, view.position);
                 Shoot(camera, Path.Combine(folder, prefix + "_" + view.name + ".png"));
             }
+            foreach (var roof in roofs) SetRoof(roof, new Vector3(9999f, 0f, 0f));
             camera.transform.SetPositionAndRotation(position, rotation);
+        }
+
+        private static void SetRoof(ThuyKieu.Environment.RoofHider roof, Vector3 point)
+        {
+            var serialized = new SerializedObject(roof);
+            var bounds = new Bounds(serialized.FindProperty("_centre").vector3Value, serialized.FindProperty("_size").vector3Value + Vector3.up * 2f);
+            bool inside = bounds.Contains(point);
+            foreach (var renderer in roof.GetComponentsInChildren<Renderer>())
+                renderer.shadowCastingMode = inside ? UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly : UnityEngine.Rendering.ShadowCastingMode.On;
         }
 
         private static void Shoot(Camera camera, string file, int width = 1600, int height = 900)
