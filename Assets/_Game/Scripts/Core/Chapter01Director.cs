@@ -33,7 +33,10 @@ namespace ThuyKieu.Core
 
         private IEnumerator Start()
         {
-            _dialogue.SetInkStory(new Ink.Runtime.Story(_compiledInk.text));
+            var story = new Ink.Runtime.Story(_compiledInk.text);
+            // Coming from the prologue: carry its choices (the state stops right before Chapter 1's first line).
+            if (InkStatePersistence.Instance != null && InkStatePersistence.Instance.TryGetStateFor(1, out string saved)) story.state.LoadJson(saved);
+            _dialogue.SetInkStory(story);
             _dialogue.InkPauseBeforeLine = PauseBeforeLine;
             _dialogue.InkStopBeforeLine = tags => Array.Exists(tags, t => t.Trim() == "chapter:2");
             _dialogue.InkTagsChanged += RouteTags;

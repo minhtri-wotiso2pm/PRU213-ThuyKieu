@@ -37,16 +37,23 @@ namespace ThuyKieu.Core.Story
         private void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();
-            if (_animator == null) _animator = GetComponentInChildren<Animator>();
-            if (_animator != null && _animator.runtimeAnimatorController != null)
-                foreach (var parameter in _animator.parameters)
-                {
-                    if (parameter.nameHash == Emotion) _hasEmotion = true;
-                    if (parameter.nameHash == Talking) _hasTalking = true;
-                    if (parameter.nameHash == Speed) _hasSpeed = true;
-                }
+            SetAnimator(_animator != null ? _animator : GetComponentInChildren<Animator>());
             if (_staticVisual != null) { _visualBase = _staticVisual.localPosition; _visualRotation = _staticVisual.localRotation; }
             _phase = Random.value * 10f;
+        }
+
+        /// <summary>Switches to another body's animator (see PlayerLook).</summary>
+        public void SetAnimator(Animator animator)
+        {
+            _animator = animator;
+            _hasEmotion = _hasTalking = _hasSpeed = false;
+            if (_animator == null || _animator.runtimeAnimatorController == null) return;
+            foreach (var parameter in _animator.parameters)
+            {
+                if (parameter.nameHash == Emotion) _hasEmotion = true;
+                if (parameter.nameHash == Talking) _hasTalking = true;
+                if (parameter.nameHash == Speed) _hasSpeed = true;
+            }
         }
 
         public void SetTalking(bool talking, int emotion)
@@ -109,6 +116,30 @@ namespace ThuyKieu.Core.Story
             _animator.speed = 0.35f;
             SetTalking(false, 0);
         }
+
+        /// <summary>Sits down on the spot (a chair must stand behind the actor), or stands up again.</summary>
+        public void Sit(bool sitting)
+        {
+            if (_animator == null || !_animator.isActiveAndEnabled) return;
+            if (sitting)
+            {
+                Stop();
+                _animator.SetBool(IsSittingId, true);
+                _animator.ResetTrigger(StandId);
+                _animator.SetTrigger(SitId);
+            }
+            else if (_animator.GetBool(IsSittingId))
+            {
+                _animator.ResetTrigger(SitId);
+                _animator.SetTrigger(StandId); // the stand-up state clears IsSitting when it finishes
+            }
+        }
+
+        public bool IsSitting => _animator != null && _animator.isActiveAndEnabled && _animator.GetBool(IsSittingId);
+
+        private static readonly int IsSittingId = Animator.StringToHash("IsSitting");
+        private static readonly int SitId = Animator.StringToHash("Sit");
+        private static readonly int StandId = Animator.StringToHash("Stand");
 
         /// <summary>Called once the runtime NavMesh exists.</summary>
         public void EnableNavigation()

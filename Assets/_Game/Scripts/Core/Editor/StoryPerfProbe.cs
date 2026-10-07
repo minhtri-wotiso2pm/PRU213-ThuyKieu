@@ -42,7 +42,7 @@ namespace ThuyKieu.Core.Editor
         public static string Run()
         {
             var report = new StringBuilder();
-            foreach (string scene in new[] { Chapter01Setup.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath, Chapter04Setup.ScenePath, Chapter05Setup.ScenePath, Chapter06Setup.ScenePath })
+            foreach (string scene in new[] { PrologueSetup.ScenePath, Chapter01Setup.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath, Chapter04Setup.ScenePath, Chapter05Setup.ScenePath, Chapter06Setup.ScenePath, Chapter07Setup.ScenePath, EpilogueSetup.ScenePath })
                 Probe(scene, report);
             return report.ToString();
         }

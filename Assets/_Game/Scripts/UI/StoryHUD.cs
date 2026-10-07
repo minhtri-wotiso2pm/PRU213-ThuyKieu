@@ -83,8 +83,13 @@ namespace ThuyKieu.UI
             _qteKey = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Qte/Key");
             _qteCaption = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Qte/Caption");
             _qteFill = StoryUIBuilder.Find<RectTransform>(t, "HUD/Qte/Track/Fill");
-            _overlays = new[] { t.Find("Pause").gameObject, t.Find("Journal").gameObject, t.Find("Document").gameObject, t.Find("Deduction").gameObject,
-                t.Find("Dossier").gameObject, _tutorial, _fail, _complete, _chapterCard };
+            var overlays = new System.Collections.Generic.List<GameObject> { _tutorial, _fail, _complete, _chapterCard };
+            foreach (string name in new[] { "Pause", "Journal", "Document", "Deduction", "Dossier", "Trial", "Recap" })
+            {
+                var overlay = t.Find(name);
+                if (overlay != null) overlays.Add(overlay.gameObject);
+            }
+            _overlays = overlays.ToArray();
             _continue.onClick.AddListener(() => { var callback = _onContinue; _onContinue = null; callback?.Invoke(); });
 
             _prompt.SetActive(false);
@@ -228,6 +233,13 @@ namespace ThuyKieu.UI
 
         // ------------------------------------------------------------------ cards
 
+        /// <summary>Colour of the full-screen fade (black by default; white for the light at the end of the story).</summary>
+        public void SetFadeColor(Color color)
+        {
+            var image = _fade.GetComponent<Image>();
+            if (image != null) image.color = color;
+        }
+
         public IEnumerator Fade(float alpha, float duration)
         {
             float start = _fade.alpha;
@@ -241,13 +253,21 @@ namespace ThuyKieu.UI
 
         public IEnumerator ChapterCard(int number, string title)
         {
-            SetChapterLabel("Chương " + number + " · " + title);
-            _cardNumber.text = "CHƯƠNG " + number;
-            _cardTitle.text = title.ToUpperInvariant();
+            SetChapterLabel(ThuyKieu.Core.ChapterCatalog.Label(number) + " · " + title);
+            yield return Card(ThuyKieu.Core.ChapterCatalog.Label(number).ToUpperInvariant(), title.ToUpperInvariant(), true);
+        }
+
+        /// <summary>Full-screen title card on black: a small line above, a large title and optionally the game's name below.</summary>
+        public IEnumerator Card(string top, string title, bool gameLine, float seconds = 2.6f)
+        {
+            _cardNumber.text = top;
+            _cardTitle.text = title;
+            var line = _chapterCard.transform.Find("Line");
+            if (line != null) line.gameObject.SetActive(gameLine);
             _chapterCard.SetActive(true);
             _chapterGroup.alpha = 0f;
             _fade.alpha = 0f;
-            float hold = FastMode ? Mathf.Max(0.05f, ThuyKieu.Core.Story.StoryCapture.Hold) : 2.6f;
+            float hold = FastMode ? Mathf.Max(0.05f, ThuyKieu.Core.Story.StoryCapture.Hold) : seconds;
             for (float t = 0; t < 1f && !FastMode; t += Time.unscaledDeltaTime) { _chapterGroup.alpha = t; yield return null; }
             _chapterGroup.alpha = 1f;
             yield return new WaitForSecondsRealtime(hold);
@@ -276,7 +296,7 @@ namespace ThuyKieu.UI
 
         public void ShowChapterComplete(int number, string title, IList<string> lines, Action onContinue)
         {
-            _completeTitle.text = "CHƯƠNG " + number + " HOÀN THÀNH\n<size=26><color=#FFFFFF>" + title + "</color></size>";
+            _completeTitle.text = ThuyKieu.Core.ChapterCatalog.Label(number).ToUpperInvariant() + " HOÀN THÀNH\n<size=26><color=#FFFFFF>" + title + "</color></size>";
             var builder = new StringBuilder();
             foreach (string line in lines) builder.Append("<color=#E8C27A>•</color> ").AppendLine(line);
             _completeLines.text = builder.ToString();

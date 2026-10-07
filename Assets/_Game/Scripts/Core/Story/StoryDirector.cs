@@ -75,6 +75,7 @@ namespace ThuyKieu.Core.Story
         public ScreenFx Fx => _fx;
         public StoryAudio Audio => _audio;
         public DialogueManager Dialogue => _dialogue;
+        public DialogueCameraRig Shots => _shots;
         /// <summary>QA autopilot drives the chapter; sequences may shorten waits.</summary>
         public bool Autopilot { get; set; }
 
@@ -257,6 +258,17 @@ namespace ThuyKieu.Core.Story
             else Debug.LogWarning("[Story] Next scene not in build settings: " + _nextScene, this);
         }
 
+        /// <summary>
+        /// The end of the whole story (the epilogue has no next chapter): marks the run complete without the
+        /// chapter-complete card, so the ending sequence owns the screen.
+        /// </summary>
+        public void EndStory()
+        {
+            ChapterComplete = true;
+            SetFreeControl(false);
+            GameProgress.MarkFinished();
+        }
+
         // ---------------------------------------------------------------- checkpoints & failure
 
         public void SaveCheckpoint()
@@ -312,6 +324,8 @@ namespace ThuyKieu.Core.Story
 
         public StoryActor FindActor(string speakerId)
         {
+            // The modern student speaks through Kiều's body (the player) in the classroom scenes.
+            if (speakerId == "HocSinh") speakerId = "Kieu";
             foreach (var actor in _actors) if (actor != null && actor.SpeakerId == speakerId) return actor;
             return null;
         }
@@ -378,7 +392,7 @@ namespace ThuyKieu.Core.Story
                 case "crying": return 1;
                 case "irritated_hidden": case "annoyed": case "cold": case "angry": case "mocking": case "rage": return 2;
                 case "satisfied": case "smug": case "amused": case "warm_fake": return 3;
-                case "defensive": case "caught_off_guard": case "determined": case "firm": return 4;
+                case "defensive": case "caught_off_guard": case "determined": case "firm": case "collapse": return 4;
                 case "thoughtful": case "calm_probe": case "realization": return 5;
                 case "suspicious": case "fearful": case "businesslike": return 7;
                 default: return 0;

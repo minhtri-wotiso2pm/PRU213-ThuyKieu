@@ -10,8 +10,8 @@ namespace ThuyKieu.UI
     /// <summary>Esc pause menu for story chapters: resume, journal, controls, restart chapter, chapter select, main menu, quit.</summary>
     public class PauseMenuView : MonoBehaviour
     {
-        public static readonly string[] ButtonNames = { "Resume", "Journal", "Controls", "Restart", "ChapterSelect", "MainMenu", "Quit" };
-        public static readonly string[] ButtonLabels = { "Tiếp tục", "Sổ tay manh mối", "Điều khiển", "Chơi lại chương", "Chọn chương", "Về menu chính", "Thoát game" };
+        public static readonly string[] ButtonNames = { "Resume", "Journal", "Settings", "Controls", "Restart", "ChapterSelect", "MainMenu", "Quit" };
+        public static readonly string[] ButtonLabels = { "Tiếp tục", "Sổ tay manh mối", "Cài đặt", "Điều khiển", "Chơi lại chương", "Chọn chương", "Về menu chính", "Thoát game" };
 
         public static bool IsPaused => GamePause.IsPaused;
 
@@ -28,6 +28,7 @@ namespace ThuyKieu.UI
             EnsureButtons(transform.Find("Pause/Panel"));
             Bind("Pause/Panel/Resume", Resume);
             Bind("Pause/Panel/Journal", OpenJournal);
+            Bind("Pause/Panel/Settings", OpenSettings);
             Bind("Pause/Panel/Controls", () => _controls.SetActive(!_controls.activeSelf));
             Bind("Pause/Panel/Restart", Restart);
             Bind("Pause/Panel/ChapterSelect", OpenChapterSelect);
@@ -61,7 +62,7 @@ namespace ThuyKieu.UI
             rect.anchorMax = new Vector2(0.64f, 0.88f);
             var title = (RectTransform)panel.Find("Title");
             if (title != null) { title.anchorMin = new Vector2(0.08f, 0.89f); title.anchorMax = new Vector2(0.92f, 0.98f); }
-            const float step = 0.118f, height = 0.095f;
+            const float step = 0.104f, height = 0.084f;
             for (int i = 0; i < ButtonNames.Length; i++)
             {
                 var button = panel.Find(ButtonNames[i]) as RectTransform;
@@ -130,6 +131,12 @@ namespace ThuyKieu.UI
             if (!_director.InExplore) return;
             Resume();
             _journal.Open();
+        }
+
+        private void OpenSettings()
+        {
+            _root.SetActive(false);
+            GameShell.ShowSettings(() => { if (_paused) _root.SetActive(true); });
         }
 
         private void OpenChapterSelect()

@@ -91,7 +91,7 @@ namespace ThuyKieu.Presentation
                 case "Narrator":
                     if (!_active) Wide(kieu);
                     return;
-                case "Kieu":
+                case "Kieu": case "HocSinh":
                     if (_lastOther != null && Vector3.Distance(_lastOther.transform.position, kieu.transform.position) < 7f)
                         OverShoulder(_lastOther, kieu.HeadPosition);
                     else CloseUp(kieu, 1.35f);

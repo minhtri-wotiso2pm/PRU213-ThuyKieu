@@ -228,6 +228,29 @@ namespace ThuyKieu.Core.Editor
             return RiggedActor(name, speakerId, folder + "/" + id + "_Rigged.fbx", folder, height, position, yaw, Color.white, StoryAnimationSetup.CharacterController(id));
         }
 
+        /// <summary>
+        /// A second, swappable body under an existing character root (the modern student inside Kiều's player object):
+        /// the rigged model fitted to height, tinted and animated by the given controller. Starts hidden.
+        /// </summary>
+        public static GameObject Body(Transform root, string name, string fbxPath, string textureFolder, float height, Color tint, RuntimeAnimatorController controller)
+        {
+            var importer = AssetImporter.GetAtPath(fbxPath) as ModelImporter;
+            if (importer != null && importer.animationType != ModelImporterAnimationType.Human)
+            { importer.animationType = ModelImporterAnimationType.Human; importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel; importer.SaveAndReimport(); }
+            var holder = new GameObject(name);
+            holder.transform.SetParent(root, false);
+            var model = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath));
+            model.transform.SetParent(holder.transform, false);
+            Fit(model, height);
+            var animator = model.GetComponentInChildren<Animator>();
+            animator.runtimeAnimatorController = controller;
+            animator.applyRootMotion = false;
+            animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+            ApplyTexture(model, name, textureFolder, tint);
+            holder.SetActive(false);
+            return holder;
+        }
+
         public static StoryActor StaticActor(string name, string speakerId, string objPath, string texturePath, float height, Vector3 position, float yaw, float relaxArms = 0f)
         {
             var importer = AssetImporter.GetAtPath(objPath) as ModelImporter;

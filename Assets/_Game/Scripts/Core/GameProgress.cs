@@ -15,7 +15,10 @@ namespace ThuyKieu.Core
 
         public static int Reached => PlayerPrefs.GetInt(ReachedKey, 0);
         public static int Last => PlayerPrefs.GetInt(LastKey, 0);
-        public static bool HasSave => Last > 0;
+        public static bool HasSave => PlayerPrefs.HasKey(LastKey);
+        /// <summary>The epilogue has been reached at least once.</summary>
+        public static bool Finished => PlayerPrefs.GetInt(FinishedKey, 0) == 1;
+        private const string FinishedKey = "tk.finished";
 
         /// <summary>Editor and development builds unlock every chapter for testing; "unlock" in the console does it in release.</summary>
         public static bool UnlockAll
@@ -24,7 +27,13 @@ namespace ThuyKieu.Core
             set { PlayerPrefs.SetInt(UnlockKey, value ? 1 : 0); PlayerPrefs.Save(); }
         }
 
-        public static bool IsUnlocked(int chapter) => chapter <= 1 || UnlockAll || chapter <= Reached;
+        public static bool IsUnlocked(int chapter) => chapter <= 1 || UnlockAll || Finished || chapter <= Reached;
+
+        public static void MarkFinished()
+        {
+            PlayerPrefs.SetInt(FinishedKey, 1);
+            PlayerPrefs.Save();
+        }
 
         public static void MarkPlaying(int chapter)
         {
@@ -38,6 +47,7 @@ namespace ThuyKieu.Core
             PlayerPrefs.DeleteKey(ReachedKey);
             PlayerPrefs.DeleteKey(LastKey);
             PlayerPrefs.DeleteKey(UnlockKey);
+            PlayerPrefs.DeleteKey(FinishedKey);
             PlayerPrefs.Save();
         }
 

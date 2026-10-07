@@ -200,6 +200,7 @@ Hãy sống một ngày của ta. Rồi hãy nói cho ta biết... ta đã chọ
 # speaker:Narrator
 # fx:spirit
 # sfx:memory
+# gameplay:into_room
 Ánh sáng nuốt chửng cả lớp học.
 
 -> pl_phong

@@ -18,8 +18,8 @@ namespace ThuyKieu.UI
 {
     /// <summary>
     /// Game-wide shell that lives across scenes (created automatically, no scene setup needed):
-    /// main menu in the MainMenu scene, chapter select, an Esc pause menu for scenes without the story pause
-    /// (Chapter 1, placeholders), the ` test console, fades between scenes, and the "-chapter N" command-line jump.
+    /// main menu in the MainMenu scene, chapter select, settings, credits, an Esc pause menu for scenes without the
+    /// story pause (Chapter 1), the ` test console, fades between scenes, and the "-chapter N" command-line jump.
     /// Runs before other scripts so it can claim Esc first.
     /// </summary>
     [DefaultExecutionOrder(-100)]
@@ -46,6 +46,8 @@ namespace ThuyKieu.UI
         private CanvasGroup _fade;
         private GameObject _menu, _menuButtons, _menuControls, _pause, _pauseControls, _select;
         private DevConsole _console;
+        private SettingsView _settings;
+        private CreditsView _credits;
         private Button _continueButton, _pauseResume, _selectStart, _selectKeep, _selectBack;
         private TMP_Text _continueLabel, _pauseChapter, _detailNumber, _detailTitle, _detailBlurb, _detailMeta;
         private readonly List<ChapterRow> _rows = new List<ChapterRow>();
@@ -77,6 +79,20 @@ namespace ThuyKieu.UI
             if (_instance != null) _instance.OpenSelect(onClose);
         }
 
+        /// <summary>Opens the options screen over the current view; onClose runs when it is dismissed.</summary>
+        public static void ShowSettings(Action onClose)
+        {
+            if (_instance == null) { onClose?.Invoke(); return; }
+            _instance.OpenSettings(onClose);
+        }
+
+        /// <summary>Rolls the credits (end of the game, or from the main menu); onClose runs when they are dismissed.</summary>
+        public static void ShowCredits(Action onClose)
+        {
+            if (_instance == null) { onClose?.Invoke(); return; }
+            _instance.OpenCredits(onClose);
+        }
+
         public static void GoToMainMenu()
         {
             if (!ChapterLoader.LoadMainMenu()) Debug.LogWarning("[GameShell] Add the MainMenu scene (Thúy Kiều > Menu > Build Main Menu Scene).");
@@ -97,6 +113,8 @@ namespace ThuyKieu.UI
         {
             var args = System.Environment.GetCommandLineArgs();
             if (args.Contains("-unlockAll")) GameProgress.UnlockAll = true;
+            int preview = Array.IndexOf(args, "-shellPreview");
+            if (preview >= 0 && preview + 1 < args.Length) { StartCoroutine(Preview(args[preview + 1])); return; }
             bool keep = args.Contains("-keepChoices");
             for (int i = 0; i < args.Length; i++)
             {
@@ -110,6 +128,36 @@ namespace ThuyKieu.UI
                 }
                 if (flag == "-continue") { ChapterLoader.Continue(); return; }
             }
+        }
+
+        /// <summary>QA: "-shellPreview &lt;folder&gt;" photographs the main menu, every settings tab, chapter select and the credits, then quits.</summary>
+        private IEnumerator Preview(string folder)
+        {
+            System.IO.Directory.CreateDirectory(folder);
+            yield return new WaitForSecondsRealtime(2.5f);
+            yield return Photo(folder, "menu");
+            OpenSettings(null);
+            for (int tab = 0; tab < 4; tab++)
+            {
+                _settings.ShowTab(tab);
+                yield return Photo(folder, "settings_" + tab);
+            }
+            _settings.Close();
+            OpenSelect(null);
+            yield return Photo(folder, "select");
+            CloseSelect();
+            OpenCredits(null);
+            yield return new WaitForSecondsRealtime(9f);
+            yield return Photo(folder, "credits");
+            _credits.Close();
+            ChapterLoader.Quit();
+        }
+
+        private static IEnumerator Photo(string folder, string name)
+        {
+            yield return new WaitForSecondsRealtime(0.8f);
+            ScreenCapture.CaptureScreenshot(System.IO.Path.Combine(folder, name + ".png"));
+            yield return new WaitForSecondsRealtime(0.4f);
         }
 
         // ---------------------------------------------------------------- lifecycle
@@ -137,6 +185,8 @@ namespace ThuyKieu.UI
             _pause.SetActive(false);
             _select.SetActive(false);
             _menuControls.SetActive(false);
+            _settings.Close();
+            _credits.Close();
             _console.Close();
 
             var entry = ChapterCatalog.FindByScene(scene.name);
@@ -155,6 +205,7 @@ namespace ThuyKieu.UI
             if (keyboard == null || _loading) return;
 
             if (keyboard.backquoteKey.wasPressedThisFrame || keyboard.f1Key.wasPressedThisFrame) { _console.Toggle(); return; }
+            if (_settings.IsOpen || _credits.IsOpen) return; // they handle their own keys, Esc included
 
             if (_select.activeSelf && !_console.IsOpen)
             {
@@ -213,7 +264,8 @@ namespace ThuyKieu.UI
             Cursor.visible = _cursorWasVisible;
         }
 
-        private void SyncOverlayFlag() => GamePause.ShellOverlayOpen = _console.IsOpen || _select.activeSelf || _pause.activeSelf || _menuControls.activeSelf;
+        private void SyncOverlayFlag() => GamePause.ShellOverlayOpen = _console.IsOpen || _select.activeSelf || _pause.activeSelf || _menuControls.activeSelf
+                                                                    || _settings.IsOpen || _credits.IsOpen;
 
         // ---------------------------------------------------------------- main menu
 
@@ -221,11 +273,11 @@ namespace ThuyKieu.UI
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            var last = ChapterCatalog.Get(GameProgress.Last);
+            var last = GameProgress.HasSave ? ChapterCatalog.Get(GameProgress.Last) : null;
             bool canContinue = last != null && ChapterCatalog.InBuild(last);
             _continueButton.interactable = canContinue;
             _continueLabel.text = canContinue
-                ? "Tiếp tục  <size=21><color=#FFFFFF88>Chương " + last.Number + " · " + last.Title + "</color></size>"
+                ? "Tiếp tục  <size=21><color=#FFFFFF88>" + ChapterCatalog.Label(last.Number) + " · " + last.Title + "</color></size>"
                 : "Tiếp tục  <size=21><color=#FFFFFF55>chưa có tiến trình</color></size>";
             _continueButton.GetComponent<ShellButton>().Refresh();
             _menuButtons.SetActive(true);
@@ -237,7 +289,7 @@ namespace ThuyKieu.UI
         private void PauseGeneric()
         {
             var entry = ChapterCatalog.FindByScene(SceneManager.GetActiveScene().name);
-            _pauseChapter.text = entry != null ? "CHƯƠNG " + entry.Number + " · " + entry.Title.ToUpperInvariant() : SceneManager.GetActiveScene().name;
+            _pauseChapter.text = entry != null ? (ChapterCatalog.Label(entry.Number) + " · " + entry.Title).ToUpperInvariant() : SceneManager.GetActiveScene().name;
             Freeze();
             _pauseControls.SetActive(false);
             _pause.SetActive(true);
@@ -252,6 +304,36 @@ namespace ThuyKieu.UI
             SyncOverlayFlag();
             Select(null);
             Unfreeze();
+        }
+
+        // ---------------------------------------------------------------- settings & credits
+
+        private void OpenSettings(Action onClose)
+        {
+            if (_inMenuScene) _menuButtons.SetActive(false);
+            bool fromPause = _pause.activeSelf;
+            if (fromPause) _pause.SetActive(false);
+            _settings.Open(() =>
+            {
+                if (fromPause) { _pause.SetActive(true); Select(_pauseResume.gameObject); }
+                else if (_inMenuScene) ShowMenu();
+                SyncOverlayFlag();
+                onClose?.Invoke();
+            });
+            SyncOverlayFlag();
+        }
+
+        private void OpenCredits(Action onClose)
+        {
+            if (_inMenuScene) _menuButtons.SetActive(false);
+            Select(null);
+            _credits.Open(() =>
+            {
+                if (_inMenuScene) ShowMenu();
+                SyncOverlayFlag();
+                onClose?.Invoke();
+            });
+            SyncOverlayFlag();
         }
 
         // ---------------------------------------------------------------- chapter select
@@ -270,7 +352,7 @@ namespace ThuyKieu.UI
             }
             _select.SetActive(true);
             SyncOverlayFlag();
-            var current = ChapterCatalog.FindByScene(SceneManager.GetActiveScene().name) ?? ChapterCatalog.Get(Mathf.Max(1, GameProgress.Last));
+            var current = ChapterCatalog.FindByScene(SceneManager.GetActiveScene().name) ?? ChapterCatalog.Get(GameProgress.HasSave ? GameProgress.Last : ChapterCatalog.Prologue);
             var start = _rows.FirstOrDefault(r => r.Entry == current) ?? _rows[0];
             Select(start.Button.gameObject);
             Focus(start.Entry);
@@ -292,12 +374,12 @@ namespace ThuyKieu.UI
             _focused = entry;
             bool unlocked = GameProgress.IsUnlocked(entry.Number);
             bool inBuild = ChapterCatalog.InBuild(entry);
-            bool hasChoices = entry.Number > 1 && GameProgress.LoadInkStateFor(entry.Number) != null;
-            _detailNumber.text = entry.Number.ToString("00");
+            bool hasChoices = entry.Number > ChapterCatalog.Prologue && GameProgress.LoadInkStateFor(entry.Number) != null;
+            _detailNumber.text = entry.Number == ChapterCatalog.Prologue ? "MỞ" : entry.Number == ChapterCatalog.Epilogue ? "KẾT" : entry.Number.ToString("00");
             _detailTitle.text = entry.Title;
             _detailBlurb.text = entry.Blurb;
             _detailMeta.text = "Scene: " + entry.Scene + "\n" + Status(entry) +
-                               (entry.Number > 1 ? (hasChoices ? "\nCó lựa chọn đã lưu từ Chương " + (entry.Number - 1) + "." : "\nChưa có lựa chọn lưu từ chương trước — biến Ink dùng giá trị mặc định.") : "");
+                               (entry.Number > ChapterCatalog.Prologue ? (hasChoices ? "\nCó lựa chọn đã lưu từ " + ChapterCatalog.Label(entry.Number - 1) + "." : "\nChưa có lựa chọn lưu từ phần trước — biến Ink dùng giá trị mặc định.") : "");
             _selectStart.interactable = unlocked && inBuild;
             _selectKeep.gameObject.SetActive(hasChoices);
             _selectKeep.interactable = unlocked && inBuild;
@@ -310,8 +392,8 @@ namespace ThuyKieu.UI
             if (!ChapterCatalog.InBuild(entry)) return "<color=#FF8A7A>Thiếu trong Build Settings</color>";
             if (!GameProgress.IsUnlocked(entry.Number)) return "<color=#FFFFFF66>Chưa mở khoá</color>";
             if (entry.Placeholder) return "<color=#FFFFFF77>Đang phát triển</color>";
-            if (entry.Number == GameProgress.Last) return "<color=#E8C27A>Đang chơi</color>";
-            if (entry.Number <= GameProgress.Reached) return "<color=#9FD49F>Đã tới</color>";
+            if (GameProgress.HasSave && entry.Number == GameProgress.Last) return "<color=#E8C27A>Đang chơi</color>";
+            if (GameProgress.HasSave && entry.Number <= GameProgress.Reached) return "<color=#9FD49F>Đã tới</color>";
             return "<color=#FFFFFF88>Chưa chơi</color>";
         }
 
@@ -380,6 +462,8 @@ namespace ThuyKieu.UI
             BuildMenu();
             BuildPause();
             BuildSelect();
+            _settings = SettingsView.Build(_canvas, MakeButton);
+            _credits = CreditsView.Build(_canvas);
             _console = DevConsole.Build(_canvas);
             _console.OpenChanged = open =>
             {
@@ -410,21 +494,24 @@ namespace ThuyKieu.UI
             subtitle.characterSpacing = 30;
             StoryUIBuilder.Image(StoryUIBuilder.Rect(menu, "Rule", new Vector2(0.072f, 0.572f), new Vector2(0.2f, 0.574f)), StoryUIBuilder.Vermilion);
 
-            var buttons = StoryUIBuilder.Rect(menu, "Buttons", new Vector2(0.065f, 0.2f), new Vector2(0.42f, 0.54f));
+            var buttons = StoryUIBuilder.Rect(menu, "Buttons", new Vector2(0.065f, 0.15f), new Vector2(0.42f, 0.555f));
             _menuButtons = buttons.gameObject;
-            string[] labels = { "Tiếp tục", "Chơi mới", "Chọn chương", "Điều khiển", "Thoát game" };
+            string[] labels = { "Tiếp tục", "Chơi mới", "Chọn chương", "Cài đặt", "Điều khiển", "Ghi công", "Thoát game" };
             Action[] actions =
             {
                 () => ChapterLoader.Continue(),
-                () => ChapterLoader.LoadChapter(1, false),
+                () => ChapterLoader.LoadChapter(ChapterCatalog.Prologue, false),
                 () => OpenSelect(null),
+                () => OpenSettings(null),
                 () => { _menuButtons.SetActive(false); _menuControls.SetActive(true); SyncOverlayFlag(); },
+                () => OpenCredits(null),
                 QuitGame
             };
+            float rowStep = 1f / labels.Length;
             for (int i = 0; i < labels.Length; i++)
             {
-                float top = 1f - i * 0.2f;
-                var button = MakeButton(buttons, "Button" + i, labels[i], new Vector2(0f, top - 0.17f), new Vector2(1f, top), actions[i], 36);
+                float top = 1f - i * rowStep;
+                var button = MakeButton(buttons, "Button" + i, labels[i], new Vector2(0f, top - rowStep * 0.86f), new Vector2(1f, top), actions[i], 34);
                 if (i == 0) { _continueButton = button; _continueLabel = button.GetComponent<ShellButton>().Label; }
             }
 
@@ -456,20 +543,21 @@ namespace ThuyKieu.UI
             _pauseChapter = StoryUIBuilder.Text(panel, "Chapter", "", 20, new Vector2(0.08f, 0.82f), new Vector2(0.92f, 0.88f), new Color(1, 1, 1, 0.55f));
             _pauseChapter.alignment = TextAlignmentOptions.Center; _pauseChapter.characterSpacing = 4;
 
-            string[] labels = { "Tiếp tục", "Chơi lại chương", "Chọn chương", "Điều khiển", "Về menu chính", "Thoát game" };
+            string[] labels = { "Tiếp tục", "Chơi lại chương", "Chọn chương", "Cài đặt", "Điều khiển", "Về menu chính", "Thoát game" };
             Action[] actions =
             {
                 ResumeGeneric,
                 () => ChapterLoader.LoadScene(SceneManager.GetActiveScene().name),
                 () => OpenSelect(null),
+                () => OpenSettings(null),
                 () => _pauseControls.SetActive(!_pauseControls.activeSelf),
                 GoToMainMenu,
                 QuitGame
             };
             for (int i = 0; i < labels.Length; i++)
             {
-                float top = 0.79f - i * 0.125f;
-                var button = MakeButton(panel, "Button" + i, labels[i], new Vector2(0.1f, top - 0.1f), new Vector2(0.9f, top), actions[i], 28, i == 0);
+                float top = 0.8f - i * 0.108f;
+                var button = MakeButton(panel, "Button" + i, labels[i], new Vector2(0.1f, top - 0.088f), new Vector2(0.9f, top), actions[i], 27, i == 0);
                 if (i == 0) _pauseResume = button;
             }
 
@@ -488,7 +576,7 @@ namespace ThuyKieu.UI
             StoryUIBuilder.Image(select, new Color(0.015f, 0.01f, 0.02f, 0.94f)).raycastTarget = true;
             var panel = StoryUIBuilder.Panel(select, "Panel", new Vector2(0.1f, 0.08f), new Vector2(0.9f, 0.92f), new Color(0.06f, 0.045f, 0.055f, 0.98f), 26);
             StoryUIBuilder.Text(panel, "Title", "CHỌN CHƯƠNG", 40, new Vector2(0.035f, 0.89f), new Vector2(0.5f, 0.98f), StoryUIBuilder.Gold).fontStyle = FontStyles.Bold;
-            var hint = StoryUIBuilder.Text(panel, "Hint", "Chuột / mũi tên chọn · 1–7 nhảy nhanh · Enter chơi · Esc quay lại", 19,
+            var hint = StoryUIBuilder.Text(panel, "Hint", "Chuột / mũi tên chọn · 1–9 nhảy nhanh · Enter chơi · Esc quay lại", 19,
                 new Vector2(0.45f, 0.89f), new Vector2(0.97f, 0.98f), new Color(1, 1, 1, 0.5f));
             hint.alignment = TextAlignmentOptions.MidlineRight;
             StoryUIBuilder.Image(StoryUIBuilder.Rect(panel, "Rule", new Vector2(0.035f, 0.885f), new Vector2(0.965f, 0.887f)), new Color(1f, 0.8f, 0.45f, 0.3f));
@@ -499,7 +587,8 @@ namespace ThuyKieu.UI
             {
                 var entry = ChapterCatalog.All[i];
                 float top = 1f - i * step;
-                var label = "<size=19><color=#E8C27A>CHƯƠNG " + entry.Number.ToString("00") + "</color></size>\n" + entry.Title;
+                string number = entry.Number == ChapterCatalog.Prologue || entry.Number == ChapterCatalog.Epilogue ? ChapterCatalog.Label(entry.Number).ToUpperInvariant() : "CHƯƠNG " + entry.Number.ToString("00");
+                var label = "<size=19><color=#E8C27A>" + number + "</color></size>\n" + entry.Title;
                 var button = MakeButton(list, "Row" + entry.Number, label, new Vector2(0f, top - step * 0.9f), new Vector2(1f, top), () => StartFocused(false), 28);
                 var look = button.GetComponent<ShellButton>();
                 look.BackgroundColor = RowColor;
@@ -536,7 +625,7 @@ namespace ThuyKieu.UI
             _select.SetActive(false);
         }
 
-        private Button MakeButton(Transform parent, string name, string label, Vector2 min, Vector2 max, Action onClick, float fontSize, bool filled = false)
+        private static Button MakeButton(Transform parent, string name, string label, Vector2 min, Vector2 max, Action onClick, float fontSize, bool filled = false)
         {
             var rect = StoryUIBuilder.Panel(parent, name, min, max, Color.clear, 14);
             var background = rect.GetComponent<Image>();

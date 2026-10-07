@@ -6,11 +6,14 @@ using UnityEngine;
 
 namespace ThuyKieu.UI
 {
-    /// <summary>Clue journal (J). Opens only while exploring; pauses player control while open.</summary>
+    /// <summary>
+    /// Clue journal (J). Opens only while exploring; pauses player control while open. Long journals turn pages
+    /// (←/→ or A/D) and open on the newest page.
+    /// </summary>
     public class JournalView : MonoBehaviour
     {
         private GameObject _root;
-        private TMP_Text _list;
+        private TMP_Text _list, _hint;
         private StoryDirector _director;
 
         public bool IsOpen => _root.activeSelf;
@@ -21,6 +24,8 @@ namespace ThuyKieu.UI
         {
             _root = transform.Find("Journal").gameObject;
             _list = StoryUIBuilder.Find<TMP_Text>(transform, "Journal/Panel/List");
+            _hint = StoryUIBuilder.Find<TMP_Text>(transform, "Journal/Panel/Hint");
+            _list.overflowMode = TextOverflowModes.Page;
         }
 
         private void Start() { _director = FindAnyObjectByType<StoryDirector>(); }
@@ -29,6 +34,7 @@ namespace ThuyKieu.UI
         {
             if (_director == null) return;
             if (IsOpen && (InputReader.JournalPressedThisFrame || InputReader.CancelPressedThisFrame)) { Close(); return; }
+            if (IsOpen) TurnPages();
             if (!IsOpen && InputReader.JournalPressedThisFrame && _director.InExplore && !_director.IsBusy && !PauseMenuView.IsPaused) Open();
         }
 
@@ -46,9 +52,33 @@ namespace ThuyKieu.UI
             }
             _list.text = builder.ToString();
             _root.SetActive(true);
+            _list.ForceMeshUpdate();
+            _list.pageToDisplay = Mathf.Max(1, _list.textInfo.pageCount);
+            UpdateHint();
             _director.SetFreeControl(false);
             _director.CameraController.SetCursorLocked(false);
             if (_director.Audio != null) _director.Audio.PlaySfx("paper", 0.6f);
+        }
+
+        private void TurnPages()
+        {
+            var keyboard = UnityEngine.InputSystem.Keyboard.current;
+            if (keyboard == null) return;
+            int pages = Mathf.Max(1, _list.textInfo.pageCount);
+            int page = _list.pageToDisplay;
+            if (keyboard.leftArrowKey.wasPressedThisFrame || keyboard.aKey.wasPressedThisFrame) page--;
+            if (keyboard.rightArrowKey.wasPressedThisFrame || keyboard.dKey.wasPressedThisFrame) page++;
+            page = Mathf.Clamp(page, 1, pages);
+            if (page == _list.pageToDisplay) return;
+            _list.pageToDisplay = page;
+            UpdateHint();
+        }
+
+        private void UpdateHint()
+        {
+            if (_hint == null) return;
+            int pages = Mathf.Max(1, _list.textInfo.pageCount);
+            _hint.text = pages > 1 ? "←/→: lật trang (" + _list.pageToDisplay + "/" + pages + ") · J / Esc: đóng sổ tay" : "J / Esc: đóng sổ tay";
         }
 
         public void Close()

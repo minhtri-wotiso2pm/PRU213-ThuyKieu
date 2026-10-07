@@ -14,6 +14,7 @@
 # gameplay:wake_class
 Tiếng quạt trần. Tiếng ve. Tiếng ai đó gọi tên mình.
 
+# fx:none
 # speaker:Ngan
 # emotion:amused
 # camera:OTS_Kieu_Ngan

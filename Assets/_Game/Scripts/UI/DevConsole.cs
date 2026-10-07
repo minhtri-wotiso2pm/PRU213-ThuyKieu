@@ -146,7 +146,7 @@ namespace ThuyKieu.UI
                     var entry = ChapterCatalog.Parse(arg);
                     if (entry == null) { ListChapters(); break; }
                     bool keep = parts.Length > 2 && parts[2].ToLowerInvariant() == "keep";
-                    if (ChapterLoader.LoadChapter(entry, keep)) Print("Đang tải Chương " + entry.Number + " — " + entry.Title + (keep ? " (giữ lựa chọn)" : ""));
+                    if (ChapterLoader.LoadChapter(entry, keep)) Print("Đang tải " + ChapterCatalog.Label(entry.Number) + " — " + entry.Title + (keep ? " (giữ lựa chọn)" : ""));
                     else Print("<color=#FF8A7A>Không tải được " + entry.Scene + " (chưa có trong Build Settings?)</color>");
                     break;
                 case "continue":

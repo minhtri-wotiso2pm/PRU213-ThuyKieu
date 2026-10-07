@@ -455,57 +455,71 @@ Mọi thứ trở nên chậm lại. Tiếng người như vọng về từ rấ
 Giữa sân huyện đường, mọi người đứng yên như tượng. Chỉ còn hai cái bóng giống hệt nhau đứng đối diện.
 
 # speaker:KieuThat
+# camera:Spirit
 # gameplay:kieu_voice
 Ngươi đã làm được.
 
 # speaker:Kieu
 # emotion:thoughtful
+# camera:Spirit
 Kiều: Không.
 
 # speaker:Kieu
+# camera:Spirit
 Kiều: Ta chỉ có những thứ mà ngươi ngày đó không có.
 
 {
 - c7_ket == 3:
     # speaker:Kieu
+# camera:Spirit
     Kiều: Ta biết trước câu chuyện. Ta có những người dám đứng ra. Ta có một công đường chịu nghe. Ngươi thì chỉ có một mình.
 - c7_ket == 2:
     # speaker:Kieu
+# camera:Spirit
     Kiều: Ta biết trước câu chuyện. Ta có người tin ta. Còn ngươi, ngày đó, chẳng ai cho ngươi được mở miệng.
 - else:
     # speaker:Kieu
+# camera:Spirit
     Kiều: Ngay cả khi biết trước, ta vẫn suýt thua. Nếu không có người đứng ra bảo lãnh, ta cũng chỉ là "một đứa con gái không nhà".
 }
 
 # speaker:KieuThat
+# camera:Spirit
 Vậy ngươi còn nghĩ...
 
 # speaker:KieuThat
+# camera:Spirit
 ...ta đã lựa chọn sai không?
 
 * [Không.]
     # speaker:Kieu
+# camera:Spirit
     Kiều: Không.
 * [Lắc đầu.]
     # speaker:Narrator
     Cô lắc đầu thật chậm.
 
 - # speaker:Kieu
+# camera:Spirit
 Kiều: Bây giờ ta hiểu rồi.
 
 {
 - tra_loi_kieu_that == 1:
     # speaker:KieuThat
+# camera:Spirit
     Ở nhà Tú Bà, ngươi đã nhận mình sai. Hôm nay ngươi đã sửa được điều đó.
 - tra_loi_kieu_that == 2:
     # speaker:KieuThat
+# camera:Spirit
     Ở nhà Tú Bà, ngươi nói ngươi sẽ không bỏ cuộc. Ngươi đã giữ lời.
 - tra_loi_kieu_that == 3:
     # speaker:KieuThat
+# camera:Spirit
     Ở nhà Tú Bà, ngươi chỉ im lặng. Hôm nay ngươi đã lên tiếng thay cả hai chúng ta.
 }
 
 # speaker:KieuThat
+# camera:Spirit
 Cảm ơn ngươi đã sống một ngày của ta... và cho ta thấy một ngày ta chưa từng có.
 
 # speaker:Narrator

@@ -102,6 +102,8 @@ namespace ThuyKieu.Presentation
 
         public void Shake(float strength, float duration)
         {
+            strength *= ThuyKieu.Core.GameSettings.ShakeAmount;
+            if (strength <= 0f) return;
             _shake = Mathf.Max(_shake, strength);
             _shakeTime = Mathf.Max(_shakeTime, duration);
         }

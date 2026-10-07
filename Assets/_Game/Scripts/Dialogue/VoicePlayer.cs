@@ -28,10 +28,11 @@ namespace ThuyKieu.Dialogue
         /// <summary>Speaks a short in-world line (HUD bark) without cutting the dialogue voice.</summary>
         public static void PlayBark(string speakerId, string text)
         {
-            if (_instance == null) return;
+            if (_instance == null || !Core.GameSettings.VoiceOn) return;
             var clip = Load(speakerId, text);
             if (clip == null) return;
             var source = SpeakerCatalog.Get(speakerId).Style == SpeakerStyle.Inner ? _instance._barkInner : _instance._barkDry;
+            source.volume = Volume * Core.GameSettings.Voice;
             source.Stop();
             source.clip = clip;
             source.Play();
@@ -91,13 +92,18 @@ namespace ThuyKieu.Dialogue
         private void OnLine(string speakerName, string text)
         {
             StopDialogueVoice();
+            if (!Core.GameSettings.VoiceOn) return;
             string speakerId = _bound != null ? _bound.CurrentSpeakerId : "Narrator";
             var clip = Load(speakerId, text);
             if (clip == null) return;
             var source = SourceFor(SpeakerCatalog.Get(speakerId).Style);
+            source.volume = Volume * Core.GameSettings.Voice;
             source.clip = clip;
             source.Play();
         }
+
+        /// <summary>True while a dialogue line is still being spoken (auto-advance waits for it).</summary>
+        public static bool IsSpeaking => _instance != null && (_instance._dry.isPlaying || _instance._inner.isPlaying || _instance._spirit.isPlaying);
 
         private AudioSource SourceFor(SpeakerStyle style)
         {

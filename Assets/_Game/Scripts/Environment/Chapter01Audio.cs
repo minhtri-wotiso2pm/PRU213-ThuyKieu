@@ -71,9 +71,9 @@ namespace ThuyKieu.Environment
             if (_player == null) return;
             bool inside = Mathf.Abs(_player.transform.position.x) < 6.3f && _player.transform.position.z > -3.2f;
             float blend = 1 - Mathf.Exp(-3 * Time.deltaTime);
-            if (_musicSource != null) _musicSource.volume = Mathf.Lerp(_musicSource.volume, _musicVolume, blend);
-            if (_rainSource != null) _rainSource.volume = Mathf.Lerp(_rainSource.volume, inside ? .13f : .28f, blend);
-            if (_windSource != null) _windSource.volume = Mathf.Lerp(_windSource.volume, inside ? .025f : .07f, blend);
+            if (_musicSource != null) _musicSource.volume = Mathf.Lerp(_musicSource.volume, _musicVolume * ThuyKieu.Core.GameSettings.Music, blend);
+            if (_rainSource != null) _rainSource.volume = Mathf.Lerp(_rainSource.volume, (inside ? .13f : .28f) * ThuyKieu.Core.GameSettings.Ambience, blend);
+            if (_windSource != null) _windSource.volume = Mathf.Lerp(_windSource.volume, (inside ? .025f : .07f) * ThuyKieu.Core.GameSettings.Ambience, blend);
             if (_player.ControlLocked || _controller == null || !_controller.isGrounded || _player.CurrentSpeed < .1f)
             { _stepDistance = 0; return; }
             _stepDistance += _player.CurrentSpeed * Time.deltaTime;

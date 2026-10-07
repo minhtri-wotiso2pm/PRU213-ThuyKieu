@@ -66,16 +66,24 @@ namespace ThuyKieu.Player
         private void Awake()
         {
             controller = GetComponent<CharacterController>();
-            if (_animator == null) _animator = GetComponentInChildren<Animator>();
-            if (_animator != null) _animator.applyRootMotion = false;
-            if (_animator != null && _animator.runtimeAnimatorController != null)
-                foreach (var parameter in _animator.parameters)
-                    if (parameter.nameHash == CrouchParameter) _hasCrouchParameter = true;
+            SetAnimator(_animator != null ? _animator : GetComponentInChildren<Animator>());
 
             if (cameraTransform == null && Camera.main != null)
             {
                 cameraTransform = Camera.main.transform;
             }
+        }
+
+        /// <summary>Drives another body (the classroom scenes swap Kiều for the modern student).</summary>
+        public void SetAnimator(Animator animator)
+        {
+            _animator = animator;
+            _hasCrouchParameter = false;
+            if (_animator == null) return;
+            _animator.applyRootMotion = false;
+            if (_animator.runtimeAnimatorController != null)
+                foreach (var parameter in _animator.parameters)
+                    if (parameter.nameHash == CrouchParameter) _hasCrouchParameter = true;
         }
 
         private void Update()

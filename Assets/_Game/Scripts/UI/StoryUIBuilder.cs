@@ -43,6 +43,8 @@ namespace ThuyKieu.UI
             BuildDocument(t);
             BuildDeduction(t);
             BuildDossier(t);
+            BuildTrial(t);
+            BuildRecap(t);
             BuildCards(t);
             BuildPause(t);
 
@@ -56,6 +58,8 @@ namespace ThuyKieu.UI
             root.AddComponent<DocumentView>();
             root.AddComponent<DeductionView>();
             root.AddComponent<DossierView>();
+            root.AddComponent<TrialView>();
+            root.AddComponent<RecapView>();
             root.AddComponent<PauseMenuView>();
             return root;
         }
@@ -262,6 +266,95 @@ namespace ThuyKieu.UI
             }
             slots.gameObject.SetActive(false);
             dossier.gameObject.SetActive(false);
+        }
+
+        /// <summary>
+        /// Chapter 7 courtroom: the witness's testimony on the left, actions or the evidence case on the right,
+        /// the magistrate's trust along the top and the last thing said along the bottom. The 3D hall stays visible.
+        /// </summary>
+        private static void BuildTrial(Transform parent)
+        {
+            var trial = Rect(parent, "Trial", Vector2.zero, Vector2.one);
+            var top = Panel(trial, "Top", new Vector2(0.025f, 0.875f), new Vector2(0.975f, 0.975f), new Color(0.05f, 0.03f, 0.03f, 0.9f), 18);
+            var title = Text(top, "Title", "", 30, new Vector2(0.02f, 0.4f), new Vector2(0.55f, 0.98f), Gold);
+            title.fontStyle = FontStyles.Bold;
+            Text(top, "Subtitle", "", 19, new Vector2(0.02f, 0.02f), new Vector2(0.55f, 0.45f), new Color(1, 1, 1, 0.6f));
+            Text(top, "TrustLabel", "Lòng tin của quan huyện", 19, new Vector2(0.58f, 0.52f), new Vector2(0.98f, 0.98f), new Color(1, 1, 1, 0.75f)).alignment = TextAlignmentOptions.MidlineRight;
+            var track = Image(Rect(top, "Track", new Vector2(0.58f, 0.18f), new Vector2(0.98f, 0.42f)), new Color(1, 1, 1, 0.14f));
+            Image(Rect(track.transform, "Fill", Vector2.zero, new Vector2(0.6f, 1f)), Gold);
+
+            var left = Panel(trial, "Testimony", new Vector2(0.025f, 0.16f), new Vector2(0.52f, 0.855f), new Color(0.04f, 0.03f, 0.035f, 0.76f), 22);
+            var header = Text(left, "Header", "LỜI KHAI", 24, new Vector2(0.05f, 0.9f), new Vector2(0.95f, 0.98f), Vermilion);
+            header.fontStyle = FontStyles.Bold;
+            var rows = Rect(left, "Rows", new Vector2(0.04f, 0.04f), new Vector2(0.96f, 0.89f));
+            var layout = rows.gameObject.AddComponent<VerticalLayoutGroup>();
+            layout.spacing = 10; layout.childControlHeight = true; layout.childControlWidth = true; layout.childForceExpandHeight = false;
+            var row = Panel(rows, "Template", Vector2.zero, Vector2.one, new Color(1, 1, 1, 0.05f), 14);
+            row.gameObject.AddComponent<Button>();
+            var rowSize = row.gameObject.AddComponent<LayoutElement>();
+            rowSize.minHeight = 96; rowSize.preferredHeight = 96;
+            Image(Rect(row, "Accent", new Vector2(0, 0.12f), new Vector2(0.008f, 0.88f)), Gold);
+            var rowText = Text(row, "Label", "", 23, new Vector2(0.03f, 0.04f), new Vector2(0.97f, 0.96f), Color.white);
+            rowText.alignment = TextAlignmentOptions.MidlineLeft;
+            row.gameObject.SetActive(false);
+
+            var right = Panel(trial, "Actions", new Vector2(0.54f, 0.16f), new Vector2(0.975f, 0.855f), new Color(0.04f, 0.03f, 0.035f, 0.72f), 22);
+            var actionHeader = Text(right, "Header", "", 24, new Vector2(0.05f, 0.9f), new Vector2(0.95f, 0.98f), Gold);
+            actionHeader.fontStyle = FontStyles.Bold;
+            Text(right, "Help", "", 20, new Vector2(0.05f, 0.62f), new Vector2(0.95f, 0.89f), new Color(1, 1, 1, 0.75f)).alignment = TextAlignmentOptions.TopLeft;
+            foreach (var (name, label, min, max, color) in new[]
+            {
+                ("Press", "<color=#E8C27A>Q</color>   HỎI VẶN", new Vector2(0.05f, 0.4f), new Vector2(0.95f, 0.56f), new Color(1, 1, 1, 0.08f)),
+                ("Present", "<color=#FFE0B0>E</color>   ĐƯA BẰNG CHỨNG", new Vector2(0.05f, 0.2f), new Vector2(0.95f, 0.36f), Vermilion)
+            })
+            {
+                var button = Panel(right, name, min, max, color, 16);
+                button.gameObject.AddComponent<Button>();
+                Text(button, "Label", label, 28, Vector2.zero, Vector2.one, Color.white).alignment = TextAlignmentOptions.Center;
+            }
+            var cases = Rect(right, "Evidence", new Vector2(0.04f, 0.04f), new Vector2(0.96f, 0.89f));
+            var grid = cases.gameObject.AddComponent<GridLayoutGroup>();
+            grid.cellSize = new Vector2(376, 94); grid.spacing = new Vector2(10, 8);
+            grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount; grid.constraintCount = 2;
+            var card = Panel(cases, "Template", Vector2.zero, Vector2.one, new Color(Paper.r, Paper.g, Paper.b, 0.95f), 12);
+            card.gameObject.AddComponent<Button>();
+            var cardTitle = Text(card, "Title", "", 21, new Vector2(0.05f, 0.58f), new Vector2(0.95f, 0.96f), new Color(0.38f, 0.1f, 0.05f));
+            cardTitle.fontStyle = FontStyles.Bold;
+            var cardBody = Text(card, "Body", "", 15, new Vector2(0.05f, 0.04f), new Vector2(0.95f, 0.6f), new Color(0.18f, 0.11f, 0.06f));
+            cardBody.alignment = TextAlignmentOptions.TopLeft;
+            card.gameObject.SetActive(false);
+            Text(right, "Back", "Backspace / chuột phải: cất hồ sơ", 18, new Vector2(0.55f, 0.005f), new Vector2(0.96f, 0.04f), new Color(1, 1, 1, 0.5f)).alignment = TextAlignmentOptions.Right;
+
+            var bottom = Panel(trial, "Line", new Vector2(0.025f, 0.025f), new Vector2(0.975f, 0.145f), Ink, 22);
+            Text(bottom, "Name", "", 22, new Vector2(0.02f, 0.6f), new Vector2(0.4f, 0.95f), Gold).fontStyle = FontStyles.Bold;
+            var line = Text(bottom, "Text", "", 25, new Vector2(0.02f, 0.05f), new Vector2(0.98f, 0.66f), Color.white);
+            line.alignment = TextAlignmentOptions.TopLeft;
+
+            var stamp = Text(trial, "Stamp", "", 110, new Vector2(0.1f, 0.4f), new Vector2(0.9f, 0.62f), Vermilion);
+            stamp.alignment = TextAlignmentOptions.Center; stamp.fontStyle = FontStyles.Bold | FontStyles.Italic;
+            stamp.outlineWidth = 0.22f; stamp.outlineColor = new Color32(30, 8, 4, 255);
+            stamp.gameObject.SetActive(false);
+            trial.gameObject.SetActive(false);
+        }
+
+        /// <summary>End of the game: the tone of the ending and what the player's choices were, chapter by chapter.</summary>
+        private static void BuildRecap(Transform parent)
+        {
+            var recap = Image(Rect(parent, "Recap", Vector2.zero, Vector2.one), new Color(0.02f, 0.015f, 0.02f, 0.96f)).transform;
+            var title = Text(recap, "Title", "HÀNH TRÌNH CỦA BẠN", 46, new Vector2(0.08f, 0.86f), new Vector2(0.92f, 0.95f), Gold);
+            title.alignment = TextAlignmentOptions.Center; title.fontStyle = FontStyles.Bold;
+            var tone = Text(recap, "Tone", "", 28, new Vector2(0.1f, 0.77f), new Vector2(0.9f, 0.86f), Color.white);
+            tone.alignment = TextAlignmentOptions.Center; tone.fontStyle = FontStyles.Italic;
+            Image(Rect(recap, "Rule", new Vector2(0.3f, 0.765f), new Vector2(0.7f, 0.767f)), new Color(1f, 0.8f, 0.45f, 0.4f));
+            foreach (var (name, min, max) in new[] { ("Left", new Vector2(0.07f, 0.13f), new Vector2(0.49f, 0.75f)), ("Right", new Vector2(0.51f, 0.13f), new Vector2(0.93f, 0.75f)) })
+            {
+                var column = Text(recap, name, "", 21, min, max, new Color(1, 1, 1, 0.88f));
+                column.alignment = TextAlignmentOptions.TopLeft;
+                column.lineSpacing = 6;
+            }
+            var hint = Text(recap, "Hint", "Enter / Space: tiếp tục", 21, new Vector2(0.3f, 0.04f), new Vector2(0.7f, 0.1f), new Color(1, 1, 1, 0.55f));
+            hint.alignment = TextAlignmentOptions.Center;
+            recap.gameObject.SetActive(false);
         }
 
         public const string ControlsHelp = "<color=#E8C27A>WASD</color>  di chuyển\n<color=#E8C27A>Shift</color>  chạy\n<color=#E8C27A>Ctrl / C</color>  khom người, rón rén\n" +

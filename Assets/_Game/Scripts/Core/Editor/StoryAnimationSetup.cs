@@ -104,7 +104,7 @@ namespace ThuyKieu.Core.Editor
 
         /// <summary>
         /// Shared story controller with a character's own Mixamo clips (Assets/_Game/Animations/&lt;id&gt;/&lt;id&gt;-Idle/-Walk/-Run.fbx,
-        /// optionally -Yell for the arguing gesture). Missing clips keep the shared ones.
+        /// optionally -Yell for the arguing gesture, -Waving and -Dying for gestures 3 and 4). Missing clips keep the shared ones.
         /// </summary>
         public static RuntimeAnimatorController CharacterController(string id)
         {
@@ -113,7 +113,9 @@ namespace ThuyKieu.Core.Editor
             if (existing != null) return existing;
             if (!AssetDatabase.IsValidFolder(CharacterFolder)) AssetDatabase.CreateFolder(Folder, "Characters");
             var controller = new AnimatorOverrideController(Controller()) { name = id + "Story" };
-            foreach (var (suffix, slot, loop) in new[] { ("Idle", "Idle", true), ("Walk", "Walking", true), ("Run", "Running", true), ("Yell", "Standing Arguing", true) })
+            // One-shot gestures some rigs bring along: Vương Ông waves when glad (emotion 3) and falls when struck (4).
+            foreach (var (suffix, slot, loop) in new[] { ("Idle", "Idle", true), ("Walk", "Walking", true), ("Run", "Running", true), ("Yell", "Standing Arguing", true),
+                         ("Waving", "Agreeing", false), ("Dying", "Disagree", false) })
             {
                 var clip = CharacterClip(id, suffix, loop);
                 if (clip != null) controller[slot] = clip;

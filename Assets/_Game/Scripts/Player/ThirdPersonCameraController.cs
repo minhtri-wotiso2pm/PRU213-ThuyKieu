@@ -128,9 +128,9 @@ namespace ThuyKieu.Player
 
             if (!ControlLocked && Cursor.lockState == CursorLockMode.Locked)
             {
-                Vector2 look = InputReader.Look * mouseSensitivity;
+                Vector2 look = InputReader.Look * mouseSensitivity * GameSettings.MouseSensitivity;
                 yaw += look.x;
-                pitch += invertY ? look.y : -look.y;
+                pitch += invertY != GameSettings.InvertY ? look.y : -look.y;
                 pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
             }
 

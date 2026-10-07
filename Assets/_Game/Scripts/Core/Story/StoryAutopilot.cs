@@ -143,18 +143,21 @@ namespace ThuyKieu.Core.Story
             }
             if (capture) { yield return new WaitForSecondsRealtime(1.2f); StoryCapture.Shot(prefix + "zz_complete"); }
             Log.Add($"[{Elapsed()}] CHAPTER {_director.ChapterNumber} COMPLETE · lines {lines} · choices {choices}");
-            string[] variables = _director.ChapterNumber <= 3
-                ? new[] { "nghi_ngo", "manh_moi", "suy_luan", "gia_vo", "c3_viec", "c3_khe_uoc", "c3_bi_bat", "tra_loi_kieu_that" }
+            string[] variables = _director.ChapterNumber == ChapterCatalog.Prologue ? new[] { "pl_che_kieu", "pl_vat", "pl_hanh_dong", "tinh_tao", "tu_trong" }
+                : _director.ChapterNumber <= 3 ? new[] { "nghi_ngo", "manh_moi", "suy_luan", "gia_vo", "c3_viec", "c3_khe_uoc", "c3_bi_bat", "tra_loi_kieu_that" }
                 : _director.ChapterNumber == 4 ? new[] { "c4_viec", "c4_canh_giac", "c4_tien", "c4_van_tu", "c4_so_no", "c4_ru_co_lam", "c4_bi_bat" }
                 : _director.ChapterNumber == 5 ? new[] { "c5_lang_le", "c5_duong", "c5_xo_do", "c5_qte", "c5_co_lam_thoat", "c5_bi_bat" }
-                : new[] { "kt_tin_tuong", "kt_biet_xuyen_khong", "c6_doi_chieu", "ev_nhan_chung", "ev_giay_no", "ev_tien", "c6_ho_so" };
+                : _director.ChapterNumber == 6 ? new[] { "kt_tin_tuong", "kt_biet_xuyen_khong", "c6_doi_chieu", "ev_nhan_chung", "ev_giay_no", "ev_tien", "c6_ho_so" }
+                : _director.ChapterNumber == 7 ? new[] { "c7_viec", "c7_nhan_chung_vung", "c7_ke_hoach_kt", "c7_biet_hoi_lo", "c7_lui", "c7_r1", "c7_r2", "c7_r3", "c7_diem", "c7_long_tin", "c7_that_bai", "c7_ket" }
+                : new[] { "c7_ket", "pl_che_kieu", "c7_diem" };
             foreach (string variable in variables)
                 Log.Add("   " + variable + " = " + _director.Story.variablesState[variable]);
             Log.Add("   clues = " + string.Join(", ", _director.Clues));
 
             bool chain = System.Environment.GetCommandLineArgs().Contains("-autopilotChain");
-            // Chapters 2–5 hand over to the next playable chapter; the Chapter 7 placeholder ends the run.
-            string next = _director.ChapterNumber < 6 ? _director.NextScene : null;
+            // Chapters 2–7 hand over to the next story chapter. The prologue leads into Chapter 1, which has its own
+            // regression check instead of the autopilot, and the epilogue is the end of the game.
+            string next = _director.ChapterNumber >= 2 && _director.ChapterNumber < ChapterCatalog.Epilogue ? _director.NextScene : null;
             if (chain && next != null && Application.CanStreamedLevelBeLoaded(next))
             {
                 yield return new WaitForSecondsRealtime(0.3f);
@@ -185,7 +188,7 @@ namespace ThuyKieu.Core.Story
             pause.Resume();
         }
 
-        private static readonly string[] HubEnders = { "c2_eavesdrop", "c3_makieu", "c4_leave", "c6_dossier" };
+        private static readonly string[] HubEnders = { "pl_book", "pl_san", "c2_eavesdrop", "c3_makieu", "c4_leave", "c6_dossier", "c7_trong", "ep_book" };
         private bool _failTested;
 
         private IEnumerator Explore(bool capture)

@@ -31,6 +31,13 @@ namespace ThuyKieu.Presentation
                 case "temple": return Score(id, 34f, 220f, MajorPenta, 1.3f, 0.42f, 0.14f, 1, 18);
                 case "study": return Score(id, 30f, 174.61f, MajorPenta, 0.95f, 0.45f, 0.1f, 2, 19);
                 case "street": return Score(id, 26f, 196f, MajorPenta, 0.42f, 0.5f, 0.06f, 2, 21);
+                // Prologue, Chapter 7 and the epilogue.
+                case "classroom": return Score(id, 30f, 261.63f, MajorPenta, 0.7f, 0.38f, 0.05f, 1, 22);
+                case "morning": return Score(id, 30f, 233.08f, MajorPenta, 0.9f, 0.42f, 0.08f, 1, 23);
+                case "trial": return Tension(id, 24f, 98f, 24);
+                case "family": return Score(id, 32f, 196f, MajorPenta, 1.1f, 0.55f, 0.16f, 2, 25);
+                case "spirit": return Score(id, 36f, 293.66f, MinorPenta, 1.7f, 0.4f, 0.22f, 2, 26);
+                case "epilogue": return Score(id, 34f, 220f, MajorPenta, 1.25f, 0.48f, 0.14f, 2, 27);
                 default: return null;
             }
         }
@@ -54,6 +61,15 @@ namespace ThuyKieu.Presentation
                 case "market_night": return Mix(id, 40f, Murmur(40f, 0.07f, 10, 51), Crickets(40f, 0.05f, 52), Distant(40f, 0.035f, 53));
                 case "temple": return Mix(id, 40f, Birds(40f, 0.09f, 3.5f, 54), Breeze(40f, 0.08f, 55), Bell(40f, 0.12f, 56));
                 case "street": return Mix(id, 40f, Murmur(40f, 0.09f, 14, 57), Birds(40f, 0.05f, 7f, 58), Breeze(40f, 0.06f, 59));
+                // A school after class: the room's hum, voices far down the corridor, sparrows outside.
+                case "classroom": return Mix(id, 40f, RoomTone(40f, 0.06f, 60), Distant(40f, 0.03f, 61), Murmur(40f, 0.025f, 5, 62), Birds(40f, 0.05f, 6f, 63));
+                // The same room at sunset: cicadas instead of voices.
+                case "classroom_evening": return Mix(id, 40f, RoomTone(40f, 0.05f, 64), Crickets(40f, 0.08f, 65), Birds(40f, 0.03f, 11f, 66));
+                // Vương family courtyard in the morning.
+                case "courtyard": return Mix(id, 40f, Birds(40f, 0.12f, 3f, 67), Breeze(40f, 0.08f, 68), Chimes(40f, 0.06f, 69));
+                // The magistrate's yard: a crowd murmuring behind the gate.
+                case "yamen": return Mix(id, 40f, Murmur(40f, 0.1f, 18, 70), Breeze(40f, 0.06f, 71), Birds(40f, 0.03f, 8f, 72));
+                case "yamen_hall": return Mix(id, 40f, RoomTone(40f, 0.06f, 73), Murmur(40f, 0.04f, 10, 74));
                 default: return null;
             }
         }
@@ -89,6 +105,11 @@ namespace ThuyKieu.Presentation
                 case "whoosh": data = Swell(0.45f, random); break;
                 case "qte_ok": data = Notes(new[] { 880f, 1318.5f }, 0.05f, 0.5f, 0.35f); break;
                 case "qte_fail": data = Bend(180f, 120f, 0.5f, 0.6f); break;
+                case "school_bell": data = SchoolBell(2.4f); break;
+                case "drum": data = Add(Add(Drum(0.9f), Delay(Drum(0.9f), 0.55f)), Delay(Drum(1.4f), 1.1f)); break;
+                case "gavel": data = Add(Thud(0.35f, random), Delay(Clicks(0.25f, 2, 0.6f, random), 0.01f)); break;
+                case "objection": data = Add(Drum(0.7f), Notes(new[] { 392f, 587.33f }, 0.06f, 0.8f, 0.45f)); break;
+                case "wrong": data = Bend(196f, 146.83f, 0.6f, 0.55f); break;
                 default: return null;
             }
             return Clip(id, data);
@@ -508,6 +529,36 @@ namespace ThuyKieu.Presentation
                 float sum = 0f;
                 for (int p = 0; p < partials.Length; p++) sum += Mathf.Sin(2 * Mathf.PI * 110f * partials[p] * t) * Mathf.Exp(-t * (0.7f + p * 0.6f)) / (p + 1);
                 data[i] = sum * 0.7f * Mathf.Min(1f, t * 200f);
+            }
+            return data;
+        }
+
+        /// <summary>An electric school bell: a fast-struck metal dome ringing on two partials.</summary>
+        private static float[] SchoolBell(float seconds)
+        {
+            var data = new float[(int)(seconds * Rate)];
+            for (int i = 0; i < data.Length; i++)
+            {
+                float t = i / (float)Rate;
+                float strike = 0.55f + 0.45f * Mathf.Abs(Mathf.Sin(2 * Mathf.PI * 22f * t));
+                float tone = Mathf.Sin(2 * Mathf.PI * 1046.5f * t) + 0.55f * Mathf.Sin(2 * Mathf.PI * 2637f * t);
+                float envelope = Mathf.Min(1f, t * 60f) * Mathf.Min(1f, (seconds - t) * 4f);
+                data[i] = tone * strike * envelope * 0.16f;
+            }
+            return data;
+        }
+
+        /// <summary>A big barrel drum: a pitched-down boom with a skin slap on the attack.</summary>
+        private static float[] Drum(float seconds)
+        {
+            var data = new float[(int)(seconds * Rate)];
+            var random = new System.Random(81);
+            for (int i = 0; i < data.Length; i++)
+            {
+                float t = i / (float)Rate;
+                float boom = Mathf.Sin(2 * Mathf.PI * (62f + 40f * Mathf.Exp(-t * 18f)) * t) * Mathf.Exp(-t * 4.5f);
+                float slap = (float)(random.NextDouble() * 2 - 1) * Mathf.Exp(-t * 60f) * 0.35f;
+                data[i] = (boom + slap) * 0.8f;
             }
             return data;
         }

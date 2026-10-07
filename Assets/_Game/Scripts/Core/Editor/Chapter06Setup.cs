@@ -17,14 +17,11 @@ namespace ThuyKieu.Core.Editor
     /// <summary>
     /// Builds Chapter06_KimTrong: Bạch Vân temple at dawn (north, z 30–46), the Lâm Tri street below it (z 14–22) with the
     /// tea stall, the Phúc Ký silver shop and the magistrate's gate, and Kim Trọng's uncle's study on the south side.
-    /// Also creates the Chapter 7 placeholder.
     /// </summary>
     public static class Chapter06Setup
     {
         public const string SceneName = "Chapter06_KimTrong";
         public const string ScenePath = "Assets/_Game/Scenes/" + SceneName + ".unity";
-        public const string PlaceholderName = "Chapter07_Placeholder";
-        public const string PlaceholderPath = "Assets/_Game/Scenes/" + PlaceholderName + ".unity";
 
         private static Material _plaster, _wood, _tiles, _ridge, _stone, _red, _planks;
 
@@ -34,7 +31,7 @@ namespace ThuyKieu.Core.Editor
             var scene = NewScene(ScenePath);
             var shared = StoryAnimationSetup.Controller();
             var spawn = new Vector3(-7f, 0.36f, 39f); // on the veranda boards
-            var s = CreateSystems(6, "Kim Trọng", "chapter_6", PlaceholderName, spawn, 90f, "temple");
+            var s = CreateSystems(6, "Kim Trọng", "chapter_6", Chapter07Setup.SceneName, spawn, 90f, "temple");
             s.CameraComponent.backgroundColor = new Color(0.75f, 0.72f, 0.66f);
             Grade(s.Fx, 0.15f, 10f, 4f, 6f, new Color(0.45f, 0.45f, 0.55f), new Color(0.75f, 0.62f, 0.48f));
             UseSky(s.CameraComponent, Sky("Ch6Sky", "kloppenheim_06_puresky", 0.95f, new Color(0.6f, 0.6f, 0.58f), 140f));
@@ -184,7 +181,6 @@ namespace ThuyKieu.Core.Editor
             Chapter03Setup.Fx(sequences, "kieu_voice", "spirit", "memory", "none", 2f, 0f, 1);
 
             Save(scene, ScenePath);
-            CreatePlaceholder();
         }
 
         private static void Look(string name, Vector3 position, Vector3 target, Transform parent)
@@ -506,27 +502,5 @@ namespace ThuyKieu.Core.Editor
             }
         }
 
-        // ------------------------------------------------------------------ Chapter 7 placeholder
-
-        private static void CreatePlaceholder()
-        {
-            if (File.Exists(PlaceholderPath)) return;
-            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-            var camera = new GameObject("Main Camera", typeof(Camera)) { tag = "MainCamera" };
-            camera.GetComponent<Camera>().clearFlags = CameraClearFlags.SolidColor;
-            camera.GetComponent<Camera>().backgroundColor = new Color(0.03f, 0.02f, 0.04f);
-            var canvas = new GameObject("Canvas", typeof(Canvas), typeof(UnityEngine.UI.CanvasScaler));
-            canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
-            var text = new GameObject("Text", typeof(RectTransform), typeof(TextMeshProUGUI));
-            text.transform.SetParent(canvas.transform, false);
-            var rect = (RectTransform)text.transform;
-            rect.anchorMin = new Vector2(0.1f, 0.2f); rect.anchorMax = new Vector2(0.9f, 0.8f); rect.offsetMin = rect.offsetMax = Vector2.zero;
-            var tmp = text.GetComponent<TextMeshProUGUI>();
-            tmp.font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
-            tmp.alignment = TextAlignmentOptions.Center;
-            tmp.fontSize = 40;
-            tmp.text = "<color=#E8C27A>CHƯƠNG 7</color>\nNGHỊCH MỆNH\n\n<size=26>Chương 1–6 đã hoàn thành. Hồ sơ của bạn đã được lưu.\nChương 7 đang được phát triển.</size>";
-            Save(scene, PlaceholderPath);
-        }
     }
 }

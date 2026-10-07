@@ -18,8 +18,13 @@ namespace ThuyKieu.Core
             public bool Placeholder;
         }
 
+        public const int Prologue = 0;
+        public const int Epilogue = 8;
+
         public static readonly IReadOnlyList<Entry> All = new[]
         {
+            new Entry { Number = Prologue, Title = "Trang sách", Scene = "Chapter00_Prologue",
+                Blurb = "Một tiết Văn cuối chiều. Một lời chê Kiều. Rồi quyển sách phát sáng." },
             new Entry { Number = 1, Title = "Gia biến", Scene = "Chapter01_GiaBien",
                 Blurb = "Nhà họ Vương gặp nạn. Mã Giám Sinh tới hỏi cưới." },
             new Entry { Number = 2, Title = "Trên đường theo Mã Giám Sinh", Scene = "Chapter02_RoadToMaGiamSinh",
@@ -32,9 +37,14 @@ namespace ThuyKieu.Core
                 Blurb = "Ngõ hẻm, chợ đêm và cánh rừng phía sau." },
             new Entry { Number = 6, Title = "Kim Trọng", Scene = "Chapter06_KimTrong",
                 Blurb = "Chùa Bạch Vân, thư phòng và ba nhân chứng." },
-            new Entry { Number = 7, Title = "Nghịch mệnh", Scene = "Chapter07_Placeholder", Placeholder = true,
-                Blurb = "Đang được phát triển." },
+            new Entry { Number = 7, Title = "Nghịch mệnh", Scene = "Chapter07_HuyenDuong",
+                Blurb = "Huyện đường Lâm Tri. Lần này, Kiều tự đứng ra kể chuyện của mình." },
+            new Entry { Number = Epilogue, Title = "Trở lại lớp học", Scene = "Chapter08_Epilogue",
+                Blurb = "Mười lăm phút sau tiếng chuông tan học." },
         };
+
+        /// <summary>"Mở đầu", "Chương 3", "Kết".</summary>
+        public static string Label(int number) => number == Prologue ? "Mở đầu" : number == Epilogue ? "Kết" : "Chương " + number;
 
         public static Entry Get(int number)
         {
@@ -52,7 +62,10 @@ namespace ThuyKieu.Core
         public static Entry Parse(string value)
         {
             if (string.IsNullOrEmpty(value)) return null;
-            string digits = value.ToLowerInvariant().Replace("chapter", "").Replace("chuong", "").Replace("ch", "").Trim();
+            string lower = value.ToLowerInvariant().Trim();
+            if (lower == "prologue" || lower == "modau") return Get(Prologue);
+            if (lower == "epilogue" || lower == "ket") return Get(Epilogue);
+            string digits = lower.Replace("chapter", "").Replace("chuong", "").Replace("ch", "").Trim();
             if (int.TryParse(digits, out int number)) return Get(number);
             return FindByScene(value);
         }

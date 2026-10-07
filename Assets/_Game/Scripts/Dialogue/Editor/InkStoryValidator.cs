@@ -135,6 +135,7 @@ namespace ThuyKieu.Dialogue.Editor
                 log.AppendLine($"{entry}: {runs} runs, lines {minLines}-{maxLines}, max nghi_ngo {maxSuspicion}" +
                                (answers.Count > 0 ? ", " + Tracked(entry) + " " + string.Join(" ", answers.OrderBy(a => a.Key).Select(a => a.Key + ":" + a.Value)) : ""));
             }
+            CheckPrologueHandoff(json, random, problems, log);
             log.AppendLine("gameplay: " + string.Join(", ", gameplay));
             log.AppendLine("explore: " + string.Join(", ", explore));
             log.AppendLine("cameras: " + string.Join(", ", cameras));
@@ -147,6 +148,41 @@ namespace ThuyKieu.Dialogue.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(ReportPath));
             File.WriteAllText(ReportPath, report, new UTF8Encoding(false));
             return distinct.Count == 0;
+        }
+
+        /// <summary>
+        /// The prologue scene stops right before the "# chapter:1" line and saves the state (as DialogueManager does);
+        /// Chapter 1's own director then loads that state. Its first line must be Chapter 1's opening, with the
+        /// prologue's choices still set.
+        /// </summary>
+        private static void CheckPrologueHandoff(string json, System.Random random, List<string> problems, StringBuilder log)
+        {
+            int ok = 0;
+            for (int run = 0; run < 50; run++)
+            {
+                var story = Start(json, "prologue", 0, random);
+                string saved = null;
+                for (int guard = 0; guard < 400 && saved == null; guard++)
+                {
+                    while (story.canContinue)
+                    {
+                        string before = story.state.ToJson();
+                        story.Continue();
+                        if (story.currentTags.Any(t => t.Trim() == "chapter:1")) { saved = before; break; }
+                    }
+                    if (saved != null || story.currentChoices.Count == 0) break;
+                    story.ChooseChoiceIndex(random.Next(story.currentChoices.Count));
+                }
+                if (saved == null) { problems.Add("prologue never reached # chapter:1"); continue; }
+                var chapterOne = new Ink.Runtime.Story(json);
+                chapterOne.state.LoadJson(saved);
+                string first = chapterOne.Continue().Trim();
+                while (string.IsNullOrEmpty(first) && chapterOne.canContinue) first = chapterOne.Continue().Trim();
+                if (!first.StartsWith("Mưa quất lên mái ngói")) problems.Add("Chapter 1 does not open on its first line after the prologue: " + first);
+                else if ((int)chapterOne.variablesState["pl_che_kieu"] == 0) problems.Add("prologue choices lost at the Chapter 1 hand-off");
+                else ok++;
+            }
+            log.AppendLine("prologue → chapter 1 hand-off: " + ok + "/50 runs open Chapter 1 correctly");
         }
 
         /// <summary>Stands in for the Unity sequences that write story variables.</summary>

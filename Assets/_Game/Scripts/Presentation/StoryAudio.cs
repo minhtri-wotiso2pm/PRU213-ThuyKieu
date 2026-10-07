@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ThuyKieu.Core;
 using ThuyKieu.Player;
 using UnityEngine;
 
@@ -81,7 +82,7 @@ namespace ThuyKieu.Presentation
         public void PlaySfx(string id, float volume = 1f)
         {
             var clip = Get("sfx", id, ProceduralAudio.Sfx);
-            if (clip != null) _sfx.PlayOneShot(clip, volume * _sfxVolume);
+            if (clip != null) _sfx.PlayOneShot(clip, volume * _sfxVolume * GameSettings.Effects);
         }
 
         /// <summary>Lowers music (e.g. while eavesdropping) without stopping it.</summary>
@@ -91,10 +92,10 @@ namespace ThuyKieu.Presentation
         {
             float k = 1 - Mathf.Exp(-1.6f * Time.unscaledDeltaTime);
             var other = _activeMusic == _musicA ? _musicB : _musicA;
-            _activeMusic.volume = Mathf.Lerp(_activeMusic.volume, _activeMusic.clip != null ? _musicVolume * _duck : 0f, k);
+            _activeMusic.volume = Mathf.Lerp(_activeMusic.volume, _activeMusic.clip != null ? _musicVolume * _duck * GameSettings.Music : 0f, k);
             other.volume = Mathf.Lerp(other.volume, 0f, k * 1.5f);
             if (other.volume < 0.005f && other.isPlaying) other.Stop();
-            _ambience.volume = Mathf.Lerp(_ambience.volume, _ambienceVolume, k);
+            _ambience.volume = Mathf.Lerp(_ambience.volume, _ambienceVolume * GameSettings.Ambience, k);
             Footsteps();
         }
 
@@ -107,7 +108,7 @@ namespace ThuyKieu.Presentation
             _stepDistance = 0f;
             var clip = Get("sfx", "step", ProceduralAudio.Sfx);
             _steps.pitch = UnityEngine.Random.Range(0.85f, 1.15f);
-            _steps.PlayOneShot(clip, (_player.IsCrouching ? 0.12f : _player.IsRunning ? 0.45f : 0.28f) * _sfxVolume);
+            _steps.PlayOneShot(clip, (_player.IsCrouching ? 0.12f : _player.IsRunning ? 0.45f : 0.28f) * _sfxVolume * GameSettings.Effects);
         }
     }
 }

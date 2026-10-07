@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ThuyKieu.Core;
 using ThuyKieu.Dialogue;
 using ThuyKieu.Presentation;
 using TMPro;
@@ -25,7 +26,7 @@ namespace ThuyKieu.UI
         private Button _template;
         private readonly List<Button> _buttons = new List<Button>();
         private DialogueChoice[] _currentChoices = new DialogueChoice[0];
-        private float _visible, _timerLeft, _timerTotal;
+        private float _visible, _timerLeft, _timerTotal, _readTime;
         private int _length;
 
         public bool IsTyping => _active != null && _visible < _length;
@@ -117,6 +118,7 @@ namespace ThuyKieu.UI
             _active.ForceMeshUpdate();
             _length = _active.textInfo.characterCount;
             _visible = 0f;
+            _readTime = 0f;
             _hint.SetActive(true);
         }
 
@@ -128,7 +130,7 @@ namespace ThuyKieu.UI
             {
                 string prefix = text.Substring(0, colon).Trim();
                 if (prefix == displayName || prefix == managerName || prefix == "Kiều" || prefix.StartsWith("Cô gái") || prefix == "Tùy tùng"
-                    || prefix == "Người canh" || prefix == "Tú Bà" || prefix == "Mã Kiều" || prefix == "Mẹ Kiều" || prefix == "Mã Giám Sinh")
+                    || prefix == "Người canh" || prefix == "Chị Lam" || prefix == "Tú Bà" || prefix == "Mã Kiều" || prefix == "Mẹ Kiều" || prefix == "Mã Giám Sinh")
                     return text.Substring(colon + 1).TrimStart();
             }
             return text;
@@ -175,7 +177,8 @@ namespace ThuyKieu.UI
             if (_manager == null || !_manager.IsDialogueActive || _active == null || PauseMenuView.IsPaused) return;
             if (_visible < _length)
             {
-                _visible += Time.unscaledDeltaTime * _charactersPerSecond;
+                // Text speed 4 (the fastest setting) shows the whole line at once.
+                _visible = GameSettings.TextSpeed >= 4f ? _length : _visible + Time.unscaledDeltaTime * _charactersPerSecond * GameSettings.TextSpeed;
                 _active.maxVisibleCharacters = (int)_visible;
             }
             // Choices appear once the line has finished typing.
@@ -200,10 +203,19 @@ namespace ThuyKieu.UI
                 }
                 return;
             }
+            if (!confirm && AutoAdvanceDue()) confirm = true;
             if (!confirm) return;
             if (IsTyping) { SkipTyping(); return; }
             if (_audio != null) _audio.PlaySfx("ui", 0.35f);
             _manager.Advance();
+        }
+
+        /// <summary>Auto-advance: once the line is shown and spoken, leave a reading pause and move on.</summary>
+        private bool AutoAdvanceDue()
+        {
+            if (!GameSettings.AutoAdvance || ThuyKieu.Core.Story.StoryAutopilot.Enabled || IsTyping || VoicePlayer.IsSpeaking) return false;
+            _readTime += Time.unscaledDeltaTime;
+            return _readTime >= Mathf.Clamp(_length * 0.03f, 1.2f, 4f);
         }
 
         private void SkipTyping()
