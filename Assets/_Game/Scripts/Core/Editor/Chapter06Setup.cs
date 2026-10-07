@@ -38,6 +38,7 @@ namespace ThuyKieu.Core.Editor
             s.CameraComponent.backgroundColor = new Color(0.75f, 0.72f, 0.66f);
             Grade(s.Fx, 0.15f, 10f, 4f, 6f, new Color(0.45f, 0.45f, 0.55f), new Color(0.75f, 0.62f, 0.48f));
             UseSky(s.CameraComponent, Sky("Ch6Sky", "kloppenheim_06_puresky", 0.95f, new Color(0.6f, 0.6f, 0.58f), 140f));
+            Set(s.Shots, "_keyLight", 0.8f);
             var world = new GameObject("World").transform;
             var nav = NavMesh(world);
             var director = s.Director;
@@ -114,7 +115,12 @@ namespace ThuyKieu.Core.Editor
 
             // ------------------------------------------------------------ cameras & spots
             Look("CAM_Wide_TempleYard", new Vector3(4.5f, 2.6f, 33.5f), new Vector3(-4.5f, 1.2f, 39.5f), world);
-            Look("CAM_Wide_Study", new Vector3(-4.4f, 2.3f, 12.6f), new Vector3(-10.5f, 0.9f, 6.5f), world);
+            Look("CAM_Wide_Study", new Vector3(-4.1f, 2.05f, 12.3f), new Vector3(-10.5f, 0.9f, 6.5f), world);
+            var zones = new GameObject("CameraZones").transform;
+            zones.SetParent(world, false);
+            StoryArtKit.Zone("Study", new Vector3(-9f, 1.5f, 8f), new Vector3(11.6f, 4f, 11.6f), 3.3f, 0.3f, 60f, 0.35f, zones);
+            StoryArtKit.Zone("SilverShop", new Vector3(15f, 1.5f, 10f), new Vector3(7.6f, 4f, 7.6f), 3.1f, 0.3f, 60f, 0.3f, zones);
+            StoryArtKit.Zone("Street", new Vector3(0f, 1.5f, 18f), new Vector3(66f, 4f, 7f), 3.8f, 0.4f, 58f, 0.1f, zones);
             var kimArrival = Point("KimArrival", new Vector3(0f, 0, 27f), 0f, world);
             var kimTemple = Point("KimTempleSpot", new Vector3(-3.8f, 0, 39.3f), 270f, world);
             var streetPlayer = Point("StreetStart", new Vector3(-9f, 0.05f, 15.6f), 90f, world);
@@ -277,7 +283,7 @@ namespace ThuyKieu.Core.Editor
             Block("StudyWallW", new Vector3(-15f, 1.6f, 8f), new Vector3(0.3f, 3.2f, 12f), _plaster, root);
             Block("StudyWallE", new Vector3(-3f, 1.6f, 8f), new Vector3(0.3f, 3.2f, 12f), _plaster, root);
             Block("InnerRoomWall", new Vector3(-12f, 1.6f, 6.4f), new Vector3(0.2f, 3.2f, 3.2f), _wood, root);
-            Roof("StudyRoof", new Vector3(-9f, 4.1f, 8f), 12.8f, 12.8f, 22f, _tiles, _ridge, root);
+            Chapter03Setup.Hide(Roof("StudyRoof", new Vector3(-9f, 4.1f, 8f), 12.8f, 12.8f, 22f, _tiles, _ridge, root), new Vector3(-9f, 1.5f, 8f), new Vector3(12f, 4f, 12f));
             Block("Signboard", new Vector3(-9f, 3.5f, 14.2f), new Vector3(2.2f, 0.45f, 0.06f), Material("Ch6Sign", new Color(0.4f, 0.08f, 0.06f), 0.5f), root, false);
             // Bookshelves, the desk with papers and inkstone, a lamp.
             for (int i = 0; i < 4; i++)
@@ -313,7 +319,7 @@ namespace ThuyKieu.Core.Editor
             Block("ShopBack", new Vector3(15f, 1.7f, 6f), new Vector3(8f, 3.4f, 0.3f), _wood, root);
             Block("ShopWallW", new Vector3(11f, 1.7f, 10f), new Vector3(0.3f, 3.4f, 8f), _plaster, root);
             Block("ShopWallE", new Vector3(19f, 1.7f, 10f), new Vector3(0.3f, 3.4f, 8f), _plaster, root);
-            Roof("ShopRoof", new Vector3(15f, 4.2f, 10f), 8.8f, 8.8f, 24f, _tiles, _ridge, root);
+            Chapter03Setup.Hide(Roof("ShopRoof", new Vector3(15f, 4.2f, 10f), 8.8f, 8.8f, 24f, _tiles, _ridge, root), new Vector3(15f, 1.5f, 10f), new Vector3(8f, 4f, 8f));
             Block("Counter", new Vector3(15f, 0.5f, 12.6f), new Vector3(5f, 1f, 0.7f), _red, root);
             Block("Scale", new Vector3(14f, 1.08f, 12.6f), new Vector3(0.5f, 0.16f, 0.3f), Material("Ch6Brass", new Color(0.75f, 0.58f, 0.25f), 0.7f), root, false);
             for (int i = 0; i < 6; i++)

@@ -10,13 +10,14 @@ namespace ThuyKieu.Core.Editor
     /// <summary>
     /// Renders still views of the story scenes without entering Play Mode, for art reviews.
     /// Shoots the main camera's saved pose plus every transform named CAM_*, WS_* or LOOK_*.
-    ///   -executeMethod ThuyKieu.Core.Editor.StoryLookCapture.Batch -lookOut &lt;folder&gt;
+    ///   -executeMethod ThuyKieu.Core.Editor.StoryLookCapture.Batch -lookOut &lt;folder&gt; [-lookScenes 4,5,6]
     /// </summary>
     public static class StoryLookCapture
     {
         private static readonly string[] Scenes =
         {
-            Chapter01Setup.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath
+            Chapter01Setup.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath,
+            Chapter04Setup.ScenePath, Chapter05Setup.ScenePath, Chapter06Setup.ScenePath
         };
 
         public static void Batch()
@@ -26,7 +27,12 @@ namespace ThuyKieu.Core.Editor
                 var args = System.Environment.GetCommandLineArgs();
                 int index = Array.IndexOf(args, "-lookOut");
                 string folder = index >= 0 && index + 1 < args.Length ? args[index + 1] : "Temp/LookCapture";
-                foreach (string scene in Scenes) Capture(scene, folder);
+                // Optional filter: -lookScenes 4,5,6 shoots only those chapters.
+                int filter = Array.IndexOf(args, "-lookScenes");
+                var only = filter >= 0 && filter + 1 < args.Length ? args[filter + 1].Split(',') : null;
+                foreach (string scene in Scenes)
+                    if (only == null || only.Any(n => Path.GetFileName(scene).StartsWith("Chapter0" + n.Trim())))
+                        Capture(scene, folder);
                 EditorApplication.Exit(0);
             }
             catch (System.Exception exception) { Debug.LogException(exception); EditorApplication.Exit(1); }

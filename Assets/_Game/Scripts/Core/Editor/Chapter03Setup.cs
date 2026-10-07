@@ -252,7 +252,10 @@ namespace ThuyKieu.Core.Editor
             return sensor;
         }
 
-        /// <summary>Flat translucent cone on the ground showing where the guard looks.</summary>
+        /// <summary>
+        /// Soft cone of lantern light on the ground showing where the guard looks: bright at his feet, fading out
+        /// towards the edge of his sight. The chapter worlds tint it warm while he is calm and red when he is suspicious.
+        /// </summary>
         internal static Renderer VisionCone(Transform guard, Transform eyes, float range, float angle, string assetName = "Ch3VisionCone")
         {
             var cone = new GameObject("VisionCone");
@@ -261,18 +264,22 @@ namespace ThuyKieu.Core.Editor
             var mesh = new Mesh { name = assetName };
             int segments = 20;
             var vertices = new Vector3[segments + 2];
+            var uvs = new Vector2[segments + 2];
             var triangles = new int[segments * 3];
             vertices[0] = Vector3.zero;
+            uvs[0] = new Vector2(0.5f, 0.5f);
             for (int i = 0; i <= segments; i++)
             {
                 float a = Mathf.Deg2Rad * (-angle * 0.5f + angle * i / segments);
                 vertices[i + 1] = new Vector3(Mathf.Sin(a), 0, Mathf.Cos(a)) * range;
+                uvs[i + 1] = new Vector2(0.5f + Mathf.Sin(a) * 0.5f, 0.5f + Mathf.Cos(a) * 0.5f);
                 if (i < segments) { triangles[i * 3] = 0; triangles[i * 3 + 1] = i + 1; triangles[i * 3 + 2] = i + 2; }
             }
             mesh.vertices = vertices;
+            mesh.uv = uvs;
             mesh.triangles = triangles;
             mesh.RecalculateNormals();
-            AssetDatabase.CreateAsset(mesh, MaterialFolder + "/" + assetName + ".asset");
+            SaveAsset(mesh, MaterialFolder + "/" + assetName + ".asset");
             cone.AddComponent<MeshFilter>().sharedMesh = mesh;
             var material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
             material.SetFloat("_Surface", 1);
@@ -283,13 +290,20 @@ namespace ThuyKieu.Core.Editor
             material.SetInt("_ZWrite", 0);
             material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
             material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-            material.SetColor("_BaseColor", new Color(1f, 0.2f, 0.12f, 0.12f));
-            AssetDatabase.CreateAsset(material, MaterialFolder + "/" + assetName + ".mat");
+            material.SetTexture("_BaseMap", StoryArtKit.GeneratedTexture("VisionConeFade", StoryArtKit.DrawDot, 128));
+            material.SetColor("_BaseColor", new Color(1f, 0.62f, 0.3f, 0.2f));
+            SaveAsset(material, MaterialFolder + "/" + assetName + ".mat");
             var renderer = cone.AddComponent<MeshRenderer>();
             renderer.sharedMaterial = material;
             renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             cone.transform.localPosition += Vector3.up * 0.02f;
             return renderer;
+        }
+
+        private static void SaveAsset(Object asset, string path)
+        {
+            if (AssetDatabase.LoadAssetAtPath<Object>(path) != null) AssetDatabase.DeleteAsset(path);
+            AssetDatabase.CreateAsset(asset, path);
         }
 
         // ------------------------------------------------------------------ architecture
@@ -603,7 +617,7 @@ namespace ThuyKieu.Core.Editor
         private static Material LatticeFrame() => Material("Ch3LatticeFrame", new Color(0.2f, 0.06f, 0.04f), 0.4f);
         private static Material WindowPaper() => Emissive("Ch3WindowPaper", new Color(0.95f, 0.78f, 0.55f), 0.35f);
 
-        private static void Hide(GameObject roof, Vector3 centre, Vector3 size)
+        internal static void Hide(GameObject roof, Vector3 centre, Vector3 size)
         {
             foreach (var t in roof.GetComponentsInChildren<Transform>()) t.gameObject.layer = 0;
             var hider = roof.AddComponent<ThuyKieu.Environment.RoofHider>();

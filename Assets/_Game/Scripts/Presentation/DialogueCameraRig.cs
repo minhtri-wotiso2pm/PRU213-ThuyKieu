@@ -16,8 +16,12 @@ namespace ThuyKieu.Presentation
         [SerializeField] private LayerMask _obstruction = 1 << 8;
         [Tooltip("Distance multiplier matching the dialogue lens: 1 for the gameplay FOV, ~1.5 for a 40° portrait lens.")]
         [SerializeField] private float _lens = 1f;
+        [Tooltip("Soft key light riding with dialogue shots so faces read in dark scenes (0 = none).")]
+        [SerializeField] private float _keyLight;
+        [SerializeField] private Color _keyColor = new Color(1f, 0.82f, 0.66f);
 
         private Transform _shot;
+        private Light _key;
         private StoryActor _lastOther;
         private bool _active;
 
@@ -25,6 +29,21 @@ namespace ThuyKieu.Presentation
         {
             _shot = new GameObject("DialogueShot").transform;
             _shot.SetParent(transform, false);
+            if (_keyLight <= 0f) return;
+            // Rides with the camera, a little above and to the side, like a bounce card on set.
+            var key = new GameObject("DialogueKeyLight");
+            key.transform.SetParent(_camera.transform, false);
+            key.transform.localPosition = new Vector3(0.6f, 0.45f, 0f);
+            key.transform.localRotation = Quaternion.Euler(6f, -8f, 0f);
+            _key = key.AddComponent<Light>();
+            _key.type = LightType.Spot;
+            _key.spotAngle = 55f;
+            _key.innerSpotAngle = 20f;
+            _key.range = 5f;
+            _key.intensity = _keyLight;
+            _key.color = _keyColor;
+            _key.shadows = LightShadows.None;
+            _key.enabled = false;
         }
 
         public void Clear()
@@ -32,6 +51,7 @@ namespace ThuyKieu.Presentation
             _active = false;
             _lastOther = null;
             _camera.SetDialogueCue(null);
+            if (_key != null) _key.enabled = false;
         }
 
         public void Shot(string id)
@@ -140,6 +160,7 @@ namespace ThuyKieu.Presentation
             _shot.SetPositionAndRotation(position, rotation);
             _camera.SetDialogueCue(_shot);
             _active = true;
+            if (_key != null) _key.enabled = true;
         }
     }
 }

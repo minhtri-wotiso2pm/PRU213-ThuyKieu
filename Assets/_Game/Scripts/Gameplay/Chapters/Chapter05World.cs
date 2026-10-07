@@ -29,7 +29,7 @@ namespace ThuyKieu.Gameplay.Chapters
         [SerializeField] private Stamina _stamina;
 
         private MaterialPropertyBlock _coneBlock;
-        private float _coneAlpha = 0.07f;
+        private float _coneAlpha = 0.18f;
 
         private void OnEnable() { _director.SceneChanged += OnScene; }
         private void OnDisable() { _director.SceneChanged -= OnScene; }
@@ -56,8 +56,10 @@ namespace ThuyKieu.Gameplay.Chapters
             bool sneaking = _director.CurrentSequence == "sneak_out";
             if (_visionCone == null) return;
             _coneBlock ??= new MaterialPropertyBlock();
-            _coneAlpha = Mathf.MoveTowards(_coneAlpha, sneaking ? (_guard.Vision.Awareness > 0.04f ? 0.24f : 0.12f) : 0f, Time.deltaTime * 0.6f);
-            _coneBlock.SetColor("_BaseColor", new Color(1f, 0.2f, 0.12f, _coneAlpha));
+            _coneAlpha = Mathf.MoveTowards(_coneAlpha, sneaking ? (_guard.Vision.Awareness > 0.04f ? 0.34f : 0.18f) : 0f, Time.deltaTime * 0.6f);
+            // Lamplight while he is calm, red as he grows suspicious.
+            var calm = new Color(1f, 0.62f, 0.3f, _coneAlpha);
+            _coneBlock.SetColor("_BaseColor", Color.Lerp(calm, new Color(1f, 0.18f, 0.1f, _coneAlpha), Mathf.Clamp01(_guard.Vision.Awareness * 2f)));
             _visionCone.SetPropertyBlock(_coneBlock);
         }
 

@@ -33,9 +33,8 @@ namespace ThuyKieu.Core.Editor
             var shared = StoryAnimationSetup.Controller();
             var start = new Vector3(1.3f, 0.05f, 0f);
             var s = CreateSystems(5, "Đào thoát", "chapter_5", Chapter06Setup.SceneName, start, 90f, "night");
-            s.CameraComponent.backgroundColor = new Color(0.03f, 0.04f, 0.07f);
-            Grade(s.Fx, 0.7f, 13f, -8f, -14f, new Color(0.25f, 0.32f, 0.62f), new Color(0.8f, 0.58f, 0.38f));
-            UseSky(s.CameraComponent, Sky("Ch5SkyNight", "kloppenheim_02_puresky", 0.3f, new Color(0.3f, 0.36f, 0.58f), 60f));
+            var moon = NightLook(s.Fx, s.CameraComponent, "Ch5SkyNight", 60f, new Vector3(34, 120, 0));
+            Set(s.Shots, "_keyLight", 1.6f);
             var world = new GameObject("World").transform;
             var nav = NavMesh(world);
             var director = s.Director;
@@ -74,7 +73,7 @@ namespace ThuyKieu.Core.Editor
             Look("CAM_Wide_BackYard", new Vector3(2.4f, 2.7f, -6.2f), new Vector3(9f, 1f, 1.5f), world);
             Look("CAM_Wide_BambooEdge", new Vector3(80f, 2.6f, -0.5f), new Vector3(94f, 1.8f, 6f), world);
             Look("CAM_Hero_Kieu_Rain", rainSpot.position + new Vector3(2.1f, 1.45f, -0.9f), rainSpot.position + Vector3.up * 1.4f, world);
-            Look("CAM_Wide_TempleGate", new Vector3(143f, 2.3f, 2.5f), new Vector3(157f, 2.2f, 7f), world);
+            Look("CAM_Wide_TempleGate", new Vector3(147.5f, 1.7f, 6.2f), new Vector3(158f, 2.3f, 7f), world);
             var chaseCam = Point("ForestChaseCamera", rail[0].position, 90f, world);
 
             var zones = new GameObject("CameraZones").transform;
@@ -84,10 +83,6 @@ namespace ThuyKieu.Core.Editor
             StoryArtKit.Zone("EastLane", new Vector3(82f, 1.5f, 17f), new Vector3(4f, 4f, 16f), 3f, 0.3f, 60f, 0.1f, zones);
 
             // ------------------------------------------------------------ light & atmosphere
-            var moon = Sun("Moon", new Color(0.6f, 0.7f, 1f), 0.52f, new Vector3(34, 120, 0));
-            RenderSettings.ambientLight = new Color(0.12f, 0.13f, 0.21f);
-            RenderSettings.fogColor = new Color(0.05f, 0.06f, 0.1f);
-            RenderSettings.fogDensity = 0.011f;
             var rain = Rain("Rain", s.CameraComponent.transform);
 
             var stamina = s.Player.gameObject.AddComponent<Stamina>();

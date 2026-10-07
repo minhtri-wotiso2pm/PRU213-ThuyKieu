@@ -248,14 +248,20 @@ namespace ThuyKieu.Core.Editor
         /// around the shoulder joints (smoothly blended) so the arms hang. Saved as a separate mesh asset;
         /// the source model is untouched. Replace with a rigged model when available.
         /// </summary>
+        private const string RelaxedVersion = "_v2"; // bump to regenerate cached relaxed meshes
+
         private static void RelaxArms(GameObject model, string assetPath, float angle)
         {
             var filters = model.GetComponentsInChildren<MeshFilter>();
             if (filters.Length == 0) return;
             var existing = AssetDatabase.LoadAssetAtPath<Mesh>(assetPath);
-            if (existing != null) { foreach (var f in filters) f.sharedMesh = existing; return; }
+            if (existing != null && existing.name.EndsWith(RelaxedVersion)) { foreach (var f in filters) f.sharedMesh = existing; return; }
             var source = filters[0].sharedMesh;
             var vertices = source.vertices;
+            // Rotate the source normals with their vertices. Recalculating them instead splits shading along every
+            // UV seam (a dark line down the face).
+            var normals = source.normals;
+            bool hasNormals = normals != null && normals.Length == vertices.Length;
             var bounds = source.bounds;
             float height = bounds.size.y;
             float cx = bounds.center.x;
@@ -270,15 +276,23 @@ namespace ThuyKieu.Core.Editor
                 if (lateral <= shoulder || v.y < bounds.min.y + height * 0.45f) continue;
                 float weight = Mathf.SmoothStep(0f, 1f, (lateral - shoulder) / blend);
                 var pivot = new Vector3(cx + side * shoulder, shoulderY, v.z);
-                Vector3 rotated = Quaternion.Euler(0, 0, -side * angle * weight) * (v - pivot) + pivot;
-                vertices[i] = rotated;
+                var turn = Quaternion.Euler(0, 0, -side * angle * weight);
+                vertices[i] = turn * (v - pivot) + pivot;
+                if (hasNormals) normals[i] = turn * normals[i];
             }
             var mesh = UnityEngine.Object.Instantiate(source);
-            mesh.name = System.IO.Path.GetFileNameWithoutExtension(assetPath);
+            mesh.name = System.IO.Path.GetFileNameWithoutExtension(assetPath) + RelaxedVersion;
             mesh.vertices = vertices;
-            mesh.RecalculateNormals();
+            if (hasNormals) mesh.normals = normals; else mesh.RecalculateNormals();
             mesh.RecalculateBounds();
-            AssetDatabase.CreateAsset(mesh, assetPath);
+            if (existing != null)
+            {
+                // Keep the asset (and its GUID) and replace its data.
+                EditorUtility.CopySerialized(mesh, existing);
+                UnityEngine.Object.DestroyImmediate(mesh);
+                mesh = existing;
+            }
+            else AssetDatabase.CreateAsset(mesh, assetPath);
             foreach (var f in filters) f.sharedMesh = mesh;
         }
 

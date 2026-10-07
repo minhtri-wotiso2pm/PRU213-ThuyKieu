@@ -27,9 +27,8 @@ namespace ThuyKieu.Core.Editor
             var shared = StoryAnimationSetup.Controller();
             var spawn = new Vector3(-10.2f, 0.05f, 6.7f);
             var s = CreateSystems(4, "Không còn đường lui", "chapter_4", Chapter05Setup.SceneName, spawn, 90f, "night_house");
-            s.CameraComponent.backgroundColor = new Color(0.04f, 0.05f, 0.09f);
-            Grade(s.Fx, 0.75f, 12f, -6f, -12f, new Color(0.28f, 0.34f, 0.62f), new Color(0.8f, 0.55f, 0.35f));
-            UseSky(s.CameraComponent, Sky("Ch4SkyNight", "kloppenheim_02_puresky", 0.32f, new Color(0.32f, 0.38f, 0.6f), 0f));
+            NightLook(s.Fx, s.CameraComponent, "Ch4SkyNight", 0f, new Vector3(38, 60, 0));
+            Set(s.Shots, "_keyLight", 1.6f);
             var world = new GameObject("World").transform;
             var nav = NavMesh(world);
             var director = s.Director;
@@ -51,11 +50,12 @@ namespace ThuyKieu.Core.Editor
 
                 var zones = new GameObject("CameraZones").transform;
                 zones.SetParent(world, false);
-                StoryArtKit.Zone("KieuRoom", new Vector3(-10.5f, 1.5f, 7.8f), new Vector3(6f, 4f, 9.4f), 2.5f, 0.35f, 58f, 0.05f, zones);
-                StoryArtKit.Zone("TuBaRoom", new Vector3(10.5f, 1.5f, 7.8f), new Vector3(6f, 4f, 9.4f), 2.5f, 0.35f, 58f, 0.05f, zones);
-                StoryArtKit.Zone("Office", new Vector3(10.5f, 1.5f, -7.2f), new Vector3(6f, 4f, 10.4f), 2.5f, 0.35f, 58f, 0.05f, zones);
-                StoryArtKit.Zone("Kitchen", new Vector3(-11.2f, 1.5f, -9.5f), new Vector3(4.4f, 4f, 5.8f), 2.4f, 0.35f, 58f, 0.05f, zones);
-                StoryArtKit.Zone("Veranda", new Vector3(-10f, 1.5f, -2f), new Vector3(7f, 4f, 9f), 3f, 0.4f, 55f, 0f, zones);
+                // Rooms: pulled back and raised so the camera looks down into the room over the faded wall.
+                StoryArtKit.Zone("KieuRoom", new Vector3(-10.5f, 1.5f, 7.8f), new Vector3(6f, 4f, 9.4f), 3.3f, 0.3f, 60f, 0.35f, zones);
+                StoryArtKit.Zone("TuBaRoom", new Vector3(10.5f, 1.5f, 7.8f), new Vector3(6f, 4f, 9.4f), 3.3f, 0.3f, 60f, 0.35f, zones);
+                StoryArtKit.Zone("Office", new Vector3(10.5f, 1.5f, -7.2f), new Vector3(6f, 4f, 10.4f), 3.3f, 0.3f, 60f, 0.35f, zones);
+                StoryArtKit.Zone("Kitchen", new Vector3(-11.2f, 1.5f, -9.5f), new Vector3(4.4f, 4f, 5.8f), 3f, 0.3f, 60f, 0.35f, zones);
+                StoryArtKit.Zone("Veranda", new Vector3(-10f, 1.5f, -2f), new Vector3(7f, 4f, 9f), 3.4f, 0.4f, 57f, 0.15f, zones);
 
                 // Night rules: anywhere outside Kiều's room and the west veranda is off limits.
                 var restricted = new GameObject("NightZones").transform;
@@ -174,11 +174,6 @@ namespace ThuyKieu.Core.Editor
                 var hallSpot = Point("TuBaHallSpot", new Vector3(-0.8f, 0.2f, 9.9f), 0, world);
 
                 // ------------------------------------------------------------ light & atmosphere
-                Sun("Moon", new Color(0.6f, 0.7f, 1f), 0.5f, new Vector3(38, 60, 0));
-                RenderSettings.ambientLight = new Color(0.13f, 0.14f, 0.22f);
-                RenderSettings.fogColor = new Color(0.05f, 0.06f, 0.1f);
-                RenderSettings.fogDensity = 0.009f;
-
                 var worldScript = s.Root.AddComponent<Chapter04World>();
                 Set(worldScript, "_director", director);
                 Set(worldScript, "_navMesh", nav);
@@ -294,8 +289,11 @@ namespace ThuyKieu.Core.Editor
                 var light = go.AddComponent<Light>();
                 light.type = LightType.Point;
                 light.color = new Color(1f, 0.42f, 0.25f);
-                light.range = 5.5f;
-                light.intensity = 1.6f;
+                light.range = 6f;
+                light.intensity = 2f;
+                // Shadowed pools: lamplight stops at walls and pillars, so the dark gaps between pools are real.
+                light.shadows = LightShadows.Soft;
+                light.shadowStrength = 0.85f;
             }
         }
 

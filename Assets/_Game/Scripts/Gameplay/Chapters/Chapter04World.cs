@@ -37,7 +37,7 @@ namespace ThuyKieu.Gameplay.Chapters
         private int _visits;
         private bool _dozeAnnounced, _doorGuardAwake = true, _ended;
         private MaterialPropertyBlock _coneBlock;
-        private float _coneAlpha = 0.06f;
+        private float _coneAlpha;
         private string _lastSequence;
 
         private void OnEnable()
@@ -100,7 +100,7 @@ namespace ThuyKieu.Gameplay.Chapters
             string sequence = _director.CurrentSequence;
             if (sequence == "pickpocket" && _lastSequence != sequence) _tuBaSight.Active = false;
             _lastSequence = sequence;
-            if (!_director.InExplore || _ended) { UpdateCone(false); return; }
+            if (!_director.InExplore || _ended) { UpdateCone(false, false); return; }
 
             float awareness = Mathf.Max(_guard.Vision.Awareness, _tuBaSight.Awareness);
             if (_doorGuardSight != null && _doorGuard != null && _doorGuard.gameObject.activeSelf) awareness = Mathf.Max(awareness, _doorGuardSight.Awareness);
@@ -125,7 +125,7 @@ namespace ThuyKieu.Gameplay.Chapters
             }
             if (_director.Player.IsHidden) _director.Hud.SetGauge("Đang trốn — E để ra", 0f, Color.white);
 
-            UpdateCone(RestrictedZone.PlayerInside || _guard.Vision.Awareness > 0.04f);
+            UpdateCone(RestrictedZone.PlayerInside || _guard.Vision.Awareness > 0.04f, true);
 
             if (_guard.Vision.Spotted || _tuBaSight.Spotted || (_doorGuardSight != null && _doorGuardSight.Spotted))
             {
@@ -204,12 +204,14 @@ namespace ThuyKieu.Gameplay.Chapters
             else _director.Hud.ShowBark("NguoiCanh", "(giật mình) Hử? ...Ai?", 1.8f);
         }
 
-        private void UpdateCone(bool alert)
+        private void UpdateCone(bool alert, bool visible)
         {
             if (_visionCone == null) return;
             _coneBlock ??= new MaterialPropertyBlock();
-            _coneAlpha = Mathf.MoveTowards(_coneAlpha, alert ? 0.22f : 0.07f, Time.deltaTime * 0.5f);
-            _coneBlock.SetColor("_BaseColor", new Color(1f, 0.2f, 0.12f, _coneAlpha));
+            _coneAlpha = Mathf.MoveTowards(_coneAlpha, !visible ? 0f : alert ? 0.32f : 0.14f, Time.deltaTime * 0.5f);
+            // Lamplight while he is calm, red as he grows suspicious.
+            var calm = new Color(1f, 0.62f, 0.3f, _coneAlpha);
+            _coneBlock.SetColor("_BaseColor", Color.Lerp(calm, new Color(1f, 0.18f, 0.1f, _coneAlpha), Mathf.Clamp01(_guard.Vision.Awareness * 2f)));
             _visionCone.SetPropertyBlock(_coneBlock);
         }
 

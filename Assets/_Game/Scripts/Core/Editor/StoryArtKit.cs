@@ -113,6 +113,26 @@ namespace ThuyKieu.Core.Editor
             Set(fx, "_highlightTint", highlights);
         }
 
+        /// <summary>
+        /// Shared moonlit-night look (Ch4, Ch5): dark but readable. Silver-blue moonlight rims roofs, posts and faces,
+        /// a sky/ground ambient keeps shadow sides grey-blue instead of crushed navy, and warm lamps carry the contrast.
+        /// </summary>
+        public static Light NightLook(ThuyKieu.Presentation.ScreenFx fx, Camera camera, string skyName, float skyRotation, Vector3 moonAngles)
+        {
+            Grade(fx, 0.95f, 11f, -2f, -3f, new Color(0.38f, 0.43f, 0.55f), new Color(0.88f, 0.64f, 0.42f));
+            camera.backgroundColor = new Color(0.05f, 0.06f, 0.09f);
+            UseSky(camera, Sky(skyName, "kloppenheim_02_puresky", 0.5f, new Color(0.42f, 0.48f, 0.64f), skyRotation));
+            RenderSettings.ambientMode = AmbientMode.Trilight;
+            RenderSettings.ambientSkyColor = new Color(0.24f, 0.29f, 0.42f);
+            RenderSettings.ambientEquatorColor = new Color(0.17f, 0.18f, 0.24f);
+            RenderSettings.ambientGroundColor = new Color(0.09f, 0.08f, 0.08f);
+            RenderSettings.fogColor = new Color(0.08f, 0.1f, 0.15f);
+            RenderSettings.fogDensity = 0.011f;
+            var moon = StorySceneKit.Sun("Moon", new Color(0.64f, 0.74f, 0.98f), 0.95f, moonAngles);
+            moon.shadowStrength = 0.7f;
+            return moon;
+        }
+
         // ------------------------------------------------------------------ architecture details
 
         /// <summary>Lacquered pillar on a carved stone plinth (chân tảng) with a bracket block on top.</summary>
@@ -594,7 +614,7 @@ namespace ThuyKieu.Core.Editor
             return material;
         }
 
-        private static void DrawDot(Color32[] pixels, int size)
+        internal static void DrawDot(Color32[] pixels, int size)
         {
             for (int y = 0; y < size; y++)
                 for (int x = 0; x < size; x++)
@@ -618,7 +638,7 @@ namespace ThuyKieu.Core.Editor
                 }
         }
 
-        private static Texture2D GeneratedTexture(string name, Action<Color32[], int> draw, int size = 256)
+        internal static Texture2D GeneratedTexture(string name, Action<Color32[], int> draw, int size = 256)
         {
             string path = AssetFolder + "/" + name + ".png";
             var existing = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
