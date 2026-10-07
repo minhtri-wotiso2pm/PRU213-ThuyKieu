@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/_Game/Scenes/MainMenu.unity
+    guid: 5b91c232047ab2842a0b94d677633ce0
+  - enabled: 1
     path: Assets/_Game/Scenes/Chapter01_GiaBien.unity
     guid: 47f6c4a44cfeb4646b598e68b068a6c9
   - enabled: 1

@@ -80,7 +80,7 @@ namespace ThuyKieu.Dialogue
 
         private void Update()
         {
-            if (!allowKeyboardShortcuts || manager == null || !manager.IsDialogueActive)
+            if (!allowKeyboardShortcuts || manager == null || !manager.IsDialogueActive || ThuyKieu.Core.GamePause.IsPaused)
             {
                 return;
             }

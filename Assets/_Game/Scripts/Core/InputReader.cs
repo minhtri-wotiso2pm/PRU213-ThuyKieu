@@ -15,6 +15,7 @@ namespace ThuyKieu.Core
         {
             get
             {
+                if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
                 if (keyboard == null)
                 {
@@ -36,6 +37,7 @@ namespace ThuyKieu.Core
         {
             get
             {
+                if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Mouse mouse = Mouse.current;
                 return mouse == null ? Vector2.zero : mouse.delta.ReadValue();
             }
@@ -46,6 +48,7 @@ namespace ThuyKieu.Core
         {
             get
             {
+                if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
                 return keyboard != null && keyboard.leftShiftKey.isPressed;
             }
@@ -56,6 +59,7 @@ namespace ThuyKieu.Core
         {
             get
             {
+                if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
                 return keyboard != null && keyboard.eKey.wasPressedThisFrame;
             }
@@ -66,6 +70,7 @@ namespace ThuyKieu.Core
         {
             get
             {
+                if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
                 return keyboard != null && keyboard.eKey.isPressed;
             }
@@ -76,6 +81,7 @@ namespace ThuyKieu.Core
         {
             get
             {
+                if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
                 return keyboard != null && keyboard.qKey.wasPressedThisFrame;
             }
@@ -93,6 +99,7 @@ namespace ThuyKieu.Core
         {
             get
             {
+                if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
                 return keyboard != null && (keyboard.leftCtrlKey.isPressed || keyboard.cKey.isPressed);
             }
@@ -103,6 +110,7 @@ namespace ThuyKieu.Core
         {
             get
             {
+                if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Mouse mouse = Mouse.current;
                 return mouse != null && mouse.rightButton.isPressed;
             }
@@ -113,6 +121,7 @@ namespace ThuyKieu.Core
         {
             get
             {
+                if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
                 return keyboard != null && keyboard.jKey.wasPressedThisFrame;
             }

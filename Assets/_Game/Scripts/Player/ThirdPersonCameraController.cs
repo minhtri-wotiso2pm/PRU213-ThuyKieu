@@ -241,7 +241,7 @@ namespace ThuyKieu.Player
 
         private void HandleCursorToggle()
         {
-            if (InputReader.CancelPressedThisFrame)
+            if (InputReader.CancelPressedThisFrame && !GamePause.EscapeConsumed) // the game shell turns Esc into its pause menu
             {
                 SetCursorLocked(Cursor.lockState != CursorLockMode.Locked);
             }

@@ -28,6 +28,29 @@ namespace ThuyKieu.Core
             File.WriteAllText(Path.Combine(Application.persistentDataPath, "Chapter" + (nextChapter - 1) + ".inkstate.json"), StateJson);
         }
 
+        /// <summary>Puts back a state read from disk (main menu "Continue").</summary>
+        public void Restore(string json, int nextChapter)
+        {
+            StateJson = json;
+            NextChapter = nextChapter;
+            Clues.Clear();
+        }
+
+        /// <summary>Forgets the carried state so the next chapter starts from its entry knot (chapter select).</summary>
+        public void Clear()
+        {
+            StateJson = null;
+            NextChapter = 0;
+            Clues.Clear();
+        }
+
+        /// <summary>The session object, created on demand so menus can prepare state before a chapter scene loads.</summary>
+        public static InkStatePersistence Ensure()
+        {
+            if (Instance == null) new GameObject("InkSession").AddComponent<InkStatePersistence>();
+            return Instance;
+        }
+
         /// <summary>Returns the saved state only if it leads into the requested chapter.</summary>
         public bool TryGetStateFor(int chapter, out string json)
         {

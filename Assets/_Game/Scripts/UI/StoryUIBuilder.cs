@@ -16,6 +16,8 @@ namespace ThuyKieu.UI
         public static readonly Color Paper = new Color(0.9f, 0.83f, 0.66f, 1f);
         public static readonly Color Vermilion = new Color(0.72f, 0.16f, 0.12f);
         private static TMP_FontAsset _font;
+        /// <summary>Font used by the primitives below; Build sets it, runtime builders (GameShell) may too.</summary>
+        public static TMP_FontAsset Font { get => _font; set => _font = value; }
 
         public static GameObject Build(TMP_FontAsset font)
         {
@@ -262,25 +264,25 @@ namespace ThuyKieu.UI
             dossier.gameObject.SetActive(false);
         }
 
+        public const string ControlsHelp = "<color=#E8C27A>WASD</color>  di chuyển\n<color=#E8C27A>Shift</color>  chạy\n<color=#E8C27A>Ctrl / C</color>  khom người, rón rén\n" +
+            "<color=#E8C27A>Chuột</color>  xoay camera\n<color=#E8C27A>Chuột phải</color>  quan sát\n<color=#E8C27A>E</color>  tương tác · trốn\n<color=#E8C27A>Q</color>  ném sỏi đánh lạc hướng\n<color=#E8C27A>Space / Click</color>  tiếp lời thoại\n" +
+            "<color=#E8C27A>1–4</color>  chọn câu trả lời\n<color=#E8C27A>J</color>  sổ tay manh mối\n<color=#E8C27A>Esc</color>  tạm dừng\n<color=#E8C27A>`</color>  bảng lệnh (thử nghiệm)";
+
         private static void BuildPause(Transform parent)
         {
             var pause = Image(Rect(parent, "Pause", Vector2.zero, Vector2.one), new Color(0.02f, 0.01f, 0.02f, 0.78f)).transform;
             var panel = Panel(pause, "Panel", new Vector2(0.36f, 0.2f), new Vector2(0.64f, 0.8f), new Color(0.07f, 0.05f, 0.06f, 0.97f), 26);
             var title = Text(panel, "Title", "TẠM DỪNG", 40, new Vector2(0.08f, 0.84f), new Vector2(0.92f, 0.96f), Gold);
             title.alignment = TextAlignmentOptions.Center; title.fontStyle = FontStyles.Bold;
-            string[] names = { "Resume", "Journal", "Controls", "Restart", "Quit" };
-            string[] labels = { "Tiếp tục", "Sổ tay manh mối", "Điều khiển", "Chơi lại chương", "Thoát game" };
-            for (int i = 0; i < names.Length; i++)
+            for (int i = 0; i < PauseMenuView.ButtonNames.Length; i++)
             {
-                float top = 0.8f - i * 0.135f;
-                var button = Panel(panel, names[i], new Vector2(0.12f, top - 0.11f), new Vector2(0.88f, top), i == 0 ? Vermilion : new Color(1, 1, 1, 0.07f), 14);
+                var button = Panel(panel, PauseMenuView.ButtonNames[i], Vector2.zero, Vector2.one, i == 0 ? Vermilion : new Color(1, 1, 1, 0.07f), 14);
                 button.gameObject.AddComponent<Button>();
-                Text(button, "Label", labels[i], 26, Vector2.zero, Vector2.one, Color.white).alignment = TextAlignmentOptions.Center;
+                Text(button, "Label", PauseMenuView.ButtonLabels[i], 26, Vector2.zero, Vector2.one, Color.white).alignment = TextAlignmentOptions.Center;
             }
+            PauseMenuView.LayoutButtons(panel);
             var controls = Panel(panel, "ControlsText", new Vector2(1.04f, 0.1f), new Vector2(1.9f, 0.9f), new Color(0.07f, 0.05f, 0.06f, 0.97f), 26);
-            var text = Text(controls, "Text", "<color=#E8C27A>WASD</color>  di chuyển\n<color=#E8C27A>Shift</color>  chạy\n<color=#E8C27A>Ctrl / C</color>  khom người, rón rén\n" +
-                "<color=#E8C27A>Chuột</color>  xoay camera\n<color=#E8C27A>Chuột phải</color>  quan sát\n<color=#E8C27A>E</color>  tương tác · trốn\n<color=#E8C27A>Q</color>  ném sỏi đánh lạc hướng\n<color=#E8C27A>Space / Click</color>  tiếp lời thoại\n" +
-                "<color=#E8C27A>1–4</color>  chọn câu trả lời\n<color=#E8C27A>J</color>  sổ tay manh mối\n<color=#E8C27A>Esc</color>  tạm dừng", 24, new Vector2(0.08f, 0.05f), new Vector2(0.92f, 0.95f), Color.white);
+            var text = Text(controls, "Text", ControlsHelp, 24, new Vector2(0.08f, 0.05f), new Vector2(0.92f, 0.95f), Color.white);
             text.alignment = TextAlignmentOptions.TopLeft; text.lineSpacing = 14;
             pause.gameObject.SetActive(false);
         }
@@ -346,14 +348,14 @@ namespace ThuyKieu.UI
             rect.offsetMax = new Vector2(-16, top);
         }
 
-        private static Image Image(RectTransform rect, Color color)
+        public static Image Image(RectTransform rect, Color color)
         {
             var image = rect.gameObject.AddComponent<Image>();
             image.color = color;
             return image;
         }
 
-        private static RectTransform Panel(Transform parent, string name, Vector2 min, Vector2 max, Color color, int radius)
+        public static RectTransform Panel(Transform parent, string name, Vector2 min, Vector2 max, Color color, int radius)
         {
             var rect = Rect(parent, name, min, max);
             Image(rect, color);
@@ -361,7 +363,7 @@ namespace ThuyKieu.UI
             return rect;
         }
 
-        private static TextMeshProUGUI Text(Transform parent, string name, string value, float size, Vector2 min, Vector2 max, Color color)
+        public static TextMeshProUGUI Text(Transform parent, string name, string value, float size, Vector2 min, Vector2 max, Color color)
         {
             var rect = Rect(parent, name, min, max);
             var text = rect.gameObject.AddComponent<TextMeshProUGUI>();

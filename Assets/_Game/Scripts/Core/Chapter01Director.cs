@@ -151,7 +151,7 @@ namespace ThuyKieu.Core
         }
         private void LateUpdate()
         {
-            if (!_completionPanel.activeSelf) return;
+            if (!_completionPanel.activeSelf || GamePause.IsPaused) return;
             // DialogueCursorController re-locks the cursor when the final dialogue ends; keep it free for the button.
             if (Cursor.lockState == CursorLockMode.Locked) _camera.SetCursorLocked(false);
             var keyboard = UnityEngine.InputSystem.Keyboard.current;
