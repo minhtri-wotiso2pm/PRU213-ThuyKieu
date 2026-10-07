@@ -21,7 +21,7 @@ namespace ThuyKieu.Core.Editor
         {
             Chapter02Setup.ScenePath, Chapter03Setup.ScenePath, Chapter04Setup.ScenePath, Chapter05Setup.ScenePath, Chapter06Setup.ScenePath,
             Chapter06Setup.PlaceholderPath, "Assets/_Game/Scenes/Chapter04_Placeholder.unity",
-            StorySceneKit.UIPrefabPath, StoryAnimationSetup.ControllerPath, StoryAnimationSetup.KieuOverridePath, StorySceneKit.MaterialFolder
+            StorySceneKit.UIPrefabPath, StoryAnimationSetup.ControllerPath, StoryAnimationSetup.KieuOverridePath, StoryAnimationSetup.CharacterFolder, StorySceneKit.MaterialFolder
         };
 
         private const string PlaytestKey = "ThuyKieu.StoryPlaytest";

@@ -109,10 +109,18 @@ Nhân vật mới trong `SpeakerCatalog`: `KimTrong`, `BaHangNuoc`, `ThuLai`, `C
   1. Chạy `ThuyKieu > Dialogue > Export voice manifest`. Manifest đã quét đủ Ch1–6, kể cả câu hô của gia nhân.
   2. Chạy `python Tools/Voice/generate_voice.py`.
 
-## 5. Model
-- **Kim Trọng**: OBJ tĩnh (`Art/Characters/KimTrong/Static/KimTrong.obj`), tay hạ bằng `RelaxArms`, cử động giả lập nhún và thở. Khi có bản rig Mixamo: thay `StaticActor(...)` bằng `RiggedActor(...)` trong `Chapter06Setup`, rồi Rebuild.
-- **Tú Bà, Lính canh**: vẫn là model tĩnh như Ch2–3. Tú Bà "ngủ gật" chỉ thể hiện bằng tiếng ngáy và lời thoại, vì model tĩnh không ngồi được.
-- **Gia nhân, khách, người dân, thư lại, chủ hiệu bạc**: model Mã Giám Sinh đổi màu. **Bà hàng nước, chị Lam**: model Mẹ Kiều đổi màu. Tất cả đều có animation thật.
+## 5. Model (bộ rig Mixamo mới, 2026-10-07)
+- Nguồn: `Doc/model và animation-…/`. Mỗi file animation Mixamo đã kèm mesh có rig; file idle được dùng làm model.
+- Cấu trúc trong project: `Art/Characters/<Id>/Rigged/<Id>_Rigged.fbx` (+ texture) và `Animations/<Id>/<Id>-Idle|Walk|Run|Yell.fbx`.
+- `StorySceneKit.CharacterActor(name, speaker, id, …)` dựng nhân vật với `StoryAnimationSetup.CharacterController(id)`: controller dùng chung của truyện, thay Idle/Walking/Running bằng clip riêng của nhân vật, và "Standing Arguing" bằng `-Yell` nếu có (Tú Bà quát). Override nằm ở `Animations/Story/Characters/` và được tạo lại mỗi lần Rebuild.
+- Gán vai:
+  - **Tú Bà** (`TuBa`): Ch3, Ch4, Ch5. Ngủ trên sập: `StoryActor.LieDown` đặt cả model rig nằm ngửa, idle chạy chậm như thở; chùm chìa gắn vào xương hông.
+  - **Lính canh** (`LinhCanh`): người canh Ch3–5, tùy tùng Ch2, người của Tú Bà trên phố Ch6.
+  - **Kim Trọng** (`KimTrong`): Ch6.
+  - **Lầu xanh 1** (áo lam, chỉ có idle) → **chị Lam** Ch3–6. **Lầu xanh 3** (áo tím) → **Cô Hồng** Ch3.
+  - **Vương ông** (`VuongOng`: idle, đi, vẫy tay, ngã): đã chép vào project nhưng chưa gán, vì scene Chương 1 dựng tay.
+- Gia nhân, khách, người dân, thư lại, chủ hiệu bạc: vẫn là model Mã Giám Sinh đổi màu; bà hàng nước là model Mẹ Kiều đổi màu.
+- **NPC nữ 1, 2**: chỉ có OBJ, chưa rig, nên chưa dùng.
 
 ## 6. Âm thanh (procedural)
 - **Nhạc**: `chase`, `temple`, `study`, `street`.

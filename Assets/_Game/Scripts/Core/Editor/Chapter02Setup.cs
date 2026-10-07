@@ -48,8 +48,7 @@ namespace ThuyKieu.Core.Editor
             var shared = StoryAnimationSetup.Controller();
             var ma = RiggedActor("MaGiamSinh", "MaGiamSinh", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
                 "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.78f, new Vector3(RoadX(5.5f) + 0.6f, 0, 5.5f), 0f, Color.white, shared);
-            var servant = StaticActor("TuyTung", "TuyTung", "Assets/_Game/Art/Characters/LinhCanh/Static/LinhCanh.obj",
-                "Assets/_Game/Art/Characters/LinhCanh/Static/texture_pbr_20250901.png", 1.72f, new Vector3(RoadX(4.2f) - 0.9f, 0, 4.2f), 0f);
+            var servant = CharacterActor("TuyTung", "TuyTung", "LinhCanh", 1.72f, new Vector3(RoadX(4.2f) - 0.9f, 0, 4.2f), 0f);
 
             var askTarget = Explore(ma.gameObject, s.Director, "c2_ask", "Bắt chuyện với Mã Giám Sinh", Vector3.one * 1.9f);
             var observable = ma.gameObject.AddComponent<ObservableTarget>();

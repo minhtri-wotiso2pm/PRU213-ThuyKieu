@@ -60,13 +60,11 @@ namespace ThuyKieu.Core.Editor
             TeaStall(world);
 
             // ------------------------------------------------------------ characters
-            var kim = StaticActor("KimTrong", "KimTrong", "Assets/_Game/Art/Characters/KimTrong/Static/KimTrong.obj",
-                "Assets/_Game/Art/Characters/KimTrong/Static/texture_pbr_20250901.png", 1.76f, new Vector3(0f, 0, 27f), 0f, 40f);
+            var kim = CharacterActor("KimTrong", "KimTrong", "KimTrong", 1.76f, new Vector3(0f, 0, 27f), 0f);
             var follower = kim.gameObject.AddComponent<Follower>();
             Set(follower, "_player", s.Player);
             Set(follower, "_distance", 1.8f);
-            var coLam = RiggedActor("CoLam", "CoLam", "Assets/_Game/Art/Characters/MeThuyKieu/Models/MeThuyKieu_Rigged.fbx",
-                "Assets/_Game/Art/Characters/MeThuyKieu/Tectures", 1.6f, new Vector3(-13.4f, 0, 4.6f), 60f, new Color(0.7f, 0.82f, 1f), shared);
+            var coLam = CharacterActor("CoLam", "CoLam", "LauXanh1", 1.6f, new Vector3(-13.4f, 0, 4.6f), 60f);
             var baNuoc = RiggedActor("BaHangNuoc", "BaHangNuoc", "Assets/_Game/Art/Characters/MeThuyKieu/Models/MeThuyKieu_Rigged.fbx",
                 "Assets/_Game/Art/Characters/MeThuyKieu/Tectures", 1.56f, new Vector3(-20f, 0, 21.3f), 180f, new Color(0.9f, 0.75f, 0.55f), shared);
             var thuLai = RiggedActor("ThuLai", "ThuLai", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
@@ -75,8 +73,7 @@ namespace ThuyKieu.Core.Editor
                 "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.7f, new Vector3(15f, 0, 11.3f), 0f, new Color(0.85f, 0.72f, 0.4f), shared);
             var messenger = RiggedActor("GiaNhan", "GiaNhan", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
                 "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.7f, new Vector3(-9f, 0, 12.4f), 180f, new Color(0.55f, 0.55f, 0.55f), shared);
-            var searcher = RiggedActor("NguoiCuaTuBa", "NguoiCanh", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
-                "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.78f, new Vector3(-24f, 0, 18f), 90f, new Color(0.45f, 0.32f, 0.26f), shared);
+            var searcher = CharacterActor("NguoiCuaTuBa", "NguoiCanh", "LinhCanh", 1.78f, new Vector3(-24f, 0, 18f), 90f);
             Crowd(world, shared);
 
             Explore(baNuoc.gameObject, director, "c6_ba_nuoc", "Nói chuyện với bà hàng nước", Vector3.one * 1.9f);
@@ -333,7 +330,7 @@ namespace ThuyKieu.Core.Editor
             var wallE = Block("StudyWallE", new Vector3(-3f, 1.6f, 8f), new Vector3(0.3f, 3.2f, 12f), _plaster, root);
             Fadeable(wallW, wallE);
             Block("InnerRoomWall", new Vector3(-12f, 1.6f, 6.4f), new Vector3(0.2f, 3.2f, 3.2f), _wood, root);
-            Chapter03Setup.Hide(Roof("StudyRoof", new Vector3(-9f, 4.1f, 8f), 12.8f, 12.8f, 22f, _tiles, _ridge, root), new Vector3(-9f, 1.5f, 8f), new Vector3(12f, 4f, 12f));
+            Chapter03Setup.Hide(Roof("StudyRoof", new Vector3(-9f, 5.95f, 8f), 12.8f, 12.8f, 22f, _tiles, _ridge, root), new Vector3(-9f, 1.5f, 8f), new Vector3(12f, 4f, 12f));
             Block("Signboard", new Vector3(-9f, 3.5f, 14.2f), new Vector3(2.2f, 0.45f, 0.06f), Material("Ch6Sign", new Color(0.4f, 0.08f, 0.06f), 0.5f), root, false);
             // Bookshelves, the desk with papers and inkstone, a lamp.
             for (int i = 0; i < 4; i++) StoryPropKit.Bookshelf(new Vector3(-12.5f + i * 2.2f, 0.03f, 2.45f), 0f, root, 70 + i, 1.9f, 2.4f);
@@ -435,7 +432,7 @@ namespace ThuyKieu.Core.Editor
             Fadeable(shopW, shopE);
             StoryPropKit.TimberFrame(shopW, _wood, 2f);
             StoryPropKit.TimberFrame(shopE, _wood, 2f);
-            Chapter03Setup.Hide(Roof("ShopRoof", new Vector3(15f, 4.2f, 10f), 8.8f, 8.8f, 24f, _tiles, _ridge, root), new Vector3(15f, 1.5f, 10f), new Vector3(8f, 4f, 8f));
+            Chapter03Setup.Hide(Roof("ShopRoof", new Vector3(15f, 5.55f, 10f), 8.8f, 8.8f, 24f, _tiles, _ridge, root), new Vector3(15f, 1.5f, 10f), new Vector3(8f, 4f, 8f));
             Block("Counter", new Vector3(15f, 0.5f, 12.6f), new Vector3(5f, 1f, 0.7f), _red, root);
             // Counter: lacquered panels with brass bosses, the balance, an abacus, ingots on a cloth, a ledger.
             for (int i = 0; i < 4; i++)

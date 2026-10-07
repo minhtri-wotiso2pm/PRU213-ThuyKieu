@@ -218,6 +218,16 @@ namespace ThuyKieu.Core.Editor
             return actor;
         }
 
+        /// <summary>
+        /// A character with its own Mixamo rig and clips: Art/Characters/&lt;id&gt;/Rigged/&lt;id&gt;_Rigged.fbx with its texture,
+        /// animated by the shared story controller overridden with Animations/&lt;id&gt; clips.
+        /// </summary>
+        public static StoryActor CharacterActor(string name, string speakerId, string id, float height, Vector3 position, float yaw)
+        {
+            string folder = "Assets/_Game/Art/Characters/" + id + "/Rigged";
+            return RiggedActor(name, speakerId, folder + "/" + id + "_Rigged.fbx", folder, height, position, yaw, Color.white, StoryAnimationSetup.CharacterController(id));
+        }
+
         public static StoryActor StaticActor(string name, string speakerId, string objPath, string texturePath, float height, Vector3 position, float yaw, float relaxArms = 0f)
         {
             var importer = AssetImporter.GetAtPath(objPath) as ModelImporter;
@@ -325,7 +335,9 @@ namespace ThuyKieu.Core.Editor
 
         private static void ApplyTexture(GameObject model, string name, string textureFolder, Color tint)
         {
-            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(textureFolder + "/texture_pbr_20250901.png");
+            string texturePath = textureFolder + "/texture_pbr_20250901.png";
+            if (AssetImporter.GetAtPath(texturePath) is TextureImporter textureImporter && textureImporter.maxTextureSize > 2048) { textureImporter.maxTextureSize = 2048; textureImporter.SaveAndReimport(); }
+            var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
             var material = Material(name + "Story", tint);
             if (texture != null) material.SetTexture("_BaseMap", texture);
             material.SetFloat("_Smoothness", 0.25f);

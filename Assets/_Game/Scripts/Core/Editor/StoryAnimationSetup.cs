@@ -99,6 +99,55 @@ namespace ThuyKieu.Core.Editor
             return controller;
         }
 
+        /// <summary>Per-character overrides (regenerated with the shared controller they extend).</summary>
+        public const string CharacterFolder = Folder + "/Characters";
+
+        /// <summary>
+        /// Shared story controller with a character's own Mixamo clips (Assets/_Game/Animations/&lt;id&gt;/&lt;id&gt;-Idle/-Walk/-Run.fbx,
+        /// optionally -Yell for the arguing gesture). Missing clips keep the shared ones.
+        /// </summary>
+        public static RuntimeAnimatorController CharacterController(string id)
+        {
+            string path = CharacterFolder + "/" + id + "Story.overrideController";
+            var existing = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(path);
+            if (existing != null) return existing;
+            if (!AssetDatabase.IsValidFolder(CharacterFolder)) AssetDatabase.CreateFolder(Folder, "Characters");
+            var controller = new AnimatorOverrideController(Controller()) { name = id + "Story" };
+            foreach (var (suffix, slot, loop) in new[] { ("Idle", "Idle", true), ("Walk", "Walking", true), ("Run", "Running", true), ("Yell", "Standing Arguing", true) })
+            {
+                var clip = CharacterClip(id, suffix, loop);
+                if (clip != null) controller[slot] = clip;
+            }
+            AssetDatabase.CreateAsset(controller, path);
+            return controller;
+        }
+
+        /// <summary>Imports a character clip as Humanoid in place (root locked, looping as asked) and returns it, or null if absent.</summary>
+        private static AnimationClip CharacterClip(string id, string suffix, bool loop)
+        {
+            string name = id + "-" + suffix;
+            string path = "Assets/_Game/Animations/" + id + "/" + name + ".fbx";
+            if (!(AssetImporter.GetAtPath(path) is ModelImporter importer)) return null;
+            if (importer.animationType != ModelImporterAnimationType.Human || importer.clipAnimations.Length == 0 || importer.clipAnimations[0].name != name)
+            {
+                importer.animationType = ModelImporterAnimationType.Human;
+                importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+                importer.importAnimation = true;
+                importer.materialImportMode = ModelImporterMaterialImportMode.None;
+                var clips = importer.clipAnimations.Length > 0 ? importer.clipAnimations : importer.defaultClipAnimations;
+                foreach (var clip in clips)
+                {
+                    clip.name = name;
+                    clip.loopTime = clip.loopPose = loop;
+                    clip.lockRootRotation = true; clip.lockRootHeightY = true; clip.lockRootPositionXZ = true;
+                    clip.keepOriginalOrientation = true; clip.keepOriginalPositionXZ = true; clip.heightFromFeet = true;
+                }
+                importer.clipAnimations = clips;
+                importer.SaveAndReimport();
+            }
+            return AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().FirstOrDefault(c => !c.name.StartsWith("__preview__"));
+        }
+
         private static AnimationClip Clip(string name) => AssetDatabase.LoadAllAssetsAtPath(Folder + "/" + name + ".fbx")
             .OfType<AnimationClip>().First(c => !c.name.StartsWith("__preview__"));
 

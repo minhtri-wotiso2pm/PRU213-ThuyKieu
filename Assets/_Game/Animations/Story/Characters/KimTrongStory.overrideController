@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: KimTrongStory
+  m_Controller: {fileID: 9100000, guid: 0efd779a78433a84fbca1b463917eba8, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -203655887218126122, guid: c5904bbcd39625b41a44e8e9d7995554, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 0c0c841383796564380d0c135a0a32c1, type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 298e91a4ac22c2f4bba66c00877c28d6, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 033f4846da60cbf4da51cd845e327c04, type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 15637fa18eeb0f6468970f080bc9cd58, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 9a22c800d19b19b4d9b4b3595f3df87f, type: 3}

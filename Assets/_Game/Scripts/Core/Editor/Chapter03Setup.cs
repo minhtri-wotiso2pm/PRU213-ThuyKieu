@@ -98,18 +98,14 @@ namespace ThuyKieu.Core.Editor
             StoryArtKit.Zone("UnderWindow", new Vector3(5.8f, 1.5f, 6.5f), new Vector3(3.6f, 4f, 6f), 2.6f, 0.45f, 54f, 0f, zones, 1);
 
             // Characters
-            var tuBa = StaticActor("TuBa", "TuBa", "Assets/_Game/Art/Characters/TuBa/StaticV2/TuBa.obj",
-                "Assets/_Game/Art/Characters/TuBa/StaticV2/texture_pbr_20250901.png", 1.62f, new Vector3(0, 0, -6.4f), 180f, 42f);
+            var tuBa = CharacterActor("TuBa", "TuBa", "TuBa", 1.62f, new Vector3(0, 0, -6.4f), 180f);
             var ma = RiggedActor("MaGiamSinh", "MaGiamSinh", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
                 "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.78f, new Vector3(1.7f, 0, -8.6f), -60f, Color.white, shared);
-            var hong = RiggedActor("CoHong", "CoHong", "Assets/_Game/Art/Characters/ThuyKieu/Models/ThuyKieu_Rigged.fbx",
-                "Assets/_Game/Art/Characters/ThuyKieu/Tectures", 1.6f, new Vector3(-1.5f, 0, -1.9f), -120f, new Color(1f, 0.72f, 0.8f), shared);
-            var lam = RiggedActor("CoLam", "CoLam", "Assets/_Game/Art/Characters/MeThuyKieu/Models/MeThuyKieu_Rigged.fbx",
-                "Assets/_Game/Art/Characters/MeThuyKieu/Tectures", 1.6f, new Vector3(-6.1f, 0, -1.5f), 90f, new Color(0.7f, 0.82f, 1f), shared);
+            var hong = CharacterActor("CoHong", "CoHong", "LauXanh3", 1.6f, new Vector3(-1.5f, 0, -1.9f), -120f);
+            var lam = CharacterActor("CoLam", "CoLam", "LauXanh1", 1.6f, new Vector3(-6.1f, 0, -1.5f), 90f);
             var maKieu = RiggedActor("MaKieu", "MaKieu", "Assets/_Game/Art/Characters/ThuyKieu/Models/ThuyKieu_Rigged.fbx",
                 "Assets/_Game/Art/Characters/ThuyKieu/Tectures", 1.64f, new Vector3(-10.4f, 0, -9.4f), 45f, new Color(0.72f, 0.6f, 0.85f), shared);
-            var guard = StaticActor("NguoiCanh", "NguoiCanh", "Assets/_Game/Art/Characters/LinhCanh/Static/LinhCanh.obj",
-                "Assets/_Game/Art/Characters/LinhCanh/Static/texture_pbr_20250901.png", 1.76f, new Vector3(2.5f, 0, -7.5f), 0f);
+            var guard = CharacterActor("NguoiCanh", "NguoiCanh", "LinhCanh", 1.76f, new Vector3(2.5f, 0, -7.5f), 0f);
 
             Explore(hong.gameObject, director, "c3_girl_hong", "Nói chuyện với cô gái áo hồng", Vector3.one * 1.9f);
             Explore(lam.gameObject, director, "c3_girl_lam", "Nói chuyện với cô gái áo lam", Vector3.one * 1.9f);

@@ -54,8 +54,7 @@ namespace ThuyKieu.Core.Editor
             Forest(world, out var rail, out var rainSpot);
 
             // ------------------------------------------------------------ characters
-            var coLam = RiggedActor("CoLam", "CoLam", "Assets/_Game/Art/Characters/MeThuyKieu/Models/MeThuyKieu_Rigged.fbx",
-                "Assets/_Game/Art/Characters/MeThuyKieu/Tectures", 1.6f, start - new Vector3(0.9f, 0, 0.6f), 90f, new Color(0.7f, 0.82f, 1f), shared);
+            var coLam = CharacterActor("CoLam", "CoLam", "LauXanh1", 1.6f, start - new Vector3(0.9f, 0, 0.6f), 90f);
             var follower = coLam.gameObject.AddComponent<Follower>();
             Set(follower, "_player", s.Player);
             var pursuers = new List<StoryActor>();
@@ -235,8 +234,7 @@ namespace ThuyKieu.Core.Editor
             Set(dog, "_head", head.transform);
 
             // The guard on his round with a lantern.
-            var guard = StaticActor("NguoiCanh", "NguoiCanh", "Assets/_Game/Art/Characters/LinhCanh/Static/LinhCanh.obj",
-                "Assets/_Game/Art/Characters/LinhCanh/Static/texture_pbr_20250901.png", 1.76f, new Vector3(4f, 0, -4f), 90f);
+            var guard = CharacterActor("NguoiCanh", "NguoiCanh", "LinhCanh", 1.76f, new Vector3(4f, 0, -4f), 90f);
             vision = guard.gameObject.AddComponent<VisionSensor>();
             var eyes = Point("Eyes", guard.transform.position + Vector3.up * 1.62f, 0, guard.transform);
             eyes.localRotation = Quaternion.identity;
@@ -265,8 +263,7 @@ namespace ThuyKieu.Core.Editor
             Lantern("GuardLantern", guard.transform.position + guard.transform.right * 0.35f + Vector3.up * 1.15f, new Color(1f, 0.55f, 0.2f), guard.transform, 4.5f, 1.3f);
             AddAlertIcon(guard.transform, vision, patrol);
 
-            tuBa = StaticActor("TuBa", "TuBa", "Assets/_Game/Art/Characters/TuBa/StaticV2/TuBa.obj",
-                "Assets/_Game/Art/Characters/TuBa/StaticV2/texture_pbr_20250901.png", 1.62f, new Vector3(1.1f, 0, 1.4f), 100f, 42f);
+            tuBa = CharacterActor("TuBa", "TuBa", "TuBa", 1.62f, new Vector3(1.1f, 0, 1.4f), 100f);
             return root;
         }
 

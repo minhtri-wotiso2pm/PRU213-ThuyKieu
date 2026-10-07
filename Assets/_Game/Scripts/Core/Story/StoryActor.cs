@@ -99,8 +99,15 @@ namespace ThuyKieu.Core.Story
             if (_agent != null) _agent.enabled = false;
             transform.SetPositionAndRotation(feet, facing * Quaternion.Euler(0f, 180f, 0f));
             _faceTarget = null;
-            _lying = _staticVisual != null;
             _lyingHeight = bedHeight;
+            _lying = _staticVisual != null;
+            if (_lying || _animator == null) return;
+            // Rigged model: tip the whole model onto its back once; its idle slowed down reads as sleeping breath.
+            var model = _animator.transform;
+            model.localPosition += Vector3.up * bedHeight;
+            model.localRotation = Quaternion.Euler(-90f, 0f, 0f) * model.localRotation;
+            _animator.speed = 0.35f;
+            SetTalking(false, 0);
         }
 
         /// <summary>Called once the runtime NavMesh exists.</summary>

@@ -68,14 +68,10 @@ namespace ThuyKieu.Core.Editor
                 Chapter03Setup.Zone(restricted, "Nhà bếp", new Vector3(-11.2f, 1f, -9.5f), new Vector3(4.4f, 2f, 5.8f));
 
                 // ------------------------------------------------------------ characters
-                var tuBa = StaticActor("TuBa", "TuBa", "Assets/_Game/Art/Characters/TuBa/StaticV2/TuBa.obj",
-                    "Assets/_Game/Art/Characters/TuBa/StaticV2/texture_pbr_20250901.png", 1.62f, new Vector3(-8.4f, 0, 6.7f), 270f, 42f);
-                var guard = StaticActor("NguoiCanh", "NguoiCanh", "Assets/_Game/Art/Characters/LinhCanh/Static/LinhCanh.obj",
-                    "Assets/_Game/Art/Characters/LinhCanh/Static/texture_pbr_20250901.png", 1.76f, new Vector3(-6.6f, 0, 7.6f), 270f);
-                var doorGuard = StaticActor("NguoiCanhCua", "NguoiCanh", "Assets/_Game/Art/Characters/LinhCanh/Static/LinhCanh.obj",
-                    "Assets/_Game/Art/Characters/LinhCanh/Static/texture_pbr_20250901.png", 1.74f, new Vector3(-6.9f, 0, 5.4f), 200f);
-                var coLam = RiggedActor("CoLam", "CoLam", "Assets/_Game/Art/Characters/MeThuyKieu/Models/MeThuyKieu_Rigged.fbx",
-                    "Assets/_Game/Art/Characters/MeThuyKieu/Tectures", 1.6f, new Vector3(-7.4f, 0, -4.2f), 90f, new Color(0.7f, 0.82f, 1f), shared);
+                var tuBa = CharacterActor("TuBa", "TuBa", "TuBa", 1.62f, new Vector3(-8.4f, 0, 6.7f), 270f);
+                var guard = CharacterActor("NguoiCanh", "NguoiCanh", "LinhCanh", 1.76f, new Vector3(-6.6f, 0, 7.6f), 270f);
+                var doorGuard = CharacterActor("NguoiCanhCua", "NguoiCanh", "LinhCanh", 1.74f, new Vector3(-6.9f, 0, 5.4f), 200f);
+                var coLam = CharacterActor("CoLam", "CoLam", "LauXanh1", 1.6f, new Vector3(-7.4f, 0, -4.2f), 90f);
                 var guests = new[]
                 {
                     RiggedActor("KhachA", "Khach", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
@@ -194,7 +190,7 @@ namespace ThuyKieu.Core.Editor
                 Set(worldScript, "_hallSpot", hallSpot);
                 Set(worldScript, "_roomSpot", tuBaChair);
                 Set(worldScript, "_sleepSpot", sleepSpot);
-                Set(worldScript, "_keyRing", StoryPropKit.KeyRing(tuBa.transform.Find("Visual"), new Vector3(0.24f, 0.86f, 0.06f)));
+                Set(worldScript, "_keyRing", KeysAtBelt(tuBa));
                 Set(worldScript, "_playerRoom", playerRoom);
                 Set(worldScript, "_keyTarget", keyTarget);
                 Set(worldScript, "_guests", guests);
@@ -378,6 +374,20 @@ namespace ThuyKieu.Core.Editor
                 light.shadows = LightShadows.Soft;
                 light.shadowStrength = 0.85f;
             }
+        }
+
+        /// <summary>Tú Bà's key ring on her right hip: parented to the hip bone so it follows her walk and her sleep.</summary>
+        private static GameObject KeysAtBelt(StoryActor tuBa)
+        {
+            var animator = tuBa.GetComponentInChildren<Animator>();
+            var hips = animator != null && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.Hips) : null;
+            var holder = hips != null ? hips : tuBa.transform;
+            var ring = StoryPropKit.KeyRing(holder, Vector3.zero);
+            ring.transform.position = tuBa.transform.TransformPoint(new Vector3(0.2f, 0.88f, 0.08f));
+            ring.transform.rotation = tuBa.transform.rotation;
+            Vector3 scale = holder.lossyScale;
+            ring.transform.localScale = new Vector3(1f / scale.x, 1f / scale.y, 1f / scale.z);
+            return ring;
         }
 
         private static void Look(string name, Vector3 position, Vector3 target, Transform parent)

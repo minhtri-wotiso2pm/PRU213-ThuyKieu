@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: TuBaStory
+  m_Controller: {fileID: 9100000, guid: 0efd779a78433a84fbca1b463917eba8, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -203655887218126122, guid: c5904bbcd39625b41a44e8e9d7995554, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 3f83d97370529ef45a03babaf3ade15f, type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 298e91a4ac22c2f4bba66c00877c28d6, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 9bf55ade14670bf4e803dad6f41a3c8b, type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 15637fa18eeb0f6468970f080bc9cd58, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: b2c555865cd02e443805c536c55ad360, type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 8b6e6451119d80640af913ed70f2fb1d, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: ee4b1e2ee9b9216439e3f26d43f139a0, type: 3}
