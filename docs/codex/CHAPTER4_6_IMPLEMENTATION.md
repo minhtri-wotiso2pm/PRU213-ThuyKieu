@@ -123,3 +123,15 @@ Nhân vật mới trong `SpeakerCatalog`: `KimTrong`, `BaHangNuoc`, `ThuLai`, `C
 - Ch4 dùng lại hàm dựng nhà Ch3. Đổi bố cục nhà Ch3 thì Ch4 đổi theo; cửa sau và bếp chỉ có trong bản đêm.
 - Độ khó đặt ở mức *vừa phải, checkpoint dày* theo yêu cầu. Thông số nằm trong Inspector của `GuardPatrol`, `VisionSensor`, `ChaseSequence` (`_catchDistance`, tốc độ dây thun) và `ForestRunSequence` (`_window`, `_mashCount`).
 - Thanh "lộ diện" chỉ tính đèn point/spot. Đèn lồng không có `Light` thì chỉ là trang trí.
+
+## 8. Kết quả kiểm thử khi bàn giao (2026-10-07)
+- **Ink validator**: 6 chương × 1.500 lượt — PASS. Không có lượt nào bị kẹt; hồ sơ Ch6 phân bố đủ từ 1 đến 4 loại bằng chứng.
+- **Hồi quy Chương 1**: 103/103.
+- **Autopilot trong Editor**:
+  - Ch2→Ch6 nối liền với seed 4, 5 (thorough) và seed 6 — PASS.
+  - Ch4→Ch6 với seed 1, 2 (có chụp ảnh) và seed 3 (thorough) — PASS.
+  - Mọi đường thua đều được thử: checkpoint Ch2/3/4/6, Tú Bà cựa mình, bị bắt khi lẻn ra / ở ngõ / trong rừng.
+  - Người đuổi áp sát tới 4,8 m.
+- **Bản Windows** (`../Builds/Windows/ThuyKieu.exe`): autopilot thorough seed 9 nối Ch2→Ch6 — PASS, không lỗi.
+- **Lồng tiếng**: 440 câu thoại Ch1–6 đều có clip.
+- **Chưa kiểm được bằng tay**: cảm giác độ khó thực tế (tốc độ người đuổi, cửa sổ QTE, độ nhạy tầm nhìn). Nên chơi thử một lượt rồi chỉnh các thông số ở mục 7.
