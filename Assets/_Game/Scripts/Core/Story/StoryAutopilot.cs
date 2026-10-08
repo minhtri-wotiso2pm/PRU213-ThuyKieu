@@ -28,6 +28,40 @@ namespace ThuyKieu.Core.Story
         private static float _startTime;
 
         [SerializeField] private StoryDirector _director;
+        private readonly List<float> _frames = new List<float>();
+        private int _explores;
+
+        /// <summary>"-autopilotMidSave": let the director write its mid-chapter save even under the autopilot.</summary>
+        public static bool MidSaveTest => Enabled && System.Environment.GetCommandLineArgs().Contains("-autopilotMidSave");
+
+        /// <summary>"-autopilotStopAtExplore N": end the run when the Nth explore checkpoint is reached.</summary>
+        private static int StopAtExplore
+        {
+            get
+            {
+                var args = System.Environment.GetCommandLineArgs();
+                int index = Array.IndexOf(args, "-autopilotStopAtExplore");
+                return index >= 0 && index + 1 < args.Length && int.TryParse(args[index + 1], out int n) ? n : 0;
+            }
+        }
+        private float _sceneStart;
+
+        /// <summary>Frame times of this scene, skipping the first two seconds of loading and shader warm-up.</summary>
+        private void Update()
+        {
+            if (_sceneStart <= 0f) _sceneStart = Time.realtimeSinceStartup;
+            if (Time.realtimeSinceStartup - _sceneStart > 2f) _frames.Add(Time.unscaledDeltaTime);
+        }
+
+        /// <summary>Average fps, the 1% low (the slowest 1% of frames) and the worst frame.</summary>
+        private string FrameStats()
+        {
+            if (_frames.Count == 0) return "no frames";
+            var sorted = _frames.OrderByDescending(f => f).ToList();
+            float average = _frames.Average();
+            float low = sorted.Take(Mathf.Max(1, sorted.Count / 100)).Average();
+            return $"avg {1f / average:F0} fps · 1% low {1f / low:F0} fps · worst {sorted[0] * 1000f:F0} ms · {_frames.Count} frames · {Screen.width}x{Screen.height}";
+        }
 
         public static bool Enabled => System.Environment.GetCommandLineArgs().Contains(Flag);
         public static string ReportPath
@@ -82,6 +116,8 @@ namespace ThuyKieu.Core.Story
         {
             if (!Enabled) return;
             var args = System.Environment.GetCommandLineArgs();
+            // "-autopilotResume": start the chapter from its mid-chapter save, as "Continue" does.
+            if (args.Contains("-autopilotResume")) InkStatePersistence.Ensure().ResumeMid = true;
             int index = Array.IndexOf(args, "-autopilotScene");
             if (index < 0 || index + 1 >= args.Length) return;
             string scene = args[index + 1];
@@ -181,6 +217,13 @@ namespace ThuyKieu.Core.Story
                 }
                 if (_director.InExplore)
                 {
+                    if (StopAtExplore > 0 && ++_explores >= StopAtExplore)
+                    {
+                        // Mid-save QA: the director has just written its checkpoint for this explore.
+                        Log.Add($"[{Elapsed()}] STOP at explore {_explores} · player {_director.Player.transform.position:F2} · clues {_director.Clues.Count}");
+                        Finish("PASS");
+                        yield break;
+                    }
                     if (capture && exploreShots < 2) { yield return new WaitForSecondsRealtime(1.5f); StoryCapture.Shot(prefix + "explore_" + ++exploreShots); }
                     if (capture && exploreShots == 2 && _director.Clues.Count > 0 && !_menusShot) yield return CaptureMenus(prefix);
                     yield return Explore(capture);
@@ -189,6 +232,7 @@ namespace ThuyKieu.Core.Story
             }
             if (capture) { yield return new WaitForSecondsRealtime(1.2f); StoryCapture.Shot(prefix + "zz_complete"); }
             Log.Add($"[{Elapsed()}] CHAPTER {_director.ChapterNumber} COMPLETE · lines {lines} · choices {choices}");
+            Log.Add($"[{Elapsed()}] FRAMES {SceneManager.GetActiveScene().name} · {FrameStats()}");
             string[] variables = _director.ChapterNumber == ChapterCatalog.Prologue ? new[] { "pl_che_kieu", "pl_vat", "pl_hanh_dong", "tinh_tao", "tu_trong" }
                 : _director.ChapterNumber <= 3 ? new[] { "nghi_ngo", "manh_moi", "suy_luan", "gia_vo", "c3_viec", "c3_khe_uoc", "c3_bi_bat", "tra_loi_kieu_that" }
                 : _director.ChapterNumber == 4 ? new[] { "c4_viec", "c4_canh_giac", "c4_tien", "c4_van_tu", "c4_so_no", "c4_ru_co_lam", "c4_bi_bat" }

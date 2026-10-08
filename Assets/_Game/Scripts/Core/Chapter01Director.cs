@@ -168,9 +168,7 @@ namespace ThuyKieu.Core
         {
             if (_continuing) return;
             _continuing = true;
-            if (Application.CanStreamedLevelBeLoaded("Chapter02_RoadToMaGiamSinh"))
-                SceneManager.LoadScene("Chapter02_RoadToMaGiamSinh");
-            else SceneManager.LoadScene("Chapter02_Placeholder");
+            SceneManager.LoadScene("Chapter02_RoadToMaGiamSinh");
             Debug.Log("Chapter 1 Complete");
         }
         private void OnDestroy()

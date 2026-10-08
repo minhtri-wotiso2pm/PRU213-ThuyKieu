@@ -155,6 +155,7 @@ namespace ThuyKieu.Core.Story
                 if (colon > 0) _lastTags[tag.Substring(0, colon)] = tag.Substring(colon + 1);
             }
             if (save.Tags.Count > 0) RouteTags(save.Tags.ToArray());
+            StoryAutopilot.Note("RESUME mid-save · tags " + string.Join(" ", save.Tags) + " · to " + save.Position.ToString("F2"));
             yield return new WaitForSecondsRealtime(1.6f);
             _player.Teleport(save.Position, Quaternion.Euler(0f, save.Yaw, 0f));
             if (_camera != null) _camera.SnapBehindTarget(save.Yaw);
@@ -325,7 +326,7 @@ namespace ThuyKieu.Core.Story
                 PlayerRotation = _player.transform.rotation,
                 ClueCount = _clues.Count
             };
-            if (Autopilot || ChapterComplete) return;
+            if ((Autopilot && !StoryAutopilot.MidSaveTest) || ChapterComplete) return;
             // The same moment is the mid-chapter save: "Continue" from the menu comes back here.
             MidChapterSave.Write(new MidChapterSave.Data
             {
