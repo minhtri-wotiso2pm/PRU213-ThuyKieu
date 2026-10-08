@@ -51,7 +51,9 @@ namespace ThuyKieu.Core.Editor
             var scene = EditorSceneManager.OpenScene(ScenePath);
             var roots = scene.GetRootGameObjects();
             var links = CollectLinks(roots);
-            foreach (var root in roots) if (Replaced.Contains(root.name)) Object.DestroyImmediate(root);
+            // A story rebuild regenerates the shared UI prefab, which leaves its old instance here as a missing prefab.
+            foreach (var root in roots)
+                if (Replaced.Contains(root.name) || PrefabUtility.IsPrefabAssetMissing(root)) Object.DestroyImmediate(root);
             foreach (var t in scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Transform>(true)).Where(t => Obsolete.Contains(t.name)).ToList())
                 if (t != null) Object.DestroyImmediate(t.gameObject);
             foreach (var go in scene.GetRootGameObjects().SelectMany(r => r.GetComponentsInChildren<Transform>(true)).Select(t => t.gameObject))
@@ -307,7 +309,7 @@ namespace ThuyKieu.Core.Editor
         private static List<Link> CollectLinks(GameObject[] roots)
         {
             var links = new List<Link>();
-            foreach (var kept in roots.Where(r => !Replaced.Contains(r.name)))
+            foreach (var kept in roots.Where(r => !Replaced.Contains(r.name) && !PrefabUtility.IsPrefabAssetMissing(r)))
                 foreach (var owner in kept.GetComponentsInChildren<MonoBehaviour>(true))
                 {
                     if (owner == null) continue;
