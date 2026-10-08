@@ -76,7 +76,7 @@ namespace ThuyKieu.Gameplay.Sequences
             Item(b, "Hồ sơ: " + v.GetInt("c6_ho_so") + "/4 loại bằng chứng · " + v.GetInt("ev_nhan_chung") + " nhân chứng.");
             Header(b, "CHƯƠNG 7 · NGHỊCH MỆNH");
             Item(b, "Mâu thuẫn vạch ra trước công đường: " + v.GetInt("c7_diem") + " điểm.");
-            Item(b, "Lòng tin của quan huyện lúc kết thúc: " + v.GetInt("c7_long_tin") + "%" + (v.GetInt("c7_that_bai") > 0 ? " · phải làm lại " + v.GetInt("c7_that_bai") + " lần." : "."));
+            Item(b, "Lòng tin của quan huyện lúc kết thúc: " + v.GetInt("c7_long_tin") + "%" + (v.GetInt("c7_thua_vong") > 0 ? " · thua " + v.GetInt("c7_thua_vong") + " vòng đối chất." : "."));
             if (v.GetInt("c7_lui") > 0) Item(b, "Một nhân chứng đã lùi bước trước lời dọa của Tú Bà.");
             else if (v.GetBool("c7_nhan_chung_vung")) Item(b, "Không nhân chứng nào lùi bước.");
             return b.ToString();

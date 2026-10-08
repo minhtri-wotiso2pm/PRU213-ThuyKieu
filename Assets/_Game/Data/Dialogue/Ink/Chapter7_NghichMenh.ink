@@ -4,7 +4,7 @@
 // Chủ đề: Kiều tự đứng ra trước công đường, dùng hồ sơ Chương 6 lật lại đơn kiện "đứa ở trốn lấy trộm bạc".
 // Nhịp: Cổng huyện đường (chuẩn bị · đánh trống kêu oan) → Đối chất ba vòng (Tú Bà · Mã Giám Sinh · Tú Bà)
 //       → Phán quyết (3 sắc thái) → Cha và em được cứu → Kiều thật lần cuối → Ánh sáng.
-// Unity ghi: c7_r1, c7_r2, c7_r3 (điểm từng vòng), c7_diem (tổng), c7_long_tin (lòng tin của quan khi kết thúc), c7_that_bai.
+// Unity ghi: c7_r1, c7_r2, c7_r3 (điểm từng vòng), c7_diem (tổng), c7_long_tin (lòng tin của quan khi kết thúc), c7_thua_vong.
 // ============================================================
 
 === chapter_7 ===

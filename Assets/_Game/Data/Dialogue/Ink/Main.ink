@@ -111,7 +111,7 @@ VAR c7_r2 = 0
 VAR c7_r3 = 0
 VAR c7_diem = 0           // tổng điểm đối chất (Unity ghi)
 VAR c7_long_tin = 0       // lòng tin của quan huyện khi kết thúc, 0–100 (Unity ghi)
-VAR c7_that_bai = 0       // số lần quan mất kiên nhẫn, phải làm lại vòng (Unity ghi)
+VAR c7_thua_vong = 0      // số vòng đối chất bị thua: quan mất kiên nhẫn, tự xét giấy tờ (Unity ghi)
 VAR c7_ket = 0            // sắc thái kết: 1 chật vật · 2 ấm · 3 trọn vẹn
 
 INCLUDE Chapter1_GiaBien.ink

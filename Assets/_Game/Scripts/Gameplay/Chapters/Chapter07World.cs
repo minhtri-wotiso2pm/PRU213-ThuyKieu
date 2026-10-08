@@ -242,7 +242,7 @@ namespace ThuyKieu.Gameplay.Chapters
             int ending = (int)v["c7_ket"];
             yield return "Phán quyết: " + (ending == 3 ? "trọn vẹn — lầu xanh bị niêm phong, ba người con gái được tìm về." : ending == 2 ? "Mã Giám Sinh bị giam, Tú Bà bị phạt nặng." : "Kiều được tự do, nhưng Tú Bà chỉ nộp phạt.");
             yield return "Điểm đối chất: " + (int)v["c7_diem"] + " · lòng tin của quan: " + (int)v["c7_long_tin"] + "%.";
-            if ((int)v["c7_that_bai"] > 0) yield return "Quan huyện mất kiên nhẫn " + (int)v["c7_that_bai"] + " lần.";
+            if ((int)v["c7_thua_vong"] > 0) yield return "Quan huyện phải tự xét giấy tờ " + (int)v["c7_thua_vong"] + " vòng.";
             yield return "Vương Ông và Vương Quan được trắng án.";
             yield return "<i>Kết — Trở lại lớp học.</i>";
         }

@@ -22,6 +22,8 @@ namespace ThuyKieu.UI
             public bool Disproved;
             /// <summary>Pressing changed what the witness says.</summary>
             public bool Revised;
+            /// <summary>Marked by a hint after repeated mistakes: this statement can be broken now.</summary>
+            public bool Hinted;
         }
 
         public struct Card
@@ -105,9 +107,12 @@ namespace ThuyKieu.UI
                 var entry = SpeakerCatalog.Get(rows[i].Speaker);
                 string text = rows[i].Disproved ? "<s><color=#FFFFFF66>" + rows[i].Text + "</color></s>  <size=80%><color=#9BE39B>— đã bác bỏ</color></size>" : rows[i].Text;
                 if (rows[i].Revised && !rows[i].Disproved) text += "  <size=80%><color=#E8C27A>(đã sửa lời)</color></size>";
+                bool hinted = rows[i].Hinted && !rows[i].Disproved;
+                if (hinted) text += "  <size=80%><color=#F07A6A>(có chỗ sai)</color></size>";
                 button.GetComponentInChildren<TMP_Text>().text = "<color=#E8C27A>" + (i + 1) + "</color>  <size=80%><color=#" + ColorUtility.ToHtmlStringRGB(entry.Color) + ">" +
                                                                  entry.DisplayName + "</color></size>\n" + text;
-                button.GetComponent<Image>().color = i == selected ? new Color(0.36f, 0.22f, 0.1f, 0.95f) : new Color(1, 1, 1, 0.05f);
+                button.GetComponent<Image>().color = i == selected ? new Color(0.36f, 0.22f, 0.1f, 0.95f)
+                    : hinted ? new Color(0.75f, 0.2f, 0.15f, 0.35f) : new Color(1, 1, 1, 0.05f);
                 button.onClick.AddListener(() => ClickedRow = index);
                 _rowButtons.Add(button);
             }

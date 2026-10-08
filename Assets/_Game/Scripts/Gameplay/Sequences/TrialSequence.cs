@@ -15,8 +15,10 @@ namespace ThuyKieu.Gameplay.Sequences
     /// correct a detail, opening a new contradiction) or presents evidence from the Chapter 6 dossier against it.
     /// The right evidence breaks the statement and raises the magistrate's trust; the wrong one costs trust. The round
     /// ends when its key statement falls; every other broken statement adds to the score that sets the ending's tone.
-    /// At zero trust Kim Trọng speaks up once (if the plan was made at the gate); after that the round restarts.
-    /// Writes c7_r&lt;round&gt;, c7_diem, c7_long_tin and c7_that_bai.
+    /// Mistakes earn hints (an inner-voice nudge, then a marked statement and the card to use). At zero trust Kim Trọng
+    /// speaks up once (if the plan was made at the gate); after that the round is lost — never replayed: the magistrate
+    /// reads the papers himself, the story goes on, and the round scores nothing.
+    /// Writes c7_r&lt;round&gt;, c7_diem, c7_long_tin and c7_thua_vong.
     /// </summary>
     public class TrialSequence : StorySequence
     {
@@ -38,7 +40,7 @@ namespace ThuyKieu.Gameplay.Sequences
             public bool Key;
             /// <summary>The proofs only fit once the witness has corrected the claim under pressing.</summary>
             public bool NeedsRevision;
-            public bool Revised, Disproved;
+            public bool Revised, Disproved, Hinted;
             public Line Current => Revised ? Revision : Claim;
         }
 
@@ -47,7 +49,7 @@ namespace ThuyKieu.Gameplay.Sequences
         [SerializeField] private TrialView _view;
         [SerializeField, Range(1, 3)] private int _round = 1;
 
-        private const float StartTrust = 0.6f, RetryTrust = 0.5f, WrongCost = 0.2f, ProofGain = 0.15f;
+        private const float StartTrust = 0.6f, RecoverTrust = 0.4f, LostTrust = 0.1f, WrongCost = 0.2f, ProofGain = 0.15f;
         private static bool _lifelineUsed;
 
         private StoryDirector _director;
@@ -62,104 +64,170 @@ namespace ThuyKieu.Gameplay.Sequences
             director.CameraController.SetCursorLocked(false);
             if (director.Audio != null) director.Audio.PlayMusic("trial");
             if (_round == 1) _lifelineUsed = false;
-            _trust = _round == 1 || director.GetInt("c7_long_tin") <= 0 ? StartTrust : director.GetInt("c7_long_tin") / 100f;
+            // A lost round leaves the magistrate cold, but the next witness still gets a fair hearing.
+            _trust = _round == 1 ? StartTrust : Mathf.Max(RecoverTrust, director.GetInt("c7_long_tin") / 100f);
             bool thorough = director.Autopilot && System.Environment.GetCommandLineArgs().Contains("-autopilotThorough");
-            bool forcedFail = false;
+            bool forcedLoss = false;
 
-            while (true)
+            var statements = Build();
+            var evidence = Available();
+            string witness = statements[0].Claim.Speaker;
+            _view.Open("ĐỐI CHẤT · VÒNG " + _round + " / 3", "Lời khai của " + SpeakerCatalog.Get(witness).DisplayName + " · bằng chứng trong tay: " + evidence.Count);
+            _view.SetTrust(_trust);
+            int score = 0, selected = 0, mistakes = 0;
+            bool lost = false;
+            Refresh(statements, selected);
+            Shot("CU_" + witness);
+            yield return Speak(statements[0].Claim, 0.6f);
+
+            while (!statements.Any(s => s.Key && s.Disproved))
             {
-                var statements = Build();
-                var evidence = Available();
-                string witness = statements[0].Claim.Speaker;
-                _view.Open("ĐỐI CHẤT · VÒNG " + _round + " / 3", "Lời khai của " + SpeakerCatalog.Get(witness).DisplayName + " · bằng chứng trong tay: " + evidence.Count);
-                _view.SetTrust(_trust);
-                int score = 0, selected = 0;
-                bool failed = false;
+                // Pick an action: (statement, press) or (statement, evidence index).
+                int action = -1, card = -1;
+                if (director.Autopilot)
+                {
+                    yield return new WaitForSecondsRealtime(0.15f);
+                    // Thorough QA walks both hints in round 1 and a lost round in round 2.
+                    if (thorough && _round == 1 && mistakes < 2) { selected = 0; card = WrongCard(statements[0], evidence); action = 2; }
+                    else if (thorough && _round == 2 && !forcedLoss) { forcedLoss = true; _trust = 0.01f; selected = 0; card = WrongCard(statements[0], evidence); action = 2; }
+                    else AutopilotChoice(statements, evidence, ref selected, out action, out card);
+                }
+                else
+                {
+                    yield return WaitForChoice(statements, evidence, selected, (s, a, c) => { selected = s; action = a; card = c; });
+                }
                 Refresh(statements, selected);
-                Shot("CU_" + witness);
-                yield return Speak(statements[0].Claim, 0.6f);
+                var statement = statements[selected];
+                if (action == 1) { yield return PressStatement(statement); Refresh(statements, selected); continue; }
 
-                while (!statements.Any(s => s.Key && s.Disproved))
+                var proof = card >= 0 && (!statement.NeedsRevision || statement.Revised)
+                    ? statement.Proofs.FirstOrDefault(p => p.Evidence == evidence[card].Id) : null;
+                if (proof != null)
                 {
-                    // Pick an action: (statement, press) or (statement, evidence index).
-                    int action = -1, card = -1;
-                    if (director.Autopilot)
-                    {
-                        yield return new WaitForSecondsRealtime(0.15f);
-                        if (thorough && !forcedFail) { forcedFail = true; _trust = 0.01f; selected = 0; card = WrongCard(statements[0], evidence); action = 2; }
-                        else AutopilotChoice(statements, evidence, ref selected, out action, out card);
-                    }
-                    else
-                    {
-                        yield return WaitForChoice(statements, evidence, selected, (s, a, c) => { selected = s; action = a; card = c; });
-                    }
-                    Refresh(statements, selected);
-                    var statement = statements[selected];
-                    if (action == 1) { yield return PressStatement(statement); Refresh(statements, selected); continue; }
-
-                    var proof = card >= 0 && (!statement.NeedsRevision || statement.Revised)
-                        ? statement.Proofs.FirstOrDefault(p => p.Evidence == evidence[card].Id) : null;
-                    if (proof != null)
-                    {
-                        statement.Disproved = true;
-                        score += proof.Points;
-                        _trust = Mathf.Min(1f, _trust + ProofGain * proof.Points);
-                        _view.SetTrust(_trust);
-                        if (director.Audio != null) director.Audio.PlaySfx("objection");
-                        if (director.Fx != null) director.Fx.Shake(0.25f, 0.35f);
-                        StoryAutopilot.Note("TRIAL r" + _round + " proved statement " + (selected + 1) + " with " + proof.Evidence + (statement.Key ? " (key)" : ""));
-                        yield return _view.Stamp(statement.Key ? "BÁC BỎ!" : "MÂU THUẪN!", statement.Key ? StoryUIBuilder.Vermilion : StoryUIBuilder.Gold, director.Autopilot ? 0.1f : 1.1f);
-                        foreach (var line in proof.Lines) yield return Speak(line, 0.4f);
-                        Refresh(statements, selected);
-                        continue;
-                    }
-
-                    // Wrong evidence (or evidence against a statement that is still true).
-                    _trust -= WrongCost;
+                    statement.Disproved = true;
+                    score += proof.Points;
+                    _trust = Mathf.Min(1f, _trust + ProofGain * proof.Points);
                     _view.SetTrust(_trust);
-                    if (director.Audio != null) director.Audio.PlaySfx("wrong");
-                    if (director.Fx != null) director.Fx.Shake(0.15f, 0.3f);
-                    StoryAutopilot.Note("TRIAL r" + _round + " wrong evidence on statement " + (selected + 1));
-                    Shot("CU_QuanHuyen");
-                    yield return Speak(Wrong(), 0.5f);
-                    if (_trust > 0.001f) continue;
-
-                    if (!_lifelineUsed && director.GetBool("c7_ke_hoach_kt") && !thorough)
-                    {
-                        _lifelineUsed = true;
-                        _trust = 0.35f;
-                        _view.SetTrust(_trust);
-                        Shot("CU_KimTrong");
-                        yield return Speak(Say("KimTrong", "Bẩm quan, xin cho học trò nói một lời. Nàng sợ quá nên rối, không phải nói càn. Xin quan cho nàng xét lại lời khai một lần nữa."), 0.6f);
-                        Shot("CU_QuanHuyen");
-                        yield return Speak(Say("QuanHuyen", "Nể mặt nhà họ Kim. Lần này thôi đấy."), 0.6f);
-                        continue;
-                    }
-                    failed = true;
-                    break;
+                    if (director.Audio != null) director.Audio.PlaySfx("objection");
+                    if (director.Fx != null) director.Fx.Shake(0.25f, 0.35f);
+                    StoryAutopilot.Note("TRIAL r" + _round + " proved statement " + (selected + 1) + " with " + proof.Evidence + (statement.Key ? " (key)" : ""));
+                    yield return _view.Stamp(statement.Key ? "BÁC BỎ!" : "MÂU THUẪN!", statement.Key ? StoryUIBuilder.Vermilion : StoryUIBuilder.Gold, director.Autopilot ? 0.1f : 1.1f);
+                    foreach (var line in proof.Lines) yield return Speak(line, 0.4f);
+                    Refresh(statements, selected);
+                    continue;
                 }
 
-                if (!failed)
+                // Wrong evidence (or evidence against a statement that is still true).
+                _trust -= WrongCost;
+                mistakes++;
+                _view.SetTrust(_trust);
+                if (director.Audio != null) director.Audio.PlaySfx("wrong");
+                if (director.Fx != null) director.Fx.Shake(0.15f, 0.3f);
+                StoryAutopilot.Note("TRIAL r" + _round + " wrong evidence on statement " + (selected + 1));
+                Shot("CU_QuanHuyen");
+                yield return Speak(Wrong(), 0.5f);
+                if (_trust > 0.001f)
                 {
-                    director.SetInt("c7_r" + _round, score);
-                    director.SetInt("c7_diem", director.GetInt("c7_r1") + director.GetInt("c7_r2") + director.GetInt("c7_r3"));
-                    director.SetInt("c7_long_tin", Mathf.Clamp(Mathf.RoundToInt(_trust * 100f), 1, 100));
-                    StoryAutopilot.Note("TRIAL r" + _round + " done · score " + score + " · trust " + Mathf.RoundToInt(_trust * 100f));
-                    yield return new WaitForSecondsRealtime(director.Autopilot ? 0f : 0.8f);
-                    _view.Close();
-                    yield break;
+                    yield return Hint(statements, evidence, mistakes);
+                    Refresh(statements, selected);
+                    continue;
                 }
 
-                // Out of patience: a fail card, then the round starts over (the dense checkpoint the chapter promises).
-                director.SetInt("c7_that_bai", director.GetInt("c7_that_bai") + 1);
-                StoryAutopilot.Note("TRIAL r" + _round + " lost the magistrate → round restarts");
-                _view.Close();
+                if (!_lifelineUsed && director.GetBool("c7_ke_hoach_kt") && !thorough)
+                {
+                    _lifelineUsed = true;
+                    _trust = 0.35f;
+                    _view.SetTrust(_trust);
+                    Shot("CU_KimTrong");
+                    yield return Speak(Say("KimTrong", "Bẩm quan, xin cho học trò nói một lời. Nàng sợ quá nên rối, không phải nói càn. Xin quan cho nàng xét lại lời khai một lần nữa."), 0.6f);
+                    Shot("CU_QuanHuyen");
+                    yield return Speak(Say("QuanHuyen", "Nể mặt nhà họ Kim. Lần này thôi đấy."), 0.6f);
+                    yield return Hint(statements, evidence, Mathf.Max(mistakes, 2));
+                    Refresh(statements, selected);
+                    continue;
+                }
+                lost = true;
+                break;
+            }
+
+            if (lost)
+            {
+                // Out of patience: the magistrate reads the papers himself. The truth still comes out, but not from Kiều.
+                StoryAutopilot.Note("TRIAL r" + _round + " lost the magistrate → round lost, story goes on");
                 if (director.Audio != null) director.Audio.PlaySfx("fail");
-                yield return director.Hud.FailCard("Quan huyện mất kiên nhẫn!",
-                    "Chỉ đưa bằng chứng khi đã thấy rõ câu khai nào sai. Hỏi vặn trước — người khai đôi khi tự sửa lời và lộ sơ hở.",
-                    director.Autopilot ? 0f : 2.4f);
-                yield return director.Hud.Fade(0f, 0.5f);
-                _trust = RetryTrust;
+                foreach (var s in statements) if (s.Key) s.Disproved = true;
+                Refresh(statements, selected);
+                yield return _view.Stamp("QUAN TỰ XÉT", StoryUIBuilder.Vermilion, director.Autopilot ? 0.1f : 1.4f);
+                foreach (var line in Takeover()) yield return Speak(line, 0.4f);
+                score = 0;
+                _trust = LostTrust;
+                _view.SetTrust(_trust);
+                director.SetInt("c7_thua_vong", director.GetInt("c7_thua_vong") + 1);
+            }
+
+            director.SetInt("c7_r" + _round, score);
+            director.SetInt("c7_diem", director.GetInt("c7_r1") + director.GetInt("c7_r2") + director.GetInt("c7_r3"));
+            director.SetInt("c7_long_tin", Mathf.Clamp(Mathf.RoundToInt(_trust * 100f), 1, 100));
+            StoryAutopilot.Note("TRIAL r" + _round + (lost ? " lost" : " done") + " · score " + score + " · trust " + Mathf.RoundToInt(_trust * 100f));
+            yield return new WaitForSecondsRealtime(director.Autopilot ? 0f : 0.8f);
+            _view.Close();
+        }
+
+        // ------------------------------------------------------------------ hints
+
+        /// <summary>
+        /// After a mistake: the first nudges towards the statement that ends the round; from the second on, that
+        /// statement is marked and the card that breaks it is named — by Kiều Thật when the two souls are close,
+        /// by Kim Trọng when the plan was made at the gate, otherwise by the inner voice.
+        /// </summary>
+        private IEnumerator Hint(List<Statement> statements, List<Evidence> evidence, int mistakes)
+        {
+            int target = statements.FindIndex(s => s.Key && !s.Disproved);
+            if (target < 0) yield break;
+            int card = Card(statements[target], evidence);
+            string n = (target + 1).ToString();
+            if (mistakes <= 1 || card < 0)
+            {
+                yield return Speak(Say("NoiTam", "Khoan. Đừng đánh vào chỗ râu ria. Câu thứ " + n + " mới là điều họ cần giấu nhất."), 0.4f);
+                yield break;
+            }
+
+            statements[target].Hinted = true;
+            string title = evidence[card].Title;
+            if (_director.GetInt("dong_dieu") >= 5)
+                yield return Speak(Say("KieuThat", "Câu thứ " + n + ". Ta còn nhớ tờ \"" + title + "\" — nó đang nằm trong tay ngươi."), 0.4f);
+            else if (_director.GetBool("c7_ke_hoach_kt"))
+                yield return Speak(Say("KimTrong", "(khẽ) Câu thứ " + n + ". Đưa \"" + title + "\" ra, nàng."), 0.4f);
+            else
+                yield return Speak(Say("NoiTam", "Bình tĩnh. Câu thứ " + n + " — \"" + title + "\" là đủ để bẻ nó."), 0.4f);
+        }
+
+        /// <summary>What the magistrate says when he stops listening and reads the key paper himself.</summary>
+        private Line[] Takeover()
+        {
+            switch (_round)
+            {
+                case 1:
+                    return new[]
+                    {
+                        Say("QuanHuyen", "Đủ rồi! Đưa hết giấy tờ lên đây, bản quan tự xem."),
+                        Say("QuanHuyen", "Giao kèo... \"mỗi người giao đến, trả bốn trăm năm mươi lạng\". Mai mối kiểu gì thế này?"),
+                        Say("NoiTam", "Quan tự tìm ra, không phải nhờ mình. Ông ta chẳng còn tin lời mình nữa.")
+                    };
+                case 2:
+                    return new[]
+                    {
+                        Say("QuanHuyen", "Im cả! Bản quan đọc giấy còn nhanh hơn nghe các ngươi cãi."),
+                        Say("QuanHuyen", "Giao kèo lập từ mùng chín tháng Giêng. Mã Giám Sinh, thế mà ngươi bảo chưa từng gặp mụ?"),
+                        Say("NoiTam", "Lại là quan tự đọc ra. Mình chỉ đứng đó như một cái bóng.")
+                    };
+                default:
+                    return new[]
+                    {
+                        Say("QuanHuyen", "Đủ! Món nợ này bản quan tự tính."),
+                        Say("QuanHuyen", "Bốn trăm năm mươi lạng, đúng bằng giá trên giao kèo. Đây là nợ, hay là giá mua người?"),
+                        Say("NoiTam", "Sự thật vẫn lộ ra. Nhưng không phải từ miệng mình.")
+                    };
             }
         }
 
@@ -233,7 +301,7 @@ namespace ThuyKieu.Gameplay.Sequences
 
         private void Refresh(List<Statement> statements, int selected)
         {
-            _view.ShowRows(statements.Select(s => new TrialView.Row { Speaker = s.Current.Speaker, Text = s.Current.Text, Disproved = s.Disproved, Revised = s.Revised }).ToList(), selected);
+            _view.ShowRows(statements.Select(s => new TrialView.Row { Speaker = s.Current.Speaker, Text = s.Current.Text, Disproved = s.Disproved, Revised = s.Revised, Hinted = s.Hinted }).ToList(), selected);
         }
 
         private IEnumerator PressStatement(Statement statement)
@@ -253,7 +321,8 @@ namespace ThuyKieu.Gameplay.Sequences
         {
             var actor = _director.FindActor(line.Speaker);
             if (actor != null) actor.SetTalking(true, line.Speaker == "TuBa" ? 2 : line.Speaker == "Kieu" ? 4 : 0);
-            if (line.Speaker != "NoiTam") Shot(line.Speaker == "Kieu" ? "CU_Kieu" : "CU_" + line.Speaker);
+            // Inner voices have no body to cut to.
+            if (line.Speaker != "NoiTam" && line.Speaker != "KieuThat") Shot(line.Speaker == "Kieu" ? "CU_Kieu" : "CU_" + line.Speaker);
             _view.ShowLine(line.Speaker, line.Text);
             VoicePlayer.PlayBark(line.Speaker, line.Text);
             if (_director.Autopilot) { yield return new WaitForSecondsRealtime(0.05f); if (actor != null) actor.SetTalking(false, 0); yield break; }

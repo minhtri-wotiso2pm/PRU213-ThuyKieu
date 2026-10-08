@@ -156,7 +156,7 @@ namespace ThuyKieu.Core.Story
                 : _director.ChapterNumber == 4 ? new[] { "c4_viec", "c4_canh_giac", "c4_tien", "c4_van_tu", "c4_so_no", "c4_ru_co_lam", "c4_bi_bat" }
                 : _director.ChapterNumber == 5 ? new[] { "c5_lang_le", "c5_duong", "c5_xo_do", "c5_qte", "c5_co_lam_thoat", "c5_bi_bat" }
                 : _director.ChapterNumber == 6 ? new[] { "kt_tin_tuong", "kt_biet_xuyen_khong", "c6_doi_chieu", "ev_nhan_chung", "ev_giay_no", "ev_tien", "c6_ho_so" }
-                : _director.ChapterNumber == 7 ? new[] { "c7_viec", "c7_nhan_chung_vung", "c7_ke_hoach_kt", "c7_biet_hoi_lo", "c7_lui", "c7_r1", "c7_r2", "c7_r3", "c7_diem", "c7_long_tin", "c7_that_bai", "c7_ket" }
+                : _director.ChapterNumber == 7 ? new[] { "c7_viec", "c7_nhan_chung_vung", "c7_ke_hoach_kt", "c7_biet_hoi_lo", "c7_lui", "c7_r1", "c7_r2", "c7_r3", "c7_diem", "c7_long_tin", "c7_thua_vong", "c7_ket" }
                 : new[] { "c7_ket", "pl_che_kieu", "c7_diem" };
             foreach (string variable in variables)
                 Log.Add("   " + variable + " = " + _director.Story.variablesState[variable]);
