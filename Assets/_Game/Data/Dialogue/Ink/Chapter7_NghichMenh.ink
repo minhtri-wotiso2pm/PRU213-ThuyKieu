@@ -4,7 +4,9 @@
 // Chủ đề: Kiều tự đứng ra trước công đường, dùng hồ sơ Chương 6 lật lại đơn kiện "đứa ở trốn lấy trộm bạc".
 // Nhịp: Cổng huyện đường (chuẩn bị · đánh trống kêu oan) → Đối chất ba vòng (Tú Bà · Mã Giám Sinh · Tú Bà)
 //       → Phán quyết (3 sắc thái) → Cha và em được cứu → Kiều thật lần cuối → Ánh sáng.
-// Unity ghi: c7_r1, c7_r2, c7_r3 (điểm từng vòng), c7_diem (tổng), c7_long_tin (lòng tin của quan khi kết thúc), c7_thua_vong.
+// Unity ghi: c7_r1, c7_r2, c7_r3 (điểm từng vòng), c7_diem (tổng), c7_long_tin (lòng tin của quan khi kết thúc), c7_thua_vong,
+//            lb_ch7 (lời kết lục bát). Kết: thua kiện (c7_thua_kien) · chật vật · ấm · trọn vẹn; sau đó Kiều Thật:
+//            mất mình (đồng điệu ≤ 3) · cảm ơn · Nghịch Mệnh (trọn vẹn + đồng điệu ≥ 7: chọn chia tay hay cùng sống).
 // ============================================================
 
 === chapter_7 ===
@@ -30,6 +32,31 @@ Kim Trọng: Kiều, đừng đáp lại. Trong kia mới là chỗ để nói.
 
 # speaker:NoiTam
 Trong sách, Kiều chưa bao giờ được bước vào một công đường để kể chuyện của mình. Hôm nay, mình sẽ bước vào.
+
+{dinh_menh >= 85:
+    ~ nhan(ts_thanh_lau)
+    # fx:spirit
+    # speaker:TrangSach
+    # page:ts_thanh_lau
+    "Thanh lâu hai lượt, thanh y hai lần."
+    # speaker:Narrator
+    Một tên nha dịch chạy từ trong ra, cúi rạp người chào Tú Bà. Mụ cười, vỗ nhẹ lên tay áo hắn như vỗ một con chó quen.
+    # fx:none
+    # speaker:NoiTam
+    Mình đã xé quá nhiều trang. Câu chuyện đang dồn hết sức kéo mình về: quan trên kia có lẽ đã nhận lễ của mụ. Phải lật tẩy chuyện đút lót, không thì không ai tin mình.
+}
+{dong_dieu >= 7:
+    ~ nhan(ts_chu_tam)
+    # speaker:KieuThat
+    # gameplay:kieu_voice
+    Người ta viết một câu ở trang cuối cuốn sách về ta. Ta chưa từng được nghe ai đọc nó cho ta. Hôm nay ta tặng lại ngươi.
+    # speaker:TrangSach
+    # page:ts_chu_tam
+    "Thiện căn ở tại lòng ta, chữ tâm kia mới bằng ba chữ tài."
+    # fx:none
+    # speaker:NoiTam
+    Không phải chữ tài. Là chữ tâm. Mình sẽ nhớ.
+}
 
 # speaker:Narrator
 # objective:Chuẩn bị trước khi vào công đường · đánh trống kêu oan khi đã sẵn sàng
@@ -213,6 +240,8 @@ Mã Giám Sinh: Bẩm... bẩm quan...
 # camera:CU_TuBa
 Tú Bà: Đồ vô dụng! Quan lớn ơi, nó là con ở của tôi, nợ tôi bạc trắng! Đứa nào dám đứng ra làm chứng cho nó thì liệu hồn!
 
+{ev_nhan_chung > 0 && not c7_nhan_chung_vung && ts_be_dau == 2: -> c7_be_dau ->}
+
 {ev_nhan_chung > 0 && not c7_nhan_chung_vung:
     {
     - nc_co_lam:
@@ -255,20 +284,90 @@ Quan huyện: Im! Nợ hay không nợ, bản quan sẽ xét. Tú Bà, khai cho 
 # gameplay:trial_3
 Tú Bà: Bẩm quan, nợ thì phải trả, xưa nay vẫn thế ạ.
 
+-> c7_loi_ket
+
+
+=== c7_be_dau ===
+// Tunnel: trang "bể dâu" giữ các nhân chứng đứng vững dù chưa được động viên trước.
+# speaker:NoiTam
+# timer:8
+Họ đang run. Mình chưa kịp đến bên họ trước khi vào đây...
+
+* [Lật trang "Trải qua một cuộc bể dâu...": nhìn thẳng vào từng người làm chứng #page:ts_be_dau]
+    ~ dung(ts_be_dau, 10)
+    ~ c7_nhan_chung_vung = true
+    # speaker:Kieu
+    # emotion:determined
+    # camera:Witnesses
+    Kiều: "Trải qua một cuộc bể dâu, những điều trông thấy mà đau đớn lòng." Những gì các người đã thấy, chỉ các người nói được. Hôm nay nói ra, mai sau không ai phải thấy lại nữa.
+    # speaker:NoiTam
+    Không ai lùi lại. Bà hàng nước gật đầu, lần thứ nhất trong buổi sáng nay.
+* [Im lặng, mặc họ tự quyết. #timeout]
+    # speaker:NoiTam
+    Mình không có quyền bắt ai can đảm thay mình.
+- ->->
+
+
+=== c7_loi_ket ===
+# speaker:QuanHuyen
+# emotion:thoughtful
+# camera:CU_QuanHuyen
+Quan huyện: Lời khai đã đủ. Vương Thúy Kiều, trước khi bản quan tuyên, ngươi còn gì muốn nói?
+
+# speaker:NoiTam
+Không phải lý lẽ nữa. Một câu thôi, nói bằng thứ tiếng mà người ở đây hiểu nhất.
+
+# speaker:Kieu
+# emotion:determined
+# camera:CU_Kieu
+# gameplay:lucbat_ch7
+Kiều: Bẩm quan...
+
+{
+- lb_ch7 >= 3:
+    # speaker:QuanHuyen
+    # emotion:thoughtful
+    Quan huyện: ...Đúng luật, đúng lời. Một đứa con gái mà nói được câu ấy trước công đường. Bản quan nhớ rồi.
+- lb_ch7 == 2:
+    # speaker:QuanHuyen
+    Quan huyện: Lời thì hay. Bản quan ghi nhận.
+- else:
+    # speaker:QuanHuyen
+    # emotion:cold
+    Quan huyện: Thơ phú không phải chứng cứ.
+}
 -> c7_phan_quyet
 
 
 === c7_phan_quyet ===
-// Sắc thái kết: 3 trọn vẹn · 2 ấm · 1 chật vật (luôn thắng).
+// Điểm phán quyết = lòng tin cuối + 15 Kim Trọng bảo lãnh + 10 nhân chứng vững + 0/10/20 lục bát − 15 mỗi vòng thua.
+// Kết: ≥ 90 và hồ sơ ≥ 3 → 3 trọn vẹn · ≥ 60 → 2 ấm · ≥ 35 → 1 chật vật · dưới 35 → 0 thua kiện (nguyên tác).
+~ c7_diem_pq = c7_long_tin
+{kt_tin_tuong >= 3:
+    ~ c7_diem_pq += 15
+}
+{ev_nhan_chung > 0 && c7_lui == 0:
+    ~ c7_diem_pq += 10
+}
 {
-- c7_diem >= 7 && c6_ho_so >= 3:
+- lb_ch7 >= 3:
+    ~ c7_diem_pq += 20
+- lb_ch7 == 2:
+    ~ c7_diem_pq += 10
+}
+~ c7_diem_pq -= 15 * c7_thua_vong
+{
+- c7_diem_pq >= 90 && c6_ho_so >= 3:
     ~ c7_ket = 3
-- c7_diem >= 4:
+- c7_diem_pq >= 60:
     ~ c7_ket = 2
-- else:
+- c7_diem_pq >= 35:
     ~ c7_ket = 1
+- else:
+    ~ c7_ket = 0
 }
 
+{c7_ket == 0: -> c7_thua_kien}
 {c7_ket == 1: -> c7_chat_vat}
 
 # speaker:Narrator
@@ -386,6 +485,97 @@ Thư lại đọc to lời tuyên án. Đám đông ngoài cổng vỡ òa.
 }
 
 -> c7_doan_tu
+
+
+=== c7_thua_kien ===
+// Kết nguyên tác: thua kiện. Buồn đúng như trang sách, không thêm tia hy vọng.
+# music:none
+# speaker:QuanHuyen
+# emotion:cold
+# camera:CU_QuanHuyen
+Quan huyện: Giấy tờ thì nhiều, người đứng ra thì ít. Lời một đứa con gái trốn khỏi lầu xanh không đủ để buộc tội người có danh phận.
+
+# speaker:QuanHuyen
+# sfx:gavel
+Quan huyện: Bản quan tuyên! Mã Giám Sinh vô can. Vương Thúy Kiều phải trả về cho chủ nợ là Tú Bà. Bạc đem theo, nộp lại đủ. Án nhà họ Vương giữ nguyên.
+
+# speaker:NoiTam
+Không...
+
+{kt_tin_tuong >= 3:
+    # speaker:KimTrong
+    # emotion:angry
+    # camera:CU_KimTrong
+    Kim Trọng: Bẩm quan! Học trò xin lấy danh dự cả họ ra bảo lãnh...
+    # speaker:NhaDich
+    # emotion:cold
+    Nha dịch: Lôi ra!
+    # speaker:Narrator
+    Hai tên nha dịch xốc nách Kim Trọng lôi ra khỏi công đường. Ngoài cổng, người nhà họ Kim đã chờ sẵn để đưa chàng về quê.
+- else:
+    # speaker:Narrator
+    Kim Trọng đứng chết lặng ở hàng ghế dưới. Chàng mở miệng, rồi lại thôi.
+}
+
+# speaker:TuBa
+# emotion:warm_fake
+# camera:CU_TuBa
+Tú Bà: Về nhà thôi con. Mẹ sẽ dạy lại quy củ cho con, từ đầu.
+
+# speaker:MaGiamSinh
+# emotion:smug
+# camera:CU_MaGiamSinh
+Mã Giám Sinh: Ta đã nói rồi. Ra khỏi đây, ngươi vẫn chỉ là một món hàng.
+
+# speaker:Narrator
+# camera:Wide_Hall
+Đám đông dạt ra hai bên. Không ai lên tiếng. Bà hàng nước cúi gằm mặt. Thư lại quay đi.
+
+# speaker:NoiTam
+Mình biết trước tất cả. Mình đã cố đến thế này. Và câu chuyện vẫn đi đúng con đường của nó.
+
+# fx:spirit
+# music:spirit
+# scene:HuyenDuong_BongToi
+# speaker:Narrator
+# camera:Spirit
+Mọi thứ đứng yên. Trong bóng tối của công đường, chỉ còn hai cái bóng giống hệt nhau.
+
+# speaker:KieuThat
+# camera:Spirit
+# gameplay:kieu_voice
+Giờ thì ngươi đã biết.
+
+# speaker:Kieu
+# emotion:crying
+# camera:Spirit
+Kiều: Ta biết rồi. Ngươi không chọn sai. Là không ai cho ngươi được chọn.
+
+{dong_dieu >= 5:
+    # speaker:KieuThat
+    # camera:Spirit
+    Ngươi đã đứng cạnh ta đến tận đây. Vậy là đủ. Phần còn lại, để ta tự sống nốt.
+- else:
+    # speaker:KieuThat
+    # camera:Spirit
+    Ngươi từng bảo, nếu là ngươi thì ngươi sẽ làm tốt hơn. Bây giờ thì về đi. Phần còn lại là của ta.
+}
+
+# speaker:TrangSach
+"Thanh lâu hai lượt, thanh y hai lần."
+
+# speaker:Narrator
+Chiều hôm ấy, cửa lầu xanh khép lại sau lưng Kiều. Tiếng then cài vang lên khô khốc. Mười lăm năm bắt đầu từ tiếng then ấy.
+
+# speaker:TrangSach
+"Trải qua một cuộc bể dâu, những điều trông thấy mà đau đớn lòng."
+
+# speaker:Narrator
+# sfx:memory
+# gameplay:light
+Ánh sáng tắt dần, như một trang sách bị gấp lại.
+
+-> epilogue
 
 
 === c7_doan_tu ===
@@ -518,7 +708,87 @@ Kiều: Bây giờ ta hiểu rồi.
     Ở nhà Tú Bà, ngươi chỉ im lặng. Hôm nay ngươi đã lên tiếng thay cả hai chúng ta.
 }
 
+{dong_dieu <= 3: -> c7_mat_minh}
+{c7_ket == 3 && dong_dieu >= 7: -> c7_nghich_menh}
+
 # speaker:KieuThat
+# camera:Spirit
+Cảm ơn ngươi đã sống một ngày của ta... và cho ta thấy một ngày ta chưa từng có.
+
+# speaker:Narrator
+# sfx:memory
+# gameplay:light
+Rồi ánh sáng xuất hiện.
+
+-> epilogue
+
+
+=== c7_mat_minh ===
+// Thắng mà mất mình: đồng điệu quá thấp, Kiều Thật lặng đi mà không cảm ơn.
+# speaker:KieuThat
+# camera:Spirit
+Ngươi thắng rồi. Ngươi giỏi thật, đúng như ngươi nói ở lớp học.
+
+# speaker:KieuThat
+# camera:Spirit
+Nhưng suốt một ngày dài, ngươi chưa một lần nhìn ta. Ngươi lật từng trang đời ta như lật bài thi.
+
+# speaker:Kieu
+# emotion:caught_off_guard
+# camera:Spirit
+Kiều: Khoan... ta...
+
+# speaker:Narrator
+# camera:Spirit
+Cái bóng mờ dần trước khi cô kịp nói hết câu. Không một lời từ biệt.
+
+# speaker:NoiTam
+Mình đã thắng vụ kiện. Vậy sao trong lòng lại trống rỗng thế này?
+
+# speaker:Narrator
+# sfx:memory
+# gameplay:light
+Ánh sáng đến, lạnh và trắng như một trang giấy chưa viết.
+
+-> epilogue
+
+
+=== c7_nghich_menh ===
+// Kết trọn vẹn nhất: người chơi tự chọn hai linh hồn chia tay hay cùng sống trong một thân.
+# speaker:KieuThat
+# camera:Spirit
+Thân này là của ta. Nhưng một ngày qua... nó cũng đã là của ngươi.
+
+# speaker:KieuThat
+# camera:Spirit
+Ánh sáng sắp đến đón ngươi về. Ngươi muốn thế nào?
+
+* [Trả lại thân xác cho nàng: "Đây là đời của ngươi. Hãy sống nốt nó."]
+    ~ ket_hon = 1
+    # speaker:Kieu
+    # emotion:warm
+    # camera:Spirit
+    Kiều: Đây là đời của ngươi. Lần này không ai viết sẵn nữa. Hãy sống nốt nó, theo cách của ngươi.
+    # speaker:KieuThat
+    # camera:Spirit
+    Vậy thì ta sẽ sống. Còn ngươi... đừng quên ta nhé.
+    # speaker:Kieu
+    # camera:Spirit
+    Kiều: Ta sẽ không quên. Ta sẽ đọc lại ngươi, chậm từng chữ.
+* [Ở lại cùng nàng: "Hai chúng ta, một thân. Không ai phải đi một mình nữa."]
+    ~ ket_hon = 2
+    # speaker:Kieu
+    # emotion:determined
+    # camera:Spirit
+    Kiều: Ta không đi đâu cả. Hai chúng ta, một thân. Ngươi có ký ức, ta có những điều ngươi chưa từng được biết. Không ai phải đi một mình nữa.
+    # speaker:KieuThat
+    # camera:Spirit
+    Hai linh hồn trong một thân... Nguyễn Du chưa từng viết trang nào như thế.
+    # speaker:Kieu
+    # camera:Spirit
+    Kiều: Thì mình tự viết.
+
+- # speaker:KieuThat
 # camera:Spirit
 Cảm ơn ngươi đã sống một ngày của ta... và cho ta thấy một ngày ta chưa từng có.
 

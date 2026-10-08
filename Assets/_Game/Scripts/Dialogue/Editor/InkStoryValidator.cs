@@ -17,11 +17,11 @@ namespace ThuyKieu.Dialogue.Editor
     {
         public const string ReportPath = "Tools/Ink/InkValidationReport.txt";
         private static readonly HashSet<string> KnownKeys = new HashSet<string>
-        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx" };
+        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx", "page", "page_half" };
         private static readonly HashSet<string> KnownSpeakers = new HashSet<string>
         { "Narrator", "Kieu", "NoiTam", "KieuThat", "TrangSach", "MeKieu", "MaGiamSinh", "TuyTung", "TuBa", "MaKieu", "CoHong", "CoLam", "NguoiCanh",
           "KimTrong", "BaHangNuoc", "ThuLai", "ChuHieuBac", "GiaNhan",
-          "HocSinh", "Ngan", "CoGiao", "VuongOng", "VuongQuan", "QuanSai", "QuanHuyen", "NhaDich", "ChiLam" };
+          "HocSinh", "Ngan", "CoGiao", "VuongOng", "VuongQuan", "QuanSai", "QuanHuyen", "NhaDich", "ChiLam", "SoKhanh" };
 
         /// <summary>Story entry knots with their chapter numbers (0 = prologue, 8 = epilogue). Chapter 1 starts at the root.</summary>
         internal static readonly (string Knot, int Chapter)[] Entries =
@@ -42,7 +42,8 @@ namespace ThuyKieu.Dialogue.Editor
 
         /// <summary>The variable summarised per entry in the report.</summary>
         private static string Tracked(string entry) => entry == "chapter_3" ? "tra_loi_kieu_that" : entry == "chapter_6" ? "c6_ho_so"
-            : entry == "chapter_7" ? "c7_ket" : entry == "prologue" ? "pl_che_kieu" : null;
+            : entry == "chapter_7" ? "c7_ket" : entry == "prologue" ? "dong_dieu" : entry == "chapter_5" ? "c5_so_khanh"
+            : entry == "epilogue" ? "ket_hon" : null;
 
         [MenuItem("ThuyKieu/Dialogue/Validate Ink branches")]
         public static void RunMenu()
@@ -97,10 +98,14 @@ namespace ThuyKieu.Dialogue.Editor
                             if ((int)story.variablesState["tien"] < 0) problems.Add("tien negative at " + story.state.currentPathString);
                             int dossier = (int)story.variablesState["c6_ho_so"];
                             if (dossier < 0 || dossier > 4) problems.Add("c6_ho_so out of range: " + dossier);
+                            int fate = (int)story.variablesState["dinh_menh"], soul = (int)story.variablesState["dong_dieu"];
+                            if (fate < 0 || fate > 100) problems.Add("dinh_menh out of range: " + fate);
+                            if (soul < 0 || soul > 10) problems.Add("dong_dieu out of range: " + soul);
+                            foreach (string tag in lastTags) CheckPage(tag.Trim(), story, problems);
                             if (lastTags.Any(t => t.Trim() == "chapter:8"))
                             {
                                 int ending = (int)story.variablesState["c7_ket"];
-                                if (ending < 1 || ending > 3) problems.Add("c7_ket not decided before the epilogue: " + ending);
+                                if (ending < 0 || ending > 3) problems.Add("c7_ket not decided before the epilogue: " + ending);
                             }
                             maxSuspicion = Math.Max(maxSuspicion, suspicion);
                         }
@@ -114,6 +119,7 @@ namespace ThuyKieu.Dialogue.Editor
                                 foreach (string tag in choice.tags)
                                 {
                                     if (tag.StartsWith("explore:")) explore.Add(tag.Substring(8));
+                                    else if (tag.StartsWith("page:")) CheckPageChoice(tag.Substring(5), story, problems);
                                     else if (tag != "timeout") problems.Add("Unknown choice tag " + tag);
                                 }
                         if (lastTags.Any(t => t.StartsWith("timer:")) && !choices.Any(c => c.tags != null && c.tags.Contains("timeout")))
@@ -201,19 +207,59 @@ namespace ThuyKieu.Dialogue.Editor
                     break;
                 case "gameplay:doi_chieu": v["c6_doi_chieu"] = random.Next(0, 4); break;
                 case "gameplay:trial_1": case "gameplay:trial_2": case "gameplay:trial_3":
-                    int points = random.Next(1, tag.EndsWith("3") ? 5 : 4);
+                    bool lost = random.Next(5) == 0;
+                    int points = lost ? 0 : random.Next(1, tag.EndsWith("3") ? 5 : 4);
                     v["c7_r" + tag[tag.Length - 1]] = points;
                     v["c7_diem"] = (int)v["c7_diem"] + points;
-                    v["c7_long_tin"] = random.Next(10, 101);
+                    v["c7_long_tin"] = lost ? 10 : random.Next(25, 101);
+                    if (lost) v["c7_thua_vong"] = (int)v["c7_thua_vong"] + 1;
+                    break;
+                case "gameplay:lucbat_pl": case "gameplay:lucbat_ch3": case "gameplay:lucbat_ch6": case "gameplay:lucbat_ch7":
+                    v["lb_" + tag.Substring("gameplay:lucbat_".Length)] = random.Next(0, 4);
                     break;
             }
+        }
+
+        /// <summary>Card ids the story may grant (each is an int story variable 0–3).</summary>
+        internal static readonly string[] Pages =
+        {
+            "ts_tai_menh", "ts_hieu", "ts_ma_mat", "ts_co_ke", "ts_tu_ba", "ts_hoa_troi", "ts_so_khanh", "ts_kim_trong",
+            "ts_be_dau", "ts_chu_tam", "ts_thanh_lau"
+        };
+
+        /// <summary>A "# page:" line must come after the card is held; "# page_half:" after it is at least torn.</summary>
+        private static void CheckPage(string tag, Ink.Runtime.Story story, List<string> problems)
+        {
+            bool half = tag.StartsWith("page_half:");
+            if (!half && !tag.StartsWith("page:")) return;
+            string id = tag.Substring(tag.IndexOf(':') + 1).Trim();
+            if (Array.IndexOf(Pages, id) < 0) { problems.Add("Unknown page " + id); return; }
+            int state = (int)story.variablesState[id];
+            if (half ? state < 1 : state < 2) problems.Add("Page tag " + tag + " shown while " + id + " = " + state + " at " + story.state.currentPathString);
+        }
+
+        /// <summary>A "#page:" choice is only offered while the player holds that card.</summary>
+        private static void CheckPageChoice(string id, Ink.Runtime.Story story, List<string> problems)
+        {
+            id = id.Trim();
+            if (Array.IndexOf(Pages, id) < 0) problems.Add("Unknown page choice " + id);
+            else if ((int)story.variablesState[id] != 2) problems.Add("Page choice " + id + " offered while not held at " + story.state.currentPathString);
         }
 
         /// <summary>Chapters played from their own entry start with random outcomes of the chapters before them.</summary>
         internal static void RandomisePriorChapters(Ink.Runtime.Story story, int chapter, System.Random random)
         {
             var v = story.variablesState;
-            if (chapter > 0) v["pl_che_kieu"] = random.Next(1, 4);
+            if (chapter > 0)
+            {
+                v["pl_che_kieu"] = random.Next(1, 4);
+                // Trang Sách: the fate meter and the bond grow over the chapters; cards are held, torn or used at random.
+                v["dinh_menh"] = Math.Min(100, random.Next(0, 16 * chapter + 1));
+                v["dong_dieu"] = random.Next(0, 11);
+                int[] grantedBy = { 0, 1, 2, 2, 3, 3, 4, 5, 6, 7, 7 };
+                for (int i = 0; i < Pages.Length; i++)
+                    if (chapter > grantedBy[i]) v[Pages[i]] = random.Next(0, 4);
+            }
             if (chapter > 2) { v["giu_mau_giay"] = random.Next(2) == 0; v["mm_nghe_len"] = random.Next(2) == 0; v["doc_ky_khe"] = random.Next(2) == 0; }
             if (chapter > 3) { v["c3_khe_uoc"] = random.Next(2) == 0; v["c3_so_no"] = random.Next(2) == 0; }
             if (chapter > 4)
@@ -247,7 +293,11 @@ namespace ThuyKieu.Dialogue.Editor
                 if ((bool)v["c6_so_bac"]) v["ev_tien"] = true;
                 v["c6_ho_so"] = 1 + ((int)v["ev_nhan_chung"] > 0 ? 1 : 0) + ((bool)v["ev_giay_no"] ? 1 : 0) + ((bool)v["ev_tien"] ? 1 : 0);
             }
-            if (chapter > 7) v["c7_ket"] = random.Next(1, 4);
+            if (chapter > 7)
+            {
+                v["c7_ket"] = random.Next(0, 4);
+                v["ket_hon"] = (int)v["c7_ket"] == 3 && (int)v["dong_dieu"] >= 7 ? random.Next(1, 3) : 0;
+            }
         }
 
         private static void CheckTag(string raw, List<string> problems, ISet<string> gameplay, ISet<string> cameras, ISet<string> scenes, ISet<string> clues)

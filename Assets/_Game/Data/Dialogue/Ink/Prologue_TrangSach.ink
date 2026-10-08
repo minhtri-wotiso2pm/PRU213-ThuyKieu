@@ -36,6 +36,7 @@ Cô giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
 # timer:14
 * ["Dễ mà cô. Em sẽ làm tốt hơn Kiều nhiều."]
     ~ pl_che_kieu = 1
+    ~ dong_dieu = 1
     # speaker:HocSinh
     # emotion:smug
     Tôi: Dễ mà cô. Ai đến hỏi cưới mà vội vàng trả đủ tiền như thế thì phải nghi chứ. Nếu là em, em sẽ làm tốt hơn Kiều nhiều.
@@ -44,6 +45,7 @@ Cô giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
     Cô giáo: Tự tin quá nhỉ. Biết trước kết cục thì ai mà chẳng khôn.
 * ["Em nghĩ phải có cách khác, chứ không phải bán chính mình."]
     ~ pl_che_kieu = 2
+    ~ dong_dieu = 3
     # speaker:HocSinh
     # emotion:thoughtful
     Tôi: Em nghĩ phải có cách khác. Vay mượn, kêu oan, tìm người làm chứng... chứ không phải đem chính mình ra đổi.
@@ -52,6 +54,7 @@ Cô giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
     Cô giáo: "Cách khác" ấy, một cô gái mười lăm tuổi thời đó có được bao nhiêu?
 * ["Kiều cam chịu quá. Em không thích nhân vật này."]
     ~ pl_che_kieu = 3
+    ~ dong_dieu = 2
     # speaker:HocSinh
     # emotion:cold
     Tôi: Kiều cam chịu quá cô ạ. Người ta bảo gì làm nấy, rồi khóc suốt mười lăm năm. Em không thích nhân vật này.
@@ -60,6 +63,7 @@ Cô giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
     Cô giáo: Thích hay không là quyền của em. Nhưng phán xét một người thì phải hiểu hoàn cảnh của họ trước đã.
 * [Im lặng, lắc đầu. #timeout]
     ~ pl_che_kieu = 3
+    ~ dong_dieu = 2
     # speaker:Narrator
     Tôi không trả lời, chỉ khẽ lắc đầu. Trong đầu vẫn là một câu: "Ngốc thật."
     # speaker:CoGiao
@@ -96,7 +100,14 @@ Lớp học vãn dần. Quyển Truyện Kiều vẫn nằm mở trên bàn.
 === pl_board ===
 # speaker:Narrator
 # camera:Board
-Trên bảng, nét phấn của cô vẫn còn nguyên.
+Trên bảng, nét phấn của cô vẫn còn nguyên. Cô chép hai câu đầu Truyện Kiều, cố tình bỏ trống một chữ cho cả lớp điền.
+
+# speaker:NoiTam
+Luật cô dạy hồi sáng: chữ thứ sáu của câu tám phải vần với chữ cuối của câu sáu. Điền thử xem.
+
+# speaker:Narrator
+# gameplay:lucbat_pl
+Đối đáp lục bát: chọn chữ hợp vần và hợp thanh.
 
 # speaker:TrangSach
 "Trăm năm trong cõi người ta, chữ tài chữ mệnh khéo là ghét nhau."
@@ -163,6 +174,14 @@ Tôi đưa tay định gấp quyển sách lại. Trang giấy dừng đúng ở
 # gameplay:book_glow
 Rồi những dòng chữ bắt đầu sáng lên.
 
+~ nhan(ts_tai_menh)
+# speaker:TrangSach
+# page:ts_tai_menh
+"Trăm năm trong cõi người ta, chữ tài chữ mệnh khéo là ghét nhau."
+
+# speaker:Narrator
+Một trang giấy bứt khỏi gáy sách, nhẹ như lông, rơi vào lòng bàn tay tôi. Chữ trên đó vẫn còn sáng. (B: mở Trang Sách)
+
 # speaker:KieuThat
 # gameplay:kieu_voice
 Ngươi nói... nếu là ngươi, ngươi sẽ làm tốt hơn ta?
@@ -189,6 +208,7 @@ Người mà ngươi gọi là "ngốc". Người đã khóc mười lăm năm t
     # speaker:KieuThat
     Vậy thì hãy ở trong đó một lần.
 * [Gấp mạnh quyển sách lại.]
+    ~ soul(-1)
     # speaker:Narrator
     Tôi gập mạnh quyển sách. Ánh sáng vẫn lọt qua kẽ giấy, mỗi lúc một chói hơn.
     # speaker:KieuThat
@@ -271,6 +291,7 @@ Thúy Kiều. Mình đang ở trong thân xác Thúy Kiều.
 === pl_dan_k ===
 ~ pl_dan = true
 ~ pl_vat += 1
+~ soul(1)
 # speaker:Narrator
 # camera:Dan
 Cây hồ cầm nằm nghiêng bên vách, dây đàn còn hơi ấm như ai vừa gảy đêm qua.

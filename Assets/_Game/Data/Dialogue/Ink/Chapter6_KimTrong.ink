@@ -52,6 +52,15 @@ Kiều: Ta cần chàng giúp ta cứu gia đình.
 # timer:14
 Chàng đang nhìn mình như nhìn một người vừa từ cõi chết trở về. Nói gì với chàng?
 
+* {ts_kim_trong == 2} [Lật trang "Người quốc sắc, kẻ thiên tài...": đọc lại câu thơ hai người từng đối nhau #page:ts_kim_trong]
+    ~ dung(ts_kim_trong, 5)
+    ~ kt_tin_tuong += 3
+    # speaker:Kieu
+    # emotion:pained
+    Kiều: "Tình trong như đã, mặt ngoài còn e." Chàng còn nhớ câu ấy không? Hôm ấy chàng nhặt được cây thoa của ta bên bức tường. Giờ thì ta không còn gì để e nữa: Mã Giám Sinh đã bán ta.
+    # speaker:KimTrong
+    # emotion:angry
+    Kim Trọng: Đúng là nàng... Hắn bán nàng? Hắn dám...
 * [Nói thật: "Không có đám cưới nào. Hắn đã bán ta."]
     ~ kt_tin_tuong += 2
     # speaker:Kieu
@@ -66,6 +75,7 @@ Chàng đang nhìn mình như nhìn một người vừa từ cõi chết trở 
     Kiều không nói gì. Nàng rút trong áo ra xấp giấy buộc dây đỏ, đặt vào tay chàng.
 * ["Chàng có tin... ta không còn là Kiều mà chàng từng quen?"]
     ~ kt_biet_xuyen_khong = true
+    ~ fate(10)
     # speaker:Kieu
     # emotion:thoughtful
     Kiều: Chàng có tin không... nếu ta nói người đứng trước mặt chàng không hẳn là Kiều mà chàng từng quen? Ta đến từ một nơi rất xa. Ta đã đọc trước câu chuyện này.
@@ -97,6 +107,15 @@ Kim Trọng: Nếu ta không đi Liêu Dương... nếu ta ở lại thêm một
     Kiều: Không phải lỗi của chàng. Kẻ có lỗi là kẻ đặt bút ký tờ giấy này.
     # speaker:KimTrong
     Kim Trọng: ...Nàng vẫn vậy. Đến lúc này còn nghĩ cho người khác.
+* {ts_hieu == 2} [Lật trang "Duyên hội ngộ, đức cù lao...": "Bên tình bên hiếu, ta đã chọn. Giờ ta cần chàng." #page:ts_hieu]
+    ~ dung(ts_hieu, 5)
+    ~ kt_tin_tuong += 2
+    # speaker:Kieu
+    # emotion:soft_firm
+    Kiều: Bên tình bên hiếu, đêm ấy ta đã phải chọn một bên. Không ai có lỗi vì chàng đi xa. Nhưng hôm nay ta không phải chọn nữa, nếu chàng ở đây.
+    # speaker:KimTrong
+    # emotion:determined
+    Kim Trọng: Ta ở đây. Lần này ta không đi đâu cả.
 * [Thẳng thắn: "Tự trách chẳng cứu được ai. Giúp ta đi."]
     ~ kt_tin_tuong += 1
     # speaker:Kieu
@@ -271,6 +290,14 @@ Thư lại: Đơn kiện à? Kiện ai? ...Tú Bà? Cô có biết mụ ấy bi�
 Thư lại: Một cô gái chạy trốn khỏi lầu xanh thì lời nói nhẹ như lông hồng. Có gì làm bằng thì đưa ra.
 
 ~ c6_thu = 0
+{dinh_menh >= 70 && kt_tin_tuong < 4:
+    # fx:spirit
+    # speaker:Narrator
+    Trong tay áo thư lại lộ ra một góc túi gấm đỏ, thêu chữ "T." y như những túi bạc ở lầu Lâm Tri.
+    # fx:none
+    # speaker:NoiTam
+    Tú Bà đã đến đây trước mình. Câu chuyện lại đẩy mình về trang cũ. Lần này chỉ được nói sai một lần thôi.
+}
 -> c6_thu_lai_present
 
 = c6_thu_lai_present
@@ -321,7 +348,7 @@ Thư lại: Một cô gái chạy trốn khỏi lầu xanh thì lời nói nhẹ
     Thư lại: Cả huyện Lâm Tri này đứa nào bị bán cũng là con nhà tử tế cả, cô ạ.
 
 - (g_thu_lai)
-{c6_thu >= 2:
+{c6_thu >= 2 || (c6_thu >= 1 && dinh_menh >= 70 && kt_tin_tuong < 4):
     # speaker:ThuLai
     # emotion:cold
     Thư lại: Hết giờ làm việc. Mời cô về.
@@ -475,6 +502,44 @@ Hồ sơ cho ngày mai.
     Kim Trọng: Mỏng quá. Nhưng chúng ta không còn thời gian để tìm thêm nữa.
 }
 
+{ev_nhan_chung >= 2:
+    ~ nhan(ts_be_dau)
+    # speaker:TrangSach
+    # page:ts_be_dau
+    "Trải qua một cuộc bể dâu, những điều trông thấy mà đau đớn lòng."
+    # speaker:NoiTam
+    Bà hàng nước, thư lại, chị Lam... mỗi người đều đã thấy một mảnh của cuộc bể dâu này. Ngày mai họ phải đứng vững.
+}
+
+# speaker:Narrator
+Kim Trọng mài mực, trải một tờ hoa tiên lên án thư. Ngày trước, hai người vẫn đối thơ với nhau như thế qua bức tường.
+
+# speaker:KimTrong
+# emotion:amused
+# camera:CU_KimTrong
+Kim Trọng: Ta ra câu sáu, nàng đối câu tám. Như hồi ở vườn Thúy. Nếu đúng là nàng, nàng sẽ đối được.
+
+# speaker:KimTrong
+# gameplay:lucbat_ch6
+Kim Trọng: "Trăng xưa còn nhớ vườn đào..."
+
+{
+- lb_ch6 >= 3:
+    ~ kt_tin_tuong += 2
+    # speaker:KimTrong
+    # emotion:warm
+    Kim Trọng: Cây thoa bên bức tường... Chỉ có nàng mới biết chuyện ấy. Đúng là nàng rồi.
+- lb_ch6 == 2:
+    ~ kt_tin_tuong += 1
+    # speaker:KimTrong
+    # emotion:amused
+    Kim Trọng: Vẫn chữ ấy, vẫn vần ấy. Có điều... giọng nàng khác xưa.
+- else:
+    # speaker:KimTrong
+    # emotion:thoughtful
+    Kim Trọng: Nàng mệt quá rồi. Thơ để dịp khác.
+}
+
 # speaker:KimTrong
 # emotion:thoughtful
 # camera:CU_KimTrong
@@ -497,6 +562,7 @@ Kim Trọng: Ở nơi ấy... người ta kể về ta thế nào?
     # emotion:determined
     Kim Trọng: Vậy thì lần này, ta sẽ không đến muộn.
 * ["Họ kể chàng chỉ là một nhân vật trong sách."]
+    ~ soul(-1)
     # speaker:Kieu
     # emotion:thoughtful
     Kiều: Ở đó... chàng chỉ là một nhân vật trong sách. Ta đã đọc về chàng như đọc về một cái tên.

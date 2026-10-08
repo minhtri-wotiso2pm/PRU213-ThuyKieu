@@ -34,8 +34,21 @@ Tú Bà: Lầu này có ba điều. Một, khách là trời. Hai, nợ là nợ
 # timer:9
 Mụ đang thử mình. Trả lời thế nào?
 
+* {ts_tu_ba == 2} [Lật trang "Thoắt trông nàng đã biết tình...": cúi đúng kiểu mụ muốn thấy, rồi hỏi khéo về nợ #page:ts_tu_ba]
+    ~ dung(ts_tu_ba, 10)
+    ~ c4_canh_giac = 0
+    ~ c4_biet_no = true
+    # speaker:Kieu
+    # emotion:controlled
+    Kiều: Dạ, con biết thân con rồi, chim vào lồng còn bay đi đâu được. Chỉ xin mẹ cho con biết con nợ bao nhiêu, để con gắng làm mà trả.
+    # speaker:TuBa
+    # emotion:satisfied
+    Tú Bà: Ngoan. Bốn trăm năm mươi lạng tiền mua, cộng áo, phấn, cơm. Sổ nằm trong ngăn bàn, ta ghi rành mạch cả.
+    # speaker:NoiTam
+    Mụ tưởng mình đã cam phận. Đúng như câu thơ: mụ nhìn là biết... nhưng chỉ biết điều mụ muốn thấy.
 * [Cúi đầu: "Dạ... con xin nghe lời mẹ."]
     ~ c4_canh_giac = 0
+    ~ fate(-5)
     # speaker:Kieu
     # emotion:controlled
     Kiều: Dạ... con mới đến, chưa biết gì. Con xin nghe lời mẹ.
@@ -71,6 +84,17 @@ Mụ đang thử mình. Trả lời thế nào?
     Tú Bà: Ánh mắt ấy... rồi ta sẽ dạy cho nó biết cúi xuống.
 
 - (g_canh)
+{dinh_menh >= 30:
+    ~ c4_canh_giac = MIN(c4_canh_giac + 1, 2)
+    # fx:spirit
+    # speaker:TrangSach
+    "Lầu xanh mới rủ trướng đào, càng treo giá ngọc càng cao phẩm người."
+    # speaker:Narrator
+    Tú Bà khựng lại ở bậc cửa, quay đầu nhìn Kiều thêm một lần nữa rồi gọi với ra hành lang: "Đêm nay thay chỗ cất chìa. Canh cho tỉnh!"
+    # fx:none
+    # speaker:NoiTam
+    Mình đã đi lệch khỏi trang sách quá nhiều. Câu chuyện bắt đầu kéo mình về chỗ cũ.
+}
 # speaker:TuBa
 # emotion:warm_fake
 Tú Bà: Đêm nay ta có khách lớn từ phủ trên. Ngày mai con tiếp khách đầu tiên. Ngủ cho đẹp mặt.
@@ -209,6 +233,7 @@ Tờ văn tự này thì sao?
     Kiều: (Tờ giấy định giá mình. Giờ nó sẽ định tội chúng.)
 * [Đốt nó trên ngọn đèn.]
     ~ c4_van_tu = 2
+    ~ fate(5)
     # speaker:Narrator
     # sfx:fire
     Mép giấy cong lại, đỏ rực, rồi thành tro trong lòng bàn tay Kiều.
@@ -238,6 +263,7 @@ Còn túi bạc. Bốn trăm năm mươi lạng — đúng bằng giá của mì
     ~ c4_tien = 2
     ~ tien += 450
     ~ ev_tien = true
+    ~ fate(10)
     # speaker:Narrator
     Túi bạc nặng trĩu. Mỗi nén đều đóng dấu "T." đỏ của lầu Lâm Tri.
     # speaker:NoiTam
@@ -331,8 +357,22 @@ Cô gái áo lam: Cho chị đi với. Chị không ở đây thêm một mùa n
 # timer:12
 Hai người thì chậm hơn, dễ lộ hơn. Nhưng...
 
+* {ts_hoa_troi == 2} [Lật trang "Hoa trôi bèo dạt đã đành...": "Câu ấy là của người đã buông tay. Mình thì chưa." #page:ts_hoa_troi]
+    ~ dung(ts_hoa_troi, 0)
+    ~ c4_ru_co_lam = true
+    ~ fate(10)
+    ~ soul(1)
+    # speaker:Kieu
+    # emotion:determined
+    Kiều: "Hoa trôi bèo dạt đã đành"... Có người từng nói với em câu ấy. Đó là câu của người đã buông tay. Chị với em thì chưa. Đi cùng em.
+    # speaker:CoLam
+    # emotion:crying
+    Cô gái áo lam: ...Chưa buông tay. Ừ. Chị đi.
+    # speaker:KieuThat
+    Ngươi trả lại câu của ta... bằng một nghĩa khác.
 * [Nắm tay chị ấy: "Đi cùng em."]
     ~ c4_ru_co_lam = true
+    ~ fate(10)
     # speaker:Kieu
     # emotion:determined
     Kiều: Đi cùng em. Nhưng chị phải làm đúng như em làm — em khom, chị khom; em dừng, chị dừng.
@@ -349,6 +389,7 @@ Hai người thì chậm hơn, dễ lộ hơn. Nhưng...
     Cô gái áo lam: ...Ai cũng hứa như thế.
 * [Im lặng quay đi. #timeout]
     ~ c4_ru_co_lam = false
+    ~ soul(-1)
     # speaker:Narrator
     Kiều không trả lời. Sau lưng nàng, cô gái áo lam kéo chăn trùm kín đầu.
     # speaker:NoiTam
@@ -359,6 +400,27 @@ Hai người thì chậm hơn, dễ lộ hơn. Nhưng...
 # speaker:NoiTam
 # clue:c4_co_lam
 Ngõ sau có chó, cổng trước có then. Chị ấy đã ở đây đủ lâu để biết hết.
+
+# speaker:CoLam
+# emotion:fearful
+Cô gái áo lam: Còn nữa... ra ngoài rồi, gặp gã thư sinh nào áo khăn thơm phức hứa đưa em đi, thì đừng tin. Năm ngoái hắn dắt một đứa đi, sáng sau nó bị lôi về đây, mặt mũi bầm dập.
+
+{
+- ts_so_khanh == 1:
+    ~ nhan(ts_so_khanh)
+    # speaker:TrangSach
+    # page:ts_so_khanh
+    "Một chàng vừa trạc thanh xuân, hình dung chải chuốt áo khăn dịu dàng."
+    # speaker:NoiTam
+    Sở Khanh. Đủ câu rồi. Trong sách, hắn là kẻ lừa Kiều trốn đi rồi bỏ mặc nàng giữa đường.
+- ts_so_khanh == 0:
+    ~ nua(ts_so_khanh)
+    # speaker:TrangSach
+    # page_half:ts_so_khanh
+    "Một chàng vừa trạc thanh xuân..."
+    # speaker:NoiTam
+    Câu thơ chỉ hiện ra một nửa. Phải chi mình đã hỏi chuyện thêm ai đó trong lầu.
+}
 -> c4_hub
 
 

@@ -28,6 +28,14 @@ Ngoài cửa, tiếng người xướng danh vang lên.
 # camera:Reveal_MaGiamSinh
 Mã Giám Sinh: Kẻ hèn họ Mã, nghe Vương gia gặp nạn nên mạo muội đến. Ta... có thể giúp.
 
+~ nua(ts_ma_mat)
+# speaker:TrangSach
+# page_half:ts_ma_mat
+"Quá niên trạc ngoại tứ tuần..."
+
+# speaker:NoiTam
+Nửa câu thơ vụt qua đầu rồi đứt. Phải nhìn hắn thật kỹ mới nhớ nốt được.
+
 # speaker:MeKieu
 # emotion:hopeful_uncertain
 Mẹ Kiều: Công tử thật lòng muốn giúp sao?
@@ -138,6 +146,16 @@ Kiều: Con đi không phải vì con rẻ hơn bốn trăm lạng.
 
 # speaker:Kieu
 Kiều: Con đi vì cha và em cần được cứu ngay hôm nay. Nhưng chuyện đời con... con chưa giao cho ai cả.
+
+~ soul(tu_trong / 2)
+{tinh_tao >= 3:
+    ~ nhan(ts_hieu)
+    # speaker:TrangSach
+    # page:ts_hieu
+    "Duyên hội ngộ, đức cù lao, bên tình bên hiếu bên nào nặng hơn?"
+    # speaker:KieuThat
+    Câu ấy ta đã tự hỏi suốt một đêm. Ngươi giữ lấy nó.
+}
 
 # speaker:Narrator
 Mã Giám Sinh sai người mang bạc đi. Tin báo trở lại: Vương Ông và Vương Quan được tạm thả để chờ xét lại vụ án.

@@ -76,6 +76,15 @@ Người đi đón vợ về nhà thì sao phải đếm bạc như đi chợ? C
 # emotion:thoughtful
 # clue:c2_ban_tay
 Kiều: (Hắn không nhìn ta như nhìn một người vợ. Hắn nhìn ta như nhìn một món hàng.)
+
+{ts_ma_mat < 2:
+    ~ nhan(ts_ma_mat)
+    # speaker:TrangSach
+    # page:ts_ma_mat
+    "Quá niên trạc ngoại tứ tuần, mày râu nhẵn nhụi áo quần bảnh bao."
+    # speaker:NoiTam
+    Nhớ ra rồi. Nguyễn Du tả hắn chỉ bằng hai câu, mà câu nào cũng đúng.
+}
 -> c2_road
 
 
@@ -128,6 +137,20 @@ Hỏi thế nào để hắn trả lời thật, mà không biết mình đang d
 
     # speaker:NoiTam
     "Người lo cho nàng." Hắn nói câu này đến lần thứ hai rồi. Mà người đó không phải mẹ chồng.
+
+* {ts_ma_mat == 2} [Lật trang "Quá niên trạc ngoại tứ tuần...": khen hắn chững chạc, hỏi chuyện làm ăn #page:ts_ma_mat]
+    ~ dung(ts_ma_mat, 10)
+    ~ nghi_ngo = MAX(nghi_ngo - 15, 0)
+    ~ gia_vo += 1
+    ~ fate(-5)
+    # speaker:Kieu
+    # emotion:calm_probe
+    Kiều: Công tử ngoài bốn mươi mà phong thái thế này, chắc buôn bán khắp nơi. Ở Lâm Tri công tử làm ăn lớn lắm nhỉ?
+    # speaker:MaGiamSinh
+    # emotion:smug
+    Mã Giám Sinh: Nàng tinh mắt đấy. Lâm Tri có một nhà quen, mối nào ta đưa về cũng được giá. Ha... à, ý ta là hàng lụa.
+    # speaker:NoiTam
+    Câu thơ nói hắn trước cả khi hắn mở miệng. Tâng bốc đúng chỗ, hắn tự khai hết.
 
 - (g1)
 ~ mm_hoi_duong = true
@@ -246,6 +269,11 @@ Trong Truyện Kiều...
 # speaker:TrangSach
 "Tiếc thay một đóa trà mi, con ong đã tỏ đường đi lối về."
 
+~ nhan(ts_co_ke)
+# speaker:TrangSach
+# page:ts_co_ke
+"Cò kè bớt một thêm hai, giờ lâu ngã giá vàng ngoài bốn trăm."
+
 # speaker:Kieu
 # emotion:realization
 # camera:CU_Kieu
@@ -254,10 +282,20 @@ Kiều: (Mã Giám Sinh không cưới Kiều.)
 # speaker:Kieu
 Kiều: (Hắn đang bán mình.)
 
-# speaker:Narrator
-# gameplay:deduction_c2
-Ghép các manh mối đã thu thập để xác nhận sự thật.
+# speaker:NoiTam
+Ghép lại từng mảnh... hay tin vào câu thơ vừa hiện lên?
 
+* {ts_co_ke == 2} [Lật trang "Cò kè bớt một thêm hai...": cái giá đã có sẵn trong sách #page:ts_co_ke]
+    ~ dung(ts_co_ke, 10)
+    ~ suy_luan = 3
+    # speaker:NoiTam
+    Bốn trăm lạng mua về, bán lại cho Tú Bà có lãi. Không cần ghép, câu thơ đã nói hết rồi.
+* [Tự ghép các manh mối.]
+    # speaker:Narrator
+    # gameplay:deduction_c2
+    Ghép các manh mối đã thu thập để xác nhận sự thật.
+
+- (g_suy)
 {suy_luan >= 3:
     # speaker:NoiTam
     Không còn nghi ngờ gì nữa. Mọi mảnh ghép đều khớp: tiền, nơi đến, giá bán, và cái tên Tú Bà.
@@ -309,10 +347,22 @@ Thở đều. Mỉm cười.
 
 * [Mỉm cười: "Thiếp đi tìm chỗ rửa mặt cho tỉnh." #timeout]
     ~ gia_vo += 1
+    ~ fate(-5)
     ~ nghi_ngo = MAX(nghi_ngo - 10, 0)
     # speaker:Kieu
     # emotion:calm
     Kiều: Thiếp đi tìm chỗ rửa mặt cho tỉnh. Đường bụi quá.
+* {ts_tai_menh == 2} [Lật trang "Trăm năm trong cõi người ta...": cười buồn như người đã cam phận #page:ts_tai_menh]
+    ~ dung(ts_tai_menh, 5)
+    ~ gia_vo += 1
+    ~ fate(-5)
+    ~ nghi_ngo = MAX(nghi_ngo - 25, 0)
+    # speaker:Kieu
+    # emotion:sad_controlled
+    Kiều: Thiếp đứng nghe gió thôi. Đời con gái, chữ mệnh đã định, thiếp còn dám nghĩ gì xa.
+    # speaker:MaGiamSinh
+    # emotion:satisfied
+    Mã Giám Sinh: Biết phận thế là tốt.
 * [Lắp bắp: "Thiếp... thiếp không nghe thấy gì cả!"]
     ~ nghi_ngo = MIN(nghi_ngo + 20, 100)
     # speaker:Kieu
@@ -341,12 +391,14 @@ Câu này là thử mình.
 
 * [Cúi đầu e thẹn: "Phận gái theo chồng, chàng đi đâu thiếp theo đó." #timeout]
     ~ gia_vo += 1
+    ~ fate(-5)
     ~ nghi_ngo = MAX(nghi_ngo - 10, 0)
     # speaker:Kieu
     # emotion:soft_firm
     Kiều: Phận gái theo chồng, chàng đi đâu thiếp theo đó.
 * [Thở dài: "Thiếp chỉ mong cha được bình an."]
     ~ gia_vo += 1
+    ~ fate(-5)
     # speaker:Kieu
     # emotion:sad_controlled
     Kiều: Thiếp chỉ mong cha được bình an. Còn lại... thiếp không dám mong gì.
@@ -367,6 +419,7 @@ Mã Giám Sinh: Nàng biết điều như vậy là tốt. Người biết đi�
 
 * [Rót chén trà mời hắn: "Công tử đi đường cũng mệt, dùng chén trà." #timeout]
     ~ gia_vo += 1
+    ~ fate(-5)
     ~ nghi_ngo = MAX(nghi_ngo - 15, 0)
     # speaker:Kieu
     # emotion:calm

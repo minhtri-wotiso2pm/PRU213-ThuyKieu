@@ -22,6 +22,14 @@ Tú Bà: Ôi chao, con gái! Đi đường xa vất vả lắm phải không? L�
 # speaker:TuBa
 Tú Bà: Mặt hoa da phấn thế này... Mã công tử quả không nói sai.
 
+~ nhan(ts_tu_ba)
+# speaker:TrangSach
+# page:ts_tu_ba
+"Thoắt trông nàng đã biết tình, chim lồng khôn lẽ cất mình bay cao."
+
+# speaker:NoiTam
+Mụ nhìn một lần là biết mình đáng giá bao nhiêu. Mình cũng phải nhìn lại mụ như thế.
+
 # speaker:TuBa
 # emotion:warm_fake
 Tú Bà: Con cứ xem nơi này như nhà.
@@ -102,10 +110,19 @@ Hỏi gì trước?
 - (g1)
 # speaker:CoHong
 # emotion:tired_small_smile
+Cô gái áo hồng: À, còn cái này. Thỉnh thoảng có một gã thư sinh áo khăn chải chuốt ghé qua, hứa đưa đứa nào đó trốn đi. Chưa đứa nào đi theo hắn mà còn quay về kể.
+
+~ nua(ts_so_khanh)
+# speaker:TrangSach
+# page_half:ts_so_khanh
+"Một chàng vừa trạc thanh xuân..."
+
+# speaker:CoHong
 Cô gái áo hồng: Thôi, em đi đi. Đứng lâu với chị, người canh lại để ý.
 
 ~ c3_noi_chuyen += 1
 ~ c3_viec += 1
+~ soul(1)
 # speaker:NoiTam
 # clue:c3_co_hong
 "Có người hứa cưới." Cùng một kịch bản. Mình không phải người đầu tiên.
@@ -129,8 +146,48 @@ Cô gái áo lam: Tháng trước có đứa trèo tường. Người canh lôi 
 # speaker:CoLam
 Cô gái áo lam: Ngõ sau có chó, cổng trước có then. Em đừng dại.
 
+# speaker:Narrator
+Nói xong, cô gái áo lam cúi gằm mặt. Vai chị run lên từng đợt.
+
+# speaker:NoiTam
+Chị ấy khóc mà không dám ra tiếng. Ngày trước mẹ dạy: người ta buồn thì nói với nhau bằng thơ.
+
+# speaker:Kieu
+# emotion:soft_firm
+# gameplay:lucbat_ch3
+Kiều: (khẽ) Chị ơi...
+
+{
+- lb_ch3 >= 3:
+    ~ soul(2)
+    # speaker:CoLam
+    # emotion:crying
+    Cô gái áo lam: ...Ba năm rồi mới có người đọc thơ cho chị nghe. Cảm ơn em.
+- lb_ch3 == 2:
+    ~ soul(1)
+    # speaker:CoLam
+    Cô gái áo lam: Em nói nghe lạ tai, mà ấm. Chị... chị đỡ hơn rồi.
+- else:
+    # speaker:CoLam
+    # emotion:fearful
+    Cô gái áo lam: Thôi, em đừng nói nữa. Người canh nghe thấy bây giờ.
+}
+
 ~ c3_noi_chuyen += 1
 ~ c3_viec += 1
+~ soul(1)
+{dong_dieu >= 4:
+    ~ nhan(ts_hoa_troi)
+    # speaker:KieuThat
+    # gameplay:kieu_voice
+    Ngày trước, ta cũng từng ngồi cạnh một người như thế. Ta chỉ biết nói với nàng một câu.
+    # speaker:TrangSach
+    # page:ts_hoa_troi
+    "Hoa trôi bèo dạt đã đành, biết duyên mình biết phận mình thế thôi."
+    # fx:none
+    # speaker:NoiTam
+    Đó là câu của người đã buông xuôi. Giữ lấy nó... để có ngày nói ngược lại.
+}
 # speaker:NoiTam
 # clue:c3_co_lam
 Người ta đã thử chạy. Và đã bị bắt lại. Chạy bừa là con đường ngắn nhất để chết.
@@ -341,6 +398,15 @@ Bây giờ thì sao?
     Kiều: Chưa xong đâu. Ngươi không biết những gì ta biết. Ta sẽ tìm đường ra.
     # speaker:KieuThat
     Ta cũng từng nghĩ thế. Hãy cho ta thấy ngươi khác ta ở chỗ nào.
+* {ts_hieu == 2} [Lật trang "Duyên hội ngộ, đức cù lao...": "Ngươi chọn chữ Hiếu. Không phải vì ngươi ngốc." #page:ts_hieu]
+    ~ dung(ts_hieu, 5)
+    ~ tra_loi_kieu_that = 1
+    ~ soul(1)
+    # speaker:Kieu
+    # emotion:pained
+    Kiều: Bên tình bên hiếu bên nào nặng hơn... Ngươi đã phải trả lời câu ấy trong một đêm, một mình. Ngươi chọn chữ Hiếu, không phải vì ngươi ngốc.
+    # speaker:KieuThat
+    Mười lăm năm... chưa ai nói với ta câu đó.
 * [Im lặng.]
     ~ tra_loi_kieu_that = 3
     # speaker:Narrator
@@ -349,6 +415,12 @@ Bây giờ thì sao?
     Im lặng cũng là một câu trả lời. Ta đã im lặng suốt mười lăm năm.
 
 - (g2)
+{
+- tra_loi_kieu_that == 1:
+    ~ soul(2)
+- tra_loi_kieu_that == 2:
+    ~ soul(1)
+}
 # fx:none
 # speaker:MaKieu
 # emotion:fearful

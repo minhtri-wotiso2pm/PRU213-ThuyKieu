@@ -112,7 +112,31 @@ VAR c7_r3 = 0
 VAR c7_diem = 0           // tổng điểm đối chất (Unity ghi)
 VAR c7_long_tin = 0       // lòng tin của quan huyện khi kết thúc, 0–100 (Unity ghi)
 VAR c7_thua_vong = 0      // số vòng đối chất bị thua: quan mất kiên nhẫn, tự xét giấy tờ (Unity ghi)
-VAR c7_ket = 0            // sắc thái kết: 1 chật vật · 2 ấm · 3 trọn vẹn
+VAR c7_diem_pq = 0        // điểm phán quyết = lòng tin + bảo lãnh + nhân chứng + lục bát − vòng thua
+VAR c7_ket = 0            // kết: 0 thua kiện (nguyên tác) · 1 chật vật · 2 ấm · 3 trọn vẹn
+VAR ket_hon = 0           // kết Nghịch Mệnh: 1 hai linh hồn chia tay · 2 cùng sống trong một thân
+
+// --- Trang Sách · Định Mệnh · Hai linh hồn (xem docs/codex/TRANG_SACH_IMPLEMENTATION.md) ---
+// Mỗi trang: 0 chưa có · 1 trang rách (mới có nửa câu) · 2 đang giữ · 3 đã dùng (đã xé).
+// Lựa chọn dùng trang mang tag #page:<id>; Unity tô vàng. Trong đối chất, trang đang giữ dùng làm "Tiên tri".
+VAR ts_tai_menh = 0       // "Trăm năm trong cõi người ta..." · Mở đầu
+VAR ts_hieu = 0           // "Duyên hội ngộ, đức cù lao..." · Ch1, khi tỉnh táo ≥ 3
+VAR ts_ma_mat = 0         // "Quá niên trạc ngoại tứ tuần..." · rách ở Ch1, đủ khi quan sát Mã Giám Sinh ở Ch2
+VAR ts_co_ke = 0          // "Cò kè bớt một thêm hai..." · Ch2, quán nước
+VAR ts_tu_ba = 0          // "Thoắt trông nàng đã biết tình..." · Ch3, gặp Tú Bà
+VAR ts_hoa_troi = 0       // "Hoa trôi bèo dạt đã đành..." · Ch3, ký ức Kiều Thật (đồng điệu ≥ 4)
+VAR ts_so_khanh = 0       // "Một chàng vừa trạc thanh xuân..." · rách ở Ch3 (cô Hồng), đủ ở Ch4 (chị Lam)
+VAR ts_kim_trong = 0      // "Người quốc sắc, kẻ thiên tài..." · cuối Ch5
+VAR ts_be_dau = 0         // "Trải qua một cuộc bể dâu..." · Ch6, khi có từ 2 nhân chứng
+VAR ts_chu_tam = 0        // "Thiện căn ở tại lòng ta..." · Ch7, ký ức Kiều Thật (đồng điệu ≥ 7)
+VAR ts_thanh_lau = 0      // "Thanh lâu hai lượt, thanh y hai lần" · Ch7, khi Định Mệnh ≥ 85 · không dùng được
+VAR dinh_menh = 0         // 0–100: mức đã bẻ cong nguyên tác. Ngưỡng 30 · 50 · 70 · 85 làm câu chuyện phản đòn
+VAR dong_dieu = 0         // 0–10: đồng điệu giữa cô học sinh và Kiều Thật
+VAR lb_pl = 0             // điểm đối đáp lục bát 0–3 (Unity ghi): Mở đầu · Ch3 · Ch6 · Ch7
+VAR lb_ch3 = 0
+VAR lb_ch6 = 0
+VAR lb_ch7 = 0
+VAR c5_so_khanh = 0       // 0 không gặp · 1 vạch mặt · 2 đi theo, bị phục kích · 3 từ chối, bị hắn hô hoán
 
 INCLUDE Chapter1_GiaBien.ink
 INCLUDE Chapter2_TrenDuongTheoMaGiamSinh.ink
@@ -125,5 +149,31 @@ INCLUDE Chapter7_NghichMenh.ink
 INCLUDE Epilogue_LopHoc.ink
 
 -> chapter_1
+
+
+// --- Hàm dùng chung ---
+
+// Nhận trang đủ câu (trang đã xé thì không mọc lại).
+=== function nhan(ref trang) ===
+{trang < 2:
+    ~ trang = 2
+}
+
+// Nhận nửa trang rách.
+=== function nua(ref trang) ===
+{trang == 0:
+    ~ trang = 1
+}
+
+// Lật trang: xé nó và trả giá bằng Định Mệnh.
+=== function dung(ref trang, gia) ===
+~ trang = 3
+~ fate(gia)
+
+=== function fate(n) ===
+~ dinh_menh = MAX(0, MIN(100, dinh_menh + n))
+
+=== function soul(n) ===
+~ dong_dieu = MAX(0, MIN(10, dong_dieu + n))
 
 

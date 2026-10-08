@@ -87,6 +87,89 @@ Kiều lao vào ngõ tối.
     Mấy cái thúng, cái xe đổ chắn đường làm chúng chửi ầm lên. Tốt.
 }
 
+{dinh_menh >= 50: -> c5_gap_so_khanh}
+-> c5_rung
+
+
+=== c5_gap_so_khanh ===
+# scene:Escape_SoKhanh
+# fx:spirit
+# speaker:Narrator
+# camera:CU_SoKhanh
+Đầu bìa rừng, dưới gốc đa, có một người thanh niên dắt ngựa đứng chờ như đã hẹn từ trước. Áo khăn chải chuốt, mùi trầm thơm thoảng trong gió.
+
+# speaker:SoKhanh
+# emotion:warm_fake
+Sở Khanh: Nàng! Ta là kẻ đọc sách, thấy chướng mắt cảnh mụ Tú hành hạ người ngay. Lên ngựa đi, ta đưa nàng ra khỏi Lâm Tri trước khi trời sáng.
+
+# speaker:NoiTam
+# timer:10
+Đây rồi. Câu chuyện đang kéo mình về đúng trang sách cũ.
+
+* {ts_so_khanh == 2} [Lật trang "Một chàng vừa trạc thanh xuân...": vạch mặt Sở Khanh #page:ts_so_khanh]
+    ~ dung(ts_so_khanh, 5)
+    ~ c5_so_khanh = 1
+    # speaker:Kieu
+    # emotion:cold
+    Kiều: Sở Khanh. Áo khăn dịu dàng, ngựa đứng sẵn, hứa đưa người ta trốn. Rồi giữa đường thì quất ngựa bỏ đi, để người của mụ Tú đến bắt về. Ta biết rõ ngươi là ai.
+    # speaker:SoKhanh
+    # emotion:fearful
+    Sở Khanh: Nàng... sao nàng biết tên ta?
+    # speaker:Narrator
+    Hắn lùi lại một bước, rồi vội vàng nhảy lên ngựa, phi mất hút vào bóng tối.
+    # fx:none
+    # speaker:NoiTam
+    Một trang của Kiều vừa bị xé. Lần này, nàng không bị lừa.
+* [Lên ngựa theo chàng.]
+    ~ c5_so_khanh = 2
+    # speaker:Narrator
+    Kiều vừa ngồi lên lưng ngựa thì gã thư sinh huýt sáo. Từ sau gốc đa, hai gã gia nhân của Tú Bà bước ra.
+    # speaker:SoKhanh
+    # emotion:smug
+    Sở Khanh: Hàng về đúng chỗ rồi nhé. Nhớ chia ta phần hơn.
+    # speaker:Narrator
+    Kiều giằng ra, ngã nhào xuống đất, rồi lăn vào bụi tre. Khi đứng dậy được, ngực áo đã nhẹ bẫng.
+    {
+    - c4_tien == 2:
+        ~ c4_tien = 1
+        ~ tien = MAX(tien - 445, 0)
+        ~ ev_tien = false
+        # speaker:NoiTam
+        # emotion:pained
+        Túi bạc dấu "T." rơi mất rồi. Thứ duy nhất chứng minh tiền mua người... giờ lại về tay chúng.
+    - c4_so_no:
+        ~ c4_so_no = false
+        ~ ev_giay_no = false
+        # speaker:NoiTam
+        # emotion:pained
+        Trang sổ nợ xé được... rơi mất trong lúc giằng co.
+    - else:
+        # speaker:NoiTam
+        # emotion:pained
+        May mà chúng chưa giật được khế ước. Nhưng mình đã mất hết đà chạy.
+    }
+    ~ fate(5)
+    # fx:none
+    # speaker:KieuThat
+    # gameplay:kieu_voice
+    Ta cũng đã từng tin hắn như thế.
+* [Lắc đầu, chạy tiếp một mình. #timeout]
+    ~ c5_so_khanh = 3
+    # speaker:Kieu
+    # emotion:firm
+    Kiều: Cảm ơn. Nhưng ta không lên ngựa của người lạ.
+    # speaker:SoKhanh
+    # emotion:angry
+    Sở Khanh: (gào to) Nó ở đây! Con bé trốn chạy ở bìa rừng này!
+    # speaker:NoiTam
+    Hắn là người của mụ! Chạy!
+    # fx:none
+
+- -> c5_rung
+
+
+=== c5_rung ===
+
 # speaker:Narrator
 # camera:Wide_BambooEdge
 Cuối chợ là bìa rừng tre. Không còn đèn, không còn đường — chỉ còn tiếng lá tre và tiếng bước chân phía sau.
@@ -104,6 +187,7 @@ Kiều lao xuống con dốc đầy rễ tre.
         # speaker:CoLam
         # emotion:crying
         Cô gái áo lam: (thở hổn hển) Chị... chị vẫn ở đây. Chị vẫn theo kịp em.
+        ~ soul(2)
     - else:
         # speaker:CoLam
         # emotion:crying
@@ -157,7 +241,9 @@ Một mình ngươi thì không mở nổi cánh cổng ấy đâu.
 # speaker:NoiTam
 Mình biết. Mình cần một người... một người mà trong câu chuyện này chưa từng phản bội Kiều.
 
+~ nhan(ts_kim_trong)
 # speaker:TrangSach
+# page:ts_kim_trong
 "Người quốc sắc, kẻ thiên tài. Tình trong như đã, mặt ngoài còn e."
 
 # fx:none

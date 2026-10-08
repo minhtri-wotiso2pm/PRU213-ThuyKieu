@@ -54,7 +54,11 @@ Quyển Truyện Kiều vẫn nằm trước mặt, mở đúng trang cũ.
 # camera:Window
 Hoàng hôn trải trên sân trường. Ở đâu đó, có tiếng mưa rất xa, rồi tạnh hẳn.
 
-{kt_tin_tuong >= 3:
+{
+- c7_ket == 0:
+    # speaker:NoiTam
+    Ở trong trang sách kia, giờ này cánh cửa lầu xanh vẫn đóng. Và sẽ còn đóng rất lâu.
+- kt_tin_tuong >= 3:
     # speaker:NoiTam
     Lần này chàng không đến muộn. Không biết ở trong trang sách kia, giờ này họ đang làm gì.
 - else:
@@ -83,6 +87,9 @@ Lần này, tôi đọc chậm từng chữ.
 - c7_ket == 2:
     # speaker:NoiTam
     Mình đã thắng, nhưng không phải nhờ mình giỏi hơn nàng. Mình chỉ được nhiều hơn nàng vài thứ.
+- c7_ket == 0:
+    # speaker:NoiTam
+    Mình biết trước từng trang, mà vẫn thua. Nàng không ngốc. Chỉ là chưa từng có ai đứng về phía nàng.
 - else:
     # speaker:NoiTam
     Biết trước mọi chuyện, mình vẫn suýt thua. Còn nàng thì không được biết trước điều gì cả.
@@ -144,14 +151,42 @@ Ngân: ...Mày ngủ một giấc mà nói chuyện như bà cụ non ấy.
 # emotion:amused
 Ngân: Thôi về đi, trường sắp đóng cổng rồi.
 
-# speaker:Narrator
-# camera:BookClose
-# music:spirit
-# gameplay:thank_you
-Khi tôi gấp sách lại, ở cuối trang có một dòng chữ nhỏ, mực còn như vừa khô.
-
-# speaker:TrangSach
-"Cảm ơn."
+{
+- c7_ket == 0:
+    # speaker:Narrator
+    # camera:BookClose
+    # music:spirit
+    Khi tôi gấp sách lại, mắt tôi dừng ở một câu tôi vẫn đọc lướt qua.
+    # speaker:TrangSach
+    "Đau đớn thay phận đàn bà, lời rằng bạc mệnh cũng là lời chung."
+    # speaker:NoiTam
+    Lần này mình không lướt qua nữa.
+- dong_dieu <= 3:
+    # speaker:Narrator
+    # camera:BookClose
+    # music:spirit
+    Khi tôi gấp sách lại, cuối trang trống trơn. Không có dòng chữ nào cả.
+    # speaker:NoiTam
+    Mình đã thắng thay nàng. Nhưng chưa từng hỏi nàng muốn gì.
+- else:
+    # speaker:Narrator
+    # camera:BookClose
+    # music:spirit
+    # gameplay:thank_you
+    Khi tôi gấp sách lại, ở cuối trang có một dòng chữ nhỏ, mực còn như vừa khô.
+    # speaker:TrangSach
+    "Cảm ơn."
+    {
+    - ket_hon == 1:
+        # speaker:NoiTam
+        Ở đâu đó trong trang sách, nàng đang sống nốt đời mình. Lần này không ai viết sẵn.
+    - ket_hon == 2:
+        # speaker:KieuThat
+        Lớp học của ngươi... nắng đẹp thật.
+        # speaker:NoiTam
+        Ừ. Mai mình dẫn nàng đi xem cả trường.
+    }
+}
 
 # speaker:Narrator
 # gameplay:ending
