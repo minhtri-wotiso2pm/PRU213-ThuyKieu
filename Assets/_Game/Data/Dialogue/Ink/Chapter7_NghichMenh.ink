@@ -535,7 +535,7 @@ Mã Giám Sinh: Ta đã nói rồi. Ra khỏi đây, ngươi vẫn chỉ là m�
 Mình biết trước tất cả. Mình đã cố đến thế này. Và câu chuyện vẫn đi đúng con đường của nó.
 
 # fx:spirit
-# music:spirit
+# music:bac_menh
 # scene:HuyenDuong_BongToi
 # speaker:Narrator
 # camera:Spirit
@@ -725,6 +725,7 @@ Rồi ánh sáng xuất hiện.
 
 === c7_mat_minh ===
 // Thắng mà mất mình: đồng điệu quá thấp, Kiều Thật lặng đi mà không cảm ơn.
+# music:none
 # speaker:KieuThat
 # camera:Spirit
 Ngươi thắng rồi. Ngươi giỏi thật, đúng như ngươi nói ở lớp học.
@@ -755,6 +756,7 @@ Mình đã thắng vụ kiện. Vậy sao trong lòng lại trống rỗng thế
 
 === c7_nghich_menh ===
 // Kết trọn vẹn nhất: người chơi tự chọn hai linh hồn chia tay hay cùng sống trong một thân.
+# music:nghich_menh
 # speaker:KieuThat
 # camera:Spirit
 Thân này là của ta. Nhưng một ngày qua... nó cũng đã là của ngươi.

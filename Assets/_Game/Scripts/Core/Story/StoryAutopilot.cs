@@ -50,7 +50,10 @@ namespace ThuyKieu.Core.Story
         private void Update()
         {
             if (_sceneStart <= 0f) _sceneStart = Time.realtimeSinceStartup;
-            if (Time.realtimeSinceStartup - _sceneStart > 2f) _frames.Add(Time.unscaledDeltaTime);
+            if (Time.realtimeSinceStartup - _sceneStart <= 2f) return;
+            _frames.Add(Time.unscaledDeltaTime);
+            // A single slow frame is logged in order with the other notes, so the line before it names the cause.
+            if (Time.unscaledDeltaTime > 0.15f) Note($"HITCH {Time.unscaledDeltaTime * 1000f:F0} ms");
         }
 
         /// <summary>Average fps, the 1% low (the slowest 1% of frames) and the worst frame.</summary>

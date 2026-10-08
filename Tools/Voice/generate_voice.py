@@ -47,7 +47,7 @@ VOICES = {
     "ChiLam":     (FEMALE, "-2%", "+4Hz"),    # same woman as CoLam, now with her name
     "HocSinh":    (FEMALE, "+4%", "+2Hz"),    # the modern student speaking aloud
     "Ngan":       (FEMALE, "+10%", "+8Hz"),   # chatty deskmate
-    "CoGiao":     (FEMALE, "-6%", "-6Hz"),
+    "ThayGiao":   (MALE, "-6%", "-4Hz"),     # the literature teacher
     "VuongOng":   (MALE, "-14%", "-16Hz"),
     "VuongQuan":  (MALE, "+8%", "+14Hz"),     # Kiều's younger brother
     "QuanSai":    (MALE, "+4%", "-12Hz"),
@@ -70,7 +70,8 @@ def spoken(text: str) -> str:
 
 async def synthesise(line, semaphore, force):
     target = OUTPUT / f"{line['key']}.mp3"
-    if target.exists() and not force:
+    # A failed request leaves an empty file behind; treat it as missing.
+    if target.exists() and target.stat().st_size > 0 and not force:
         return "skip"
     voice, rate, pitch = VOICES.get(line["speaker"], VOICES["Narrator"])
     async with semaphore:
@@ -80,9 +81,10 @@ async def synthesise(line, semaphore, force):
                 return "made"
             except Exception as error:  # network hiccups: retry with backoff
                 if attempt == 3:
+                    target.unlink(missing_ok=True)
                     print(f"FAILED {line['key']} ({line['speaker']}): {error}")
                     return "fail"
-                await asyncio.sleep(1.5 * (attempt + 1))
+                await asyncio.sleep(3 * (attempt + 1))
 
 
 async def main():

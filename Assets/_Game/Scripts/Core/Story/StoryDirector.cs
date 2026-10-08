@@ -21,6 +21,8 @@ namespace ThuyKieu.Core.Story
     /// dialogue → explore (world resolves #explore choices) → blocking sequences → chapter complete.
     /// Presentation tags are routed to camera, actors, HUD, audio and screen effects.
     /// </summary>
+    // Start must load the Ink state before the chapter worlds' Start reads story variables (scene order is not guaranteed).
+    [DefaultExecutionOrder(-50)]
     public class StoryDirector : MonoBehaviour
     {
         public struct ExploreOption { public int Index; public string Id; public string Text; }
@@ -416,6 +418,7 @@ namespace ThuyKieu.Core.Story
                 string key = raw.Substring(0, colon).Trim();
                 string value = raw.Substring(colon + 1).Trim();
                 if (Array.IndexOf(ResumeKeys, key) >= 0) _lastTags[key] = value;
+                if (key == "scene" || key == "music" || key == "sfx" || key == "gameplay") StoryAutopilot.Note("TAG " + key + ":" + value);
                 switch (key)
                 {
                     case "emotion": emotion = value; break;

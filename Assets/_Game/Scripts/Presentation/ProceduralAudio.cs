@@ -38,6 +38,10 @@ namespace ThuyKieu.Presentation
                 case "family": return Score(id, 32f, 196f, MajorPenta, 1.1f, 0.55f, 0.16f, 2, 25);
                 case "spirit": return Score(id, 36f, 293.66f, MinorPenta, 1.7f, 0.4f, 0.22f, 2, 26);
                 case "epilogue": return Score(id, 34f, 220f, MajorPenta, 1.25f, 0.48f, 0.14f, 2, 27);
+                // Trang Sách branches: Sở Khanh's sweet-talk, the lost trial (bạc mệnh) and the Nghịch Mệnh farewell.
+                case "so_khanh": return Score(id, 26f, 155.56f, MinorPenta, 0.5f, 0.4f, 0.1f, 2, 28);
+                case "bac_menh": return Score(id, 40f, 98f, MinorPenta, 2f, 0.42f, 0.26f, 1, 29);
+                case "nghich_menh": return Score(id, 36f, 246.94f, MajorPenta, 1.15f, 0.5f, 0.2f, 2, 30);
                 default: return null;
             }
         }
@@ -90,8 +94,8 @@ namespace ThuyKieu.Presentation
                 case "memory": data = Add(Swell(1.6f, random), Notes(new[] { 146.83f, 220f, 293.66f, 440f }, 0f, 3f, 0.35f, 1.6f)); break;
                 case "detect": data = Notes(new[] { 1174.66f }, 0f, 0.35f, 0.4f); break;
                 case "ui": data = Notes(new[] { 1318.5f }, 0f, 0.12f, 0.25f); break;
-                case "step": data = Thud(0.18f, random); break;
-                case "door": data = Add(Thud(0.4f, random), Clicks(0.4f, 3, 0.3f, random)); break;
+                case "step": case "step_wood": case "step_stone": data = Thud(0.18f, random); break;
+                case "door": case "door_open": case "door_close": data = Add(Thud(0.4f, random), Clicks(0.4f, 3, 0.3f, random)); break;
                 case "slap": data = Noise(0.16f, 0.9f, 0.95f, random); break;
                 case "lock_open": data = Add(Clicks(0.5f, 3, 0.55f, random), Thud(0.3f, random)); break;
                 case "fire": data = Add(Swell(1.2f, random), Clicks(1.6f, 14, 0.25f, random)); break;

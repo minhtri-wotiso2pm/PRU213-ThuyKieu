@@ -21,7 +21,7 @@ namespace ThuyKieu.Dialogue.Editor
         private static readonly HashSet<string> KnownSpeakers = new HashSet<string>
         { "Narrator", "Kieu", "NoiTam", "KieuThat", "TrangSach", "MeKieu", "MaGiamSinh", "TuyTung", "TuBa", "MaKieu", "CoHong", "CoLam", "NguoiCanh",
           "KimTrong", "BaHangNuoc", "ThuLai", "ChuHieuBac", "GiaNhan",
-          "HocSinh", "Ngan", "CoGiao", "VuongOng", "VuongQuan", "QuanSai", "QuanHuyen", "NhaDich", "ChiLam", "SoKhanh" };
+          "HocSinh", "Ngan", "ThayGiao", "VuongOng", "VuongQuan", "QuanSai", "QuanHuyen", "NhaDich", "ChiLam", "SoKhanh" };
 
         /// <summary>Story entry knots with their chapter numbers (0 = prologue, 8 = epilogue). Chapter 1 starts at the root.</summary>
         internal static readonly (string Knot, int Chapter)[] Entries =
@@ -309,6 +309,9 @@ namespace ThuyKieu.Dialogue.Editor
             if (!KnownKeys.Contains(key)) problems.Add("Unknown tag " + tag);
             if (key == "speaker" && !KnownSpeakers.Contains(value)) problems.Add("Unknown speaker " + value);
             if (key == "gameplay") gameplay.Add(value);
+            if ((key == "music" && value != "none") || key == "sfx")
+                if (ThuyKieu.Presentation.AudioBank.Get(key == "music" ? ThuyKieu.Presentation.AudioBank.Music : ThuyKieu.Presentation.AudioBank.Sfx, value) == null)
+                    problems.Add("No audio for " + tag);
             if (key == "camera") cameras.Add(value);
             if (key == "scene") scenes.Add(value);
             if (key == "clue") clues.Add(value);

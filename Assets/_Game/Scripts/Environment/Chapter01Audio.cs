@@ -30,18 +30,18 @@ namespace ThuyKieu.Environment
             StartLoop(_musicSource); StartLoop(_rainSource); StartLoop(_windSource);
         }
 
-        /// <summary>Slots without recorded audio use the synthesised placeholders shared with Chapters 2–3.</summary>
+        /// <summary>Empty slots take the Chapter 1 clips from AudioBank (recorded where they exist, baked otherwise).</summary>
         private void FillMissingClips()
         {
-            FillLoop(_musicSource, ProceduralAudio.Music("sad_strings"));
-            FillLoop(_rainSource, ProceduralAudio.Ambience("rain"));
-            FillLoop(_windSource, ProceduralAudio.Ambience("wind"));
-            if (_paper == null) _paper = ProceduralAudio.Sfx("paper");
-            if (_doorOpen == null) _doorOpen = ProceduralAudio.Sfx("door");
-            if (_doorClose == null) _doorClose = ProceduralAudio.Sfx("door");
-            if (_uiConfirm == null) _uiConfirm = ProceduralAudio.Sfx("ui");
-            if (_woodStep == null) _woodStep = ProceduralAudio.Sfx("step");
-            if (_stoneStep == null) _stoneStep = ProceduralAudio.Sfx("step");
+            FillLoop(_musicSource, AudioBank.Get(AudioBank.Music, "sad_strings"));
+            FillLoop(_rainSource, AudioBank.Get(AudioBank.Ambience, "rain"));
+            FillLoop(_windSource, AudioBank.Get(AudioBank.Ambience, "wind"));
+            if (_paper == null) _paper = AudioBank.Get(AudioBank.Sfx, "paper");
+            if (_doorOpen == null) _doorOpen = AudioBank.Get(AudioBank.Sfx, "door_open");
+            if (_doorClose == null) _doorClose = AudioBank.Get(AudioBank.Sfx, "door_close");
+            if (_uiConfirm == null) _uiConfirm = AudioBank.Get(AudioBank.Sfx, "ui");
+            if (_woodStep == null) _woodStep = AudioBank.Get(AudioBank.Sfx, "step_wood");
+            if (_stoneStep == null) _stoneStep = AudioBank.Get(AudioBank.Sfx, "step_stone");
         }
 
         private static void FillLoop(AudioSource source, AudioClip clip)

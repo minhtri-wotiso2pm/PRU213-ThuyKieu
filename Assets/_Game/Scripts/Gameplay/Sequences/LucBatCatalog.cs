@@ -34,7 +34,7 @@ namespace ThuyKieu.Gameplay.Sequences
         {
             new Couplet
             {
-                Id = "lucbat_pl", Variable = "lb_pl", Title = "Giờ Văn · điền chữ còn thiếu", Listener = "CoGiao",
+                Id = "lucbat_pl", Variable = "lb_pl", Title = "Giờ Văn · điền chữ còn thiếu", Listener = "ThayGiao",
                 Luc = "Trăm năm trong cõi người ta", BatPattern = "Chữ tài chữ mệnh khéo {0} ghét nhau",
                 Tiles = new[] { "là", "lại", "thì", "đã" }, Correct = 0,
                 Why = new[] { "", "\"lại\" mang thanh trắc — chữ thứ sáu câu tám phải là thanh bằng.", "\"thì\" không vần với \"ta\".", "\"đã\" mang thanh trắc — chữ thứ sáu câu tám phải là thanh bằng." },

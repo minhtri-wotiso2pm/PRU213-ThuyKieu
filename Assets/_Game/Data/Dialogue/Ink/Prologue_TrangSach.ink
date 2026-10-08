@@ -13,69 +13,69 @@
 # camera:Wide_Classroom
 Tiết Văn cuối cùng của một buổi chiều tháng Năm. Quạt trần quay chậm, nắng xiên qua khung cửa sổ.
 
-# speaker:CoGiao
+# speaker:ThayGiao
 # emotion:thoughtful
-# camera:CU_CoGiao
-Cô giáo: Gia đình gặp nạn, cha và em bị bắt oan, cần bốn trăm lạng bạc. Và Thúy Kiều đã quyết định bán mình chuộc cha.
+# camera:CU_ThayGiao
+Thầy giáo: Gia đình gặp nạn, cha và em bị bắt oan, cần bốn trăm lạng bạc. Và Thúy Kiều đã quyết định bán mình chuộc cha.
 
 # speaker:TrangSach
 "Duyên hội ngộ, đức cù lao, bên tình bên hiếu bên nào nặng hơn?"
 
-# speaker:CoGiao
-Cô giáo: Hôm nay cô muốn nghe các em nghĩ gì. Nếu các em là Kiều, các em có làm như thế không?
+# speaker:ThayGiao
+Thầy giáo: Hôm nay thầy muốn nghe các em nghĩ gì. Nếu các em là Kiều, các em có làm như thế không?
 
 # speaker:Ngan
 # emotion:amused
 # camera:OTS_Kieu_Ngan
 Ngân: (thì thầm) Ê, giơ tay đi. Tiết trước mày chê Kiều suốt mà.
 
-# speaker:CoGiao
+# speaker:ThayGiao
 # emotion:calm_probe
-Cô giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
+Thầy giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
 
 # timer:14
-* ["Dễ mà cô. Em sẽ làm tốt hơn Kiều nhiều."]
+* ["Dễ mà thầy. Em sẽ làm tốt hơn Kiều nhiều."]
     ~ pl_che_kieu = 1
     ~ dong_dieu = 1
     # speaker:HocSinh
     # emotion:smug
-    Tôi: Dễ mà cô. Ai đến hỏi cưới mà vội vàng trả đủ tiền như thế thì phải nghi chứ. Nếu là em, em sẽ làm tốt hơn Kiều nhiều.
-    # speaker:CoGiao
+    Tôi: Dễ mà thầy. Ai đến hỏi cưới mà vội vàng trả đủ tiền như thế thì phải nghi chứ. Nếu là em, em sẽ làm tốt hơn Kiều nhiều.
+    # speaker:ThayGiao
     # emotion:amused
-    Cô giáo: Tự tin quá nhỉ. Biết trước kết cục thì ai mà chẳng khôn.
+    Thầy giáo: Tự tin quá nhỉ. Biết trước kết cục thì ai mà chẳng khôn.
 * ["Em nghĩ phải có cách khác, chứ không phải bán chính mình."]
     ~ pl_che_kieu = 2
     ~ dong_dieu = 3
     # speaker:HocSinh
     # emotion:thoughtful
     Tôi: Em nghĩ phải có cách khác. Vay mượn, kêu oan, tìm người làm chứng... chứ không phải đem chính mình ra đổi.
-    # speaker:CoGiao
+    # speaker:ThayGiao
     # emotion:thoughtful
-    Cô giáo: "Cách khác" ấy, một cô gái mười lăm tuổi thời đó có được bao nhiêu?
+    Thầy giáo: "Cách khác" ấy, một cô gái mười lăm tuổi thời đó có được bao nhiêu?
 * ["Kiều cam chịu quá. Em không thích nhân vật này."]
     ~ pl_che_kieu = 3
     ~ dong_dieu = 2
     # speaker:HocSinh
     # emotion:cold
-    Tôi: Kiều cam chịu quá cô ạ. Người ta bảo gì làm nấy, rồi khóc suốt mười lăm năm. Em không thích nhân vật này.
-    # speaker:CoGiao
+    Tôi: Kiều cam chịu quá thầy ạ. Người ta bảo gì làm nấy, rồi khóc suốt mười lăm năm. Em không thích nhân vật này.
+    # speaker:ThayGiao
     # emotion:cold
-    Cô giáo: Thích hay không là quyền của em. Nhưng phán xét một người thì phải hiểu hoàn cảnh của họ trước đã.
+    Thầy giáo: Thích hay không là quyền của em. Nhưng phán xét một người thì phải hiểu hoàn cảnh của họ trước đã.
 * [Im lặng, lắc đầu. #timeout]
     ~ pl_che_kieu = 3
     ~ dong_dieu = 2
     # speaker:Narrator
     Tôi không trả lời, chỉ khẽ lắc đầu. Trong đầu vẫn là một câu: "Ngốc thật."
-    # speaker:CoGiao
-    Cô giáo: Không nói cũng là một câu trả lời. Về nhà các em nghĩ thêm nhé.
+    # speaker:ThayGiao
+    Thầy giáo: Không nói cũng là một câu trả lời. Về nhà các em nghĩ thêm nhé.
 
 - # speaker:Narrator
 # sfx:school_bell
 # camera:Wide_Classroom
 Chuông tan học reo vang. Cả lớp ào ra như ong vỡ tổ.
 
-# speaker:CoGiao
-Cô giáo: Bài về nhà: viết một đoạn, nếu em là Kiều. Nhớ là viết bằng tấm lòng, đừng viết bằng cái đầu biết trước kết cục!
+# speaker:ThayGiao
+Thầy giáo: Bài về nhà: viết một đoạn, nếu em là Kiều. Nhớ là viết bằng tấm lòng, đừng viết bằng cái đầu biết trước kết cục!
 
 # speaker:Narrator
 # objective:Thu dọn sách vở trước khi về · E để tương tác
@@ -87,7 +87,7 @@ Lớp học vãn dần. Quyển Truyện Kiều vẫn nằm mở trên bàn.
 
 === pl_lop ===
 // Hub khám phá trong lớp; lật quyển sách là kết thúc.
-* [Đọc mấy câu thơ cô chép trên bảng #explore:pl_board]
+* [Đọc mấy câu thơ thầy chép trên bảng #explore:pl_board]
     -> pl_board
 * [Nói chuyện với Ngân #explore:pl_ngan]
     -> pl_ngan
@@ -100,10 +100,10 @@ Lớp học vãn dần. Quyển Truyện Kiều vẫn nằm mở trên bàn.
 === pl_board ===
 # speaker:Narrator
 # camera:Board
-Trên bảng, nét phấn của cô vẫn còn nguyên. Cô chép hai câu đầu Truyện Kiều, cố tình bỏ trống một chữ cho cả lớp điền.
+Trên bảng, nét phấn của thầy vẫn còn nguyên. Thầy chép hai câu đầu Truyện Kiều, cố tình bỏ trống một chữ cho cả lớp điền.
 
 # speaker:NoiTam
-Luật cô dạy hồi sáng: chữ thứ sáu của câu tám phải vần với chữ cuối của câu sáu. Điền thử xem.
+Luật thầy dạy hồi sáng: chữ thứ sáu của câu tám phải vần với chữ cuối của câu sáu. Điền thử xem.
 
 # speaker:Narrator
 # gameplay:lucbat_pl
@@ -121,7 +121,7 @@ Chữ mệnh. Người xưa cứ đổ hết cho số phận. Số phận thì l
 # speaker:Ngan
 # emotion:amused
 # camera:OTS_Kieu_Ngan
-Ngân: Mày ghê thật. Cả lớp chẳng ai dám cãi cô, có mỗi mày.
+Ngân: Mày ghê thật. Cả lớp chẳng ai dám cãi thầy, có mỗi mày.
 
 {
 - pl_che_kieu == 1:
@@ -141,7 +141,7 @@ Tôi: Thì đấy là truyện. Nhân vật làm sai thì mình được quyền
 
 # speaker:Ngan
 # emotion:thoughtful
-Ngân: Ừ... nhưng cô bảo rồi, mình biết trước kết cục. Kiều thì không.
+Ngân: Ừ... nhưng thầy bảo rồi, mình biết trước kết cục. Kiều thì không.
 
 # speaker:Ngan
 # emotion:amused

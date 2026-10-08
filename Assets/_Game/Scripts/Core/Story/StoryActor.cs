@@ -51,6 +51,8 @@ namespace ThuyKieu.Core.Story
         /// <summary>Feet-to-crown capsule axis used by cameras to keep bystanders out of a shot.</summary>
         public float StandingHeight => _headHeight + 0.15f;
         public NavMeshAgent Agent => _agent;
+        /// <summary>False for a static posed mesh (e.g. a seated classmate), which must not be walked around.</summary>
+        public bool HasRig => _animator != null;
         public bool IsMoving => _agent != null && _agent.enabled && _agent.isOnNavMesh && !_agent.isStopped
                                 && (_agent.pathPending || _agent.remainingDistance > _agent.stoppingDistance + 0.05f);
 

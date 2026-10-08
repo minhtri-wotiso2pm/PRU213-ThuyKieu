@@ -8,7 +8,7 @@
 === epilogue ===
 # chapter:8
 # scene:LopHoc_HoangHon
-# music:epilogue
+# music:{c7_ket == 0:bac_menh|epilogue}
 # speaker:Narrator
 # camera:Wide_Classroom
 # gameplay:wake_class

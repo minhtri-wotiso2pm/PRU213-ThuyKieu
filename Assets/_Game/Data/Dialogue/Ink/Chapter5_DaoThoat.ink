@@ -93,6 +93,7 @@ Kiều lao vào ngõ tối.
 
 === c5_gap_so_khanh ===
 # scene:Escape_SoKhanh
+# music:so_khanh
 # fx:spirit
 # speaker:Narrator
 # camera:CU_SoKhanh
@@ -170,6 +171,7 @@ Sở Khanh: Nàng! Ta là kẻ đọc sách, thấy chướng mắt cảnh mụ 
 
 === c5_rung ===
 
+# music:chase
 # speaker:Narrator
 # camera:Wide_BambooEdge
 Cuối chợ là bìa rừng tre. Không còn đèn, không còn đường — chỉ còn tiếng lá tre và tiếng bước chân phía sau.
@@ -229,6 +231,7 @@ Kiều: Nhưng chỉ trốn thôi chưa đủ.
 
 # speaker:Kieu
 # emotion:determined
+# music:resolve
 Kiều: Mình phải quay lại.
 
 # speaker:NoiTam

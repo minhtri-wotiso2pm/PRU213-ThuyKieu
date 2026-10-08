@@ -111,7 +111,21 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             if (actor == null || !actor.isActiveAndEnabled) return;
             actor.Sit(false);
-            StartCoroutine(WalkOut(actor, door));
+            StartCoroutine(actor.HasRig ? WalkOut(actor, door) : SlipAway(actor));
+        }
+
+        /// <summary>A posed (unrigged) classmate cannot walk, so it is gone the first moment the camera looks elsewhere.</summary>
+        private IEnumerator SlipAway(StoryActor actor)
+        {
+            var renderers = actor.GetComponentsInChildren<Renderer>();
+            for (float t = 0; t < 30f && actor.isActiveAndEnabled; t += Time.deltaTime)
+            {
+                bool seen = false;
+                foreach (var r in renderers) seen |= r.isVisible;
+                if (!seen || _director.Autopilot) break;
+                yield return null;
+            }
+            actor.gameObject.SetActive(false);
         }
 
         private IEnumerator WalkOut(StoryActor actor, Transform door)

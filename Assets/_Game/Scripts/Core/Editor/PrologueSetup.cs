@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using ThuyKieu.Core.Story;
 using ThuyKieu.Gameplay.Chapters;
 using ThuyKieu.Gameplay.Sequences;
@@ -39,12 +39,10 @@ namespace ThuyKieu.Core.Editor
             // ------------------------------------------------------------ the classroom
             var room = ClassroomKit.Build(world, ClassOrigin, false);
             var look = ClassroomKit.StudentBody(s);
-            // Ngân: the purple-dressed rig warmed to coral so she never reads as the student in blue.
-            var ngan = RiggedActor("Ngan", "Ngan", Characters + "LauXanh3/Rigged/LauXanh3_Rigged.fbx", Characters + "LauXanh3/Rigged", 1.58f,
-                room.NganSeat.position, 0f, new Color(1f, 0.78f, 0.66f), StoryAnimationSetup.CharacterController("LauXanh3"));
-            var teacher = RiggedActor("CoGiao", "CoGiao", Characters + "MeThuyKieu/Models/MeThuyKieu_Rigged.fbx", Characters + "MeThuyKieu/Tectures",
-                1.6f, room.TeacherSpot.position, 180f, new Color(0.78f, 0.8f, 1f), shared);
-            var classmates = Classmates(room, shared);
+            // Modern-day cast from the team's ThuyKieuKiemTien models (static, posed): Ngân and the classmates sit, the teacher stands.
+            var ngan = ModernActor("Ngan", "Ngan", "NuSinhToxic", 1.3f, room.NganSeat.position, 0f, Color.white, seat: true);
+            var teacher = ModernActor("ThayGiao", "ThayGiao", "ThayGiao", 1.72f, room.TeacherSpot.position, 180f, Color.white);
+            var classmates = Classmates(room);
             Explore(Anchor(world, "BoardTarget", room.BoardAnchor.position), director, "pl_board", "Đọc mấy câu thơ trên bảng", new Vector3(2.4f, 1.6f, 1.2f));
             Explore(ngan.gameObject, director, "pl_ngan", "Nói chuyện với Ngân", Vector3.one * 1.8f);
             Set(Explore(Anchor(world, "WindowTarget", room.WindowAnchor.position), director, "pl_window", "Nhìn ra cửa sổ", new Vector3(1.2f, 1.6f, 1.8f)), "_standPoint", room.WindowStand);
@@ -144,20 +142,19 @@ namespace ThuyKieu.Core.Editor
         // ------------------------------------------------------------------ characters
 
 
-        private static StoryActor[] Classmates(ClassroomKit.Parts room, RuntimeAnimatorController shared)
+        private static StoryActor[] Classmates(ClassroomKit.Parts room)
         {
-            string[] models = { "ThuyKieu/Models/ThuyKieu_Rigged.fbx", "MaGiamSinh/Models/MaGiamSinh_Rigged.fbx", "MeThuyKieu/Models/MeThuyKieu_Rigged.fbx" };
-            string[] textures = { "ThuyKieu/Tectures", "MaGiamSinh/Tectures", "MeThuyKieu/Tectures" };
-            Color[] tints = { new Color(0.95f, 0.96f, 1f), new Color(0.82f, 0.88f, 1f), new Color(0.9f, 0.95f, 1f), new Color(0.78f, 0.84f, 0.95f) };
+            // Mostly the seated boy, a few girls; light tints so the copies do not read as twins.
+            string[] models = { "HocSinhNgoi", "HocSinhNgoi", "NuSinhToxic" };
+            Color[] tints = { Color.white, new Color(0.86f, 0.9f, 1f), new Color(1f, 0.93f, 0.86f), new Color(0.92f, 1f, 0.92f) };
             // Two front rows and the back corner: enough to fill the room without crowding her desk.
             int[] picks = { 0, 3, 6, 9, 11, 13, 16, 20 };
             var list = new System.Collections.Generic.List<StoryActor>();
             for (int i = 0; i < picks.Length && picks[i] < room.ClassmateSeats.Count; i++)
             {
                 var seat = room.ClassmateSeats[picks[i]];
-                int m = i % 3;
-                list.Add(RiggedActor("BanHoc" + i, "BanHoc", Characters + models[m], Characters + textures[m], m == 1 ? 1.7f : 1.58f,
-                    seat.position, 0f, tints[i % tints.Length], shared));
+                list.Add(ModernActor("BanHoc" + i, "BanHoc", models[i % models.Length], 1.26f + (i % 3) * 0.04f, seat.position, 0f,
+                    tints[i % tints.Length], seat: true));
             }
             return list.ToArray();
         }

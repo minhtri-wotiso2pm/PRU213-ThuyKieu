@@ -1,4 +1,4 @@
-using ThuyKieu.Gameplay.Chapters;
+﻿using ThuyKieu.Gameplay.Chapters;
 using ThuyKieu.Gameplay.Sequences;
 using ThuyKieu.UI;
 using UnityEditor;
@@ -30,8 +30,8 @@ namespace ThuyKieu.Core.Editor
 
             var room = ClassroomKit.Build(world, Vector3.zero, true);
             var look = ClassroomKit.StudentBody(s);
-            RiggedActor("Ngan", "Ngan", Characters + "LauXanh3/Rigged/LauXanh3_Rigged.fbx", Characters + "LauXanh3/Rigged", 1.58f,
-                room.NganSeat.position + new Vector3(0.75f, 0f, -0.2f), 250f, new Color(1f, 0.78f, 0.66f), StoryAnimationSetup.CharacterController("LauXanh3"));
+            // Ngân still at the next seat when she wakes (static seated model from ThuyKieuKiemTien).
+            ModernActor("Ngan", "Ngan", "NuSinhToxic", 1.3f, room.NganSeat.position, 0f, Color.white, seat: true);
             Set(Explore(Anchor(world, "WindowTarget", room.WindowAnchor.position), director, "ep_window", "Nhìn ra cửa sổ", new Vector3(1.2f, 1.6f, 1.8f)), "_standPoint", room.WindowStand);
             Set(Explore(Anchor(world, "BookTarget", room.Seat.position + new Vector3(0, 0, 0.1f)), director, "ep_book", "Mở lại quyển Truyện Kiều", new Vector3(1.2f, 1.6f, 1.2f)), "_standPoint", room.Seat);
 

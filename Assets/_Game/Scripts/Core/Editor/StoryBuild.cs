@@ -66,6 +66,7 @@ namespace ThuyKieu.Core.Editor
         [MenuItem("ThuyKieu/Story/Build Windows (whole game)")]
         public static void BuildWindows()
         {
+            AudioBankBaker.Bake(); // the build must ship baked audio, never synthesise it in play
             var scenes = EditorBuildSettings.scenes.Where(s => s.enabled).Select(s => s.path).ToArray();
             var report = BuildPipeline.BuildPlayer(new BuildPlayerOptions
             {

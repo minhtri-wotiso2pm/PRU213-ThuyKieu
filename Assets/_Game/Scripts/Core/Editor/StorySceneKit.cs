@@ -279,6 +279,49 @@ namespace ThuyKieu.Core.Editor
             return FinishActor(root, speakerId, null, visual.transform, height);
         }
 
+        /// <summary>
+        /// A modern-day character from <see cref="ModernCharacterImport"/> (static posed mesh, own material with normal map).
+        /// <paramref name="seat"/> set: the model is seated, so it is placed with its hips on the bench behind that seat point
+        /// (bench top <paramref name="benchHeight"/>, <paramref name="benchBehind"/> metres behind) instead of standing on it.
+        /// </summary>
+        public static StoryActor ModernActor(string name, string speakerId, string model, float height, Vector3 position, float yaw, Color tint,
+            bool seat = false, float benchHeight = 0.46f, float benchBehind = 0.3f)
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ModernCharacterImport.PrefabPath(model));
+            if (prefab == null) throw new System.IO.FileNotFoundException("Run ThuyKieu > Tools > Import modern characters first", ModernCharacterImport.PrefabPath(model));
+            var root = new GameObject(name);
+            var visual = new GameObject("Visual");
+            visual.transform.SetParent(root.transform, false);
+            var instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+            instance.transform.SetParent(visual.transform, false);
+            Fit(instance, height);
+            if (tint != Color.white)
+            {
+                var renderer = instance.GetComponentInChildren<Renderer>();
+                string path = AssetFolder + "/" + model + "_" + ColorUtility.ToHtmlStringRGB(tint) + ".mat";
+                var material = AssetDatabase.LoadAssetAtPath<Material>(path);
+                if (material == null) { material = new Material(renderer.sharedMaterial); material.SetColor("_BaseColor", tint); AssetDatabase.CreateAsset(material, path); }
+                renderer.sharedMaterial = material;
+            }
+            if (seat)
+            {
+                // Hips = the lowest point of the back third of the seated mesh; slide them onto the bench.
+                var mesh = instance.GetComponentInChildren<MeshFilter>().sharedMesh;
+                var b = mesh.bounds;
+                float hips = b.max.y, back = b.min.z + b.size.z * 0.3f;
+                foreach (var v in mesh.vertices) if (v.z < back && v.y > b.min.y + b.size.y * 0.15f) hips = Mathf.Min(hips, v.y);
+                float scale = height / b.size.y;
+                float lift = Mathf.Clamp(benchHeight - (hips - b.min.y) * scale, -0.06f, 0.14f);
+                float hipsForward = (b.min.z + b.size.z * 0.15f - b.center.z) * scale;
+                visual.transform.localPosition = new Vector3(0f, lift, -benchBehind - hipsForward);
+            }
+            root.transform.SetPositionAndRotation(position, Quaternion.Euler(0, yaw, 0));
+            var actor = FinishActor(root, speakerId, null, visual.transform, height);
+            // A seated pose never walks; without this the agent would snap the actor onto the nearest NavMesh (a desk top).
+            if (seat) UnityEngine.Object.DestroyImmediate(root.GetComponent<NavMeshAgent>());
+            return actor;
+        }
+
 
         /// <summary>
         /// Placeholder posing for unrigged T/A-pose meshes: rotates everything outside the shoulders down

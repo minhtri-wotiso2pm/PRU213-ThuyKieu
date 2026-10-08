@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ThuyKieu.Core;
 using ThuyKieu.Player;
 using UnityEngine;
@@ -8,7 +7,7 @@ namespace ThuyKieu.Presentation
 {
     /// <summary>
     /// Music crossfades, ambience beds, one-shot effects and footsteps for story chapters.
-    /// Assigned clips override the procedural placeholders by id, so recorded audio can be dropped in later.
+    /// Clips come from AudioBank by id (recorded, then baked); assigned overrides win, so recorded audio can be dropped in per scene.
     /// </summary>
     public class StoryAudio : MonoBehaviour
     {
@@ -21,7 +20,6 @@ namespace ThuyKieu.Presentation
         [SerializeField, Range(0, 1)] private float _sfxVolume = 0.8f;
         [SerializeField] private Override[] _overrides;
 
-        private readonly Dictionary<string, AudioClip> _cache = new Dictionary<string, AudioClip>();
         private AudioSource _musicA, _musicB, _ambience, _sfx, _steps;
         private AudioSource _activeMusic;
         private string _musicId;
@@ -51,19 +49,17 @@ namespace ThuyKieu.Presentation
             return source;
         }
 
-        private AudioClip Get(string kind, string id, Func<string, AudioClip> make)
+        private AudioClip Get(string kind, string id)
         {
             if (_overrides != null) foreach (var entry in _overrides) if (entry.Id == id && entry.Clip != null) return entry.Clip;
-            string key = kind + ":" + id;
-            if (!_cache.TryGetValue(key, out AudioClip clip)) _cache[key] = clip = make(id);
-            return clip;
+            return AudioBank.Get(kind, id);
         }
 
         public void PlayMusic(string id)
         {
             if (id == _musicId) return;
             _musicId = id;
-            AudioClip clip = id == "none" ? null : Get("music", id, ProceduralAudio.Music);
+            AudioClip clip = Get(AudioBank.Music, id);
             var next = _activeMusic == _musicA ? _musicB : _musicA;
             next.clip = clip;
             next.volume = 0f;
@@ -73,7 +69,7 @@ namespace ThuyKieu.Presentation
 
         public void SetAmbience(string id)
         {
-            AudioClip clip = string.IsNullOrEmpty(id) ? null : Get("amb", id, ProceduralAudio.Ambience);
+            AudioClip clip = Get(AudioBank.Ambience, id);
             if (_ambience.clip == clip) return;
             _ambience.clip = clip;
             if (clip != null) _ambience.Play(); else _ambience.Stop();
@@ -81,7 +77,7 @@ namespace ThuyKieu.Presentation
 
         public void PlaySfx(string id, float volume = 1f)
         {
-            var clip = Get("sfx", id, ProceduralAudio.Sfx);
+            var clip = Get(AudioBank.Sfx, id);
             if (clip != null) _sfx.PlayOneShot(clip, volume * _sfxVolume * GameSettings.Effects);
         }
 
@@ -106,7 +102,7 @@ namespace ThuyKieu.Presentation
             float stride = _player.IsRunning ? 1.5f : _player.IsCrouching ? 0.75f : 0.95f;
             if (_stepDistance < stride) return;
             _stepDistance = 0f;
-            var clip = Get("sfx", "step", ProceduralAudio.Sfx);
+            var clip = Get(AudioBank.Sfx, "step");
             _steps.pitch = UnityEngine.Random.Range(0.85f, 1.15f);
             _steps.PlayOneShot(clip, (_player.IsCrouching ? 0.12f : _player.IsRunning ? 0.45f : 0.28f) * _sfxVolume * GameSettings.Effects);
         }

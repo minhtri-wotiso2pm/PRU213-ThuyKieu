@@ -14,7 +14,7 @@
 // Speaker: Narrator, Kieu, NoiTam (ý nghĩ nhân vật hiện đại), KieuThat (giọng Kiều thật), TrangSach (câu thơ ký ức),
 //          MeKieu, MaGiamSinh, TuyTung, TuBa, MaKieu, CoHong, CoLam, NguoiCanh,
 //          KimTrong, BaHangNuoc, ThuLai, ChuHieuBac, GiaNhan,
-//          HocSinh (nhân vật chính ở thời hiện đại, hiển thị "Tôi"), Ngan, CoGiao, VuongOng, VuongQuan, QuanSai,
+//          HocSinh (nhân vật chính ở thời hiện đại, hiển thị "Tôi"), Ngan, ThayGiao, VuongOng, VuongQuan, QuanSai,
 //          QuanHuyen, NhaDich
 // ============================================================
 
