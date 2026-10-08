@@ -25,6 +25,7 @@ namespace ThuyKieu.UI
             public Button Row;
         }
 
+        private static bool _cleanArmed;
         private static readonly string[] Tabs = { "Âm thanh", "Thoại", "Hình ảnh", "Điều khiển" };
         private static readonly float[] TextSpeeds = { 0.5f, 1f, 1.6f, 2.5f, 4f };
         private static readonly string[] TextSpeedNames = { "Chậm", "Vừa", "Nhanh", "Rất nhanh", "Hiện ngay" };
@@ -73,6 +74,10 @@ namespace ThuyKieu.UI
                     Step = d => GameSettings.TextSpeed = TextSpeeds[Mathf.Clamp(NearestSpeed() + d, 0, TextSpeeds.Length - 1)] },
                 Toggle("Lồng tiếng", () => GameSettings.VoiceOn, v => GameSettings.VoiceOn = v),
                 Toggle("Tự chuyển câu thoại", () => GameSettings.AutoAdvance, v => GameSettings.AutoAdvance = v),
+                // "Bắt đầu sạch": forget the Trang Sách pages kept between runs (two presses, so it is never an accident).
+                new Option { Label = "Bắt đầu sạch (quên trang đã nhớ)",
+                    Value = () => _cleanArmed ? "Bấm lần nữa để xóa" : Core.Story.PageArchive.Ids.Count + " trang",
+                    Step = d => { if (!_cleanArmed) { _cleanArmed = true; return; } Core.Story.PageArchive.Clear(); _cleanArmed = false; } },
             });
             view.AddPage(panel, makeButton, new List<Option>
             {

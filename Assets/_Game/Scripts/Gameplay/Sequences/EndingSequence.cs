@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Text;
+using ThuyKieu.Core;
 using ThuyKieu.Core.Story;
 using ThuyKieu.UI;
 using UnityEngine;
@@ -24,7 +25,11 @@ namespace ThuyKieu.Gameplay.Sequences
             director.CameraController.SetCursorLocked(false);
             _recap.FastMode = director.Autopilot;
             var v = director;
-            yield return _recap.Show(Tone(v), Left(v), Right(v));
+            string ending = EndingRecord.Classify(v.GetInt);
+            bool fresh = !director.Autopilot && EndingRecord.Unlock(ending);
+            string tone = Tone(v) + "\n<size=80%><color=#FFFFFF99>" + (fresh ? "Kết mới được mở · " : "") +
+                          "Đã mở " + EndingRecord.Unlocked.Count + "/" + EndingRecord.All.Length + " kết — xem lại ở \"Các kết\" ngoài menu chính.</color></size>";
+            yield return _recap.Show(tone, Left(v), Right(v));
             StoryAutopilot.Note("ENDING tone " + v.GetInt("c7_ket") + " · verdict " + v.GetInt("c7_diem_pq") + " · soul " + v.GetInt("dong_dieu") +
                                 " · fate " + v.GetInt("dinh_menh") + " · bond " + v.GetInt("ket_hon") + " · trial " + v.GetInt("c7_diem") + " · dossier " + v.GetInt("c6_ho_so"));
             // The story is over: no chapter-complete card, the progress is marked finished (chapter select unlocks).

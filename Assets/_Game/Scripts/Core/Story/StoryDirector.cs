@@ -52,6 +52,9 @@ namespace ThuyKieu.Core.Story
 
         private readonly List<ExploreOption> _exploreOptions = new List<ExploreOption>();
         private readonly List<string> _clues = new List<string>();
+        /// <summary>Last value of each world-setting tag, replayed when a mid-chapter save is resumed.</summary>
+        private static readonly string[] ResumeKeys = { "scene", "fx", "music", "objective" };
+        private readonly Dictionary<string, string> _lastTags = new Dictionary<string, string>();
         private Dictionary<string, StorySequence> _sequences;
         private StoryActor[] _actors;
         private StoryActor _playerActor;
@@ -101,7 +104,18 @@ namespace ThuyKieu.Core.Story
         private IEnumerator Start()
         {
             Story = new Ink.Runtime.Story(_compiledInk.text);
-            if (InkStatePersistence.Instance != null && InkStatePersistence.Instance.TryGetStateFor(_chapterNumber, out string saved))
+            MidChapterSave.Data resume = null;
+            if (InkStatePersistence.Instance != null && InkStatePersistence.Instance.ResumeMid)
+            {
+                InkStatePersistence.Instance.ResumeMid = false;
+                resume = MidChapterSave.Load(_chapterNumber);
+            }
+            if (resume != null)
+            {
+                Story.state.LoadJson(resume.Ink);
+                _clues.AddRange(resume.Clues);
+            }
+            else if (InkStatePersistence.Instance != null && InkStatePersistence.Instance.TryGetStateFor(_chapterNumber, out string saved))
             {
                 Story.state.LoadJson(saved);
                 _clues.AddRange(InkStatePersistence.Instance.Clues);
@@ -124,7 +138,27 @@ namespace ThuyKieu.Core.Story
             SetFreeControl(false);
             yield return null; // Let views subscribe to the dialogue events first.
             if (_hud != null) yield return _hud.ChapterCard(_chapterNumber, _chapterTitle);
+            if (resume != null) yield return Resume(resume);
             Continue();
+        }
+
+        /// <summary>
+        /// Puts the world back as it was at the saved checkpoint: replays the last scene / mood / music / objective tags
+        /// (chapter worlds rebuild their set-up from the scene tag), waits for their transitions, then returns Kiều to
+        /// where she stood.
+        /// </summary>
+        private IEnumerator Resume(MidChapterSave.Data save)
+        {
+            foreach (string tag in save.Tags)
+            {
+                int colon = tag.IndexOf(':');
+                if (colon > 0) _lastTags[tag.Substring(0, colon)] = tag.Substring(colon + 1);
+            }
+            if (save.Tags.Count > 0) RouteTags(save.Tags.ToArray());
+            yield return new WaitForSecondsRealtime(1.6f);
+            _player.Teleport(save.Position, Quaternion.Euler(0f, save.Yaw, 0f));
+            if (_camera != null) _camera.SnapBehindTarget(save.Yaw);
+            if (_hud != null) _hud.ShowToast("TIẾP TỤC", "Từ điểm lưu lúc " + save.SavedAt);
         }
 
         private void OnDestroy()
@@ -246,6 +280,7 @@ namespace ThuyKieu.Core.Story
         private IEnumerator CompleteChapter()
         {
             ChapterComplete = true;
+            MidChapterSave.Clear();
             SetFreeControl(false);
             if (InkStatePersistence.Instance != null)
             {
@@ -275,6 +310,7 @@ namespace ThuyKieu.Core.Story
         {
             ChapterComplete = true;
             SetFreeControl(false);
+            MidChapterSave.Clear();
             GameProgress.MarkFinished();
         }
 
@@ -289,6 +325,17 @@ namespace ThuyKieu.Core.Story
                 PlayerRotation = _player.transform.rotation,
                 ClueCount = _clues.Count
             };
+            if (Autopilot || ChapterComplete) return;
+            // The same moment is the mid-chapter save: "Continue" from the menu comes back here.
+            MidChapterSave.Write(new MidChapterSave.Data
+            {
+                Chapter = _chapterNumber,
+                Ink = _checkpoint.Ink,
+                Position = _checkpoint.PlayerPosition,
+                Yaw = _checkpoint.PlayerRotation.eulerAngles.y,
+                Clues = new List<string>(_clues),
+                Tags = ResumeKeys.Where(_lastTags.ContainsKey).Select(k => k + ":" + _lastTags[k]).ToList()
+            });
         }
 
         /// <summary>Shows a failure card, restores the last checkpoint and returns to exploring.</summary>
@@ -367,6 +414,7 @@ namespace ThuyKieu.Core.Story
                 if (colon < 0) continue;
                 string key = raw.Substring(0, colon).Trim();
                 string value = raw.Substring(colon + 1).Trim();
+                if (Array.IndexOf(ResumeKeys, key) >= 0) _lastTags[key] = value;
                 switch (key)
                 {
                     case "emotion": emotion = value; break;

@@ -48,6 +48,7 @@ namespace ThuyKieu.UI
         private DevConsole _console;
         private SettingsView _settings;
         private CreditsView _credits;
+        private EndingGalleryView _gallery;
         private Button _continueButton, _pauseResume, _selectStart, _selectKeep, _selectBack;
         private TMP_Text _continueLabel, _pauseChapter, _detailNumber, _detailTitle, _detailBlurb, _detailMeta;
         private readonly List<ChapterRow> _rows = new List<ChapterRow>();
@@ -187,6 +188,7 @@ namespace ThuyKieu.UI
             _menuControls.SetActive(false);
             _settings.Close();
             _credits.Close();
+            _gallery.Close();
             _console.Close();
 
             var entry = ChapterCatalog.FindByScene(scene.name);
@@ -205,7 +207,7 @@ namespace ThuyKieu.UI
             if (keyboard == null || _loading) return;
 
             if (keyboard.backquoteKey.wasPressedThisFrame || keyboard.f1Key.wasPressedThisFrame) { _console.Toggle(); return; }
-            if (_settings.IsOpen || _credits.IsOpen) return; // they handle their own keys, Esc included
+            if (_settings.IsOpen || _credits.IsOpen || _gallery.IsOpen) return; // they handle their own keys, Esc included
 
             if (_select.activeSelf && !_console.IsOpen)
             {
@@ -265,7 +267,7 @@ namespace ThuyKieu.UI
         }
 
         private void SyncOverlayFlag() => GamePause.ShellOverlayOpen = _console.IsOpen || _select.activeSelf || _pause.activeSelf || _menuControls.activeSelf
-                                                                    || _settings.IsOpen || _credits.IsOpen;
+                                                                    || _settings.IsOpen || _credits.IsOpen || _gallery.IsOpen;
 
         // ---------------------------------------------------------------- main menu
 
@@ -277,7 +279,8 @@ namespace ThuyKieu.UI
             bool canContinue = last != null && ChapterCatalog.InBuild(last);
             _continueButton.interactable = canContinue;
             _continueLabel.text = canContinue
-                ? "Tiếp tục  <size=21><color=#FFFFFF88>" + ChapterCatalog.Label(last.Number) + " · " + last.Title + "</color></size>"
+                ? "Tiếp tục  <size=21><color=#FFFFFF88>" + ChapterCatalog.Label(last.Number) + " · " + last.Title +
+                  (MidChapterSave.Load(last.Number) is MidChapterSave.Data mid ? " · giữa chương (" + mid.SavedAt + ")" : "") + "</color></size>"
                 : "Tiếp tục  <size=21><color=#FFFFFF55>chưa có tiến trình</color></size>";
             _continueButton.GetComponent<ShellButton>().Refresh();
             _menuButtons.SetActive(true);
@@ -320,6 +323,14 @@ namespace ThuyKieu.UI
                 SyncOverlayFlag();
                 onClose?.Invoke();
             });
+            SyncOverlayFlag();
+        }
+
+        private void OpenGallery()
+        {
+            _menuButtons.SetActive(false);
+            Select(null);
+            _gallery.Open(() => { ShowMenu(); SyncOverlayFlag(); });
             SyncOverlayFlag();
         }
 
@@ -464,6 +475,7 @@ namespace ThuyKieu.UI
             BuildSelect();
             _settings = SettingsView.Build(_canvas, MakeButton);
             _credits = CreditsView.Build(_canvas);
+            _gallery = EndingGalleryView.Build(_canvas);
             _console = DevConsole.Build(_canvas);
             _console.OpenChanged = open =>
             {
@@ -496,12 +508,13 @@ namespace ThuyKieu.UI
 
             var buttons = StoryUIBuilder.Rect(menu, "Buttons", new Vector2(0.065f, 0.15f), new Vector2(0.42f, 0.555f));
             _menuButtons = buttons.gameObject;
-            string[] labels = { "Tiếp tục", "Chơi mới", "Chọn chương", "Cài đặt", "Điều khiển", "Ghi công", "Thoát game" };
+            string[] labels = { "Tiếp tục", "Chơi mới", "Chọn chương", "Các kết", "Cài đặt", "Điều khiển", "Ghi công", "Thoát game" };
             Action[] actions =
             {
                 () => ChapterLoader.Continue(),
                 () => ChapterLoader.LoadChapter(ChapterCatalog.Prologue, false),
                 () => OpenSelect(null),
+                OpenGallery,
                 () => OpenSettings(null),
                 () => { _menuButtons.SetActive(false); _menuControls.SetActive(true); SyncOverlayFlag(); },
                 () => OpenCredits(null),

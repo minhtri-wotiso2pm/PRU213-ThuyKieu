@@ -30,7 +30,12 @@ namespace ThuyKieu.Core
         }
 
         /// <summary>Last chapter played, with the choices saved on finishing the one before it.</summary>
-        public static bool Continue() => GameProgress.HasSave && LoadChapter(GameProgress.Last, true);
+        public static bool Continue()
+        {
+            if (!GameProgress.HasSave || !LoadChapter(GameProgress.Last, true)) return false;
+            InkStatePersistence.Instance.ResumeMid = true; // the scene loads after a fade, so the flag is read in time
+            return true;
+        }
 
         public static bool LoadMainMenu() => LoadScene(ChapterCatalog.MainMenuScene);
 

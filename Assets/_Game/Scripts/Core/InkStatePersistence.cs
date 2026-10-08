@@ -12,6 +12,8 @@ namespace ThuyKieu.Core
         public int NextChapter { get; private set; }
         /// <summary>Journal clues gathered so far, carried into the next chapter.</summary>
         public List<string> Clues { get; } = new List<string>();
+        /// <summary>Set by "Continue": the next chapter scene resumes from its mid-chapter save if there is one.</summary>
+        public bool ResumeMid { get; set; }
         private void Awake()
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
@@ -34,6 +36,7 @@ namespace ThuyKieu.Core
             StateJson = json;
             NextChapter = nextChapter;
             Clues.Clear();
+            ResumeMid = false;
         }
 
         /// <summary>Forgets the carried state so the next chapter starts from its entry knot (chapter select).</summary>
@@ -42,6 +45,7 @@ namespace ThuyKieu.Core
             StateJson = null;
             NextChapter = 0;
             Clues.Clear();
+            ResumeMid = false;
         }
 
         /// <summary>The session object, created on demand so menus can prepare state before a chapter scene loads.</summary>
