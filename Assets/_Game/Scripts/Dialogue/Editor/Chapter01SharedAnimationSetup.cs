@@ -1,12 +1,7 @@
 using System;
-using System.IO;
 using System.Linq;
-using ThuyKieu.Core;
-using ThuyKieu.Player;
-using ThuyKieu.Player.Editor;
 using UnityEditor;
 using UnityEditor.Animations;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace ThuyKieu.Dialogue.Editor
@@ -127,48 +122,6 @@ namespace ThuyKieu.Dialogue.Editor
             standUp.AddStateMachineBehaviour<DialogueGestureReturn>().Configure(0, true);
             EditorUtility.SetDirty(controller);
             return controller;
-        }
-
-        [MenuItem("ThuyKieu/Chapter 1/Apply shared animations")]
-        public static void Apply()
-        {
-            if (Application.isPlaying) throw new InvalidOperationException("Stop Play Mode first.");
-            var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-            if (scene.path != "Assets/_Game/Scenes/Chapter01_GiaBien.unity") throw new InvalidOperationException("Open Chapter 1 first.");
-            foreach (string name in Names) if (!Clip(name).isHumanMotion) throw new InvalidOperationException("Import Shared clips as Humanoid first: " + name);
-            var controller = GetController();
-            var playerController = ThuyKieuLocomotionSetup.GetController(controller);
-            var director = UnityEngine.Object.FindAnyObjectByType<Chapter01Director>();
-            var serialized = new SerializedObject(director);
-            var player = (PlayerMovement)serialized.FindProperty("_player").objectReferenceValue;
-            var actors = new[] { player.GetComponentInChildren<Animator>(), (Animator)serialized.FindProperty("_motherAnimator").objectReferenceValue,
-                (Animator)serialized.FindProperty("_maAnimator").objectReferenceValue };
-            foreach (var animator in actors)
-            {
-                if (animator == null || animator.avatar == null || !animator.avatar.isHuman || !animator.avatar.isValid)
-                    throw new InvalidOperationException("Actor needs a valid Humanoid avatar.");
-                animator.runtimeAnimatorController = animator == actors[0] ? playerController : controller; animator.applyRootMotion = false;
-                animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
-            }
-            const string playerPrefabPath = "Assets/_Game/Prefabs/Player/ThuyKieu.prefab";
-            var prefab = PrefabUtility.LoadPrefabContents(playerPrefabPath);
-            try
-            {
-                var prefabAnimator = prefab.GetComponentInChildren<Animator>();
-                prefabAnimator.runtimeAnimatorController = playerController; prefabAnimator.applyRootMotion = false;
-                ThuyKieuLocomotionSetup.ConfigureMovement(prefab.GetComponent<PlayerMovement>());
-                PrefabUtility.SaveAsPrefabAsset(prefab, playerPrefabPath);
-            }
-            finally { PrefabUtility.UnloadPrefabContents(prefab); }
-            // Saving the prefab can refresh instances and restore their earlier controller override.
-            foreach (var animator in new[] { player.GetComponentInChildren<Animator>(), actors[1], actors[2] })
-            {
-                animator.runtimeAnimatorController = animator == player.GetComponentInChildren<Animator>() ? playerController : controller; animator.applyRootMotion = false;
-                if (PrefabUtility.IsPartOfPrefabInstance(animator)) PrefabUtility.RecordPrefabInstancePropertyModifications(animator);
-                EditorUtility.SetDirty(animator);
-            }
-            ThuyKieuLocomotionSetup.ConfigureMovement(player);
-            EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene); AssetDatabase.SaveAssets();
         }
     }
 }

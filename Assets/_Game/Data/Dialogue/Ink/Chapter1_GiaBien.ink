@@ -53,6 +53,7 @@ Kiều: Mẹ đừng khóc. Cha và em còn chờ chúng ta. Con sẽ tìm cách
 Ngươi định ngồi chờ như ta sao?
 
 # fx:none
+# music:sad_strings
 # speaker:NoiTam
 Không. Trước khi hắn đến, mình phải biết nhà này còn gì, mẹ biết gì, và kẻ sắp đến là ai.
 
@@ -170,6 +171,7 @@ Vậy thì mình sẽ xin thêm một điều. Đi, nhưng phải có ngày quay
 
 ~ soul(1)
 # fx:none
+# music:sad_strings
 # speaker:KieuThat
 Ngươi lạ thật. Cầu xin mà nghe như đang ra điều kiện.
 -> c1_nha
@@ -246,14 +248,15 @@ Hắn đang chờ mình phản ứng. Phải trả lời ngay.
 Mẹ Kiều: Công tử ngồi xuống đã. Trời mưa, để già pha ấm trà.
 
 # speaker:Narrator
+# scene:VuongGia_DamPhan
+# camera:Table_Contract
 # gameplay:tutorial_suspicion
-Mã Giám Sinh ngồi xuống bên bàn, đặt một túi bạc nặng trịch trước mặt. Tên tùy tùng đứng chờ ngoài hiên.
+Mã Giám Sinh không ngồi. Hắn đứng bên bàn, đặt một túi bạc nặng trịch xuống mặt gỗ. Tên tùy tùng đứng chờ ngoài hiên.
 
 -> c1_dam_phan_mo
 
 
 === c1_dam_phan_mo ===
-# scene:VuongGia_DamPhan
 # speaker:NoiTam
 # objective:Tìm hiểu Mã Giám Sinh trước khi ký khế · đừng để hắn sinh nghi
 Phải biết hắn là ai trước khi đặt bút. Nhưng hắn cũng đang nhìn mình. Nhìn lộ quá là hắn sẽ đề phòng.
@@ -508,6 +511,7 @@ Nhưng khi đặt bút xuống, Kiều thấy Mã Giám Sinh mỉm cười. Nàn
 Ta cũng đã ký nhanh như thế. Ta tưởng như vậy là hiếu. Hóa ra chỉ là sợ.
 
 # fx:none
+# music:tension_low
 # speaker:NoiTam
 Lần sau, mình sẽ đọc trước khi ký. Không bao giờ ký thứ gì mà mình chưa đọc nữa.
 -> c1_decision

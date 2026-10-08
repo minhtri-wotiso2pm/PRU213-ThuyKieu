@@ -30,12 +30,11 @@ namespace ThuyKieu.Core.Editor
 
         static StoryBuild()
         {
-            if (SessionState.GetBool(RegressionKey, false)) EditorApplication.update += WatchRegression;
             if (!SessionState.GetBool(PlaytestKey, false)) return;
             EditorApplication.update += WatchPlaytest;
         }
 
-        [MenuItem("ThuyKieu/Story/Rebuild story scenes (Prologue, Chapters 2–7, Epilogue)")]
+        [MenuItem("ThuyKieu/Story/Rebuild story scenes (Prologue, Chapters 2–7, Epilogue; Chapter 1 systems)")]
         public static void Rebuild()
         {
             foreach (string path in Generated)
@@ -52,6 +51,8 @@ namespace ThuyKieu.Core.Editor
             Chapter07Setup.Create();
             PrologueSetup.Create();
             EpilogueSetup.Create();
+            // Chapter 1 keeps its hand-made house; only its story systems are rebuilt, re-linking the shared UI and controllers.
+            Chapter01StoryUpgrade.Apply();
             EditorSceneManager.OpenScene(PrologueSetup.ScenePath);
         }
 
@@ -98,51 +99,6 @@ namespace ThuyKieu.Core.Editor
             SessionState.SetFloat(PlaytestKey + ".start", (float)EditorApplication.timeSinceStartup);
             EditorApplication.update += WatchPlaytest;
             EditorApplication.EnterPlaymode();
-        }
-
-        private const string RegressionKey = "ThuyKieu.Chapter1Regression";
-
-        /// <summary>Runs the existing Chapter 1 Play Mode check headless; exit code 0 when it passes.</summary>
-        public static void Chapter1RegressionBatch()
-        {
-            const string report = "Tools/Chapter01/PlayModeReport.json";
-            SessionState.SetString(RegressionKey + ".backup", File.Exists(report) ? File.ReadAllText(report) : string.Empty);
-            EditorSceneManager.OpenScene(Chapter01Setup.ScenePath);
-            SessionState.SetBool(RegressionKey, true);
-            SessionState.SetFloat(RegressionKey + ".start", (float)EditorApplication.timeSinceStartup);
-            EditorApplication.update += WatchRegression;
-            EditorApplication.EnterPlaymode();
-        }
-
-        private static void WatchRegression()
-        {
-            double elapsed = EditorApplication.timeSinceStartup - SessionState.GetFloat(RegressionKey + ".start", 0f);
-            if (!Application.isPlaying) { if (elapsed > 600) FinishRegression("TIMEOUT before play mode"); return; }
-            if (!SessionState.GetBool(RegressionKey + ".started", false))
-            {
-                if (Time.timeSinceLevelLoad < 2f) return;
-                SessionState.SetBool(RegressionKey + ".started", true);
-                Chapter01PlayModeCheck.Start();
-                return;
-            }
-            if (Chapter01PlayModeCheck.Running && elapsed < 600) return;
-            FinishRegression(Chapter01PlayModeCheck.Running ? "TIMEOUT" : null);
-        }
-
-        private static void FinishRegression(string error)
-        {
-            EditorApplication.update -= WatchRegression;
-            SessionState.SetBool(RegressionKey, false);
-            SessionState.SetBool(RegressionKey + ".started", false);
-            const string path = "Tools/Chapter01/PlayModeReport.json";
-            string json = File.Exists(path) ? File.ReadAllText(path) : "{}";
-            File.WriteAllText("Tools/Ink/Chapter01RegressionReport.json", json);
-            // Keep the team's committed Chapter 1 report untouched; the fresh run is saved beside the Ink report.
-            string backup = SessionState.GetString(RegressionKey + ".backup", string.Empty);
-            if (!string.IsNullOrEmpty(backup)) File.WriteAllText(path, backup);
-            bool pass = error == null && json.Contains("\"completed\": true") && json.Contains("\"passed\": true");
-            Debug.Log("[Chapter1Regression] " + (error ?? (pass ? "PASS" : "FAIL")) + "\n" + json);
-            EditorApplication.Exit(pass ? 0 : 1);
         }
 
         private static void WatchPlaytest()

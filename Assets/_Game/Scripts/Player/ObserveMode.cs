@@ -32,7 +32,8 @@ namespace ThuyKieu.Player
 
         private void Start()
         {
-            _targets = FindObjectsByType<ObservableTarget>();
+            // Include targets on characters who only arrive later in the chapter; FindTarget skips inactive ones.
+            _targets = FindObjectsByType<ObservableTarget>(FindObjectsInactive.Include);
             _orbit = _camera.GetComponent<ThirdPersonCameraController>();
         }
 

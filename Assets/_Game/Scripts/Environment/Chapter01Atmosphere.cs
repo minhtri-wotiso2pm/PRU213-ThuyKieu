@@ -1,28 +1,28 @@
-using ThuyKieu.Core;
+using ThuyKieu.Core.Story;
 using UnityEngine;
 
 namespace ThuyKieu.Environment
 {
+    /// <summary>Blends the Chapter 1 hall, entrance and contract lamps to the moment of the night (Ink scene tags).</summary>
     public sealed class Chapter01Atmosphere : MonoBehaviour
     {
-        [SerializeField] private Chapter01Director _director;
+        [SerializeField] private StoryDirector _director;
         [SerializeField] private Light _hall;
         [SerializeField] private Light _entrance;
         [SerializeField] private Light _contract;
         private Vector3 _target = new Vector3(4.2f, 0.8f, 2.4f);
         public string Moment { get; private set; } = "Opening";
 
-        private void OnEnable() { if (_director != null) _director.CueReceived += OnCue; }
-        private void OnDisable() { if (_director != null) _director.CueReceived -= OnCue; }
-        private void OnCue(string key, string value)
+        private void OnEnable() { if (_director != null) _director.SceneChanged += OnScene; }
+        private void OnDisable() { if (_director != null) _director.SceneChanged -= OnScene; }
+        private void OnScene(string scene)
         {
-            if (key != "camera") return;
-            switch (value)
+            switch (scene)
             {
-                case "WS_VuongGia": Moment = "Opening"; _target = new Vector3(4.2f, .8f, 2.4f); break;
-                case "Reveal_MaGiamSinh": Moment = "Entrance"; _target = new Vector3(4.8f, 2.4f, 2.8f); break;
-                case "Table_Contract": Moment = "Contract"; _target = new Vector3(4, 1.2f, 5.2f); break;
-                case "Hero_Kieu_Rain": Moment = "Ending"; _target = new Vector3(3.8f, 1, 2.5f); break;
+                case "VuongGia_DemMua": Moment = "Opening"; _target = new Vector3(4.2f, .8f, 2.4f); break;
+                case "VuongGia_MaDen": Moment = "Entrance"; _target = new Vector3(4.8f, 2.4f, 2.8f); break;
+                case "VuongGia_DamPhan": case "VuongGia_BanKyKhe": Moment = "Contract"; _target = new Vector3(4, 1.2f, 5.2f); break;
+                case "VuongGia_RaDi": Moment = "Ending"; _target = new Vector3(3.8f, 1, 2.5f); break;
             }
         }
         private void Update()

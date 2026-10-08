@@ -16,7 +16,7 @@ namespace ThuyKieu.Core.Editor
     {
         private static readonly string[] Scenes =
         {
-            PrologueSetup.ScenePath, Chapter01Setup.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath,
+            PrologueSetup.ScenePath, Chapter01StoryUpgrade.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath,
             Chapter04Setup.ScenePath, Chapter05Setup.ScenePath, Chapter06Setup.ScenePath, Chapter07Setup.ScenePath, EpilogueSetup.ScenePath
         };
 

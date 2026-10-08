@@ -21,13 +21,13 @@ namespace ThuyKieu.Environment.Editor
         private const string EnvironmentMaterials = "Assets/_Game/Materials/Chapter01Environment";
         private const string SetupMaterials = "Assets/_Game/Materials";
         // Generated meshes/materials for the Chapter 1 dressing (the story folder is wiped by the Chapter 2/3 rebuild).
-        private const string LookAssets = "Assets/_Game/Materials/Chapter01Look";
+        public const string LookAssets = "Assets/_Game/Materials/Chapter01Look";
 
         [MenuItem("ThuyKieu/Chapter 1/Apply look upgrade")]
         public static void Apply()
         {
             if (Application.isPlaying) throw new InvalidOperationException("Stop Play Mode before the look upgrade.");
-            var scene = EditorSceneManager.OpenScene(Chapter01Setup.ScenePath);
+            var scene = EditorSceneManager.OpenScene(Chapter01StoryUpgrade.ScenePath);
 
             // Night rain washes everything darker and wetter, so tints stay low and stone keeps its sheen.
             Convert(EnvironmentMaterials, "DarkWood", "dark_wood", new Color(0.55f, 0.42f, 0.36f), 1.2f, 0.3f);
@@ -39,26 +39,12 @@ namespace ThuyKieu.Environment.Editor
             Convert(SetupMaterials, "Chapter01Plaster", "plastered_wall_02", new Color(0.72f, 0.66f, 0.55f), 2.6f, 0.12f, 0.8f);
             Convert(SetupMaterials, "Chapter01Courtyard", "monastery_stone_floor", new Color(0.42f, 0.46f, 0.5f), 2.4f, 0.55f, 0.25f, 0.6f);
 
-            var camera = Camera.main;
-            StoryArtKit.UseSky(camera, StoryArtKit.Sky("Ch1SkyRainNight", "kloppenheim_07_puresky", 0.22f, new Color(0.42f, 0.48f, 0.58f), 0f, EnvironmentMaterials));
-
-            var orbit = UnityEngine.Object.FindAnyObjectByType<ThirdPersonCameraController>();
-            if (orbit != null)
-            {
-                StorySceneKit.Set(orbit, "_shoulder", 0.35f);
-                StorySceneKit.Set(orbit, "minPitch", -25f);
-                StorySceneKit.Set(orbit, "maxPitch", 55f);
-                StorySceneKit.Set(orbit, "followSmoothTime", 0.08f);
-            }
             Decorate();
             Directory.CreateDirectory(LookAssets);
             AssetDatabase.Refresh();
+            ApplyCamera(Camera.main);
             StorySceneKit.AssetFolder = LookAssets;
-            try
-            {
-                Grade(camera);
-                Outdoor();
-            }
+            try { Outdoor(); }
             finally { StorySceneKit.AssetFolder = StorySceneKit.MaterialFolder; }
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
@@ -118,10 +104,26 @@ namespace ThuyKieu.Environment.Editor
             }
         }
 
+        /// <summary>Rain-night sky, orbit framing and colour grade on the chapter camera (also used by the story upgrade).</summary>
+        public static void ApplyCamera(Camera camera)
+        {
+            if (camera == null) return;
+            StoryArtKit.UseSky(camera, StoryArtKit.Sky("Ch1SkyRainNight", "kloppenheim_07_puresky", 0.22f, new Color(0.42f, 0.48f, 0.58f), 0f, EnvironmentMaterials));
+            if (camera.TryGetComponent(out ThirdPersonCameraController orbit))
+            {
+                StorySceneKit.Set(orbit, "_shoulder", 0.35f);
+                StorySceneKit.Set(orbit, "minPitch", -25f);
+                StorySceneKit.Set(orbit, "maxPitch", 55f);
+                StorySceneKit.Set(orbit, "followSmoothTime", 0.08f);
+            }
+            StorySceneKit.AssetFolder = LookAssets;
+            try { Grade(camera); }
+            finally { StorySceneKit.AssetFolder = StorySceneKit.MaterialFolder; }
+        }
+
         /// <summary>Same filmic pipeline as Chapters 2–3, graded for a cold rainy night with warm lamp highlights.</summary>
         private static void Grade(Camera camera)
         {
-            if (camera == null) return;
             if (!camera.TryGetComponent(out UnityEngine.Rendering.Universal.UniversalAdditionalCameraData urp))
                 urp = camera.gameObject.AddComponent<UnityEngine.Rendering.Universal.UniversalAdditionalCameraData>();
             urp.renderPostProcessing = true;

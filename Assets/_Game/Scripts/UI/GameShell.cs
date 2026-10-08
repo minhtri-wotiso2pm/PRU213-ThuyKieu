@@ -19,7 +19,7 @@ namespace ThuyKieu.UI
     /// <summary>
     /// Game-wide shell that lives across scenes (created automatically, no scene setup needed):
     /// main menu in the MainMenu scene, chapter select, settings, credits, an Esc pause menu for scenes without the
-    /// story pause (Chapter 1), the ` test console, fades between scenes, and the "-chapter N" command-line jump.
+    /// story pause, the ` test console, fades between scenes, and the "-chapter N" command-line jump.
     /// Runs before other scripts so it can claim Esc first.
     /// </summary>
     [DefaultExecutionOrder(-100)]
