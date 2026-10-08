@@ -32,9 +32,17 @@ VAR danh_tieng = 0
 VAR tu_trong = 2
 VAR tien = 0
 VAR doc_ky_khe = false
+VAR c1_viec = 0           // số việc đã làm trong nhà trước khi Mã Giám Sinh đến
+VAR c1_biet_moi = false   // đã nghe Mẹ Kiều kể chuyện bà mối
+VAR c1_manh_moi = 0       // số manh mối Chương 1
+VAR c1_nghi_ngo = 0       // 0–100: nghi ngờ của Mã Giám Sinh trong buổi dạm hỏi. Unity cộng khi nhìn lộ liễu. 100 = bị lộ (checkpoint)
+VAR c1_hoi_xong = false   // đã đáp lời hắn (mở tờ khế)
+VAR c1_hoi_tien = false   // đã bắt hắn hứa bạc đến trước
+VAR c1_bac_dau = false    // đã thấy dấu Phúc Ký trên nén bạc
+VAR c1_tam_biet = false   // đã từ biệt Mẹ Kiều
 
 // --- Chương 2 ---
-VAR nghi_ngo = 0          // 0–100. Unity cộng theo hành vi, Ink cộng theo lời nói. 100 = bị lộ (checkpoint)
+VAR nghi_ngo = 0          // 0–100. Unity cộng theo hành vi, Ink cộng theo lời nói. 100 = bị lộ (checkpoint). Bắt đầu ở 15 nếu Ch1 kết thúc với c1_nghi_ngo ≥ 60
 VAR manh_moi = 0          // số manh mối Chương 2
 VAR mm_ban_tay = false    // quan sát hắn đếm bạc
 VAR mm_hoi_duong = false  // hỏi được nơi đến: Lâm Tri

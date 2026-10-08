@@ -43,7 +43,7 @@ namespace ThuyKieu.Dialogue.Editor
         /// <summary>The variable summarised per entry in the report.</summary>
         private static string Tracked(string entry) => entry == "chapter_3" ? "tra_loi_kieu_that" : entry == "chapter_6" ? "c6_ho_so"
             : entry == "chapter_7" ? "c7_ket" : entry == "prologue" ? "dong_dieu" : entry == "chapter_5" ? "c5_so_khanh"
-            : entry == "epilogue" ? "ket_hon" : null;
+            : entry == "epilogue" ? "ket_hon" : entry == "chapter_1" ? "c1_manh_moi" : null;
 
         [MenuItem("ThuyKieu/Dialogue/Validate Ink branches")]
         public static void RunMenu()
@@ -95,6 +95,8 @@ namespace ThuyKieu.Dialogue.Editor
                             foreach (string tag in lastTags) SimulateSequence(tag.Trim(), story, random);
                             int suspicion = (int)story.variablesState["nghi_ngo"];
                             if (suspicion < 0 || suspicion > 100) problems.Add("nghi_ngo out of range: " + suspicion + " at " + story.state.currentPathString);
+                            int houseSuspicion = (int)story.variablesState["c1_nghi_ngo"];
+                            if (houseSuspicion < 0 || houseSuspicion > 100) problems.Add("c1_nghi_ngo out of range: " + houseSuspicion + " at " + story.state.currentPathString);
                             if ((int)story.variablesState["tien"] < 0) problems.Add("tien negative at " + story.state.currentPathString);
                             int dossier = (int)story.variablesState["c6_ho_so"];
                             if (dossier < 0 || dossier > 4) problems.Add("c6_ho_so out of range: " + dossier);
