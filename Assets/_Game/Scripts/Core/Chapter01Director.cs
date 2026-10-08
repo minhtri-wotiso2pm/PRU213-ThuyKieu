@@ -36,7 +36,9 @@ namespace ThuyKieu.Core
             var story = new Ink.Runtime.Story(_compiledInk.text);
             // Coming from the prologue: carry its choices (the state stops right before Chapter 1's first line).
             if (InkStatePersistence.Instance != null && InkStatePersistence.Instance.TryGetStateFor(1, out string saved)) story.state.LoadJson(saved);
+            else Story.PageArchive.ApplyTo(story); // a fresh run starts holding the pages kept from earlier runs
             _dialogue.SetInkStory(story);
+            UI.TrangSachView.Attach(_dialogue);
             _dialogue.InkPauseBeforeLine = PauseBeforeLine;
             _dialogue.InkStopBeforeLine = tags => Array.Exists(tags, t => t.Trim() == "chapter:2");
             _dialogue.InkTagsChanged += RouteTags;

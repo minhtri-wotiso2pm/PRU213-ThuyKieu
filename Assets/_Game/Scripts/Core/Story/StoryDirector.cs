@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ThuyKieu.Dialogue;
+using ThuyKieu.Gameplay.Sequences;
 using ThuyKieu.Interaction;
 using ThuyKieu.Player;
 using ThuyKieu.Presentation;
@@ -92,6 +93,9 @@ namespace ThuyKieu.Core.Story
             _sequences = new Dictionary<string, StorySequence>();
             foreach (var sequence in FindObjectsByType<StorySequence>(FindObjectsInactive.Include))
                 if (!string.IsNullOrEmpty(sequence.Id)) _sequences[sequence.Id] = sequence;
+            // The lục bát exchanges need no scene setup: their UI builds itself, so register them in every chapter.
+            foreach (string id in LucBatCatalog.Ids)
+                if (!_sequences.ContainsKey(id)) _sequences[id] = LucBatSequence.Create(gameObject, id);
         }
 
         private IEnumerator Start()
@@ -103,9 +107,13 @@ namespace ThuyKieu.Core.Story
                 _clues.AddRange(InkStatePersistence.Instance.Clues);
             }
             else
+            {
                 Story.ChoosePathString(_entryKnot);
+                PageArchive.ApplyTo(Story); // a fresh run starts holding the pages kept from earlier runs
+            }
 
             _dialogue.SetInkStory(Story);
+            TrangSachView.Attach(_dialogue);
             _dialogue.InkStopBeforeLine = StopBeforeLine;
             _dialogue.InkBlockAfterLine = BlockAfterLine;
             _dialogue.InkTagsChanged += RouteTags;
@@ -322,6 +330,12 @@ namespace ThuyKieu.Core.Story
         public bool GetBool(string variable) => Story.variablesState[variable] is bool value ? value : GetInt(variable) != 0;
         public void SetInt(string variable, int value) => Story.variablesState[variable] = value;
         public void SetBool(string variable, bool value) => Story.variablesState[variable] = value;
+
+        /// <summary>Adds an actor created at runtime so speaker tags, close-ups and talking animation reach it.</summary>
+        public void RegisterActor(StoryActor actor)
+        {
+            if (actor != null && Array.IndexOf(_actors, actor) < 0) _actors = _actors.Append(actor).ToArray();
+        }
 
         public StoryActor FindActor(string speakerId)
         {

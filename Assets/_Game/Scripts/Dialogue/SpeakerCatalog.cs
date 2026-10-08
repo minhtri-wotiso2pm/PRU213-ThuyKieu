@@ -42,6 +42,7 @@ namespace ThuyKieu.Dialogue
                 case "QuanSai": return new Entry("Quan sai", new Color(0.88f, 0.56f, 0.45f), SpeakerStyle.Spoken);
                 case "QuanHuyen": return new Entry("Quan huyện", new Color(0.98f, 0.62f, 0.34f), SpeakerStyle.Spoken);
                 case "NhaDich": return new Entry("Nha dịch", new Color(0.76f, 0.66f, 0.56f), SpeakerStyle.Spoken);
+                case "SoKhanh": return new Entry("Sở Khanh", new Color(0.78f, 0.86f, 0.98f), SpeakerStyle.Spoken);
                 case "NoiTam": return new Entry("Nội tâm", new Color(0.82f, 0.9f, 1f), SpeakerStyle.Inner);
                 case "KieuThat": return new Entry("Thúy Kiều thật", new Color(1f, 0.84f, 0.45f), SpeakerStyle.Spirit);
                 case "TrangSach": return new Entry("Truyện Kiều", new Color(0.93f, 0.86f, 0.7f), SpeakerStyle.Verse);

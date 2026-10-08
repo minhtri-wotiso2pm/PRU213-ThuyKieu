@@ -24,8 +24,9 @@ namespace ThuyKieu.Gameplay.Sequences
             director.CameraController.SetCursorLocked(false);
             _recap.FastMode = director.Autopilot;
             var v = director;
-            yield return _recap.Show(Tone(v.GetInt("c7_ket")), Left(v), Right(v));
-            StoryAutopilot.Note("ENDING tone " + v.GetInt("c7_ket") + " · trial " + v.GetInt("c7_diem") + " · dossier " + v.GetInt("c6_ho_so"));
+            yield return _recap.Show(Tone(v), Left(v), Right(v));
+            StoryAutopilot.Note("ENDING tone " + v.GetInt("c7_ket") + " · verdict " + v.GetInt("c7_diem_pq") + " · soul " + v.GetInt("dong_dieu") +
+                                " · fate " + v.GetInt("dinh_menh") + " · bond " + v.GetInt("ket_hon") + " · trial " + v.GetInt("c7_diem") + " · dossier " + v.GetInt("c6_ho_so"));
             // The story is over: no chapter-complete card, the progress is marked finished (chapter select unlocks).
             director.EndStory();
             if (director.Autopilot) yield break;
@@ -35,8 +36,13 @@ namespace ThuyKieu.Gameplay.Sequences
             GameShell.GoToMainMenu();
         }
 
-        private static string Tone(int ending)
+        private static string Tone(StoryDirector v)
         {
+            int ending = v.GetInt("c7_ket");
+            if (ending == 0) return "<color=#E07A5F>Kết Định Mệnh</color> — thua kiện. Kiều bị trả về lầu xanh, đúng như trang sách.";
+            if (v.GetInt("dong_dieu") <= 3) return "<color=#E8C27A>Thắng mà mất mình</color> — vụ kiện thắng, nhưng Kiều Thật đã lặng đi không một lời.";
+            if (v.GetInt("ket_hon") == 1) return "<color=#E8C27A>Kết Nghịch Mệnh</color> — hai linh hồn chia tay; Kiều sống nốt đời mình, không ai viết sẵn.";
+            if (v.GetInt("ket_hon") == 2) return "<color=#E8C27A>Kết Nghịch Mệnh</color> — hai linh hồn cùng sống trong một thân.";
             switch (ending)
             {
                 case 3: return "<color=#E8C27A>Kết trọn vẹn</color> — công lý đến với Kiều, và cả với những người con gái trước nàng.";
@@ -79,6 +85,20 @@ namespace ThuyKieu.Gameplay.Sequences
             Item(b, "Lòng tin của quan huyện lúc kết thúc: " + v.GetInt("c7_long_tin") + "%" + (v.GetInt("c7_thua_vong") > 0 ? " · thua " + v.GetInt("c7_thua_vong") + " vòng đối chất." : "."));
             if (v.GetInt("c7_lui") > 0) Item(b, "Một nhân chứng đã lùi bước trước lời dọa của Tú Bà.");
             else if (v.GetBool("c7_nhan_chung_vung")) Item(b, "Không nhân chứng nào lùi bước.");
+            Item(b, "Điểm phán quyết: " + v.GetInt("c7_diem_pq") + " (thua kiện nếu dưới 35).");
+            Header(b, "TRANG SÁCH");
+            int held = 0, used = 0;
+            foreach (var page in PageCatalog.All)
+            {
+                if (page.Unusable) continue;
+                int state = v.GetInt(page.Id);
+                if (state >= PageCatalog.Held) held++;
+                if (state == PageCatalog.Used) used++;
+            }
+            Item(b, "Thu được " + held + " trang thơ, đã lật " + used + " · Định Mệnh " + v.GetInt("dinh_menh") + "/100.");
+            int soul = v.GetInt("dong_dieu");
+            Item(b, "Với Kiều Thật: " + (soul >= 7 ? "hai bàn tay đã chạm vào nhau." : soul >= 4 ? "hai bàn tay đang với tìm nhau." : "hai bàn tay vẫn quay lưng."));
+            Item(b, "<color=#E8C27A>Viết lại:</color> chơi lại, bạn giữ " + PageArchive.Ids.Count + " trang đã nhớ — biết trước nhiều hơn.");
             return b.ToString();
         }
 

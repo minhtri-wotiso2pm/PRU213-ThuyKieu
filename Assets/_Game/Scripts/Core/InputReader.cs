@@ -127,6 +127,17 @@ namespace ThuyKieu.Core
             }
         }
 
+        /// <summary>B pressed this frame: open or close the Trang Sách book.</summary>
+        public static bool BookPressedThisFrame
+        {
+            get
+            {
+                if (GamePause.IsPaused) return default;
+                Keyboard keyboard = Keyboard.current;
+                return keyboard != null && keyboard.bKey.wasPressedThisFrame;
+            }
+        }
+
         /// <summary>Escape pressed this frame (used to release the cursor in the editor).</summary>
         public static bool CancelPressedThisFrame
         {

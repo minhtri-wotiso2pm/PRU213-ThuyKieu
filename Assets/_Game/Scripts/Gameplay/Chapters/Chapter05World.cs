@@ -30,6 +30,7 @@ namespace ThuyKieu.Gameplay.Chapters
 
         private MaterialPropertyBlock _coneBlock;
         private float _coneAlpha = 0.18f;
+        private StoryActor _soKhanh;
 
         private void OnEnable() { _director.SceneChanged += OnScene; }
         private void OnDisable() { _director.SceneChanged -= OnScene; }
@@ -68,8 +69,40 @@ namespace ThuyKieu.Gameplay.Chapters
             switch (scene)
             {
                 case "Escape_Alarm": Alarm(); break;
-                case "Escape_Rain": StartCoroutine(Rain()); break;
+                case "Escape_SoKhanh": MeetSoKhanh(); break;
+                case "Escape_Rain": if (_soKhanh != null) _soKhanh.gameObject.SetActive(false); StartCoroutine(Rain()); break;
             }
+        }
+
+        /// <summary>
+        /// Định Mệnh pushes back (fate ≥ 50): Sở Khanh waits at the edge of the bamboo with a horse, as in the poem. He is a
+        /// placeholder recast from one of the pursuers' rigs (the Mã Giám Sinh model) in a scholar's pale blue, without torch.
+        /// </summary>
+        private void MeetSoKhanh()
+        {
+            if (_soKhanh == null && _pursuers.Length > 0)
+            {
+                var copy = Instantiate(_pursuers[0].gameObject, transform);
+                copy.name = "SoKhanh";
+                var torch = copy.transform.Find("Torch");
+                if (torch != null) Destroy(torch.gameObject);
+                var block = new MaterialPropertyBlock();
+                foreach (var renderer in copy.GetComponentsInChildren<Renderer>())
+                {
+                    renderer.GetPropertyBlock(block);
+                    block.SetColor("_BaseColor", new Color(0.72f, 0.8f, 0.92f));
+                    renderer.SetPropertyBlock(block);
+                }
+                _soKhanh = copy.GetComponent<StoryActor>();
+                _soKhanh.Recast("SoKhanh");
+                _director.RegisterActor(_soKhanh);
+            }
+            if (_soKhanh == null) return;
+            var player = _director.Player.transform;
+            Vector3 spot = player.position + player.forward * 2.4f;
+            _soKhanh.gameObject.SetActive(true);
+            _soKhanh.Place(spot, Quaternion.LookRotation(player.position - spot));
+            _soKhanh.FaceTowards(player.position);
         }
 
         /// <summary>The gate is open, a window bangs upstairs and the whole house wakes.</summary>

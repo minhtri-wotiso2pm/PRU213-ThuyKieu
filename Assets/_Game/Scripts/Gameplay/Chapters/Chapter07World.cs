@@ -105,7 +105,8 @@ namespace ThuyKieu.Gameplay.Chapters
             {
                 case "HuyenDuong_CongDuong": StartCoroutine(IntoHall()); break;
                 case "HuyenDuong_DoanTu": StartCoroutine(Reunion()); break;
-                case "HuyenDuong_AnhSang": Stillness(); break;
+                case "HuyenDuong_AnhSang": Stillness(false); break;
+                case "HuyenDuong_BongToi": Stillness(true); break;
             }
         }
 
@@ -165,7 +166,7 @@ namespace ThuyKieu.Gameplay.Chapters
         /// facing her. The two-shot is taken from whichever side has nobody standing in it (Kim Trọng and the family
         /// stay behind Kiều, out of the line of sight); anyone still in the way steps out of the picture.
         /// </summary>
-        private void Stillness()
+        private void Stillness(bool lost)
         {
             var frozen = new List<StoryActor>();
             foreach (var actor in FindObjectsByType<StoryActor>())
@@ -218,10 +219,10 @@ namespace ThuyKieu.Gameplay.Chapters
                     foreach (var renderer in actor.GetComponentsInChildren<Renderer>())
                         renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
 
-            // The moment outside time: warm, hazy light instead of the noon glare.
-            if (_sun != null) { _sun.intensity = 1.1f; _sun.color = new Color(1f, 0.84f, 0.62f); }
-            RenderSettings.fogColor = new Color(0.95f, 0.86f, 0.7f);
-            RenderSettings.fogDensity = 0.012f;
+            // The moment outside time: warm, hazy light instead of the noon glare — or, when the case is lost, a cold dusk.
+            if (_sun != null) { _sun.intensity = lost ? 0.45f : 1.1f; _sun.color = lost ? new Color(0.55f, 0.62f, 0.78f) : new Color(1f, 0.84f, 0.62f); }
+            RenderSettings.fogColor = lost ? new Color(0.32f, 0.35f, 0.42f) : new Color(0.95f, 0.86f, 0.7f);
+            RenderSettings.fogDensity = lost ? 0.03f : 0.012f;
             if (_director.Audio != null) _director.Audio.SetAmbience(null);
         }
 
@@ -240,10 +241,11 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             var v = story.variablesState;
             int ending = (int)v["c7_ket"];
-            yield return "Phán quyết: " + (ending == 3 ? "trọn vẹn — lầu xanh bị niêm phong, ba người con gái được tìm về." : ending == 2 ? "Mã Giám Sinh bị giam, Tú Bà bị phạt nặng." : "Kiều được tự do, nhưng Tú Bà chỉ nộp phạt.");
+            yield return "Phán quyết: " + (ending == 3 ? "trọn vẹn — lầu xanh bị niêm phong, ba người con gái được tìm về." : ending == 2 ? "Mã Giám Sinh bị giam, Tú Bà bị phạt nặng." : ending == 1 ? "Kiều được tự do, nhưng Tú Bà chỉ nộp phạt." : "thua kiện — Kiều bị trả về lầu xanh. Câu chuyện đi đúng con đường của nó.");
             yield return "Điểm đối chất: " + (int)v["c7_diem"] + " · lòng tin của quan: " + (int)v["c7_long_tin"] + "%.";
             if ((int)v["c7_thua_vong"] > 0) yield return "Quan huyện phải tự xét giấy tờ " + (int)v["c7_thua_vong"] + " vòng.";
-            yield return "Vương Ông và Vương Quan được trắng án.";
+            if (ending > 0) yield return "Vương Ông và Vương Quan được trắng án.";
+            yield return "Điểm phán quyết: " + (int)v["c7_diem_pq"] + " · Định Mệnh " + (int)v["dinh_menh"] + "/100.";
             yield return "<i>Kết — Trở lại lớp học.</i>";
         }
     }

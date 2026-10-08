@@ -11,6 +11,8 @@ namespace ThuyKieu.Core.Story
     {
         [SerializeField] private string _id;
         public string Id => _id;
+        /// <summary>Names a sequence added at runtime (scene-authored ones keep their serialized id).</summary>
+        public void AssignId(string id) { if (string.IsNullOrEmpty(_id)) _id = id; }
         public abstract IEnumerator Run(StoryDirector director);
     }
 }

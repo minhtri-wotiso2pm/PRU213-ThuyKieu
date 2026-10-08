@@ -49,7 +49,8 @@ namespace ThuyKieu.Gameplay.Sequences
         [SerializeField] private TrialView _view;
         [SerializeField, Range(1, 3)] private int _round = 1;
 
-        private const float StartTrust = 0.6f, RecoverTrust = 0.4f, LostTrust = 0.1f, WrongCost = 0.2f, ProofGain = 0.15f;
+        private const float StartTrust = 0.6f, RecoverTrust = 0.4f, LostTrust = 0.1f, WrongCost = 0.2f, ProofGain = 0.15f, BribedCost = 0.15f;
+        private const int ForesightCost = 10, LostRoundFate = 10;
         private static bool _lifelineUsed;
 
         private StoryDirector _director;
@@ -66,6 +67,8 @@ namespace ThuyKieu.Gameplay.Sequences
             if (_round == 1) _lifelineUsed = false;
             // A lost round leaves the magistrate cold, but the next witness still gets a fair hearing.
             _trust = _round == 1 ? StartTrust : Mathf.Max(RecoverTrust, director.GetInt("c7_long_tin") / 100f);
+            // Định Mệnh ≥ 85: the magistrate has taken Tú Bà's gift. Seeing the bribe at the gate cancels it.
+            if (_round == 1 && director.GetInt("dinh_menh") >= 85 && !director.GetBool("c7_biet_hoi_lo")) _trust -= BribedCost;
             bool thorough = director.Autopilot && System.Environment.GetCommandLineArgs().Contains("-autopilotThorough");
             bool forcedLoss = false;
 
@@ -74,6 +77,7 @@ namespace ThuyKieu.Gameplay.Sequences
             string witness = statements[0].Claim.Speaker;
             _view.Open("ĐỐI CHẤT · VÒNG " + _round + " / 3", "Lời khai của " + SpeakerCatalog.Get(witness).DisplayName + " · bằng chứng trong tay: " + evidence.Count);
             _view.SetTrust(_trust);
+            ShowHelp();
             int score = 0, selected = 0, mistakes = 0;
             bool lost = false;
             Refresh(statements, selected);
@@ -88,7 +92,10 @@ namespace ThuyKieu.Gameplay.Sequences
                 {
                     yield return new WaitForSecondsRealtime(0.15f);
                     // Thorough QA walks both hints in round 1 and a lost round in round 2.
-                    if (thorough && _round == 1 && mistakes < 2) { selected = 0; card = WrongCard(statements[0], evidence); action = 2; }
+                    string target = StoryAutopilot.EndingTarget;
+                    if (target == "dinh_menh" && !forcedLoss) { forcedLoss = true; _trust = 0.01f; selected = 0; card = WrongCard(statements[0], evidence); action = 2; }
+                    else if (target == "nghich_menh" && _round == 1 && Foresight(statements) < 0 && HeldPage() != null) { action = 3; }
+                    else if (thorough && _round == 1 && mistakes < 2) { selected = 0; card = WrongCard(statements[0], evidence); action = 2; }
                     else if (thorough && _round == 2 && !forcedLoss) { forcedLoss = true; _trust = 0.01f; selected = 0; card = WrongCard(statements[0], evidence); action = 2; }
                     else AutopilotChoice(statements, evidence, ref selected, out action, out card);
                 }
@@ -99,6 +106,7 @@ namespace ThuyKieu.Gameplay.Sequences
                 Refresh(statements, selected);
                 var statement = statements[selected];
                 if (action == 1) { yield return PressStatement(statement); Refresh(statements, selected); continue; }
+                if (action == 3) { yield return TurnPage(statements); Refresh(statements, selected); ShowHelp(); continue; }
 
                 var proof = card >= 0 && (!statement.NeedsRevision || statement.Revised)
                     ? statement.Proofs.FirstOrDefault(p => p.Evidence == evidence[card].Id) : null;
@@ -133,7 +141,7 @@ namespace ThuyKieu.Gameplay.Sequences
                     continue;
                 }
 
-                if (!_lifelineUsed && director.GetBool("c7_ke_hoach_kt") && !thorough)
+                if (!_lifelineUsed && director.GetBool("c7_ke_hoach_kt") && !thorough && StoryAutopilot.EndingTarget != "dinh_menh")
                 {
                     _lifelineUsed = true;
                     _trust = 0.35f;
@@ -163,6 +171,7 @@ namespace ThuyKieu.Gameplay.Sequences
                 _trust = LostTrust;
                 _view.SetTrust(_trust);
                 director.SetInt("c7_thua_vong", director.GetInt("c7_thua_vong") + 1);
+                director.SetInt("dinh_menh", Mathf.Min(100, director.GetInt("dinh_menh") + LostRoundFate));
             }
 
             director.SetInt("c7_r" + _round, score);
@@ -271,6 +280,7 @@ namespace ThuyKieu.Gameplay.Sequences
                 bool present = _view.PresentClicked || (!caseOpen && keyboard != null && keyboard.eKey.wasPressedThisFrame);
                 _view.PressClicked = _view.PresentClicked = false;
                 if (press) { done(selected, 1, -1); yield break; }
+                if (!caseOpen && keyboard != null && keyboard.tKey.wasPressedThisFrame && HeldPage() != null) { done(selected, 3, -1); yield break; }
                 if (present && !caseOpen) { caseOpen = true; ShowRight(statements, evidence, selected, caseOpen); continue; }
                 if (caseOpen)
                 {
@@ -355,6 +365,39 @@ namespace ThuyKieu.Gameplay.Sequences
             }
         }
 
+        // ------------------------------------------------------------------ Trang Sách: Tiên tri
+
+        /// <summary>Pages with a courtroom use of their own (the witnesses' stand, the closing verse) are never spent here.</summary>
+        private static readonly string[] Reserved = { "ts_be_dau", "ts_chu_tam" };
+
+        /// <summary>The first page the player can still turn (in catalog order), or null.</summary>
+        private PageCatalog.Page HeldPage() =>
+            PageCatalog.All.FirstOrDefault(p => !p.Unusable && !Reserved.Contains(p.Id) && _director.GetInt(p.Id) == PageCatalog.Held);
+
+        /// <summary>Index of the statement already lit by a turned page, or -1.</summary>
+        private static int Foresight(List<Statement> statements) => statements.FindIndex(s => s.Hinted);
+
+        private void ShowHelp()
+        {
+            int held = PageCatalog.All.Count(p => !p.Unusable && !Reserved.Contains(p.Id) && _director.GetInt(p.Id) == PageCatalog.Held);
+            _view.ExtraHelp = held > 0 ? "<color=#E8C27A>T</color> lật một trang Tiên tri: chỉ ra câu khai then chốt (còn " + held + " trang · +" + ForesightCost + " Định Mệnh)" : string.Empty;
+        }
+
+        /// <summary>Turns a held page: the verse lights the statement this round turns on.</summary>
+        private IEnumerator TurnPage(List<Statement> statements)
+        {
+            var page = HeldPage();
+            int target = statements.FindIndex(s => s.Key && !s.Disproved);
+            if (page == null || target < 0) yield break;
+            _director.SetInt(page.Id, PageCatalog.Used);
+            _director.SetInt("dinh_menh", Mathf.Min(100, _director.GetInt("dinh_menh") + ForesightCost));
+            statements[target].Hinted = true;
+            if (_director.Audio != null) _director.Audio.PlaySfx("clue");
+            StoryAutopilot.Note("TRIAL r" + _round + " turned page " + page.Id + " (Tiên tri)");
+            yield return Speak(Say("TrangSach", page.Verse.Replace('\n', ' ')), 0.4f);
+            yield return Speak(Say("NoiTam", "Trang sách đã nói trước rồi. Câu thứ " + (target + 1) + " — đó là chỗ họ cần giấu nhất."), 0.4f);
+        }
+
         // ------------------------------------------------------------------ autopilot
 
         private void AutopilotChoice(List<Statement> statements, List<Evidence> evidence, ref int selected, out int action, out int card)
@@ -374,7 +417,7 @@ namespace ThuyKieu.Gameplay.Sequences
                 card = Card(statements[selected], evidence);
                 return;
             }
-            if (roll < 0.93f) { selected = open[Random.Range(0, open.Count)]; action = 1; return; }
+            if (roll < 0.93f || StoryAutopilot.EndingTarget == "nghich_menh") { selected = open[Random.Range(0, open.Count)]; action = 1; return; }
             selected = open[Random.Range(0, open.Count)];
             card = WrongCard(statements[selected], evidence);
             if (card < 0) action = 1;

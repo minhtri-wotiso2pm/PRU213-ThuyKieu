@@ -29,6 +29,8 @@ namespace ThuyKieu.Core.Story
         private float _lyingHeight;
 
         public string SpeakerId => _speakerId;
+        /// <summary>Recasts a copy of an actor as another speaker (runtime placeholders reuse an existing rig).</summary>
+        public void Recast(string speakerId) => _speakerId = speakerId;
         /// <summary>
         /// Eye level of the visible body: the rig's head bone when there is one (so seated, kneeling or lying actors are
         /// framed where their face really is), otherwise the standing head height above the root.

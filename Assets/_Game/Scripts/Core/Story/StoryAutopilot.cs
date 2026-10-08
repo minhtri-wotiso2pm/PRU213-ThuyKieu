@@ -40,6 +40,42 @@ namespace ThuyKieu.Core.Story
             }
         }
 
+        /// <summary>
+        /// "-autopilotEnding &lt;nghich_menh|thang|mat_minh|dinh_menh&gt;": steer the courtroom (bond, trust, evidence and how
+        /// the trial and lục bát are played) so QA can reach each ending on purpose. Null when not given.
+        /// </summary>
+        public static string EndingTarget
+        {
+            get
+            {
+                var args = System.Environment.GetCommandLineArgs();
+                int index = Array.IndexOf(args, "-autopilotEnding");
+                return Enabled && index >= 0 && index + 1 < args.Length ? args[index + 1] : null;
+            }
+        }
+
+        /// <summary>Sets the story up for the requested ending when Chapter 7 starts.</summary>
+        private void SteerEnding()
+        {
+            string target = EndingTarget;
+            var d = _director;
+            // The fate run also meets Sở Khanh in Chapter 5 (fate ≥ 50).
+            if (target == "dinh_menh" && d.ChapterNumber == 5 && d.GetInt("dinh_menh") < 60) { d.SetInt("dinh_menh", 60); Log.Add($"[{Elapsed()}] STEER fate → 60"); }
+            if (target == null || d.ChapterNumber != 7) return;
+            switch (target)
+            {
+                case "nghich_menh":
+                    d.SetInt("dong_dieu", 9); d.SetInt("kt_tin_tuong", 6); d.SetInt("c6_ho_so", 4); d.SetInt("ev_nhan_chung", 2);
+                    d.SetBool("nc_ba_nuoc", true); d.SetBool("nc_thu_lai", true); d.SetBool("ev_giay_no", true); d.SetBool("c6_so_bac", true);
+                    d.SetBool("ev_tien", true); d.SetInt("dinh_menh", 20);
+                    break;
+                case "thang": d.SetInt("dong_dieu", 5); d.SetInt("kt_tin_tuong", 4); break;
+                case "mat_minh": d.SetInt("dong_dieu", 2); d.SetInt("kt_tin_tuong", 4); break;
+                case "dinh_menh": d.SetInt("dong_dieu", 5); d.SetInt("kt_tin_tuong", 0); d.SetInt("dinh_menh", 90); break;
+            }
+            Log.Add($"[{Elapsed()}] STEER ending → {target}");
+        }
+
         /// <summary>Player builds: "-autopilotScene &lt;name&gt;" jumps straight to a chapter for automated runs.</summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Boot()
@@ -80,6 +116,8 @@ namespace ThuyKieu.Core.Story
 
         private IEnumerator Drive()
         {
+            while (_director.Story == null) yield return null; // the director creates the story in its own Start
+            SteerEnding();
             var dialogue = _director.Dialogue;
             bool capture = StoryCapture.Directory != null;
             string prefix = "C" + _director.ChapterNumber + "_";
@@ -187,6 +225,14 @@ namespace ThuyKieu.Core.Story
                 yield return new WaitForSecondsRealtime(0.6f);
                 StoryCapture.Shot(prefix + "journal");
                 journal.Close();
+            }
+            var book = FindAnyObjectByType<TrangSachView>();
+            if (book != null)
+            {
+                book.OpenBook();
+                yield return new WaitForSecondsRealtime(0.6f);
+                StoryCapture.Shot(prefix + "trang_sach");
+                book.CloseBook();
             }
             var pause = FindAnyObjectByType<PauseMenuView>();
             if (pause == null) yield break;

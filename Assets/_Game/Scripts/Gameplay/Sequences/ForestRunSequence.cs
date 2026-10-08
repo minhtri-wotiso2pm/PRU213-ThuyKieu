@@ -29,6 +29,7 @@ namespace ThuyKieu.Gameplay.Sequences
         [SerializeField] private Transform _camera;
         [SerializeField] private float _speed = 5.2f;
         [SerializeField] private float _startGap = 7f;
+        private const float ShoutedCloser = 2.5f;
         [SerializeField] private float _window = 1.5f;
         [SerializeField] private float _mashWindow = 2.4f;
         [SerializeField] private int _mashCount = 7;
@@ -64,7 +65,9 @@ namespace ThuyKieu.Gameplay.Sequences
 
             int successes = 0, next = 0;
             bool companionSaved = false, forced = false;
-            float distance = 0f, gap = _startGap, stumble = 0f;
+            // Sở Khanh shouted for the pursuers at the edge of the bamboo: they start closer.
+            float startGap = director.GetInt("c5_so_khanh") == 3 ? _startGap - ShoutedCloser : _startGap;
+            float distance = 0f, gap = startGap, stumble = 0f;
             while (distance < _total - 0.5f)
             {
                 distance = Mathf.Max(distance, Project(player.transform.position));
@@ -109,7 +112,7 @@ namespace ThuyKieu.Gameplay.Sequences
                     director.SetInt("c5_bi_bat", director.GetInt("c5_bi_bat") + 1);
                     player.ScriptedMove = null;
                     yield return hud.FailCard("Bị đuổi kịp!", "Bấm đúng phím hiện trên màn hình trước khi vạch đỏ cạn. Bấm sai phím cũng là vấp ngã.", director.Autopilot ? 0f : 2f);
-                    successes = 0; next = 0; companionSaved = false; distance = 0f; gap = _startGap; stumble = 0f;
+                    successes = 0; next = 0; companionSaved = false; distance = 0f; gap = startGap; stumble = 0f;
                     Restart(player, companion, withCompanion);
                     yield return hud.Fade(0f, 0.4f);
                 }

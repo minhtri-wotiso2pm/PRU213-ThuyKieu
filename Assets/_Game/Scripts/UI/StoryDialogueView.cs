@@ -147,7 +147,11 @@ namespace ThuyKieu.UI
                 int index = i;
                 var button = Instantiate(_template, _choices);
                 button.gameObject.SetActive(true);
-                button.GetComponentInChildren<TMP_Text>().text = "<color=#E8C27A>" + (i + 1) + "</color>   " + _currentChoices[i].ChoiceText;
+                // Turning a Trang Sách page: gold, so the player sees the foreknowledge they are about to spend.
+                bool page = System.Array.Exists(_currentChoices[i].Tags, t => t.StartsWith("page:"));
+                button.GetComponentInChildren<TMP_Text>().text = "<color=#E8C27A>" + (i + 1) + "</color>   " +
+                    (page ? "<color=#FFC46B><b>TRANG SÁCH ·</b> " + _currentChoices[i].ChoiceText + "</color>" : _currentChoices[i].ChoiceText);
+                if (page && button.TryGetComponent<UnityEngine.UI.Image>(out var image)) image.color = new Color(0.45f, 0.26f, 0.06f, 0.95f);
                 button.onClick.AddListener(() => Choose(index));
                 _buttons.Add(button);
             }

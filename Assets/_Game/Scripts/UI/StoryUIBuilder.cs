@@ -359,7 +359,7 @@ namespace ThuyKieu.UI
 
         public const string ControlsHelp = "<color=#E8C27A>WASD</color>  di chuyển\n<color=#E8C27A>Shift</color>  chạy\n<color=#E8C27A>Ctrl / C</color>  khom người, rón rén\n" +
             "<color=#E8C27A>Chuột</color>  xoay camera\n<color=#E8C27A>Chuột phải</color>  quan sát\n<color=#E8C27A>E</color>  tương tác · trốn\n<color=#E8C27A>Q</color>  ném sỏi đánh lạc hướng\n<color=#E8C27A>Space / Click</color>  tiếp lời thoại\n" +
-            "<color=#E8C27A>1–4</color>  chọn câu trả lời\n<color=#E8C27A>J</color>  sổ tay manh mối\n<color=#E8C27A>Esc</color>  tạm dừng\n<color=#E8C27A>`</color>  bảng lệnh (thử nghiệm)";
+            "<color=#E8C27A>1–4</color>  chọn câu trả lời\n<color=#E8C27A>J</color>  sổ tay manh mối\n<color=#E8C27A>B</color>  Trang Sách (câu thơ biết trước · Định Mệnh)\n<color=#E8C27A>T</color>  lật trang Tiên tri khi đối chất\n<color=#E8C27A>Esc</color>  tạm dừng\n<color=#E8C27A>`</color>  bảng lệnh (thử nghiệm)";
 
         private static void BuildPause(Transform parent)
         {

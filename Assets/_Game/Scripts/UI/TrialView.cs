@@ -47,6 +47,8 @@ namespace ThuyKieu.UI
         public bool PressClicked { get; set; }
         public bool PresentClicked { get; set; }
         public bool IsOpen => _root != null && _root.activeSelf;
+        /// <summary>An extra line under the action help (the Trang Sách "Tiên tri" key while pages are held).</summary>
+        public string ExtraHelp { get; set; } = string.Empty;
         public bool EvidenceOpen => _evidence != null && _evidence.activeSelf;
 
         private void Awake()
@@ -129,6 +131,7 @@ namespace ThuyKieu.UI
                 ? "Đọc kỹ từng câu. Câu nào nghe có lý nhưng trái với giấy tờ hay nhân chứng của bạn?\n\n<color=#E8C27A>1–4 / ↑↓</color> chọn lời khai"
                 : disproved ? "Câu này đã bị bác bỏ. Hãy xét những câu khác."
                 : "<color=#E8C27A>Hỏi vặn</color> để người khai nói thêm — đôi khi họ tự lộ ra sơ hở.\n<color=#E8C27A>Đưa bằng chứng</color> khi bạn chắc chắn câu này sai. Đưa sai, quan huyện sẽ mất kiên nhẫn.";
+            if (!string.IsNullOrEmpty(ExtraHelp) && !disproved) _help.text += "\n\n" + ExtraHelp;
         }
 
         /// <summary>Right panel in evidence mode: one card per item the player can present.</summary>
