@@ -111,7 +111,9 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             if (actor == null || !actor.isActiveAndEnabled) return;
             actor.Sit(false);
-            StartCoroutine(actor.HasRig ? WalkOut(actor, door) : SlipAway(actor));
+            // Only actors that can actually navigate (the teacher) walk out; rigged-but-seated actors with no
+            // agent (Ngan, the classmates) still slip away off-camera, exactly as they did when unrigged.
+            StartCoroutine(actor.HasRig && actor.Agent != null ? WalkOut(actor, door) : SlipAway(actor));
         }
 
         /// <summary>A posed (unrigged) classmate cannot walk, so it is gone the first moment the camera looks elsewhere.</summary>
