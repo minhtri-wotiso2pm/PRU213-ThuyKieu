@@ -15,6 +15,10 @@ namespace ThuyKieu.Player
         [SerializeField] private float runSpeed = 5.5f;
         [Tooltip("How fast the character turns towards the movement direction (deg/s).")]
         [SerializeField] private float rotationSpeed = 720f;
+        [Tooltip("How quickly speed eases towards the target; lower = softer starts and stops.")]
+        [SerializeField] private float _moveSharpness = 9f;
+        [Tooltip("How quickly the facing eases towards the movement direction.")]
+        [SerializeField] private float _turnSharpness = 12f;
 
         [Header("Gravity")]
         [SerializeField] private float gravity = -20f;
@@ -39,6 +43,7 @@ namespace ThuyKieu.Player
 
         private CharacterController controller;
         private float verticalVelocity;
+        private Vector3 _planarVelocity;
         private bool _hasCrouchParameter;
 
         /// <summary>True while sneaking. Stealth systems read this to lower visibility.</summary>
@@ -98,7 +103,8 @@ namespace ThuyKieu.Player
             RotateTowards(moveDirection);
             ApplyGravity();
 
-            Vector3 velocity = moveDirection * speed;
+            _planarVelocity = Vector3.Lerp(_planarVelocity, moveDirection * speed, 1f - Mathf.Exp(-_moveSharpness * Time.deltaTime));
+            Vector3 velocity = _planarVelocity;
             velocity.y = verticalVelocity;
             Vector3 previousPosition = transform.position;
             controller.Move(velocity * Time.deltaTime);
@@ -125,6 +131,7 @@ namespace ThuyKieu.Player
             transform.SetPositionAndRotation(position, rotation);
             controller.enabled = true;
             verticalVelocity = 0f;
+            _planarVelocity = Vector3.zero;
         }
 
         private static Vector3 Flat(Vector3 direction)
@@ -164,7 +171,8 @@ namespace ThuyKieu.Player
             }
 
             Quaternion target = Quaternion.LookRotation(direction, Vector3.up);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, target, rotationSpeed * Time.deltaTime);
+            Quaternion eased = Quaternion.Slerp(transform.rotation, target, 1f - Mathf.Exp(-_turnSharpness * Time.deltaTime));
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, eased, rotationSpeed * Time.deltaTime);
         }
 
         private void ApplyGravity()
