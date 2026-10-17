@@ -66,14 +66,14 @@ namespace ThuyKieu.Core
             }
         }
 
-        /// <summary>Left Shift held.</summary>
+        /// <summary>Either Shift held.</summary>
         public static bool IsRunHeld
         {
             get
             {
                 if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
-                return keyboard != null && keyboard.leftShiftKey.isPressed;
+                return keyboard != null && (keyboard.leftShiftKey.isPressed || keyboard.rightShiftKey.isPressed);
             }
         }
 
