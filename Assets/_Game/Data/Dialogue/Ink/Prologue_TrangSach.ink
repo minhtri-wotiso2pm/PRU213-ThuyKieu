@@ -1,27 +1,27 @@
 // ============================================================
 // MỞ ĐẦU — TRANG SÁCH
 // Scene Unity: Chapter00_Prologue (lớp học hiện đại + phòng Kiều và sân Vương gia)
-// Mở đầu 1 — Lớp học: nhân vật chính chê quyết định bán mình của Kiều; quyển sách phát sáng, giọng Kiều thách thức.
+// Mở đầu 1 — Lớp học: nhân vật chính chê quyết định bán mình của Kiều; đọc lại đoạn thơ, trang sách sáng lên.
 // Mở đầu 2 — Phòng Kiều: tỉnh dậy trong thân xác Kiều; quan sai bắt Vương Ông và Vương Quan; chiều đổ mưa → Chương 1.
+// Kể bằng hình ảnh: lời dẫn chỉ giữ ở chỗ hình ảnh không tự nói được; camera, âm thanh và câu thơ gánh phần còn lại.
+// Giọng Kiều là giọng của trang thơ — dịu, buồn, không đe doạ.
 // ============================================================
 
 === prologue ===
 # chapter:0
 # scene:LopHoc
 # music:classroom
-# speaker:Narrator
-# camera:Wide_Classroom
-Tiết Văn cuối cùng của một buổi chiều tháng Năm. Quạt trần quay chậm, nắng xiên qua khung cửa sổ.
-
 # speaker:ThayGiao
 # emotion:thoughtful
-# camera:CU_ThayGiao
+# camera:Wide_Classroom
 Thầy giáo: Gia đình gặp nạn, cha và em bị bắt oan, cần bốn trăm lạng bạc. Và Thúy Kiều đã quyết định bán mình chuộc cha.
 
 # speaker:TrangSach
+# camera:Board
 "Duyên hội ngộ, đức cù lao, bên tình bên hiếu bên nào nặng hơn?"
 
 # speaker:ThayGiao
+# camera:CU_ThayGiao
 Thầy giáo: Hôm nay thầy muốn nghe các em nghĩ gì. Nếu các em là Kiều, các em có làm như thế không?
 
 # speaker:Ngan
@@ -64,23 +64,20 @@ Thầy giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
 * [Im lặng, lắc đầu. #timeout]
     ~ pl_che_kieu = 3
     ~ dong_dieu = 2
-    # speaker:Narrator
-    Tôi không trả lời, chỉ khẽ lắc đầu. Trong đầu vẫn là một câu: "Ngốc thật."
+    # speaker:NoiTam
+    Ngốc thật.
     # speaker:ThayGiao
     Thầy giáo: Không nói cũng là một câu trả lời. Về nhà các em nghĩ thêm nhé.
 
-- # speaker:Narrator
+- # speaker:ThayGiao
 # sfx:school_bell
 # camera:Wide_Classroom
-Chuông tan học reo vang. Cả lớp ào ra như ong vỡ tổ.
-
-# speaker:ThayGiao
 Thầy giáo: Bài về nhà: viết một đoạn, nếu em là Kiều. Nhớ là viết bằng tấm lòng, đừng viết bằng cái đầu biết trước kết cục!
 
-# speaker:Narrator
+# speaker:NoiTam
 # objective:Thu dọn sách vở trước khi về · E để tương tác
 # gameplay:tutorial_classroom
-Lớp học vãn dần. Quyển Truyện Kiều vẫn nằm mở trên bàn.
+Còn vài phút. Quyển Truyện Kiều vẫn mở trên bàn.
 
 -> pl_lop
 
@@ -98,12 +95,9 @@ Lớp học vãn dần. Quyển Truyện Kiều vẫn nằm mở trên bàn.
 
 
 === pl_board ===
-# speaker:Narrator
-# camera:Board
-Trên bảng, nét phấn của thầy vẫn còn nguyên. Thầy chép hai câu đầu Truyện Kiều, cố tình bỏ trống một chữ cho cả lớp điền.
-
 # speaker:NoiTam
-Luật thầy dạy hồi sáng: chữ thứ sáu của câu tám phải vần với chữ cuối của câu sáu. Điền thử xem.
+# camera:Board
+Thầy cố tình bỏ trống một chữ. Luật lục bát: chữ thứ sáu câu tám phải vần với chữ cuối câu sáu.
 
 # speaker:Narrator
 # gameplay:lucbat_pl
@@ -150,12 +144,9 @@ Ngân: Thôi tao về trước đây. Mai nộp bài nhớ cho tao chép ý vớ
 
 
 === pl_window ===
-# speaker:Narrator
-# camera:Window
-Ngoài cửa sổ, sân trường đã vắng. Một cơn gió thổi lật mấy trang vở trên bàn ai đó.
-
 # speaker:NoiTam
-Mười lăm tuổi. Bằng tuổi mình bây giờ. Nếu là mình thì...
+# camera:Window
+Sân trường vắng rồi. Kiều năm ấy mười lăm tuổi, bằng tuổi mình bây giờ. Nếu là mình thì...
 
 # speaker:NoiTam
 Thôi. Bài về nhà thì tối làm.
@@ -163,35 +154,33 @@ Thôi. Bài về nhà thì tối làm.
 
 
 === pl_book ===
-# speaker:Narrator
-# camera:Book
-Tôi đưa tay định gấp quyển sách lại. Trang giấy dừng đúng ở đoạn Kiều bán mình.
-
 # speaker:TrangSach
+# camera:Book
 "Để lời thệ hải minh sơn, làm con trước phải đền ơn sinh thành."
 
-# speaker:Narrator
-# gameplay:book_glow
-Rồi những dòng chữ bắt đầu sáng lên.
+# speaker:NoiTam
+Trang sách dừng đúng đoạn bán mình. Mình đọc lướt qua đoạn này không biết bao nhiêu lần.
 
 ~ nhan(ts_tai_menh)
 # speaker:TrangSach
+# gameplay:book_glow
+# camera:BookClose
 # page:ts_tai_menh
 "Trăm năm trong cõi người ta, chữ tài chữ mệnh khéo là ghét nhau."
 
 # speaker:Narrator
-Một trang giấy bứt khỏi gáy sách, nhẹ như lông, rơi vào lòng bàn tay tôi. Chữ trên đó vẫn còn sáng. (B: mở Trang Sách)
+Trang Sách: câu thơ vừa đọc được giữ lại · B để mở
 
 # speaker:KieuThat
 # gameplay:kieu_voice
-Ngươi nói... nếu là ngươi, ngươi sẽ làm tốt hơn ta?
+Em bảo, nếu là em, em sẽ làm tốt hơn ta?
 
 # speaker:HocSinh
-# emotion:fearful
-Tôi: Ai... ai vừa nói đấy?
+# emotion:thoughtful
+Tôi: ...Ai vậy?
 
 # speaker:KieuThat
-Người mà ngươi gọi là "ngốc". Người đã khóc mười lăm năm trong những trang giấy ngươi lật qua chẳng cần đọc kỹ.
+Người em gọi là "ngốc". Mười lăm năm của ta nằm trong những trang em lật qua chẳng cần đọc kỹ.
 
 * ["Đúng. Biết trước mọi chuyện, tôi sẽ không để ai lừa."]
     ~ tu_trong += 1
@@ -207,21 +196,19 @@ Người mà ngươi gọi là "ngốc". Người đã khóc mười lăm năm t
     Tôi: Tôi chỉ nói vậy thôi. Tôi đâu có ở trong hoàn cảnh đó.
     # speaker:KieuThat
     Vậy thì hãy ở trong đó một lần.
-* [Gấp mạnh quyển sách lại.]
+* [Gấp quyển sách lại.]
     ~ soul(-1)
-    # speaker:Narrator
-    Tôi gập mạnh quyển sách. Ánh sáng vẫn lọt qua kẽ giấy, mỗi lúc một chói hơn.
     # speaker:KieuThat
-    Gấp sách lại không làm câu chuyện biến mất đâu.
+    Gấp sách lại không làm câu chuyện biến mất đâu em.
 
 - # speaker:KieuThat
 Hãy sống một ngày của ta. Rồi hãy nói cho ta biết... ta đã chọn sai ở đâu.
 
-# speaker:Narrator
-# fx:spirit
+# speaker:TrangSach
+# fx:page
 # sfx:memory
 # gameplay:into_room
-Ánh sáng nuốt chửng cả lớp học.
+"Trải qua một cuộc bể dâu, những điều trông thấy mà đau đớn lòng."
 
 -> pl_phong
 
@@ -230,28 +217,19 @@ Hãy sống một ngày của ta. Rồi hãy nói cho ta biết... ta đã chọ
 # fx:none
 # scene:PhongKieu
 # music:morning
-# speaker:Narrator
+# speaker:NoiTam
 # camera:Wide_KieuRoom
-Có tiếng chim sẻ. Mùi gỗ cũ và hương trầm.
-
-# speaker:NoiTam
-# gameplay:wake_panic
-Đây... đây là đâu? Giường gỗ, màn the, rèm tre... Đây không phải phòng mình.
-
-# speaker:NoiTam
-Tay mình. Sao tay mình lại thế này? Áo này là áo gì?
+# gameplay:wake_room
+Giường gỗ, màn the, rèm tre... Đây không phải phòng mình.
 
 # speaker:MeKieu
 # emotion:warm
 Mẹ Kiều: (gọi vọng từ ngoài sân) Kiều ơi! Dậy chưa con? Ra ăn sáng với cha mẹ nào!
 
 # speaker:NoiTam
-"Kiều"?
-
-# speaker:Narrator
 # objective:Tìm hiểu căn phòng · đi bằng WASD, E để xem, giữ chuột phải để quan sát
 # gameplay:tutorial_room
-Căn phòng lặng im, chờ cô bước xuống giường.
+"Kiều"?
 
 -> pl_phong_hub
 
@@ -270,19 +248,14 @@ Căn phòng lặng im, chờ cô bước xuống giường.
 === pl_guong_k ===
 ~ pl_guong = true
 ~ pl_vat += 1
-# speaker:Narrator
-# camera:Mirror
-Mặt gương đồng mờ mờ. Một gương mặt hiện ra: đôi mày lá liễu, đôi mắt trong như nước mùa thu.
-
-# speaker:NoiTam
-# fx:panic
-Không phải mặt mình. Mình chớp mắt, cô ấy chớp mắt. Mình đưa tay lên má, cô ấy cũng đưa tay lên.
-
 # speaker:TrangSach
+# camera:Mirror
 "Làn thu thủy, nét xuân sơn, hoa ghen thua thắm, liễu hờn kém xanh."
 
 # speaker:NoiTam
-# fx:none
+Không phải mặt mình. Mình chớp mắt, người trong gương cũng chớp mắt.
+
+# speaker:NoiTam
 Thúy Kiều. Mình đang ở trong thân xác Thúy Kiều.
 # clue:pl_guong
 -> pl_phong_hub
@@ -292,11 +265,8 @@ Thúy Kiều. Mình đang ở trong thân xác Thúy Kiều.
 ~ pl_dan = true
 ~ pl_vat += 1
 ~ soul(1)
-# speaker:Narrator
-# camera:Dan
-Cây hồ cầm nằm nghiêng bên vách, dây đàn còn hơi ấm như ai vừa gảy đêm qua.
-
 # speaker:TrangSach
+# camera:Dan
 "Khúc nhà tay lựa nên chương, một thiên Bạc mệnh lại càng não nhân."
 
 # speaker:NoiTam
@@ -310,15 +280,12 @@ Giờ cầm cây đàn trong tay mới thấy... nàng đã linh cảm được 
 === pl_tho_k ===
 ~ pl_tho = true
 ~ pl_vat += 1
-# speaker:Narrator
+# speaker:KimTrong
 # camera:Desk
-Trên bàn viết là một bức thư gấp làm tư, nét chữ cứng cỏi của một người đàn ông.
-
-# speaker:Narrator
-"Chú ta mất ở Liêu Dương, ta phải đi hộ tang nửa năm. Lời thề dưới trăng, ta không quên. — Kim Trọng."
+(thư) "Chú ta mất ở Liêu Dương, ta phải đi hộ tang nửa năm. Lời thề dưới trăng, ta không quên. — Kim Trọng."
 
 # speaker:NoiTam
-Kim Trọng. Người yêu của Kiều. Trong sách, chàng đi hộ tang, đến lúc quay về thì mọi chuyện đã quá muộn.
+Kim Trọng. Trong sách, chàng đi hộ tang, đến lúc quay về thì mọi chuyện đã quá muộn.
 
 # speaker:NoiTam
 # clue:pl_thu_kim_trong
@@ -328,12 +295,9 @@ Chàng đi rồi. Vậy là chuyện đó sắp xảy ra.
 
 === pl_san_k ===
 # scene:VuongGia_San
-# speaker:Narrator
-# camera:Wide_Courtyard
-Sân nhà họ Vương sáng nắng. Mâm cơm sáng bày dưới hiên, chén nước chè còn bốc khói.
-
 # speaker:VuongOng
 # emotion:satisfied
+# camera:Wide_Courtyard
 Vương Ông: Kiều con! Dậy muộn thế? Lại thức khuya gảy đàn phải không?
 
 # speaker:VuongQuan
@@ -345,19 +309,13 @@ Vương Quan: Chị Kiều lại ngủ quên! Để em ăn hết bánh của ch�
 Mẹ Kiều: Con ngồi xuống đi. Hôm nay cha con được nghỉ, cả nhà mới ăn với nhau một bữa yên lành.
 
 # speaker:NoiTam
-Vương Ông. Vương Quan. Mẹ Kiều. Họ cười với mình như thể mình là con gái, là chị của họ thật.
-
-# speaker:NoiTam
-Mình nhớ đoạn này. Một ngày yên lành. Rồi...
-
-# speaker:Narrator
-# sfx:gong
-# music:tension_low
-# camera:Gate
-Tiếng chiêng dồn dập ngoài cổng. Cánh cổng gỗ bật mở.
+Họ cười với mình như thể mình là con gái, là chị của họ thật. Mình nhớ đoạn này. Một ngày yên lành. Rồi...
 
 # speaker:QuanSai
 # emotion:angry
+# sfx:gong
+# music:tension_low
+# camera:Gate
 Quan sai: Vương Ông, Vương Quan đâu? Có đơn tố cáo nhà các người chứa hàng gian! Trói cả lại!
 
 # speaker:VuongOng
@@ -380,8 +338,8 @@ Thằng bán tơ. Đúng như trong sách. Một lời vu oan là đủ để c�
     # speaker:QuanSai
     # emotion:angry
     Quan sai: Đàn bà con gái biết gì mà xen vào! Tránh ra!
-    # speaker:Narrator
-    Hắn gạt mạnh. Cô ngã dúi xuống nền gạch. Đầu gối rát buốt. Cảm giác đau này là thật.
+    # speaker:NoiTam
+    Đầu gối rát buốt trên nền gạch. Cái đau này là thật.
 * ["Đơn tố cáo đâu? Ai làm chứng? Cha tôi phạm luật nào?"]
     ~ pl_hanh_dong = 2
     ~ tinh_tao += 1
@@ -409,27 +367,21 @@ Mẹ Kiều: Ông ơi! Quan lớn ơi, xin tha cho nhà tôi!
 
 # speaker:VuongQuan
 # emotion:fearful
-Vương Quan: Chị Kiều! Chị Kiều ơi!
-
-# speaker:Narrator
 # camera:Gate
-Dây trói siết chặt. Hai cha con bị lôi qua cổng. Hàng xóm đứng xa nhìn, không ai dám bước lại gần.
-
-# speaker:Narrator
-# scene:VuongGia_Mua
-# music:sad_strings
-Chiều hôm ấy, trời đổ mưa.
+Vương Quan: Chị Kiều! Chị Kiều ơi!
 
 # speaker:MeKieu
 # emotion:crying
+# scene:VuongGia_Mua
+# music:sad_strings
 Mẹ Kiều: Họ đòi bốn trăm lạng... Bốn trăm lạng thì nhà ta lấy đâu ra...
 
 # speaker:KieuThat
 # gameplay:kieu_voice
-Ngươi đã thấy rồi đấy. Không ai hỏi ta có muốn hay không. Chỉ có một con số: bốn trăm lạng.
+Em thấy rồi đấy. Không ai hỏi ta có muốn hay không. Chỉ có một con số: bốn trăm lạng.
 
 # speaker:KieuThat
-Đêm nay, sẽ có một người đến gõ cửa nhà này. Ngươi biết hắn là ai.
+Đêm nay, sẽ có một người đến gõ cửa nhà này. Em biết người ấy là ai.
 
 {
 - pl_che_kieu == 1:
@@ -444,7 +396,7 @@ Ngươi đã thấy rồi đấy. Không ai hỏi ta có muốn hay không. Ch�
 }
 
 # speaker:KieuThat
-Hãy cho ta thấy ngươi sẽ làm gì.
+Hãy cho ta thấy em sẽ làm gì.
 
 # fx:none
 -> chapter_1

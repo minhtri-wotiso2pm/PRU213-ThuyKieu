@@ -10,14 +10,15 @@ using static ThuyKieu.Core.Editor.StoryArtKit;
 namespace ThuyKieu.Core.Editor
 {
     /// <summary>
-    /// Builds Chapter00_Prologue: the modern classroom (west, around x −60) and the Vương family house on the morning
+    /// Builds Chapter00_Prologue: the modern classroom and its school (far west, around x −600) and the Vương family house on the morning
     /// of the arrest (around the origin): Kiều's room in the west wing, the courtyard, the main house and the gate.
     /// </summary>
     public static class PrologueSetup
     {
         public const string SceneName = "Chapter00_Prologue";
         public const string ScenePath = "Assets/_Game/Scenes/" + SceneName + ".unity";
-        public static readonly Vector3 ClassOrigin = new Vector3(-60f, 0f, 0f);
+        // Far enough west that the school, its town and hills stay beyond the camera's far plane (260 m) from the Vương house.
+        public static readonly Vector3 ClassOrigin = new Vector3(-600f, 0f, 0f);
 
         private const string Characters = "Assets/_Game/Art/Characters/";
         private static Material _plaster, _wood, _tiles, _ridge, _stone, _red, _planks, _brick;
@@ -38,13 +39,20 @@ namespace ThuyKieu.Core.Editor
 
             // ------------------------------------------------------------ the classroom
             var room = ClassroomKit.Build(world, ClassOrigin, false);
+            // CreateSystems uses a spacious outdoor camera by default. Start this
+            // interior scene inside the rear wall, already at the classroom framing.
+            s.CameraComponent.transform.SetPositionAndRotation(
+                ClassOrigin + new Vector3(3.28f, 1.92f, -3.42f),
+                Quaternion.Euler(10f, 0f, 0f));
             var look = ClassroomKit.StudentBody(s);
             // Modern-day cast from the team's ThuyKieuKiemTien models (static, posed): Ngân and the classmates sit, the teacher stands.
-            var ngan = ModernActor("Ngan", "Ngan", "NuSinhToxic", 1.3f, room.NganSeat.position, 0f, Color.white, seat: true);
+            var ngan = ModernActor("Ngan", "Ngan", "NuSinhToxic", 1.38f, room.NganSeat.position + Vector3.back * 0.22f, 0f, Color.white, seat: true);
+            Set(ngan, "_lockFacing", true);
             var teacher = ModernActor("ThayGiao", "ThayGiao", "ThayGiao", 1.72f, room.TeacherSpot.position, 180f, Color.white);
             var classmates = Classmates(room);
             Explore(Anchor(world, "BoardTarget", room.BoardAnchor.position), director, "pl_board", "Đọc mấy câu thơ trên bảng", new Vector3(2.4f, 1.6f, 1.2f));
-            Explore(ngan.gameObject, director, "pl_ngan", "Nói chuyện với Ngân", Vector3.one * 1.8f);
+            var nganTalk = Point("NganTalkStand", room.NganSeat.position + new Vector3(0.75f, 0f, -0.72f), 315f, room.Root);
+            Set(Explore(ngan.gameObject, director, "pl_ngan", "Nói chuyện với Ngân", Vector3.one * 1.8f), "_standPoint", nganTalk);
             Set(Explore(Anchor(world, "WindowTarget", room.WindowAnchor.position), director, "pl_window", "Nhìn ra cửa sổ", new Vector3(1.2f, 1.6f, 1.8f)), "_standPoint", room.WindowStand);
             Set(Explore(Anchor(world, "BookTarget", room.Seat.position + new Vector3(0, 0, 0.1f)), director, "pl_book", "Cất quyển Truyện Kiều vào cặp", new Vector3(1.2f, 1.6f, 1.2f)), "_standPoint", room.Seat);
 
@@ -153,8 +161,14 @@ namespace ThuyKieu.Core.Editor
             for (int i = 0; i < picks.Length && picks[i] < room.ClassmateSeats.Count; i++)
             {
                 var seat = room.ClassmateSeats[picks[i]];
-                list.Add(ModernActor("BanHoc" + i, "BanHoc", models[i % models.Length], 1.26f + (i % 3) * 0.04f, seat.position, 0f,
-                    tints[i % tints.Length], seat: true));
+                string model = models[i % models.Length];
+                var classmate = ModernActor("BanHoc" + i, "BanHoc", model, 1.26f + (i % 3) * 0.04f,
+                    seat.position + Vector3.down * (model == "HocSinhNgoi" ? 0.1f : 0.03f), 0f,
+                    tints[i % tints.Length], seat: true);
+                // Background pupils keep facing the board. StoryDirector otherwise turns every
+                // registered actor toward each speaker, making seated rows swivel into each other.
+                Set(classmate, "_lockFacing", true);
+                list.Add(classmate);
             }
             return list.ToArray();
         }

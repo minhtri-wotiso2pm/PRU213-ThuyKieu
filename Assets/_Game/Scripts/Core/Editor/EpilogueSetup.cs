@@ -29,6 +29,9 @@ namespace ThuyKieu.Core.Editor
             var director = s.Director;
 
             var room = ClassroomKit.Build(world, Vector3.zero, true);
+            s.CameraComponent.transform.SetPositionAndRotation(
+                new Vector3(3.28f, 1.92f, -3.42f),
+                Quaternion.Euler(10f, 0f, 0f));
             var look = ClassroomKit.StudentBody(s);
             // Ngân still at the next seat when she wakes (static seated model from ThuyKieuKiemTien).
             ModernActor("Ngan", "Ngan", "NuSinhToxic", 1.3f, room.NganSeat.position, 0f, Color.white, seat: true);

@@ -96,6 +96,7 @@ namespace ThuyKieu.Presentation
             CurrentMood = string.IsNullOrEmpty(mood) ? "none" : mood;
             _target = MoodFor(CurrentMood);
             if (CurrentMood == "memory" || CurrentMood == "spirit") Flash(0.85f);
+            else if (CurrentMood == "page") Flash(0.45f);
         }
 
         public void Flash(float strength) { _flashAlpha = Mathf.Max(_flashAlpha, strength); }
@@ -118,6 +119,8 @@ namespace ThuyKieu.Presentation
                 case "panic": m.Saturation = -35; m.Vignette = 0.5f; m.Chroma = 1f; m.Distortion = -0.25f; m.Contrast = _baseContrast + 17f; m.Grain = 0.4f; break;
                 case "spirit": m.Saturation = -55; m.Filter = new Color(1f, 0.88f, 0.55f); m.Vignette = 0.42f; m.Bloom = 3f; m.Exposure = _baseExposure - 0.25f; m.Chroma = 0.3f; break;
                 case "tension": m.Vignette = 0.38f; m.Saturation = -10; m.Contrast = _baseContrast + 6f; break;
+                // Warm lamplight of an old page: full colour, no grain or distortion (the story world, not a haunting).
+                case "page": m.Filter = new Color(1f, 0.93f, 0.8f); m.Vignette = 0.3f; m.Bloom = 1.6f; m.Exposure = _baseExposure + 0.08f; break;
             }
             return m;
         }

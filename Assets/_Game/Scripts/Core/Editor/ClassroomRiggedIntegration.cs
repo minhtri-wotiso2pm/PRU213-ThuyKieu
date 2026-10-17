@@ -75,7 +75,9 @@ namespace ThuyKieu.Core.Editor
             var teacherCtrl = UpsertTeacherController(RequireClip(TeacherFbx, "Idle"), RequireClip(SharedWalkFbx, "Walking"));
             var boyCtrl = UpsertSeatedController(ControllerFolder + "/HocSinhNam.controller", "Sitting", RequireClip(BoyFbx, "Sitting"));
             var girlCtrl = UpsertSeatedController(ControllerFolder + "/HocSinhNu.controller", "Sitting", RequireClip(GirlFbx, "Sitting"));
-            var heroCtrl = UpsertHeroController(RequireClip(HeroIdleFbx, "Idle"), RequireClip(HeroWalkFbx, "Walking"), RequireClip(HeroSitFbx, "Sitting"));
+            // The dedicated hero walk take bends the knees like a crouch on this avatar.
+            // The shared humanoid walk retargets cleanly and keeps both feet under the body.
+            var heroCtrl = UpsertHeroController(RequireClip(HeroIdleFbx, "Idle"), RequireClip(SharedWalkFbx, "Walking"), RequireClip(HeroSitFbx, "Sitting"));
 
             var targets = FindTargets();
             if (targets.Count == 0) throw new InvalidOperationException("No classroom StoryActors found in " + ScenePath + " (is the scene open?).");

@@ -43,6 +43,29 @@ namespace ThuyKieu.Core
             }
         }
 
+        /// <summary>Mouse-wheel movement, normalized so one physical notch is approximately one step.</summary>
+        public static float Zoom
+        {
+            get
+            {
+                if (GamePause.IsPaused) return 0f;
+                Mouse mouse = Mouse.current;
+                if (mouse == null) return 0f;
+                return Mathf.Clamp(mouse.scroll.ReadValue().y / 120f, -1f, 1f);
+            }
+        }
+
+        /// <summary>V toggles the close front-facing character portrait camera.</summary>
+        public static bool PortraitPressedThisFrame
+        {
+            get
+            {
+                if (GamePause.IsPaused) return false;
+                Keyboard keyboard = Keyboard.current;
+                return keyboard != null && keyboard.vKey.wasPressedThisFrame;
+            }
+        }
+
         /// <summary>Left Shift held.</summary>
         public static bool IsRunHeld
         {

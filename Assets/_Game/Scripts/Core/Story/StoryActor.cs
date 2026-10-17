@@ -15,6 +15,10 @@ namespace ThuyKieu.Core.Story
         [SerializeField] private Transform _staticVisual;
         [SerializeField] private float _headHeight = 1.55f;
         [SerializeField] private float _turnSpeed = 240f;
+        [Tooltip("Keep a staged actor facing its authored direction (useful for seated classroom extras).")]
+        [SerializeField] private bool _lockFacing;
+        [Tooltip("Raises the rigged body while seated, for sit clips authored for a lower seat than the bench it sits on.")]
+        [SerializeField] private float _seatLift;
 
         private static readonly int Speed = Animator.StringToHash("Speed");
         private static readonly int Talking = Animator.StringToHash("DialogueTalking");
@@ -27,6 +31,7 @@ namespace ThuyKieu.Core.Story
         private float _phase;
         private bool _lying;
         private float _lyingHeight;
+        private float _currentLift;
 
         public string SpeakerId => _speakerId;
         /// <summary>Recasts a copy of an actor as another speaker (runtime placeholders reuse an existing rig).</summary>
@@ -67,6 +72,7 @@ namespace ThuyKieu.Core.Story
         /// <summary>Switches to another body's animator (see PlayerLook).</summary>
         public void SetAnimator(Animator animator)
         {
+            ApplySeatLift(0f);
             _animator = animator;
             _hasEmotion = _hasTalking = _hasSpeed = false;
             if (_animator == null || _animator.runtimeAnimatorController == null) return;
@@ -86,10 +92,22 @@ namespace ThuyKieu.Core.Story
         }
 
         /// <summary>Smoothly turns to look at a world point (only while not walking).</summary>
-        public void FaceTowards(Vector3? point) => _faceTarget = point;
+        public void FaceTowards(Vector3? point)
+        {
+            // Seated people do not swivel towards each speaker: turning about the root slides them off the bench.
+            if ((_lockFacing || IsSitting) && point.HasValue) return;
+            _faceTarget = point;
+        }
+
+        public void SetFacingLocked(bool locked)
+        {
+            _lockFacing = locked;
+            if (locked) _faceTarget = null;
+        }
 
         public void FaceInstant(Vector3 point)
         {
+            if (_lockFacing || IsSitting) return;
             Vector3 direction = point - transform.position;
             direction.y = 0;
             if (direction.sqrMagnitude > 0.001f) transform.rotation = Quaternion.LookRotation(direction);
@@ -177,15 +195,26 @@ namespace ThuyKieu.Core.Story
         private void Update()
         {
             float speed = _agent != null && _agent.enabled ? _agent.velocity.magnitude : 0f;
-            if (_hasSpeed) _animator.SetFloat(Speed, Mathf.Clamp01(speed / 3.2f), 0.12f, Time.deltaTime);
-            if (_faceTarget.HasValue && speed < 0.1f)
+            // PlayerMovement owns the Speed parameter on the playable actor. Writing zero
+            // here as well made the classroom student's idle/walk states flicker each frame.
+            if (_hasSpeed && _agent != null)
+                _animator.SetFloat(Speed, Mathf.Clamp01(speed / 3.2f), 0.12f, Time.deltaTime);
+            if (_faceTarget.HasValue && speed < 0.1f && !IsSitting)
             {
                 Vector3 direction = _faceTarget.Value - transform.position;
                 direction.y = 0;
                 if (direction.sqrMagnitude > 0.01f)
                     transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(direction), _turnSpeed * Time.deltaTime);
             }
+            if (_seatLift != 0f) ApplySeatLift(Mathf.MoveTowards(_currentLift, IsSitting ? _seatLift : 0f, Time.deltaTime * 0.6f));
             AnimateStaticVisual(speed);
+        }
+
+        private void ApplySeatLift(float lift)
+        {
+            if (_animator == null || Mathf.Approximately(lift, _currentLift)) return;
+            _animator.transform.localPosition += Vector3.up * (lift - _currentLift);
+            _currentLift = lift;
         }
 
         // Placeholder life for unrigged models: a stepping bob and sway while walking, breathing when idle.

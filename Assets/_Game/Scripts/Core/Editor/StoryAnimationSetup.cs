@@ -93,8 +93,8 @@ namespace ThuyKieu.Core.Editor
             var existing = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(KieuOverridePath);
             if (existing != null) return existing;
             var controller = new AnimatorOverrideController(Controller()) { name = "ThuyKieuStory" };
-            controller["Walking"] = ThuyKieuClip("TK-Walking");
-            controller["Running"] = ThuyKieuClip("TK-Running");
+            controller["Walking"] = ThuyKieu.Player.Editor.ThuyKieuLocomotionSetup.Clip(ThuyKieu.Player.Editor.ThuyKieuLocomotionSetup.ModelFolder + "ThuyKieu_Walk.fbx");
+            controller["Running"] = ThuyKieu.Player.Editor.ThuyKieuLocomotionSetup.Clip(ThuyKieu.Player.Editor.ThuyKieuLocomotionSetup.ModelFolder + "ThuyKieu_Run.fbx");
             AssetDatabase.CreateAsset(controller, KieuOverridePath);
             return controller;
         }
@@ -151,9 +151,6 @@ namespace ThuyKieu.Core.Editor
         }
 
         private static AnimationClip Clip(string name) => AssetDatabase.LoadAllAssetsAtPath(Folder + "/" + name + ".fbx")
-            .OfType<AnimationClip>().First(c => !c.name.StartsWith("__preview__"));
-
-        private static AnimationClip ThuyKieuClip(string name) => AssetDatabase.LoadAllAssetsAtPath("Assets/_Game/Animations/ThuyKieu/" + name + ".fbx")
             .OfType<AnimationClip>().First(c => !c.name.StartsWith("__preview__"));
     }
 }

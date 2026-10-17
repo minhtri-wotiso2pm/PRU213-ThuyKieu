@@ -118,7 +118,9 @@ namespace ThuyKieu.Presentation
             var kieu = _director.FindActor("Kieu");
             var partner = actor == kieu ? _lastOther : kieu;
             Vector3 forward = actor.transform.forward;
-            if (partner != null && Vector3.Distance(partner.transform.position, actor.transform.position) < 7f)
+            // Seated people are framed from the front, across their desk; from the partner's side the lens sits
+            // beside the bench and looks along their legs.
+            if (partner != null && !actor.IsSitting && Vector3.Distance(partner.transform.position, actor.transform.position) < 7f)
             {
                 Vector3 toPartner = partner.transform.position - actor.transform.position;
                 toPartner.y = 0;
@@ -126,7 +128,7 @@ namespace ThuyKieu.Presentation
             }
             Vector3 right = Vector3.Cross(Vector3.up, forward);
             distance *= _lens;
-            Vector3 position = head + forward * distance + right * 0.28f * _lens + Vector3.up * 0.04f;
+            Vector3 position = head + forward * distance + right * 0.28f * _lens + Vector3.up * (0.04f + SeatedRise(actor));
             // Aim past the face towards the camera's side so the speaker sits on a third, looking into the open frame.
             Vector3 look = head - Vector3.up * (0.1f + 0.04f * distance) + right * 0.11f * distance;
             Compose(head, position, look, new[] { actor }, new[] { head, head - Vector3.up * 0.35f });
@@ -140,11 +142,18 @@ namespace ThuyKieu.Presentation
             if (direction.sqrMagnitude < 0.01f) direction = from.transform.forward;
             direction.Normalize();
             Vector3 right = Vector3.Cross(Vector3.up, direction);
-            Vector3 position = head - direction * 1.05f * _lens + right * 0.5f * Mathf.Sqrt(_lens) + Vector3.up * 0.12f;
+            float rise = Mathf.Max(SeatedRise(from), targetActor != null ? SeatedRise(targetActor) : 0f);
+            Vector3 position = head - direction * 1.05f * _lens + right * 0.5f * Mathf.Sqrt(_lens) + Vector3.up * (0.12f + rise);
             // Turning around the person being looked at keeps them in frame if the shoulder shot is blocked.
             var subjects = targetActor != null ? new[] { from, targetActor } : new[] { from };
             Compose(target, position, target, subjects, new[] { target, target - Vector3.up * 0.35f }, head + Vector3.up * 0.1f);
         }
+
+        /// <summary>
+        /// Seated people are framed from above eye level, looking down across the desk: at a seated head's height the
+        /// bottom of the frame falls on the laps of whoever sits in front of the lens.
+        /// </summary>
+        private static float SeatedRise(StoryActor actor) => actor != null && actor.IsSitting ? 0.45f : 0f;
 
         private void Wide(StoryActor kieu)
         {
@@ -202,7 +211,7 @@ namespace ThuyKieu.Presentation
             return list;
         }
 
-        /// <summary>Counts the bystanders standing on the sight lines from the lens to the targets (or right at the lens).</summary>
+        /// <summary>Counts the bystanders standing on the sight lines from the lens to the targets, at the lens or just in front of it.</summary>
         private static int Blockers(Vector3 lens, Vector3[] targets, List<StoryActor> others, List<StoryActor> found)
         {
             int count = 0;
@@ -212,6 +221,10 @@ namespace ThuyKieu.Presentation
                 Vector3 crown = actor.HeadPosition + Vector3.up * 0.12f;
                 Vector3 hips = new Vector3(crown.x, Mathf.Min(feet.y + 0.35f, crown.y), crown.z);
                 bool blocks = SegmentDistance(lens, lens, hips, crown) < 0.5f;
+                // A head looming just in front of the lens fills the foreground even off the sight lines. It is only
+                // hidden (found != null), never scored: scoring it swung seated shots round to worse angles.
+                if (!blocks && found != null && targets.Length > 0 && Vector3.Distance(lens, crown) < 0.9f && Vector3.Dot(crown - lens, targets[0] - lens) > 0f)
+                    blocks = true;
                 foreach (var target in targets)
                 {
                     if (blocks) break;
@@ -275,7 +288,8 @@ namespace ThuyKieu.Presentation
             Vector3 delta = to - from;
             float length = delta.magnitude;
             if (length > 0.01f && Physics.SphereCast(from, 0.12f, delta / length, out RaycastHit hit, length, _obstruction, QueryTriggerInteraction.Ignore))
-                return from + delta / length * Mathf.Max(0.35f, hit.distance - 0.05f);
+                // No 0.35 m floor: it is thicker than a wall, so a short gap put the lens on the far side of it.
+                return from + delta / length * Mathf.Max(0.05f, hit.distance - 0.05f);
             return to;
         }
 

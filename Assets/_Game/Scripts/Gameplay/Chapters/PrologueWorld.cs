@@ -69,7 +69,10 @@ namespace ThuyKieu.Gameplay.Chapters
             // Everyone at their desks for the lesson: the animator needs one frame before the sit trigger takes.
             yield return null;
             _director.Player.Teleport(_seat.position, _seat.rotation);
-            _director.Player.GetComponent<StoryActor>().Sit(true);
+            var playerActor = _director.Player.GetComponent<StoryActor>();
+            playerActor.SetFacingLocked(true);
+            playerActor.Sit(true);
+            _ngan.SetFacingLocked(true);
             _ngan.Sit(true);
             foreach (var classmate in _classmates) classmate.Sit(true);
         }
@@ -88,6 +91,7 @@ namespace ThuyKieu.Gameplay.Chapters
             _seated = false;
             var player = _director.Player;
             player.ControlLocked = true;
+            player.GetComponent<StoryActor>().SetFacingLocked(false);
             player.GetComponent<StoryActor>().Sit(false);
             _ngan.Sit(false);
             if (!_classLeft)
@@ -110,6 +114,7 @@ namespace ThuyKieu.Gameplay.Chapters
         private void Leave(StoryActor actor, Transform door)
         {
             if (actor == null || !actor.isActiveAndEnabled) return;
+            actor.SetFacingLocked(false);
             actor.Sit(false);
             // Only actors that can actually navigate (the teacher) walk out; rigged-but-seated actors with no
             // agent (Ngan, the classmates) still slip away off-camera, exactly as they did when unrigged.

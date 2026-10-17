@@ -243,6 +243,10 @@ namespace ThuyKieu.Core.Editor
             var model = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath));
             model.transform.SetParent(holder.transform, false);
             Fit(model, height);
+            // Humanoid playback already puts the feet on the Animator's origin; Fit's lift (from the bind-pose mesh
+            // bottom) would leave the body floating above the CharacterController.
+            var lifted = model.transform.localPosition;
+            model.transform.localPosition = new Vector3(lifted.x, 0f, lifted.z);
             holder.transform.SetParent(root, false);
             Vector3 rootScale = root.lossyScale;
             holder.transform.localScale = new Vector3(1f / rootScale.x, 1f / rootScale.y, 1f / rootScale.z);
