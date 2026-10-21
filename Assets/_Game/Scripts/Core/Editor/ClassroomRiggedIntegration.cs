@@ -36,17 +36,26 @@ namespace ThuyKieu.Core.Editor
         private const string VisualName = "Visual";
 
         private const string TeacherFbx = "Assets/_Game/Animations/animationthaygiao/idle.fbx";
+        private const string TeacherWalkFbx = "Assets/_Game/Animations/animationthaygiao/Walking.fbx";
+        private const string TeacherTalkFbx = "Assets/_Game/Animations/animationthaygiao/Talking.fbx";
         private const string BoyFbx = "Assets/_Game/Animations/animationhocsinhnam/seat.fbx";
         private const string GirlFbx = "Assets/_Game/Animations/animationhocsinhnu/seat.fbx";
         private const string HeroIdleFbx = "Assets/_Game/Animations/animationnuchinh/idle.fbx";
         private const string HeroWalkFbx = "Assets/_Game/Animations/animationnuchinh/walk.fbx";
         private const string HeroSitFbx = "Assets/_Game/Animations/animationnuchinh/seat.fbx";
-        private const string SharedWalkFbx = "Assets/_Game/Animations/Shared/Walking.fbx";
+        private const string HeroTalkFbx = "Assets/_Game/Animations/animationnuchinh/Talking.fbx";
+        // She has no run take of her own; the shared humanoid run retargets onto her avatar.
+        private const string SharedRunFbx = "Assets/_Game/Animations/Shared/Running.fbx";
 
         private const string TeacherTex = "Assets/_Game/Art/Characters/thaygiao";
         private const string BoyTex = "Assets/_Game/Art/Characters/hocsinhnam";
         private const string GirlTex = "Assets/_Game/Art/Characters/hocsinhnu";
         private const string HeroTex = "Assets/_Game/Art/Characters/nuchinh";
+
+        private const string RaiseHandLayer = "RaiseHand";
+        // The classmates' seat take (175 frames) puts the right hand up from ~frame 12 to ~frame 140. It is split
+        // into a calm seated loop and the held raise, which an arm-masked layer fades in when the teacher asks.
+        private static readonly (string name, int first, int last)[] SeatSegments = { ("Sitting", 150, 175), ("RaiseHand", 24, 108) };
 
         private enum Role { Teacher, Boy, Girl, Hero }
 
@@ -60,24 +69,34 @@ namespace ThuyKieu.Core.Editor
             EnsureFolder(MaterialFolder);
 
             ConfigureHumanoid(TeacherFbx, "Idle", loop: true, sitting: false, copyFrom: null);
-            ConfigureHumanoid(BoyFbx, "Sitting", loop: true, sitting: true, copyFrom: null);
-            ConfigureHumanoid(GirlFbx, "Sitting", loop: true, sitting: true, copyFrom: null);
+            var teacherAvatar = LoadSubAsset<Avatar>(TeacherFbx);
+            ConfigureHumanoid(TeacherWalkFbx, "Walking", loop: true, sitting: false, copyFrom: teacherAvatar);
+            ConfigureHumanoid(TeacherTalkFbx, "Talking", loop: true, sitting: false, copyFrom: teacherAvatar);
+            ConfigureHumanoid(BoyFbx, "Sitting", loop: true, sitting: true, copyFrom: null, SeatSegments);
+            ConfigureHumanoid(GirlFbx, "Sitting", loop: true, sitting: true, copyFrom: null, SeatSegments);
             ConfigureHumanoid(HeroIdleFbx, "Idle", loop: true, sitting: false, copyFrom: null);
             var heroAvatar = LoadSubAsset<Avatar>(HeroIdleFbx);
             ConfigureHumanoid(HeroWalkFbx, "Walking", loop: true, sitting: false, copyFrom: heroAvatar);
             ConfigureHumanoid(HeroSitFbx, "Sitting", loop: true, sitting: true, copyFrom: heroAvatar);
+            ConfigureHumanoid(HeroTalkFbx, "Talking", loop: true, sitting: false, copyFrom: heroAvatar);
 
             var teacherMat = UpsertLit(MaterialFolder + "/ThayGiao.mat", TeacherTex);
             var boyMat = UpsertLit(MaterialFolder + "/HocSinhNam.mat", BoyTex);
             var girlMat = UpsertLit(MaterialFolder + "/HocSinhNu.mat", GirlTex);
             var heroMat = UpsertLit(MaterialFolder + "/NuChinh.mat", HeroTex);
 
-            var teacherCtrl = UpsertTeacherController(RequireClip(TeacherFbx, "Idle"), RequireClip(SharedWalkFbx, "Walking"));
+            var teacherCtrl = UpsertTeacherController(RequireClip(TeacherFbx, "Idle"),
+                RequireClip(TeacherWalkFbx, "Walking"), RequireClip(TeacherTalkFbx, "Talking"));
+            var rightArm = UpsertRightArmMask();
             var boyCtrl = UpsertSeatedController(ControllerFolder + "/HocSinhNam.controller", "Sitting", RequireClip(BoyFbx, "Sitting"));
+            UpsertRaiseHandLayer(boyCtrl, RequireClip(BoyFbx, RaiseHandLayer), rightArm);
             var girlCtrl = UpsertSeatedController(ControllerFolder + "/HocSinhNu.controller", "Sitting", RequireClip(GirlFbx, "Sitting"));
-            // The dedicated hero walk take bends the knees like a crouch on this avatar.
-            // The shared humanoid walk retargets cleanly and keeps both feet under the body.
-            var heroCtrl = UpsertHeroController(RequireClip(HeroIdleFbx, "Idle"), RequireClip(SharedWalkFbx, "Walking"), RequireClip(HeroSitFbx, "Sitting"));
+            UpsertRaiseHandLayer(girlCtrl, RequireClip(GirlFbx, RaiseHandLayer), rightArm);
+            var heroCtrl = UpsertHeroController(RequireClip(HeroIdleFbx, "Idle"),
+                RequireClip(HeroWalkFbx, "Walking"), RequireClip(SharedRunFbx, "Running"),
+                RequireClip(HeroSitFbx, "Sitting"), RequireClip(HeroTalkFbx, "Talking"));
+            // She has no raise of her own: the girl's arm motion retargets through the humanoid mask.
+            UpsertRaiseHandLayer(heroCtrl, RequireClip(GirlFbx, RaiseHandLayer), rightArm);
 
             var targets = FindTargets();
             if (targets.Count == 0) throw new InvalidOperationException("No classroom StoryActors found in " + ScenePath + " (is the scene open?).");
@@ -169,11 +188,11 @@ namespace ThuyKieu.Core.Editor
             switch (actor.SpeakerId)
             {
                 case "ThayGiao": return Role.Teacher;
-                case "Ngan": return Role.Hero;
+                case "Ngan": return Role.Girl;
             }
             // BanHoc*: the boy and girl classmates share a speaker id, so resolve the model from the static visual.
             string model = StaticModelName(actor);
-            return model != null && model.Contains("NuSinhToxic") ? Role.Girl : Role.Boy;
+            return model != null && (model.Contains("NuSinhToxic") || model.Contains("HocSinhNu")) ? Role.Girl : Role.Boy;
         }
 
         private static string StaticModelName(StoryActor actor)
@@ -192,26 +211,19 @@ namespace ThuyKieu.Core.Editor
             var staticVisual = GetObject<Transform>(actor, "_staticVisual");
             float height = ColliderHeight(root, actor);
 
-            var holder = root.Find(BodyName);
-            GameObject model;
-            if (holder == null)
-            {
-                holder = new GameObject(BodyName).transform;
-                var fbx = AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath);
-                if (fbx == null) throw new InvalidOperationException("Missing FBX " + fbxPath);
-                model = (GameObject)PrefabUtility.InstantiatePrefab(fbx);
-                model.transform.SetParent(holder, false);
-                Fit(model, height);
-                holder.SetParent(root, false);
-                Vector3 rootScale = root.lossyScale; // cancel any parent scale so the fitted height survives
-                holder.localScale = new Vector3(1f / rootScale.x, 1f / rootScale.y, 1f / rootScale.z);
-                if (staticVisual != null) AlignToStaticVisual(holder, model, staticVisual);
-            }
-            else
-            {
-                if (holder.childCount == 0) throw new InvalidOperationException(actor.name + ": existing " + BodyName + " has no model.");
-                model = holder.GetChild(0).gameObject;
-            }
+            var existing = root.Find(BodyName);
+            if (existing != null) UnityEngine.Object.DestroyImmediate(existing.gameObject);
+            var holder = new GameObject(BodyName).transform;
+            var fbx = AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath);
+            if (fbx == null) throw new InvalidOperationException("Missing FBX " + fbxPath);
+            var model = (GameObject)PrefabUtility.InstantiatePrefab(fbx);
+            model.transform.SetParent(holder, false);
+            Fit(model, height);
+            holder.SetParent(root, false);
+            Vector3 rootScale = root.lossyScale;
+            holder.localScale = new Vector3(1f / rootScale.x, 1f / rootScale.y, 1f / rootScale.z);
+            if (role == Role.Boy || role == Role.Girl) holder.position = ClassroomKit.SeatedOrigin(root.position);
+            else StorySceneKit.GroundFeet(holder, model, root.position.y);
 
             var animator = model.GetComponentInChildren<Animator>();
             if (animator == null) animator = model.AddComponent<Animator>();
@@ -219,6 +231,8 @@ namespace ThuyKieu.Core.Editor
             animator.runtimeAnimatorController = controller;
             animator.applyRootMotion = false;
             animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+            if (animator.GetComponent<AnimatorRootAnchor>() == null)
+                animator.gameObject.AddComponent<AnimatorRootAnchor>();
 
             foreach (var renderer in model.GetComponentsInChildren<Renderer>(true))
                 renderer.sharedMaterials = Enumerable.Repeat(material, Mathf.Max(1, renderer.sharedMaterials.Length)).ToArray();
@@ -268,7 +282,8 @@ namespace ThuyKieu.Core.Editor
 
         // ------------------------------------------------------------------ FBX import
 
-        private static void ConfigureHumanoid(string path, string clipName, bool loop, bool sitting, Avatar copyFrom)
+        private static void ConfigureHumanoid(string path, string clipName, bool loop, bool sitting, Avatar copyFrom,
+            (string name, int first, int last)[] segments = null)
         {
             var importer = AssetImporter.GetAtPath(path) as ModelImporter;
             if (importer == null) throw new InvalidOperationException("Missing FBX " + path);
@@ -294,11 +309,33 @@ namespace ThuyKieu.Core.Editor
                 clip.keepOriginalPositionXZ = true;
                 clip.heightFromFeet = !sitting;
             }
+            if (segments != null) clips = segments.Select(s => Segment(clips[0], s.name, s.first, s.last)).ToArray();
             importer.clipAnimations = clips;
             importer.SaveAndReimport();
 
             if (copyFrom == null && AssetDatabase.LoadAllAssetsAtPath(path).OfType<Avatar>().FirstOrDefault() == null)
                 throw new InvalidOperationException(path + " did not generate a Humanoid Avatar.");
+        }
+
+        /// <summary>A frame range of the same take with the template's import settings.</summary>
+        private static ModelImporterClipAnimation Segment(ModelImporterClipAnimation template, string name, int first, int last)
+        {
+            return new ModelImporterClipAnimation
+            {
+                takeName = template.takeName,
+                name = name,
+                firstFrame = first,
+                lastFrame = last,
+                loopTime = template.loopTime,
+                loopPose = template.loopPose,
+                lockRootRotation = template.lockRootRotation,
+                lockRootPositionXZ = template.lockRootPositionXZ,
+                lockRootHeightY = template.lockRootHeightY,
+                keepOriginalOrientation = template.keepOriginalOrientation,
+                keepOriginalPositionXZ = template.keepOriginalPositionXZ,
+                keepOriginalPositionY = template.keepOriginalPositionY,
+                heightFromFeet = template.heightFromFeet,
+            };
         }
 
         private static AnimationClip RequireClip(string fbxPath, string clipName)
@@ -313,20 +350,24 @@ namespace ThuyKieu.Core.Editor
 
         // ------------------------------------------------------------------ controllers
 
-        private static AnimatorController UpsertTeacherController(AnimationClip idle, AnimationClip walk)
+        private static AnimatorController UpsertTeacherController(AnimationClip idle, AnimationClip walk, AnimationClip talk)
         {
             var controller = UpsertController(ControllerFolder + "/ThayGiao.controller");
             EnsureParam(controller, "Speed", AnimatorControllerParameterType.Float);
+            EnsureParam(controller, "DialogueTalking", AnimatorControllerParameterType.Bool);
             EnsureSitParams(controller, defaultSitting: false);
 
             var machine = controller.layers[0].stateMachine;
             var idleState = FindOrAddState(machine, "Idle");
             var walkState = FindOrAddState(machine, "Walking");
+            var talkState = FindOrAddState(machine, "Talking");
             idleState.motion = idle;
             walkState.motion = walk;
+            talkState.motion = talk;
             machine.defaultState = idleState;
             ClearTransitions(idleState);
             ClearTransitions(walkState);
+            ClearTransitions(talkState);
 
             var toWalk = idleState.AddTransition(walkState);
             toWalk.hasExitTime = false; toWalk.duration = 0.15f;
@@ -335,6 +376,12 @@ namespace ThuyKieu.Core.Editor
             var toIdle = walkState.AddTransition(idleState);
             toIdle.hasExitTime = false; toIdle.duration = 0.15f;
             toIdle.AddCondition(AnimatorConditionMode.Less, 0.1f, "Speed");
+            var toTalk = idleState.AddTransition(talkState);
+            toTalk.hasExitTime = false; toTalk.duration = 0.12f;
+            toTalk.AddCondition(AnimatorConditionMode.If, 0, "DialogueTalking");
+            var stopTalk = talkState.AddTransition(idleState);
+            stopTalk.hasExitTime = false; stopTalk.duration = 0.12f;
+            stopTalk.AddCondition(AnimatorConditionMode.IfNot, 0, "DialogueTalking");
 
             EditorUtility.SetDirty(controller);
             return controller;
@@ -355,23 +402,30 @@ namespace ThuyKieu.Core.Editor
             return controller;
         }
 
-        private static AnimatorController UpsertHeroController(AnimationClip idle, AnimationClip walk, AnimationClip sit)
+        private static AnimatorController UpsertHeroController(AnimationClip idle, AnimationClip walk, AnimationClip run, AnimationClip sit, AnimationClip talk)
         {
             var controller = UpsertController(ControllerFolder + "/NuChinh.controller");
             EnsureParam(controller, "Speed", AnimatorControllerParameterType.Float);
+            EnsureParam(controller, "DialogueTalking", AnimatorControllerParameterType.Bool);
             EnsureSitParams(controller, defaultSitting: false);
 
             var machine = controller.layers[0].stateMachine;
             var idleState = FindOrAddState(machine, "Idle");
             var walkState = FindOrAddState(machine, "Walking");
+            var runState = FindOrAddState(machine, "Running");
             var sitState = FindOrAddState(machine, "Sitting");
+            var talkState = FindOrAddState(machine, "Talking");
             idleState.motion = idle;
             walkState.motion = walk;
+            runState.motion = run;
             sitState.motion = sit;
+            talkState.motion = talk;
             machine.defaultState = idleState;
             ClearTransitions(idleState);
             ClearTransitions(walkState);
+            ClearTransitions(runState);
             ClearTransitions(sitState);
+            ClearTransitions(talkState);
             ClearAnyStateTransitions(machine);
 
             var toWalk = idleState.AddTransition(walkState);
@@ -382,6 +436,24 @@ namespace ThuyKieu.Core.Editor
             var toIdle = walkState.AddTransition(idleState);
             toIdle.hasExitTime = false; toIdle.duration = 0.15f;
             toIdle.AddCondition(AnimatorConditionMode.Less, 0.05f, "Speed");
+
+            // PlayerMovement normalises Speed: walking reaches 0.5, running 1.
+            var toRun = walkState.AddTransition(runState);
+            toRun.hasExitTime = false; toRun.duration = 0.15f;
+            toRun.AddCondition(AnimatorConditionMode.Greater, 0.75f, "Speed");
+            var runToWalk = runState.AddTransition(walkState);
+            runToWalk.hasExitTime = false; runToWalk.duration = 0.15f;
+            runToWalk.AddCondition(AnimatorConditionMode.Less, 0.7f, "Speed");
+            var runToIdle = runState.AddTransition(idleState);
+            runToIdle.hasExitTime = false; runToIdle.duration = 0.2f;
+            runToIdle.AddCondition(AnimatorConditionMode.Less, 0.05f, "Speed");
+
+            var toTalk = idleState.AddTransition(talkState);
+            toTalk.hasExitTime = false; toTalk.duration = 0.12f;
+            toTalk.AddCondition(AnimatorConditionMode.If, 0, "DialogueTalking");
+            var stopTalk = talkState.AddTransition(idleState);
+            stopTalk.hasExitTime = false; stopTalk.duration = 0.12f;
+            stopTalk.AddCondition(AnimatorConditionMode.IfNot, 0, "DialogueTalking");
 
             // StoryActor.Sit(true) sets IsSitting + the Sit trigger; Sit(false) fires the Stand trigger.
             var down = machine.AddAnyStateTransition(sitState);
@@ -400,6 +472,37 @@ namespace ThuyKieu.Core.Editor
 
             EditorUtility.SetDirty(controller);
             return controller;
+        }
+
+        private static AvatarMask UpsertRightArmMask()
+        {
+            string path = ControllerFolder + "/RightArm.mask";
+            var mask = AssetDatabase.LoadAssetAtPath<AvatarMask>(path);
+            if (mask == null)
+            {
+                mask = new AvatarMask();
+                AssetDatabase.CreateAsset(mask, path);
+            }
+            for (var part = AvatarMaskBodyPart.Root; part < AvatarMaskBodyPart.LastBodyPart; part++)
+                mask.SetHumanoidBodyPartActive(part, part == AvatarMaskBodyPart.RightArm || part == AvatarMaskBodyPart.RightFingers);
+            EditorUtility.SetDirty(mask);
+            return mask;
+        }
+
+        /// <summary>Right-arm override layer holding the raised hand; StoryActor.RaiseHand fades its weight from 0.</summary>
+        private static void UpsertRaiseHandLayer(AnimatorController controller, AnimationClip raise, AvatarMask mask)
+        {
+            if (controller.layers.All(l => l.name != RaiseHandLayer)) controller.AddLayer(RaiseHandLayer);
+            var layers = controller.layers;
+            int index = Array.FindIndex(layers, l => l.name == RaiseHandLayer);
+            layers[index].avatarMask = mask;
+            layers[index].defaultWeight = 0f;
+            layers[index].blendingMode = AnimatorLayerBlendingMode.Override;
+            var state = FindOrAddState(layers[index].stateMachine, RaiseHandLayer);
+            state.motion = raise;
+            layers[index].stateMachine.defaultState = state;
+            controller.layers = layers;
+            EditorUtility.SetDirty(controller);
         }
 
         private static AnimatorController UpsertController(string path)

@@ -45,7 +45,8 @@ namespace ThuyKieu.Presentation
             source.loop = loop;
             source.playOnAwake = false;
             source.spatialBlend = 0f;
-            source.volume = 0f;
+            // Loops fade in from silence in Update; one-shots set their level per PlayOneShot, which this volume scales.
+            source.volume = loop ? 0f : 1f;
             return source;
         }
 

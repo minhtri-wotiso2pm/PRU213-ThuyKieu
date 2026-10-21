@@ -38,9 +38,11 @@ namespace ThuyKieu.Presentation
         private FilmGrain _grain;
         private LensDistortion _distortion;
         private Bloom _bloom;
+        private DepthOfField _depthOfField;
         private Mood _current, _target;
         private Image _flash;
         private float _flashAlpha, _shake, _shakeTime;
+        private float _wakeBlur, _wakeBlurTarget;
         private Quaternion _lastShake = Quaternion.identity;
 
         public string CurrentMood { get; private set; } = "none";
@@ -60,6 +62,7 @@ namespace ThuyKieu.Presentation
             _grain = profile.Add<FilmGrain>(true);
             _distortion = profile.Add<LensDistortion>(true);
             _bloom = profile.Add<Bloom>(true);
+            _depthOfField = profile.Add<DepthOfField>(true);
             _vignette.smoothness.Override(0.45f);
             _grain.type.Override(FilmGrainLookup.Medium3);
             _bloom.threshold.Override(0.9f);
@@ -100,6 +103,9 @@ namespace ThuyKieu.Presentation
         }
 
         public void Flash(float strength) { _flashAlpha = Mathf.Max(_flashAlpha, strength); }
+
+        /// <summary>Soft, short-lived far blur for the instant Kiều opens her eyes.</summary>
+        public void SetWakeBlur(float strength) { _wakeBlurTarget = Mathf.Clamp01(strength); }
 
         public void Shake(float strength, float duration)
         {
@@ -147,6 +153,12 @@ namespace ThuyKieu.Presentation
                 shown.Distortion -= pulse * 0.12f;
             }
             Push(shown);
+
+            _wakeBlur = Mathf.MoveTowards(_wakeBlur, _wakeBlurTarget, Time.unscaledDeltaTime * 0.7f);
+            _depthOfField.mode.Override(_wakeBlur > 0.01f ? DepthOfFieldMode.Gaussian : DepthOfFieldMode.Off);
+            _depthOfField.gaussianStart.Override(Mathf.Lerp(10f, 0.35f, _wakeBlur));
+            _depthOfField.gaussianEnd.Override(Mathf.Lerp(20f, 1.45f, _wakeBlur));
+            _depthOfField.gaussianMaxRadius.Override(Mathf.Lerp(0f, 1.35f, _wakeBlur));
 
             _flashAlpha = Mathf.MoveTowards(_flashAlpha, 0f, Time.unscaledDeltaTime * 1.1f);
             _flash.color = new Color(1, 1, 1, _flashAlpha);

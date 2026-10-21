@@ -32,14 +32,14 @@ namespace ThuyKieu.Core.Story
         private int _explores;
 
         /// <summary>"-autopilotMidSave": let the director write its mid-chapter save even under the autopilot.</summary>
-        public static bool MidSaveTest => Enabled && System.Environment.GetCommandLineArgs().Contains("-autopilotMidSave");
+        public static bool MidSaveTest => Enabled && Args.Contains("-autopilotMidSave");
 
         /// <summary>"-autopilotStopAtExplore N": end the run when the Nth explore checkpoint is reached.</summary>
         private static int StopAtExplore
         {
             get
             {
-                var args = System.Environment.GetCommandLineArgs();
+                var args = Args;
                 int index = Array.IndexOf(args, "-autopilotStopAtExplore");
                 return index >= 0 && index + 1 < args.Length && int.TryParse(args[index + 1], out int n) ? n : 0;
             }
@@ -66,12 +66,26 @@ namespace ThuyKieu.Core.Story
             return $"avg {1f / average:F0} fps · 1% low {1f / low:F0} fps · worst {sorted[0] * 1000f:F0} ms · {_frames.Count} frames · {Screen.width}x{Screen.height}";
         }
 
-        public static bool Enabled => System.Environment.GetCommandLineArgs().Contains(Flag);
+        public static bool Enabled => Args.Contains(Flag);
+
+        /// <summary>
+        /// The command line plus THUYKIEU_AUTOPILOT_ARGS (space-separated), so a QA run can also be started inside an Editor
+        /// that is already open: set the variable in-process, then enter Play Mode.
+        /// </summary>
+        public static string[] Args
+        {
+            get
+            {
+                string extra = System.Environment.GetEnvironmentVariable("THUYKIEU_AUTOPILOT_ARGS");
+                var args = System.Environment.GetCommandLineArgs();
+                return string.IsNullOrWhiteSpace(extra) ? args : args.Concat(extra.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)).ToArray();
+            }
+        }
         public static string ReportPath
         {
             get
             {
-                var args = System.Environment.GetCommandLineArgs();
+                var args = Args;
                 int index = Array.IndexOf(args, "-autopilotReport");
                 return index >= 0 && index + 1 < args.Length ? args[index + 1] : Path.Combine(Application.persistentDataPath, "AutopilotReport.txt");
             }
@@ -85,7 +99,7 @@ namespace ThuyKieu.Core.Story
         {
             get
             {
-                var args = System.Environment.GetCommandLineArgs();
+                var args = Args;
                 int index = Array.IndexOf(args, "-autopilotEnding");
                 return Enabled && index >= 0 && index + 1 < args.Length ? args[index + 1] : null;
             }
@@ -118,7 +132,7 @@ namespace ThuyKieu.Core.Story
         private static void Boot()
         {
             if (!Enabled) return;
-            var args = System.Environment.GetCommandLineArgs();
+            var args = Args;
             // "-autopilotResume": start the chapter from its mid-chapter save, as "Continue" does.
             if (args.Contains("-autopilotResume")) InkStatePersistence.Ensure().ResumeMid = true;
             int index = Array.IndexOf(args, "-autopilotScene");
@@ -139,7 +153,7 @@ namespace ThuyKieu.Core.Story
                     if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
                         Errors.Add(type + ": " + message + " @ " + stack.Split('\n').FirstOrDefault());
                 };
-                var args = System.Environment.GetCommandLineArgs();
+                var args = Args;
                 int seedIndex = Array.IndexOf(args, "-autopilotSeed");
                 UnityEngine.Random.InitState(seedIndex >= 0 && seedIndex + 1 < args.Length ? int.Parse(args[seedIndex + 1]) : 213);
             }
@@ -248,7 +262,7 @@ namespace ThuyKieu.Core.Story
                 Log.Add("   " + variable + " = " + _director.Story.variablesState[variable]);
             Log.Add("   clues = " + string.Join(", ", _director.Clues));
 
-            bool chain = System.Environment.GetCommandLineArgs().Contains("-autopilotChain");
+            bool chain = Args.Contains("-autopilotChain");
             // Every chapter hands over to the next one; the epilogue is the end of the game.
             string next = _director.ChapterNumber < ChapterCatalog.Epilogue ? _director.NextScene : null;
             if (chain && next != null && Application.CanStreamedLevelBeLoaded(next))
@@ -296,7 +310,7 @@ namespace ThuyKieu.Core.Story
         {
             yield return new WaitForSecondsRealtime(0.1f);
             if (!_director.InExplore) yield break;
-            var args = System.Environment.GetCommandLineArgs();
+            var args = Args;
             bool thorough = args.Contains("-autopilotThorough");
             if (thorough && !_failTested)
             {

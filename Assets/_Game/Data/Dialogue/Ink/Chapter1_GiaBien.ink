@@ -6,40 +6,20 @@
 // Nhịp: Đêm mưa → Trong nhà (Mẹ Kiều / tủ gỗ / sân bị lục soát / bàn thờ) → Mã Giám Sinh đến
 //       → Dạm hỏi (quan sát / đối đáp hẹn giờ / túi bạc / tùy tùng, thanh nghi ngờ) → Tờ khế → Lên đường.
 // Bản cũ (tuyến tính, không có NoiTam): Legacy/Chapter1_GiaBien_v1.ink
+// Lời dẫn tả cảnh đã thay bằng chuỗi ảnh chớp (# montage:<id>, xem MontageCatalog).
 // ============================================================
 
 === chapter_1 ===
 # chapter:1
 # scene:VuongGia_DemMua
 # music:sad_strings
-# speaker:Narrator
-# camera:WS_VuongGia
-Mưa quất lên mái ngói Vương gia. Trong sân, dấu chân quan sai còn lẫn với bùn đất.
-
-# speaker:Narrator
-Vương Ông và Vương Quan vừa bị áp giải đi vì một vụ án mà cả nhà đều biết là oan.
-
-{
-- pl_hanh_dong == 1:
-    # speaker:NoiTam
-    Đầu gối vẫn còn rát chỗ ngã xuống nền gạch. Không phải mơ. Mình vẫn ở đây, trong thân xác Thúy Kiều.
-- pl_hanh_dong == 2:
-    # speaker:NoiTam
-    "Muốn đọc đơn thì mang bạc lên mà đọc." Câu ấy cứ vang mãi trong đầu. Không phải mơ. Mình vẫn ở đây.
-- else:
-    # speaker:NoiTam
-    Tên quan sai sẹo má. Cái túi bạc bên hông hắn. Mình nhớ hết. Và mình vẫn ở đây, trong thân xác Thúy Kiều.
-}
-
+# montage:c1_mo
 # speaker:MeKieu
 # emotion:crying
 Mẹ Kiều: Bốn trăm lạng... Nhà ta có bán hết cũng không đủ. Trời muốn dồn người ta đến đường cùng sao?
 
 # speaker:NoiTam
-"Bán mình chuộc cha." Trong sách chỉ có bốn chữ. Mình đọc lướt qua nó trong năm giây.
-
-# speaker:NoiTam
-Ở đây, nó là một đêm mưa dài, và một người mẹ đang khóc trước mặt mình.
+"Bán mình chuộc cha." Trong sách chỉ có bốn chữ. Ở đây, nó là một người mẹ đang khóc trước mặt mình.
 
 # speaker:Kieu
 # emotion:sad_controlled
@@ -47,20 +27,13 @@ Kiều: Mẹ đừng khóc. Cha và em còn chờ chúng ta. Con sẽ tìm cách
 
 # speaker:KieuThat
 # gameplay:kieu_voice
-Đêm ấy ta cũng nói đúng câu đó. Rồi ta ngồi yên chờ người ta đến định giá mình.
-
-# speaker:KieuThat
-Ngươi định ngồi chờ như ta sao?
+Đêm ấy ta cũng nói đúng câu đó. Rồi ta ngồi yên chờ người ta đến định giá mình. Ngươi định ngồi chờ như ta sao?
 
 # fx:none
 # music:sad_strings
 # speaker:NoiTam
-Không. Trước khi hắn đến, mình phải biết nhà này còn gì, mẹ biết gì, và kẻ sắp đến là ai.
-
-# speaker:Narrator
 # objective:Tìm hiểu tình cảnh gia đình trước khi khách đến
-# gameplay:tutorial_house
-Đi quanh nhà, nhìn và hỏi. Mỗi điều biết thêm bây giờ là một lá bài trong tay lúc đối mặt với hắn.
+Không. Trước khi hắn đến, mình phải biết nhà này còn gì, mẹ biết gì, và kẻ sắp đến là ai.
 
 -> c1_nha
 
@@ -93,22 +66,11 @@ Kiều: Mẹ ơi, chiều nay bà mối đến nhà mình nói chuyện gì vậ
 
 # speaker:MeKieu
 # emotion:hopeful_uncertain
-Mẹ Kiều: Bà ấy nói có một vị giám sinh ở phương xa, nghe tiếng con nên muốn cầu thân. Người ta sẵn lòng đưa sính lễ thật hậu.
-
-# speaker:MeKieu
-Mẹ Kiều: Mẹ chưa dám nhận lời. Nhưng đêm nay... người ta sẽ đến xem mặt.
+Mẹ Kiều: Có một vị giám sinh ở phương xa muốn cầu thân, sính lễ thật hậu. Đêm nay... người ta sẽ đến xem mặt.
 
 # speaker:NoiTam
-Bà mối. Sính lễ hậu. Đến xem mặt ngay trong đêm cha bị bắt. Không ai cưới vợ vội như thế.
-
-# speaker:Kieu
-# emotion:soft_firm
-Kiều: Mẹ cứ để con tự gặp người ấy. Con muốn tự nghe, tự hỏi.
-
-# speaker:MeKieu
-# emotion:crying
 # clue:c1_ba_moi
-Mẹ Kiều: Con của mẹ... Mẹ chỉ sợ con chịu thiệt.
+Sính lễ hậu. Đến xem mặt ngay trong đêm cha bị bắt. Không ai cưới vợ vội như thế.
 -> c1_nha
 
 
@@ -118,21 +80,15 @@ Mẹ Kiều: Con của mẹ... Mẹ chỉ sợ con chịu thiệt.
 # speaker:Narrator
 # camera:OTS_Kieu_Cabinet
 # sfx:creak
-Chiếc tủ gỗ trống gần hết. Quan sai đã lấy đi những cuộn tơ đẹp nhất. Còn lại một chiếc hộp gỗ nhỏ và một tờ giấy gấp đôi.
-
-# speaker:Narrator
-Trong hộp là đôi hoa tai bạc của mẹ và mấy nén bạc vụn. Gom hết lại, chưa được ba mươi lạng.
-
-# speaker:NoiTam
-Ba mươi lạng. Còn thiếu ba trăm bảy mươi. Không có phép màu nào lấp được khoảng trống ấy trong ba ngày.
+Tủ gỗ gần trống. Còn đôi hoa tai bạc của mẹ và mấy nén bạc vụn: chưa được ba mươi lạng. Thiếu ba trăm bảy mươi.
 
 # speaker:Narrator
 # sfx:paper
-Tờ giấy là bản sao lời khai ở huyện: "Thằng bán tơ khai đã gửi hàng gian ở nhà họ Vương." Không có tên thằng bán tơ. Không có người làm chứng.
+Dưới đáy hộp là bản sao lời khai: "Thằng bán tơ khai đã gửi hàng gian ở nhà họ Vương." Không tên, không người làm chứng.
 
 # speaker:NoiTam
 # clue:c1_don_kien
-Một lời khai không tên, không chứng. Thế mà đủ để trói hai người đàn ông đi. Mình phải giữ kỹ tờ này.
+Một lời khai không tên mà đủ trói hai người đàn ông đi. Phải giữ kỹ tờ này.
 -> c1_nha
 
 
@@ -142,27 +98,18 @@ Một lời khai không tên, không chứng. Thế mà đủ để trói hai ng
 ~ tinh_tao += 1
 # speaker:Narrator
 # camera:Wide_Courtyard
-Dưới mưa, khoảng sân như một bãi chiến trường. Hòm xiểng bị lật tung, tơ lụa bị giẫm nát trong bùn.
-
-# speaker:Narrator
-Nhưng có một thứ quan sai bỏ quên: cuộn sổ hàng của Vương Ông, ướt sũng bên miệng giếng.
-
-# speaker:NoiTam
-Từng cuộn tơ đều ghi ngày mua, nơi mua, người bán. Cái gọi là "hàng gian" là hàng có sổ sách đàng hoàng.
+Hòm xiểng lật tung, tơ lụa nát trong bùn. Bên miệng giếng còn sót cuộn sổ hàng của Vương Ông, ướt sũng.
 
 # speaker:NoiTam
 # clue:c1_so_hang
-Họ không cần sự thật. Họ chỉ cần bạc. Nhớ lấy: ở đây công lý cũng có giá.
+Từng cuộn tơ đều ghi ngày mua, người bán. "Hàng gian" mà sổ sách đàng hoàng. Họ không cần sự thật, chỉ cần bạc.
 -> c1_nha
 
 
 === c1_ban_tho ===
 ~ c1_viec += 1
-# speaker:Narrator
-# camera:OTS_Kieu_Altar
-Ngọn đèn dầu trên bàn thờ chập chờn. Kiều cắm nén hương, khói bay lên rồi tan vào mái ngói đen.
-
 # speaker:KieuThat
+# camera:OTS_Kieu_Altar
 # gameplay:kieu_voice
 Ngày trước ta cũng đứng đây. Ta xin tổ tiên cho ta đủ can đảm để đi. Ta chưa bao giờ xin cho mình được quay về.
 
@@ -183,7 +130,7 @@ Ngươi lạ thật. Cầu xin mà nghe như đang ra điều kiện.
 # music:tension_low
 # speaker:Narrator
 # camera:Reveal_MaGiamSinh
-Cổng mở. Một người đàn ông áo gấm bước vào, giũ nước mưa trên vai. Theo sau là một tên tùy tùng ôm chiếc hòm gỗ.
+Cổng mở. Một người đàn ông áo gấm bước vào, theo sau là tên tùy tùng ôm hòm gỗ.
 
 # speaker:MaGiamSinh
 # emotion:smug
@@ -195,10 +142,7 @@ Mã Giám Sinh: Kẻ hèn họ Mã, nghe Vương gia gặp nạn nên mạo mu�
 "Quá niên trạc ngoại tứ tuần..."
 
 # speaker:NoiTam
-Nửa câu thơ vụt qua đầu rồi đứt. Là hắn. Mã Giám Sinh. Người mà cả lớp gọi là "kẻ buôn người".
-
-# speaker:NoiTam
-Nhưng ở đây hắn đang cười rất lịch sự. Nếu mình gọi thẳng tên tội của hắn, ai sẽ tin một đứa con gái mười lăm tuổi?
+Là hắn. Mã Giám Sinh, "kẻ buôn người". Nhưng nếu mình gọi thẳng tội hắn ra, ai tin một đứa con gái mười lăm tuổi?
 
 # speaker:MaGiamSinh
 # emotion:polite_fake
@@ -243,15 +187,11 @@ Hắn đang chờ mình phản ứng. Phải trả lời ngay.
     # speaker:NoiTam
     Đó không phải cái nhìn của người đi hỏi vợ. Đó là cái nhìn của người đi chợ.
 
-- # speaker:MeKieu
-# emotion:hopeful_uncertain
-Mẹ Kiều: Công tử ngồi xuống đã. Trời mưa, để già pha ấm trà.
-
-# speaker:Narrator
+- # speaker:Narrator
 # scene:VuongGia_DamPhan
 # camera:Table_Contract
 # gameplay:tutorial_suspicion
-Mã Giám Sinh không ngồi. Hắn đứng bên bàn, đặt một túi bạc nặng trịch xuống mặt gỗ. Tên tùy tùng đứng chờ ngoài hiên.
+Mã Giám Sinh không ngồi. Hắn đặt một túi bạc nặng trịch xuống bàn. Tên tùy tùng đứng chờ ngoài hiên.
 
 -> c1_dam_phan_mo
 
@@ -282,10 +222,7 @@ Phải biết hắn là ai trước khi đặt bút. Nhưng hắn cũng đang nh
 ~ tinh_tao += 1
 # speaker:Narrator
 # camera:OTS_Kieu_MaGiamSinh
-Mã Giám Sinh không uống trà. Ngón tay hắn gõ liên tục lên mặt bàn, mắt chốc chốc lại liếc ra cổng như sợ trễ giờ.
-
-# speaker:Narrator
-Mỗi lần Mẹ Kiều nhắc đến chuyện cưới hỏi, hắn gật cho qua. Mỗi lần nhắc đến bạc, hắn ngồi thẳng lưng.
+Ngón tay hắn gõ liên tục lên bàn, mắt chốc chốc liếc ra cổng. Nhắc chuyện cưới hỏi, hắn gật cho qua. Nhắc đến bạc, hắn đứng thẳng lưng.
 
 # speaker:NoiTam
 # clue:c1_ngon_tay
@@ -376,11 +313,8 @@ Mã Giám Sinh: Thôi, chuyện đã rõ. Mời cô nương ngồi vào bàn, ta
 Miệng túi bạc hé ra. Những nén bạc mới tinh, xếp ngay ngắn, nén nào cũng có một con dấu đỏ nhỏ.
 
 # speaker:NoiTam
-Phúc... Ký. Dấu của một hiệu bạc. Bạc của người đi hỏi vợ thì thường là bạc nhà để dành, cũ, lẫn đủ loại.
-
-# speaker:NoiTam
 # clue:c1_bac_phuc_ky
-Còn đây là bạc vừa rút ra cùng một lúc, cùng một nơi. Như thể có ai đó vừa đưa tiền cho hắn để đi... mua hàng.
+Phúc Ký, dấu một hiệu bạc. Bạc hỏi vợ thường là bạc nhà để dành, cũ, lẫn đủ loại. Đây là bạc vừa rút ra một lượt, như có ai đưa tiền cho hắn đi... mua hàng.
 -> c1_dam_phan
 
 
@@ -490,7 +424,7 @@ Mình đã biết đây là giấy bán người. Làm gì với điều đó b�
     Cứ để hắn nghĩ mình là con cừu. Con cừu nhớ từng chữ trên tờ giấy bán nó.
 
 - # speaker:Narrator
-Kiều ghi nhớ từng chữ rồi mới điểm chỉ. Nàng chưa đủ sức lật bàn, nhưng ít nhất đã biết mình đang bước vào đâu.
+Kiều điểm chỉ. Chưa lật được bàn, nhưng nàng biết rõ mình đang bước vào đâu.
 -> c1_decision
 
 
@@ -502,9 +436,6 @@ Kiều cầm bút. Mực chạm giấy nhanh hơn cả một hơi thở.
 # speaker:Kieu
 # emotion:pained
 Kiều: Một chữ của ta đổi lấy mạng người nhà. Nếu đây là cái giá duy nhất... ta trả.
-
-# speaker:Narrator
-Nhưng khi đặt bút xuống, Kiều thấy Mã Giám Sinh mỉm cười. Nàng hiểu: nếu cứ coi mình là cái giá phải trả, sẽ luôn có kẻ khác định giá nàng.
 
 # speaker:KieuThat
 # gameplay:kieu_voice
@@ -526,10 +457,7 @@ Mẹ Kiều: Con ơi... hay là thôi. Mẹ không thể nhìn con tự bán đ�
 # speaker:Kieu
 # emotion:soft_firm
 # camera:CU_Kieu
-Kiều: Con đi không phải vì con rẻ hơn bốn trăm lạng.
-
-# speaker:Kieu
-Kiều: Con đi vì cha và em cần được cứu ngay hôm nay. Nhưng chuyện đời con... con chưa giao cho ai cả.
+Kiều: Con đi không phải vì con rẻ hơn bốn trăm lạng. Con đi để cứu cha và em. Còn chuyện đời con... con chưa giao cho ai cả.
 
 ~ soul(tu_trong / 2)
 {tinh_tao >= 3:
@@ -541,13 +469,11 @@ Kiều: Con đi vì cha và em cần được cứu ngay hôm nay. Nhưng chuy�
     Câu ấy ta đã tự hỏi suốt một đêm. Ngươi giữ lấy nó.
 }
 
-# speaker:Narrator
-# scene:VuongGia_RaDi
-# music:sad_strings
-Mã Giám Sinh sai người mang bạc đi. Gần sáng, tin báo trở lại: Vương Ông và Vương Quan được tạm thả để chờ xét lại vụ án.
-
 {c1_nghi_ngo >= 60:
     ~ nghi_ngo = 15
+    # scene:VuongGia_RaDi
+    # music:sad_strings
+    # montage:c1_sang
     # speaker:MaGiamSinh
     # emotion:cold
     Mã Giám Sinh: Nàng lanh lợi quá. Đường xa, ta sẽ để mắt tới nàng từng bước.
@@ -555,6 +481,9 @@ Mã Giám Sinh sai người mang bạc đi. Gần sáng, tin báo trở lại: V
     # speaker:NoiTam
     Hắn đã bắt đầu đề phòng mình. Trên đường đi phải cẩn thận gấp đôi.
 - else:
+    # scene:VuongGia_RaDi
+    # music:sad_strings
+    # montage:c1_sang
     # speaker:MaGiamSinh
     # emotion:satisfied
     Mã Giám Sinh: Giờ thì lên đường thôi, nương tử.
@@ -562,11 +491,8 @@ Mã Giám Sinh sai người mang bạc đi. Gần sáng, tin báo trở lại: V
 
 # speaker:Kieu
 # emotion:determined
-Kiều: Đừng gọi ta như thế vội.
-
-# speaker:Narrator
 # objective:Từ biệt Mẹ Kiều và ra cổng lên đường
-Mã Giám Sinh ra cổng trước. Ngoài trời, mưa đã nhẹ hạt.
+Kiều: Đừng gọi ta như thế vội.
 
 -> c1_ra_di_hub
 
@@ -582,7 +508,7 @@ Mã Giám Sinh ra cổng trước. Ngoài trời, mưa đã nhẹ hạt.
 ~ c1_tam_biet = true
 # speaker:MeKieu
 # emotion:crying
-# camera:MCU_MeKieu
+# camera:Hug_MeKieu
 Mẹ Kiều: Con đi đường xa, nhớ giữ mình. Mẹ chỉ có cái này cho con.
 
 # speaker:Narrator
@@ -598,20 +524,15 @@ Kiều: Mẹ đợi con. Con sẽ về.
 
 
 === c1_ra_di ===
-# speaker:Narrator
-# camera:Hero_Kieu_Rain
-Kiều bước ra khỏi nhà. Sau lưng là chữ Hiếu. Trước mặt là một chiếc lồng chưa đóng cửa.
-
 {c1_manh_moi >= 4:
+    # montage:c1_ra_di
     # speaker:NoiTam
     Bạc dấu Phúc Ký. Tờ khế bán người. Một kẻ "hỏi vợ ở nhiều nơi". Mình chưa có bằng chứng, nhưng mình đã có câu hỏi.
 - else:
+    # montage:c1_ra_di
     # speaker:NoiTam
     Mình còn biết quá ít về hắn. Trên đường đi phải nhìn kỹ hơn, hỏi khéo hơn.
 }
-
-# speaker:Narrator
-Và nàng quyết định: trước khi cánh cửa ấy khép lại, nàng phải tìm được chìa khóa.
 
 -> chapter_2
 

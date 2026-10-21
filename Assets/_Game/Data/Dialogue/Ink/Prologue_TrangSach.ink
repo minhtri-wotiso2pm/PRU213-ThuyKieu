@@ -3,7 +3,8 @@
 // Scene Unity: Chapter00_Prologue (lớp học hiện đại + phòng Kiều và sân Vương gia)
 // Mở đầu 1 — Lớp học: nhân vật chính chê quyết định bán mình của Kiều; đọc lại đoạn thơ, trang sách sáng lên.
 // Mở đầu 2 — Phòng Kiều: tỉnh dậy trong thân xác Kiều; quan sai bắt Vương Ông và Vương Quan; chiều đổ mưa → Chương 1.
-// Kể bằng hình ảnh: lời dẫn chỉ giữ ở chỗ hình ảnh không tự nói được; camera, âm thanh và câu thơ gánh phần còn lại.
+// Kể bằng hình ảnh: lời dẫn chỉ giữ ở chỗ hình ảnh không tự nói được; camera, âm thanh, câu thơ và chuỗi ảnh chớp
+// (# montage:<id>, xem MontageCatalog) gánh phần còn lại.
 // Giọng Kiều là giọng của trang thơ — dịu, buồn, không đe doạ.
 // ============================================================
 
@@ -22,6 +23,7 @@ Thầy giáo: Gia đình gặp nạn, cha và em bị bắt oan, cần bốn tr�
 
 # speaker:ThayGiao
 # camera:CU_ThayGiao
+# hands:up
 Thầy giáo: Hôm nay thầy muốn nghe các em nghĩ gì. Nếu các em là Kiều, các em có làm như thế không?
 
 # speaker:Ngan
@@ -31,12 +33,14 @@ Ngân: (thì thầm) Ê, giơ tay đi. Tiết trước mày chê Kiều suốt m
 
 # speaker:ThayGiao
 # emotion:calm_probe
+# hands:pick
 Thầy giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
 
 # timer:14
 * ["Dễ mà thầy. Em sẽ làm tốt hơn Kiều nhiều."]
     ~ pl_che_kieu = 1
     ~ dong_dieu = 1
+    # hands:down
     # speaker:HocSinh
     # emotion:smug
     Tôi: Dễ mà thầy. Ai đến hỏi cưới mà vội vàng trả đủ tiền như thế thì phải nghi chứ. Nếu là em, em sẽ làm tốt hơn Kiều nhiều.
@@ -46,6 +50,7 @@ Thầy giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
 * ["Em nghĩ phải có cách khác, chứ không phải bán chính mình."]
     ~ pl_che_kieu = 2
     ~ dong_dieu = 3
+    # hands:down
     # speaker:HocSinh
     # emotion:thoughtful
     Tôi: Em nghĩ phải có cách khác. Vay mượn, kêu oan, tìm người làm chứng... chứ không phải đem chính mình ra đổi.
@@ -55,6 +60,7 @@ Thầy giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
 * ["Kiều cam chịu quá. Em không thích nhân vật này."]
     ~ pl_che_kieu = 3
     ~ dong_dieu = 2
+    # hands:down
     # speaker:HocSinh
     # emotion:cold
     Tôi: Kiều cam chịu quá thầy ạ. Người ta bảo gì làm nấy, rồi khóc suốt mười lăm năm. Em không thích nhân vật này.
@@ -64,6 +70,7 @@ Thầy giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
 * [Im lặng, lắc đầu. #timeout]
     ~ pl_che_kieu = 3
     ~ dong_dieu = 2
+    # hands:down
     # speaker:NoiTam
     Ngốc thật.
     # speaker:ThayGiao
@@ -135,11 +142,7 @@ Tôi: Thì đấy là truyện. Nhân vật làm sai thì mình được quyền
 
 # speaker:Ngan
 # emotion:thoughtful
-Ngân: Ừ... nhưng thầy bảo rồi, mình biết trước kết cục. Kiều thì không.
-
-# speaker:Ngan
-# emotion:amused
-Ngân: Thôi tao về trước đây. Mai nộp bài nhớ cho tao chép ý với!
+Ngân: Ừ... nhưng thầy bảo rồi, mình biết trước kết cục. Kiều thì không. Thôi tao về trước đây!
 -> pl_lop
 
 
@@ -154,13 +157,6 @@ Thôi. Bài về nhà thì tối làm.
 
 
 === pl_book ===
-# speaker:TrangSach
-# camera:Book
-"Để lời thệ hải minh sơn, làm con trước phải đền ơn sinh thành."
-
-# speaker:NoiTam
-Trang sách dừng đúng đoạn bán mình. Mình đọc lướt qua đoạn này không biết bao nhiêu lần.
-
 ~ nhan(ts_tai_menh)
 # speaker:TrangSach
 # gameplay:book_glow
@@ -253,11 +249,8 @@ Mẹ Kiều: (gọi vọng từ ngoài sân) Kiều ơi! Dậy chưa con? Ra ăn
 "Làn thu thủy, nét xuân sơn, hoa ghen thua thắm, liễu hờn kém xanh."
 
 # speaker:NoiTam
-Không phải mặt mình. Mình chớp mắt, người trong gương cũng chớp mắt.
-
-# speaker:NoiTam
-Thúy Kiều. Mình đang ở trong thân xác Thúy Kiều.
 # clue:pl_guong
+Không phải mặt mình. Mình chớp mắt, người trong gương cũng chớp mắt. Thúy Kiều.
 -> pl_phong_hub
 
 
@@ -267,13 +260,11 @@ Thúy Kiều. Mình đang ở trong thân xác Thúy Kiều.
 ~ soul(1)
 # speaker:TrangSach
 # camera:Dan
+# gameplay:dan_tu_do
 "Khúc nhà tay lựa nên chương, một thiên Bạc mệnh lại càng não nhân."
 
 # speaker:NoiTam
-"Bạc mệnh" — khúc đàn Kiều tự soạn. Hồi đọc mình còn bảo: ai lại tự viết bài hát buồn cho đời mình như thế.
-
-# speaker:NoiTam
-Giờ cầm cây đàn trong tay mới thấy... nàng đã linh cảm được điều gì đó.
+Mình chưa từng học đàn. Vậy mà ngón tay này vẫn nhớ đường dây.
 -> pl_phong_hub
 
 
@@ -285,11 +276,8 @@ Giờ cầm cây đàn trong tay mới thấy... nàng đã linh cảm được 
 (thư) "Chú ta mất ở Liêu Dương, ta phải đi hộ tang nửa năm. Lời thề dưới trăng, ta không quên. — Kim Trọng."
 
 # speaker:NoiTam
-Kim Trọng. Trong sách, chàng đi hộ tang, đến lúc quay về thì mọi chuyện đã quá muộn.
-
-# speaker:NoiTam
 # clue:pl_thu_kim_trong
-Chàng đi rồi. Vậy là chuyện đó sắp xảy ra.
+Kim Trọng đi rồi. Trong sách, đến lúc chàng về thì mọi chuyện đã quá muộn.
 -> pl_phong_hub
 
 
@@ -304,12 +292,8 @@ Vương Ông: Kiều con! Dậy muộn thế? Lại thức khuya gảy đàn ph�
 # emotion:amused
 Vương Quan: Chị Kiều lại ngủ quên! Để em ăn hết bánh của chị nhé.
 
-# speaker:MeKieu
-# emotion:warm
-Mẹ Kiều: Con ngồi xuống đi. Hôm nay cha con được nghỉ, cả nhà mới ăn với nhau một bữa yên lành.
-
 # speaker:NoiTam
-Họ cười với mình như thể mình là con gái, là chị của họ thật. Mình nhớ đoạn này. Một ngày yên lành. Rồi...
+Một bữa sáng yên lành. Mình nhớ đoạn này. Rồi...
 
 # speaker:QuanSai
 # emotion:angry
@@ -325,9 +309,6 @@ Vương Ông: Oan cho tôi quá! Nhà tôi làm ăn lương thiện... Hàng gia
 # speaker:QuanSai
 # emotion:mocking
 Quan sai: Thằng bán tơ khai đã gửi tơ lụa ăn cắp ở nhà ngươi. Có oan thì lên huyện mà kêu!
-
-# speaker:NoiTam
-Thằng bán tơ. Đúng như trong sách. Một lời vu oan là đủ để cả nhà tan nát.
 
 # timer:9
 * [Lao ra chắn trước mặt cha.]
@@ -358,11 +339,11 @@ Thằng bán tơ. Đúng như trong sách. Một lời vu oan là đủ để c�
 
 - # speaker:VuongOng
 # emotion:collapse
-# gameplay:arrest
 Vương Ông: Con ơi... đừng...
 
 # speaker:MeKieu
 # emotion:crying
+# gameplay:arrest
 Mẹ Kiều: Ông ơi! Quan lớn ơi, xin tha cho nhà tôi!
 
 # speaker:VuongQuan
@@ -374,14 +355,12 @@ Vương Quan: Chị Kiều! Chị Kiều ơi!
 # emotion:crying
 # scene:VuongGia_Mua
 # music:sad_strings
+# montage:pl_mua
 Mẹ Kiều: Họ đòi bốn trăm lạng... Bốn trăm lạng thì nhà ta lấy đâu ra...
 
 # speaker:KieuThat
 # gameplay:kieu_voice
-Em thấy rồi đấy. Không ai hỏi ta có muốn hay không. Chỉ có một con số: bốn trăm lạng.
-
-# speaker:KieuThat
-Đêm nay, sẽ có một người đến gõ cửa nhà này. Em biết người ấy là ai.
+Không ai hỏi ta có muốn hay không. Đêm nay, sẽ có một người đến gõ cửa nhà này. Em biết người ấy là ai.
 
 {
 - pl_che_kieu == 1:
@@ -394,9 +373,6 @@ Em thấy rồi đấy. Không ai hỏi ta có muốn hay không. Chỉ có mộ
     # speaker:NoiTam
     Mã Giám Sinh. Mình đã gọi nàng là cam chịu. Giờ thì đến lượt mình đứng ở đây.
 }
-
-# speaker:KieuThat
-Hãy cho ta thấy em sẽ làm gì.
 
 # fx:none
 -> chapter_1

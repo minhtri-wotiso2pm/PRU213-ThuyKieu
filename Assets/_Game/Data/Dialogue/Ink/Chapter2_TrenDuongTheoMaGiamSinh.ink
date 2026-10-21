@@ -10,21 +10,11 @@
 # chapter:2
 # scene:Road_Departure
 # music:road_dusk
-# speaker:Narrator
-# camera:Wide_Road
-Chiều muộn. Con đường đất đỏ uốn qua rặng tre, dẫn khỏi làng Vương gia.
-
-# speaker:Narrator
-Không có kiệu hoa, không có kèn trống. Chỉ có Mã Giám Sinh, một tên tùy tùng vác hòm bạc, và Kiều.
-
+# montage:c2_mo
 # speaker:MaGiamSinh
 # emotion:polite_fake
 # camera:CU_MaGiamSinh
-Mã Giám Sinh: Nàng cứ yên tâm. Về đến nơi sẽ có người chăm sóc nàng.
-
-# speaker:MaGiamSinh
-# emotion:smug
-Mã Giám Sinh: Đường gò đồi hơi xa, nhưng qua đồi tre là tới bến. Đi kịp trước tối thì đêm nay đã có cơm ấm.
+Mã Giám Sinh: Nàng cứ yên tâm. Đi kịp trước tối thì đêm nay đã có người lo cơm ấm cho nàng.
 
 # speaker:Kieu
 # emotion:controlled
@@ -32,15 +22,12 @@ Mã Giám Sinh: Đường gò đồi hơi xa, nhưng qua đồi tre là tới b�
 Kiều: Đa tạ công tử.
 
 # speaker:NoiTam
-Được rồi. Bình tĩnh. Mình đang ở trong thân xác Thúy Kiều, đang đi theo cái người mà cả lớp từng gọi là "kẻ buôn người".
-
-# speaker:NoiTam
-Nhưng sách là sách. Ở đây, hắn đang cười rất tử tế. Mình phải tự nhìn bằng mắt mình.
+Sách gọi hắn là kẻ buôn người. Nhưng ở đây hắn đang cười rất tử tế. Mình phải tự nhìn bằng mắt mình.
 
 # speaker:Narrator
 # objective:Theo Mã Giám Sinh · Quan sát và tìm hiểu, nhưng đừng để hắn sinh nghi
 # gameplay:tutorial_road
-Đi theo Mã Giám Sinh. Giữ chuột phải để quan sát. Nếu tụt lại quá xa hoặc nhìn hắn quá lộ liễu, hắn sẽ sinh nghi.
+Theo sát hắn. Tụt lại quá xa hay nhìn quá lộ liễu, hắn sẽ sinh nghi.
 
 -> c2_road
 
@@ -60,13 +47,7 @@ Nhưng sách là sách. Ở đây, hắn đang cười rất tử tế. Mình ph
 === c2_observe ===
 # speaker:Narrator
 # camera:OTS_Kieu_MaGiamSinh
-Mã Giám Sinh đi chậm lại, lấy từ hòm ra một xâu bạc. Hắn đếm một lượt, rồi đếm lại, môi lẩm nhẩm như người buôn tính lãi.
-
-# speaker:Narrator
-Tên tùy tùng ghé tai hắn nói gì đó. Cả hai cùng liếc về phía Kiều — cái liếc của người xem hàng.
-
-# speaker:NoiTam
-Người đi đón vợ về nhà thì sao phải đếm bạc như đi chợ? Còn ánh mắt kia...
+Mã Giám Sinh đếm đi đếm lại một xâu bạc, môi lẩm nhẩm như người buôn tính lãi. Tên tùy tùng ghé tai hắn, cả hai cùng liếc về phía Kiều.
 
 ~ mm_ban_tay = true
 ~ manh_moi += 1
@@ -82,8 +63,6 @@ Kiều: (Hắn không nhìn ta như nhìn một người vợ. Hắn nhìn ta nh
     # speaker:TrangSach
     # page:ts_ma_mat
     "Quá niên trạc ngoại tứ tuần, mày râu nhẵn nhụi áo quần bảnh bao."
-    # speaker:NoiTam
-    Nhớ ra rồi. Nguyễn Du tả hắn chỉ bằng hai câu, mà câu nào cũng đúng.
 }
 -> c2_road
 
@@ -108,7 +87,7 @@ Hỏi thế nào để hắn trả lời thật, mà không biết mình đang d
     Mã Giám Sinh: Phụ mẫu? À... Ở Lâm Tri. Nhà ta... ở đó có người lo liệu cả.
 
     # speaker:NoiTam
-    Hỏi về cha mẹ mà hắn trả lời về "người lo liệu". Lâm Tri... mình nhớ cái tên này.
+    Lúc dạm hỏi, hắn nói quê ở huyện Lâm Thanh. Giờ lại thành Lâm Tri. Và hỏi về cha mẹ thì hắn trả lời về "người lo liệu".
     ~ tinh_tao += 1
 
 * [Hỏi thẳng: "Rốt cuộc công tử đưa ta đi đâu?"]
@@ -149,8 +128,6 @@ Hỏi thế nào để hắn trả lời thật, mà không biết mình đang d
     # speaker:MaGiamSinh
     # emotion:smug
     Mã Giám Sinh: Nàng tinh mắt đấy. Lâm Tri có một nhà quen, mối nào ta đưa về cũng được giá. Ha... à, ý ta là hàng lụa.
-    # speaker:NoiTam
-    Câu thơ nói hắn trước cả khi hắn mở miệng. Tâng bốc đúng chỗ, hắn tự khai hết.
 
 - (g1)
 ~ mm_hoi_duong = true
@@ -164,13 +141,11 @@ Kiều ghi nhớ: điểm đến là Lâm Tri. Không ai nhắc đến lễ cư�
 === c2_paper ===
 # speaker:Narrator
 # camera:OTS_Kieu_Paper
-Một mẩu giấy gấp tư nằm giữa đường, mép còn dính sáp. Nó vừa rơi khỏi tay áo Mã Giám Sinh khi hắn rút xâu bạc.
-
-# speaker:Narrator
 # gameplay:document_paper
-Kiều cúi xuống nhặt, mở ra thật nhanh.
+Một mẩu giấy gấp tư vừa rơi khỏi tay áo Mã Giám Sinh. Kiều cúi xuống nhặt, mở ra thật nhanh.
 
 # speaker:NoiTam
+# clue:c2_mau_giay
 "Bà T. ở Lâm Tri nhận hàng." "Giá bốn trăm năm mươi lạng." Hắn mua mình bốn trăm... để bán lại bốn trăm năm mươi?
 
 ~ mm_mau_giay = true
@@ -182,7 +157,7 @@ Kiều cúi xuống nhặt, mở ra thật nhanh.
 Mã Giám Sinh: Nàng nhặt được gì đấy?
 
 # speaker:NoiTam
-# timer:7
+# timer:9
 Nhanh lên. Trả hay giữ?
 
 * [Đưa lại, giả vờ chưa đọc: "Hình như công tử đánh rơi." #timeout]
@@ -214,9 +189,6 @@ Nhanh lên. Trả hay giữ?
     Hắn sờ tay áo mình, nhíu mày, rồi im lặng bước tiếp. Mẩu giấy nằm yên trong tay áo Kiều — một bằng chứng nhỏ, đổi bằng một ánh nhìn ngờ vực.
 
 - (g2)
-# speaker:Narrator
-# clue:c2_mau_giay
-Kiều ghi nhớ: "Bà T. ở Lâm Tri nhận hàng — giá bốn trăm năm mươi lạng."
 -> c2_road
 
 
@@ -225,9 +197,6 @@ Kiều ghi nhớ: "Bà T. ở Lâm Tri nhận hàng — giá bốn trăm năm m�
 # speaker:Narrator
 # camera:Wide_TeaHouse
 Trời sẩm tối. Mã Giám Sinh dừng ở một quán nước ven đường, bảo Kiều ngồi nghỉ rồi kéo tên tùy tùng ra sau vách tre.
-
-# speaker:NoiTam
-Hắn cố ý tránh mình. Phải nghe được họ nói gì — nhưng không được để lộ.
 
 # speaker:Narrator
 # gameplay:eavesdrop_c2
@@ -254,20 +223,8 @@ Mã Giám Sinh: Đàn hay, thơ giỏi, mặt hoa. Bốn trăm năm mươi là c
 # speaker:NoiTam
 # clue:c2_tu_ba
 # music:none
-Tú Bà?
-
-# speaker:NoiTam
-Khoan... cái tên này...
-
-# speaker:NoiTam
 # gameplay:memory_flash
-Trong Truyện Kiều...
-
-# speaker:TrangSach
-"Đắn đo cân sắc cân tài, ép cung cầm nguyệt, thử bài quạt thơ..."
-
-# speaker:TrangSach
-"Tiếc thay một đóa trà mi, con ong đã tỏ đường đi lối về."
+Tú Bà? Khoan... cái tên này... trong Truyện Kiều...
 
 ~ nhan(ts_co_ke)
 # speaker:TrangSach
@@ -276,11 +233,8 @@ Trong Truyện Kiều...
 
 # speaker:Kieu
 # emotion:realization
-# camera:CU_Kieu
-Kiều: (Mã Giám Sinh không cưới Kiều.)
-
-# speaker:Kieu
-Kiều: (Hắn đang bán mình.)
+# camera:CU_Kieu_Listens
+Kiều: (Mã Giám Sinh không cưới Kiều. Hắn đang bán mình.)
 
 # speaker:NoiTam
 Ghép lại từng mảnh... hay tin vào câu thơ vừa hiện lên?
@@ -326,10 +280,7 @@ Bây giờ... phải làm gì?
 
 * [Giả vờ như chưa biết gì.]
     # speaker:NoiTam
-    Mình phải giả vờ chưa biết gì.
-
-    # speaker:NoiTam
-    Diễn cho tròn vai. Cho đến khi tìm được đường ra — một đường ra không khiến cha phải trả giá.
+    Giả vờ chưa biết gì. Diễn cho tròn vai, cho đến khi tìm được đường ra — một đường ra không khiến cha phải trả giá.
     -> c2_mask
 
 
@@ -342,7 +293,7 @@ Bây giờ... phải làm gì?
 Mã Giám Sinh: Nàng làm gì sau vách tre thế?
 
 # speaker:NoiTam
-# timer:6
+# timer:9
 Thở đều. Mỉm cười.
 
 * [Mỉm cười: "Thiếp đi tìm chỗ rửa mặt cho tỉnh." #timeout]
@@ -383,10 +334,10 @@ Thở đều. Mỉm cười.
 - (g3)
 # speaker:MaGiamSinh
 # emotion:polite_fake
-Mã Giám Sinh: Mai là tới Lâm Tri. Nàng có mong không?
+Mã Giám Sinh: Đêm nay là tới Lâm Tri. Nàng có mong không?
 
 # speaker:NoiTam
-# timer:6
+# timer:9
 Câu này là thử mình.
 
 * [Cúi đầu e thẹn: "Phận gái theo chồng, chàng đi đâu thiếp theo đó." #timeout]
@@ -407,29 +358,6 @@ Câu này là thử mình.
     # speaker:Kieu
     # emotion:cold
     Kiều: Mong hay không thì có khác gì đâu.
-
-- (g4)
-# speaker:MaGiamSinh
-# emotion:polite_fake
-Mã Giám Sinh: Nàng biết điều như vậy là tốt. Người biết điều thì sống dễ.
-
-# speaker:NoiTam
-# timer:6
-Đến lúc chốt lại rồi.
-
-* [Rót chén trà mời hắn: "Công tử đi đường cũng mệt, dùng chén trà." #timeout]
-    ~ gia_vo += 1
-    ~ fate(-5)
-    ~ nghi_ngo = MAX(nghi_ngo - 15, 0)
-    # speaker:Kieu
-    # emotion:calm
-    Kiều: Công tử đi đường cũng mệt, dùng chén trà cho ấm.
-    # speaker:MaGiamSinh
-    # emotion:satisfied
-    Mã Giám Sinh: Hà... nàng đúng là ngoan.
-* [Im lặng nhìn xuống đất.]
-    # speaker:Narrator
-    Kiều không nói gì. Mã Giám Sinh nhìn nàng thêm một lúc, rồi khẽ nhún vai.
 
 - (g5)
 {
@@ -453,10 +381,7 @@ Mã Giám Sinh: Nàng biết điều như vậy là tốt. Người biết đi�
 === c2_ending ===
 # scene:Road_LamTriGate
 # music:road_night
-# speaker:Narrator
-# camera:Wide_LamTri
-Nửa đêm, cổng Lâm Tri hiện ra sau màn sương. Phía xa, một dãy đèn lồng đỏ treo cao trên một ngôi lầu vẫn còn sáng.
-
+# montage:c2_lam_tri
 # speaker:Kieu
 # emotion:determined
 # camera:CU_Kieu
@@ -464,8 +389,5 @@ Kiều: Kiều ngày trước bước vào đây mà không biết gì.
 
 # speaker:Kieu
 Kiều: Còn ta... ta biết. Và ta sẽ giả vờ như không biết — cho đến khi đủ sức lật ngược ván cờ này.
-
-# speaker:NoiTam
-Mình phải giả vờ chưa biết gì.
 
 -> chapter_3

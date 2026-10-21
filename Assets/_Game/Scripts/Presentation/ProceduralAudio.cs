@@ -116,6 +116,8 @@ namespace ThuyKieu.Presentation
                 case "wrong": data = Bend(196f, 146.83f, 0.6f, 0.55f); break;
                 // A few plucked notes of the hồ cầm, the opening of a sad "Bạc mệnh" phrase in a minor pentatonic.
                 case "dan": data = Notes(new[] { 293.66f, 349.23f, 392f, 349.23f, 293.66f, 261.63f, 220f }, 0.42f, 3.4f, 0.42f); break;
+                // One hồ cầm string at hò (C4); free play retunes it per string with the source pitch.
+                case "dan_note": data = Notes(new[] { 261.63f }, 0f, 2.6f, 0.5f); break;
                 default: return null;
             }
             return Clip(id, data);

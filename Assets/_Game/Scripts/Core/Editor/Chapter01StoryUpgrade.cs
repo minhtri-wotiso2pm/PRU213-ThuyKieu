@@ -95,17 +95,19 @@ namespace ThuyKieu.Core.Editor
             // ------------------------------------------------------------ characters
             var shared = StoryAnimationSetup.Controller();
             var mother = RiggedActor("MeKieu", "MeKieu", Characters + "MeThuyKieu/Models/MeThuyKieu_Rigged.fbx", Characters + "MeThuyKieu/Tectures",
-                1.56f, new Vector3(-1.4f, 0f, 0.6f), 150f, Color.white, shared);
+                1.56f, new Vector3(-2.2f, 0f, 1.35f), 115f, Color.white, shared);
             var ma = RiggedActor("MaGiamSinh", "MaGiamSinh", Characters + "MaGiamSinh/Models/MaGiamSinh_Rigged.fbx", Characters + "MaGiamSinh/Tectures",
-                1.78f, new Vector3(1.0f, 0f, -1.2f), 310f, Color.white, shared);
+                1.72f, new Vector3(1.0f, 0f, -1.2f), 310f, Color.white, shared);
             var servant = CharacterActor("TuyTung", "TuyTung", "LinhCanh", 1.72f, new Vector3(2.3f, 0f, -3.4f), 340f);
 
             // ------------------------------------------------------------ staging
             var staging = Group(root, "Staging");
-            var kieuMeet = Point("KieuMeet", new Vector3(-0.9f, 0.05f, 0.4f), 60f, staging);
-            var motherMeet = Point("MotherMeet", new Vector3(-2.0f, 0f, 1.0f), 80f, staging);
-            var maMeet = Point("MaMeet", new Vector3(1.0f, 0f, -1.2f), 310f, staging);
-            var servantPorch = Point("ServantPorch", new Vector3(2.3f, 0f, -3.4f), 340f, staging);
+            // Keep the door-to-table centre aisle readable. The family receives the visitor from the left side while
+            // Mã and his attendant occupy the right/porch side, instead of everyone standing on one central line.
+            var kieuMeet = Point("KieuMeet", new Vector3(-0.55f, 0.05f, -0.1f), 55f, staging);
+            var motherMeet = Point("MotherMeet", new Vector3(-2.2f, 0f, 1.35f), 80f, staging);
+            var maMeet = Point("MaMeet", new Vector3(1.25f, 0f, -0.75f), 310f, staging);
+            var servantPorch = Point("ServantPorch", new Vector3(2.55f, 0f, -2.8f), 330f, staging);
             var motherTable = Point("MotherTable", new Vector3(-1.95f, 0f, 2.3f), 100f, staging);
             var maTable = Point("MaTable", new Vector3(1.8f, 0f, 2.5f), 250f, staging);
             var tableFocus = Point("TableFocus", new Vector3(0f, 1.0f, 3.0f), 0f, staging);
@@ -121,8 +123,11 @@ namespace ThuyKieu.Core.Editor
             Shot(cameras, "Table_Contract", new Vector3(1.1f, 1.75f, 1.35f), new Vector3(0.1f, 0.82f, 2.75f));
             Shot(cameras, "Wide_Courtyard", new Vector3(-1.2f, 2.5f, -2.9f), new Vector3(4.8f, 0.3f, -6.0f));
             Shot(cameras, "Hero_Kieu_Rain", new Vector3(1.0f, 1.9f, -8.4f), new Vector3(0f, 1.2f, -12.4f));
+            Shot(cameras, "OTS_Kieu_Cabinet", new Vector3(3.15f, 1.55f, 4.15f), new Vector3(4.8f, 1.02f, 5.58f));
+            Shot(cameras, "OTS_Kieu_Altar", new Vector3(-2.15f, 1.62f, 4.28f), new Vector3(0f, 1.18f, 5.95f));
+            Shot(cameras, "MCU_MeKieu", new Vector3(1.55f, 1.52f, 4.05f), new Vector3(-0.88f, 1.12f, 3.08f));
             Point("Focus_Cabinet", new Vector3(4.8f, 1.1f, 5.6f), 0f, cameras);
-            Point("Focus_Altar", new Vector3(-2.6f, 1.3f, 5.9f), 0f, cameras);
+            Point("Focus_Altar", new Vector3(0f, 1.22f, 5.92f), 0f, cameras);
 
             // ------------------------------------------------------------ props
             var silver = Silver(root);
@@ -135,7 +140,7 @@ namespace ThuyKieu.Core.Editor
             var farewell = Point("FarewellTarget", mother.transform.position, 0f, mother.transform);
             Explore(farewell.gameObject, director, "c1_me_cuoi", "Ôm Mẹ lần cuối", new Vector3(1.8f, 1.8f, 1.8f));
             Target(targets, director, "CabinetTarget", new Vector3(4.8f, 0f, 4.9f), "c1_tu", "Mở tủ gỗ", new Vector3(1.4f, 1.6f, 1.2f), new Vector3(4.8f, 0.05f, 4.7f), 0f);
-            Target(targets, director, "AltarTarget", new Vector3(-2.6f, 0f, 5.05f), "c1_ban_tho", "Thắp hương trên bàn thờ", new Vector3(1.4f, 1.6f, 1.2f), new Vector3(-2.6f, 0.05f, 4.85f), 0f);
+            Target(targets, director, "AltarTarget", new Vector3(0f, 0f, 5.14f), "c1_ban_tho", "Thắp hương trên bàn thờ", new Vector3(1.4f, 1.6f, 1.2f), new Vector3(0f, 0.05f, 5.14f), 0f);
             Target(targets, director, "GateKnock", new Vector3(0f, 0f, -12.0f), "c1_cong", "Ra mở cổng", new Vector3(3.2f, 2f, 1.8f), null, 0f);
             Target(targets, director, "GateLeave", new Vector3(0f, 0f, -11.8f), "c1_ra_di", "Bước ra cổng", new Vector3(3.2f, 2f, 1.8f), new Vector3(0f, 0.05f, -11.5f), 180f);
             Target(targets, director, "SilverTarget", new Vector3(0.7f, 0f, 1.95f), "c1_tui_bac", "Nhìn túi bạc", new Vector3(1.1f, 1.4f, 0.9f), new Vector3(0.65f, 0.05f, 1.6f), 0f);

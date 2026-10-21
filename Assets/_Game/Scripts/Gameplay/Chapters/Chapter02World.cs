@@ -32,9 +32,14 @@ namespace ThuyKieu.Gameplay.Chapters
         [SerializeField] private GameObject[] _nightLights;
         [SerializeField] private LightingPreset[] _lighting;
 
+        // Mã Giám Sinh's walking pace; he stops and turns when she comes up to talk.
+        private const float EscortSpeed = 1.45f;
+        // Straying this far from him sends the servant after her; coming back within GiveUpDistance calls him off.
+        private const float StrayDistance = 13f, GiveUpDistance = 6f, ChaseSpeed = 6.2f;
+
         private int _waypoint;
         private float _glanceTimer = 10f, _glanceHold, _barkCooldown;
-        private bool _waiting, _restCalled, _paperDropped;
+        private bool _waiting, _restCalled, _paperDropped, _chasing, _shouted;
         private float _suspicionCarry;
 
         public bool Glancing => _glanceHold > 0f;
@@ -57,6 +62,13 @@ namespace ThuyKieu.Gameplay.Chapters
             // Runtime bake: the road is generated geometry, and agents join once the mesh exists.
             if (_navMesh != null) _navMesh.BuildNavMesh();
             foreach (var actor in FindObjectsByType<StoryActor>()) actor.EnableNavigation();
+            // The road cast was imported at different sizes: a head taller than Kiều, not a giant beside her.
+            float kieu = _director.Player.GetComponent<StoryActor>().VisualHeight;
+            if (kieu > 0.5f)
+            {
+                _ma.FitVisualHeight(kieu * 1.08f);
+                _servant.FitVisualHeight(kieu * 1.05f);
+            }
             _director.Player.AllowCrouch = true;
             _director.Hud.SetControls("WASD: đi · Shift: chạy · Chuột phải: quan sát · Ctrl: khom · E: tương tác · J: sổ tay");
             ApplyLighting("Road_Departure");
@@ -70,7 +82,8 @@ namespace ThuyKieu.Gameplay.Chapters
                 if (!_director.IsBusy || _director.CurrentSequence == null) HoldEscort();
                 return;
             }
-            UpdateEscort();
+            UpdateChase();
+            if (!_chasing) UpdateEscort();
             UpdateSuspicion();
             if (!_restCalled && _director.IsExploreAvailable("c2_eavesdrop"))
             {
@@ -99,6 +112,15 @@ namespace ThuyKieu.Gameplay.Chapters
                 return;
             }
 
+            // She has come up to talk: he stops and turns to her so the conversation can start.
+            if (distance < 3f && _director.IsExploreAvailable("c2_ask"))
+            {
+                _ma.Stop();
+                _ma.FaceTowards(player);
+                FollowServant(false);
+                return;
+            }
+
             bool atEnd = _waypoint >= _path.Length - 1;
             if (distance > 10f && !atEnd)
             {
@@ -120,7 +142,7 @@ namespace ThuyKieu.Gameplay.Chapters
                     _waypoint++;
                     if (_waypoint == _paperDropWaypoint && !_paperDropped) StartCoroutine(DropPaper());
                 }
-                else if (!_ma.IsMoving) _ma.MoveTo(target, 1.45f);
+                else if (!_ma.IsMoving) _ma.MoveTo(target, EscortSpeed);
 
                 if ((_glanceTimer -= Time.deltaTime) <= 0f)
                 {
@@ -141,6 +163,45 @@ namespace ThuyKieu.Gameplay.Chapters
             Vector3 slot = _ma.transform.position - _ma.transform.forward * 1.7f + _ma.transform.right * 0.9f;
             if (!follow || Flat(slot - _servant.transform.position) < 0.8f) { if (_servant.IsMoving && !follow) _servant.Stop(); return; }
             _servant.MoveTo(slot, 1.7f);
+        }
+
+        /// <summary>Kiều wanders off: Mã Giám Sinh shouts and his servant runs her down; catching her restores the checkpoint.</summary>
+        private void UpdateChase()
+        {
+            Vector3 player = _director.Player.transform.position;
+            float distance = Flat(player - _ma.transform.position);
+            if (!_chasing)
+            {
+                // At the end of the road he waits at the tea house: walking up to it is not running away.
+                bool resting = _waypoint >= _path.Length - 1 || (_bench != null && Flat(player - _bench.position) < 9f);
+                if (distance < StrayDistance || resting) return;
+                _chasing = true;
+                _shouted = false;
+                _ma.Stop();
+                _ma.FaceTowards(player);
+                Bark("MaGiamSinh", "Đứng lại! Bắt nó về đây!");
+                _director.Hud.ShowToast("BỊ ĐUỔI THEO", "Tùy tùng của Mã Giám Sinh đang chạy tới. Quay lại gần hắn!");
+                if (_director.Audio != null) { _director.Audio.PlaySfx("detect"); _director.Audio.PlaySfx("heartbeat"); }
+                if (_director.Fx != null) _director.Fx.Shake(0.2f, 0.35f);
+                return;
+            }
+            if (distance < GiveUpDistance)
+            {
+                _chasing = false;
+                _servant.Stop();
+                Bark("TuyTung", "Nương tử đi lạc sao? Đừng để chủ ta nổi giận.");
+                return;
+            }
+            _servant.MoveTo(player, ChaseSpeed);
+            float gap = Flat(player - _servant.transform.position);
+            _director.Hud.SetMeter("TÙY TÙNG ĐANG ĐUỔI THEO", Mathf.Clamp01(1f - gap / StrayDistance), new Color(0.9f, 0.2f, 0.15f));
+            if (!_shouted && gap < 6f) { _shouted = true; Bark("TuyTung", "Đứng lại đó! Chạy đâu cho thoát!"); }
+            if (gap < 1.3f)
+            {
+                _chasing = false;
+                _servant.Stop();
+                _director.Fail("Bị bắt lại", "Tên tùy tùng của Mã Giám Sinh đuổi kịp và lôi bạn về. Trên đường đi, đừng rời xa hắn quá.");
+            }
         }
 
         private IEnumerator DropPaper()
@@ -169,7 +230,7 @@ namespace ThuyKieu.Gameplay.Chapters
             Vector3 player = _director.Player.transform.position;
             float distance = Flat(player - _ma.transform.position);
             float rate = 0f;
-            if (distance > 14f) rate += 14f;
+            if (_chasing) rate += 8f;
             else if (distance > 9f) rate += 6f;
             bool watched = Glancing || Vector3.Dot(_ma.transform.forward, (player - _ma.transform.position).normalized) > 0.6f;
             if (_observe != null && _observe.IsObserving && watched && distance < 11f)
@@ -189,6 +250,7 @@ namespace ThuyKieu.Gameplay.Chapters
                 _director.SetInt("nghi_ngo", value);
             }
             float normalized = value / 100f;
+            if (_chasing) return; // the chase owns the meter while it lasts
             _director.Hud.SetMeter(value >= 60 ? "MÃ GIÁM SINH ĐANG NGỜ VỰC" : "Nghi ngờ của Mã Giám Sinh",
                 normalized, Color.Lerp(new Color(1f, 0.85f, 0.4f), new Color(0.9f, 0.2f, 0.15f), normalized));
             if (value >= 100)
@@ -201,6 +263,7 @@ namespace ThuyKieu.Gameplay.Chapters
             _suspicionCarry = 0f;
             _glanceHold = 0f;
             _waiting = false;
+            _chasing = false;
             // Bring the escort back beside Kiều so the restored state is readable.
             Vector3 player = _director.Player.transform.position;
             Vector3 forward = _director.Player.transform.forward;
@@ -259,6 +322,9 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             yield return _director.Hud.Fade(1f, fade * 0.5f);
             move();
+            yield return null; // let the moved rigs pose before framing them
+            // The line's shot was taken before the people moved: frame them where they now stand.
+            if (_director.Shots != null) _director.Shots.Reshoot();
             yield return new WaitForSeconds(_director.Autopilot ? 0f : fade * 0.3f);
             yield return _director.Hud.Fade(0f, fade);
         }
