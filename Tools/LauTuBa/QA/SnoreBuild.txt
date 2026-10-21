@@ -1,0 +1,28 @@
+Tú Bà's breath (measured, not listened to)
+columns: output · from · source seconds · length s · gain dB · peak dBFS · loudest 300 ms RMS dBFS
+snore_deep_01.wav · Tongue_base_snoring.ogg 15.45–17.00 s · 1.46 · -6.6 · -6.5 · -16.0
+snore_out_01.wav · Tongue_base_snoring.ogg 17.00–19.15 s · 2.03 · +2.4 · -20.4 · -32.0
+snore_deep_02.wav · Tongue_base_snoring.ogg 48.80–50.30 s · 1.42 · -6.3 · -6.1 · -16.0
+snore_out_02.wav · Tongue_base_snoring.ogg 50.30–52.50 s · 2.08 · +1.5 · -19.3 · -31.0
+snore_deep_03.wav · Tongue_base_snoring.ogg 71.50–73.25 s · 1.65 · -5.8 · -5.9 · -16.0
+snore_out_03.wav · Tongue_base_snoring.ogg 73.25–75.25 s · 1.89 · +2.5 · -19.4 · -31.0
+snore_deep_04.wav · Tongue_base_snoring.ogg 98.45–100.05 s · 1.51 · -8.1 · -8.0 · -16.0
+snore_out_04.wav · Tongue_base_snoring.ogg 100.05–102.25 s · 2.08 · +0.9 · -20.8 · -31.8
+snore_deep_05.wav · Tongue_base_snoring.ogg 117.85–119.30 s · 1.37 · -6.8 · -6.7 · -16.0
+snore_out_05.wav · Tongue_base_snoring.ogg 119.30–121.30 s · 1.89 · +2.2 · -23.4 · -34.6
+snore_deep_06.wav · Tongue_base_snoring.ogg 136.90–138.50 s · 1.51 · -4.9 · -5.0 · -16.0
+snore_out_06.wav · Tongue_base_snoring.ogg 138.50–140.60 s · 1.98 · +4.1 · -20.9 · -31.8
+snore_deep_07.wav · Palatal_snoring_1.ogg 20.25–21.55 s · 1.23 · -6.2 · -6.9 · -16.0
+snore_out_07.wav · Palatal_snoring_1.ogg 21.55–23.85 s · 2.17 · +2.8 · -22.7 · -33.4
+snore_deep_08.wav · Palatal_snoring_1.ogg 51.55–52.70 s · 1.09 · -4.2 · -6.6 · -16.0
+snore_out_08.wav · Palatal_snoring_1.ogg 52.70–54.95 s · 2.12 · +4.8 · -20.5 · -31.8
+snore_deep_09.wav · Palatal_snoring_1.ogg 78.35–79.55 s · 1.13 · -3.9 · -6.8 · -16.0
+snore_out_09.wav · Palatal_snoring_1.ogg 79.55–82.05 s · 2.36 · +5.1 · -20.5 · -32.4
+snore_deep_10.wav · Palatal_snoring_1.ogg 101.45–102.80 s · 1.27 · -6.2 · -7.0 · -16.0
+snore_out_10.wav · Palatal_snoring_1.ogg 102.80–105.20 s · 2.27 · +2.8 · -22.8 · -34.1
+snore_deep_11.wav · Palatal_snoring_2.ogg 20.85–21.95 s · 1.04 · -1.9 · -6.3 · -16.0
+snore_out_11.wav · Palatal_snoring_2.ogg 21.95–24.00 s · 1.93 · +5.4 · -20.6 · -31.0
+snore_deep_12.wav · Palatal_snoring_2.ogg 46.05–47.20 s · 1.09 · -1.9 · -6.7 · -16.0
+snore_out_12.wav · Palatal_snoring_2.ogg 47.20–49.87 s · 2.52 · +3.5 · -20.5 · -31.0
+  A/B: Tools/LauTuBa/Foley/AB_snore.wav (65 s; old 4 cycles, 1 s silence, new 12 cycles)
+  in-breaths 12, lasting 1.04–1.65 s (the in-breath phase lasts as long as its take); out-breaths at most 2.52 s (phase 2.6 s)

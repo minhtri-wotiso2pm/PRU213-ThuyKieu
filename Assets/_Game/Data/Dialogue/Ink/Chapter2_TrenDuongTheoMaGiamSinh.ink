@@ -468,4 +468,4 @@ Kiều: Còn ta... ta biết. Và ta sẽ giả vờ như không biết — cho 
 # speaker:NoiTam
 Mình phải giả vờ chưa biết gì.
 
--> chapter_3
+-> chapter_3_lau

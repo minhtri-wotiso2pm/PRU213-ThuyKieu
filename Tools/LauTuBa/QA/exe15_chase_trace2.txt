@@ -1,0 +1,178 @@
+AUTOPILOT PASS
+[3.7s] NAVMESH built in 28 ms · 388 sources
+[3.7s] C4 Foley recorded set loaded
+[3.7s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (10.5, -4.0) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[3.7s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.7s] TAG scene:Dem_Opening
+[0.7s] TAG music:tension_low
+[0.9s] CHOICE 3/5: Cãi lại: "Tôi không nợ bà thứ gì cả."
+[0.9s] TAG sfx:knock
+[1.0s] TAG sfx:latch_drop
+[1.1s] TAG scene:Dem_Night
+[1.1s] TAG gameplay:tutorial_dem
+[14.9s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (10.5, 6.4) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 3.1 m left · 1.1 m/s · awareness 0.00
+[14.9s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[14.9s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[14.9s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[14.9s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.5, -9.0) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[15.1s] WATCH NguoiCanh Patrol→Suspicious (a glimpse) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (0.0, 0.0) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.30
+[15.3s] WATCH NguoiCanh Suspicious→Investigate (going to check) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (0.0, 0.0) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.66
+[15.5s] WATCH NguoiCanh Investigate→Chase (sure it is her) · at (-10.6, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (0.0, 0.0) · target (-10.5, -5.0) · path PathComplete Infinity m left · 1.2 m/s · awareness 1.00
+[20.0s] CHASE ok   lost round a corner, stays still · chased True · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 · came within 1.3 m of where he last knew · stuck up to 0.0 s · searched none · caught 1 · back on his round no
+[20.0s] WATCH NguoiCanh Chase→Patrol (forgotten (checkpoint, reset)) · at (-15.1, -1.8) · seen 0.0 s ago at (-16.3, -1.4) · heard at (-16.1, -1.5) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 3.3 m/s · awareness 0.00
+[20.0s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[20.0s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[20.0s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen 0.0 s ago at (-16.3, -1.4) · heard at (-16.1, -1.5) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[20.0s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.5, -9.0) · seen 0.0 s ago at (-16.3, -1.4) · heard at (-16.1, -1.5) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[20.2s] WATCH NguoiCanh Patrol→Suspicious (a glimpse) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-16.1, -1.5) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.32
+[20.4s] WATCH NguoiCanh Suspicious→Investigate (going to check) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-16.1, -1.5) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[20.6s] WATCH NguoiCanh Investigate→Chase (sure it is her) · at (-10.6, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-16.1, -1.5) · target (-10.5, -5.0) · path PathComplete Infinity m left · 1.2 m/s · awareness 1.00
+[25.0s] CHASE ok   lost round a corner, makes noise there · chased True · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 · came within 1.3 m of where he last knew · stuck up to 0.0 s · searched none · caught 1 · back on his round no
+[25.0s] WATCH NguoiCanh Chase→Patrol (forgotten (checkpoint, reset)) · at (-15.0, -1.9) · seen 0.0 s ago at (-16.3, -1.5) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 3.3 m/s · awareness 0.00
+[25.0s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[25.0s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[25.0s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen 0.0 s ago at (-16.3, -1.5) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[25.0s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.5, -9.0) · seen 0.0 s ago at (-16.3, -1.5) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[25.2s] WATCH NguoiCanh Patrol→Suspicious (a glimpse) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.32
+[25.4s] WATCH NguoiCanh Suspicious→Investigate (going to check) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.67
+[25.6s] WATCH NguoiCanh Investigate→Chase (sure it is her) · at (-10.6, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete Infinity m left · 1.2 m/s · awareness 1.00
+[31.9s] WATCH NguoiCanh Chase→Search (lost sight of her) · at (-16.1, -1.6) · seen 3.0 s ago at (-16.1, -1.6) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.64
+[44.7s] WATCH NguoiCanh Search→Return (searched every spot) · at (-14.7, -0.9) · seen 15.8 s ago at (-16.1, -1.6) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[55.4s] WATCH NguoiCanh Return→Patrol (back on his round) · at (-10.7, -9.2) · seen 26.5 s ago at (-16.1, -1.6) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.2 m left · 0.8 m/s · awareness 0.00
+[55.4s] CHASE ok   lost round a corner, slips away · chased True · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 → Search@6.9 → Return@19.6 → Patrol@30.4 · came within 0.0 m of where he last knew · stuck up to 0.0 s · searched (-15.95, 0.00, -6.02) PathComplete, (-17.38, 0.00, -2.34) PathComplete, (-14.75, 0.00, -0.88) PathComplete · caught 0 · back on his round 0.3 m from it
+[55.4s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.7, -9.2) · seen 26.5 s ago at (-16.1, -1.6) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.2 m left · 0.7 m/s · awareness 0.00
+[55.4s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[55.4s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[55.4s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen 26.5 s ago at (-16.1, -1.6) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[55.4s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.5, -6.5) · seen 26.5 s ago at (-16.1, -1.6) · heard at (-16.1, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[55.4s] WATCH NguoiCanh Patrol→Investigate (going to check) · at (-10.5, -6.5) · seen 26.5 s ago at (-16.1, -1.6) · heard at (-11.4, -3.6) · target (-11.4, -3.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.30
+[56.9s] WATCH NguoiCanh Investigate→Investigate (newer sound, going there instead) · at (-11.2, -4.3) · seen 28.0 s ago at (-16.1, -1.6) · heard at (-10.5, 1.5) · target (-11.4, -3.6) · path PathComplete 0.7 m left · 1.7 m/s · awareness 0.00
+[58.4s] WATCH NguoiCanh Investigate→Investigate (newer sound, going there instead) · at (-10.9, -1.8) · seen 29.6 s ago at (-16.1, -1.6) · heard at (-10.5, 6.5) · target (-10.5, 1.5) · path PathComplete 3.3 m left · 1.7 m/s · awareness 0.00
+[67.2s] WATCH NguoiCanh Investigate→Return (checked, nothing there) · at (-10.5, 6.5) · seen 38.3 s ago at (-16.1, -1.6) · heard at (-10.5, 6.5) · target (-10.5, 6.5) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[80.2s] WATCH NguoiCanh Return→Patrol (back on his round) · at (-10.5, -6.3) · seen 51.3 s ago at (-16.1, -1.6) · heard at (-10.5, 6.5) · target (-10.5, 6.5) · path PathComplete 0.2 m left · 0.8 m/s · awareness 0.00
+[80.2s] CHASE ok   three sounds, each further away · after each sound he was heading 0.0 / 0.0 / 0.0 m from it · Return@11.8 → Patrol@24.8 · back on his round 0.2 m from it
+[80.2s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.5, -6.3) · seen 51.3 s ago at (-16.1, -1.6) · heard at (-10.5, 6.5) · target (-10.5, 6.5) · path PathComplete 0.2 m left · 0.7 m/s · awareness 0.00
+[80.2s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[80.2s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[80.2s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen 51.3 s ago at (-16.1, -1.6) · heard at (-10.5, 6.5) · target (-10.5, 6.5) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[80.2s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.5, -9.0) · seen 51.3 s ago at (-16.1, -1.6) · heard at (-10.5, 6.5) · target (-10.5, 6.5) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[80.4s] WATCH NguoiCanh Patrol→Suspicious (a glimpse) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-10.5, 6.5) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.30
+[80.6s] WATCH NguoiCanh Suspicious→Investigate (going to check) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-10.5, 6.5) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.67
+[80.8s] WATCH NguoiCanh Investigate→Chase (sure it is her) · at (-10.6, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-10.5, 6.5) · target (-10.5, -5.0) · path PathComplete Infinity m left · 1.1 m/s · awareness 1.00
+[86.4s] WATCH NguoiCanh Chase→Search (lost sight of her) · at (-11.7, -2.7) · seen 3.0 s ago at (-16.0, -1.6) · heard at (-16.0, -1.6) · target (-10.5, -5.0) · path PathPartial 1.1 m left · 0.6 m/s · awareness 0.64
+[99.3s] WATCH NguoiCanh Search→Return (searched every spot) · at (-11.0, 1.0) · seen 15.9 s ago at (-16.0, -1.6) · heard at (-16.0, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[111.0s] WATCH NguoiCanh Return→Patrol (back on his round) · at (-10.3, -9.2) · seen 27.6 s ago at (-16.0, -1.6) · heard at (-16.0, -1.6) · target (-10.5, -5.0) · path PathComplete 0.2 m left · 0.8 m/s · awareness 0.00
+[111.0s] CHASE ok   door bolted behind her · chased True · he was 1.8 m behind her when it shut · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 → Search@6.2 → Return@19.1 → Patrol@30.8 · stuck up to 0.1 s · searched (-11.49, 0.00, -6.45) PathComplete, (-10.44, 0.00, -3.37) PathComplete, (-11.02, 0.00, 0.98) PathComplete · caught 0 · back on his round 0.3 m from it
+[111.0s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.3, -9.2) · seen 27.6 s ago at (-16.0, -1.6) · heard at (-16.0, -1.6) · target (-10.5, -5.0) · path PathComplete 0.2 m left · 0.8 m/s · awareness 0.00
+[111.0s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[111.0s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[111.0s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen 27.6 s ago at (-16.0, -1.6) · heard at (-16.0, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[111.0s] WATCH NguoiCanh Patrol→Investigate (going to check) · at (-6.0, -7.5) · seen 27.6 s ago at (-3.0, 2.0) · heard at (-16.0, -1.6) · target (-3.0, 2.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[122.9s] WATCH NguoiCanh Investigate→Return (checked, nothing there) · at (-2.8, 0.5) · seen 39.5 s ago at (-3.0, 2.0) · heard at (-16.0, -1.6) · target (-3.0, 2.0) · path PathPartial 0.0 m left · 0.0 m/s · awareness 0.00
+[123.1s] HITCH 153 ms
+[130.3s] WATCH NguoiCanh Return→Patrol (back on his round) · at (-10.3, 0.5) · seen 46.9 s ago at (-3.0, 2.0) · heard at (-16.0, -1.6) · target (-3.0, 2.0) · path PathComplete 0.2 m left · 0.8 m/s · awareness 0.00
+[130.3s] CHASE ok   a 150 ms frame as he gives up · Return@11.9 → Patrol@19.3 · back on his round 0.2 m from it
+[130.3s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.3, 0.5) · seen 46.9 s ago at (-3.0, 2.0) · heard at (-16.0, -1.6) · target (-3.0, 2.0) · path PathComplete 0.2 m left · 0.8 m/s · awareness 0.00
+[130.3s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[130.3s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[130.3s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen 46.9 s ago at (-3.0, 2.0) · heard at (-16.0, -1.6) · target (-3.0, 2.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[130.3s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.5, -9.0) · seen 46.9 s ago at (-3.0, 2.0) · heard at (-16.0, -1.6) · target (-3.0, 2.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[130.5s] WATCH NguoiCanh Patrol→Suspicious (a glimpse) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-16.0, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.30
+[130.7s] WATCH NguoiCanh Suspicious→Investigate (going to check) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-16.0, -1.6) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[130.9s] WATCH NguoiCanh Investigate→Chase (sure it is her) · at (-10.6, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-16.0, -1.6) · target (-10.5, -5.0) · path PathComplete Infinity m left · 1.2 m/s · awareness 1.00
+[136.5s] WATCH NguoiCanh Chase→Search (lost sight of her) · at (-12.6, -3.4) · seen 3.0 s ago at (-12.5, -3.4) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete 0.1 m left · 0.0 m/s · awareness 0.64
+[139.7s] CHASE ok   paused 2 s while walking to a search spot · searching True · 2.9 m from the spot before the pause, 1.3 m 1.2 s after · Search
+[139.7s] WATCH NguoiCanh Search→Patrol (forgotten (checkpoint, reset)) · at (-11.6, -2.1) · seen 4.2 s ago at (-12.5, -3.4) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete 1.3 m left · 1.7 m/s · awareness 0.00
+[139.7s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[139.7s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[139.7s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen 4.2 s ago at (-12.5, -3.4) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[139.7s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-15.5, -3.5) · seen 4.2 s ago at (-12.5, -3.4) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[140.3s] WATCH NguoiCanh Patrol→Suspicious (a glimpse) · at (-15.5, -3.5) · seen 0.0 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.30
+[140.9s] WATCH NguoiCanh Suspicious→Investigate (going to check) · at (-15.5, -3.5) · seen 0.0 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[149.6s] WATCH NguoiCanh Investigate→Search (cannot get to Hide_LamScreen (PathPartial)) · at (-18.8, -9.4) · seen 8.7 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathPartial 0.2 m left · 1.3 m/s · awareness 0.00
+[162.2s] WATCH NguoiCanh Search→Return (searched every spot) · at (-16.3, -11.6) · seen 21.4 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[170.9s] CHASE ok   saw her hide, the way there bolted · knew the place True · Search@9.9 → Return@22.5 · came within 2.0 m of the screen · caught 0 (a catch from outside the bolted room would be wrong)
+[170.9s] WATCH NguoiCanh Return→Patrol (forgotten (checkpoint, reset)) · at (-11.7, -6.1) · seen 30.0 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathPartial 2.7 m left · 1.0 m/s · awareness 0.00
+[170.9s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[170.9s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[170.9s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen 30.0 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[170.9s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-15.5, -3.5) · seen 30.0 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[171.4s] WATCH NguoiCanh Patrol→Suspicious (a glimpse) · at (-15.5, -3.5) · seen 0.0 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.31
+[172.1s] WATCH NguoiCanh Suspicious→Investigate (going to check) · at (-15.5, -3.5) · seen 0.0 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[178.2s] WATCH NguoiCanh Investigate→Search (nothing here, she was seen) · at (-19.0, -7.4) · seen 6.1 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[187.0s] WATCH NguoiCanh Search→Return (searched every spot) · at (-18.1, -4.6) · seen 14.9 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[189.5s] WATCH NguoiCanh Return→Patrol (back on his round) · at (-15.7, -3.6) · seen 17.4 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.2 m left · 0.8 m/s · awareness 0.00
+[189.5s] CHASE ok   saw her hide, she left before he came · knew the place True · forgot it when she left True · Search@7.3 → Return@16.1 → Patrol@18.6 · caught 0
+[189.5s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-15.7, -3.6) · seen 17.4 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.2 m left · 0.8 m/s · awareness 0.00
+[189.5s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[189.5s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[189.5s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen 17.4 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[189.5s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.5, -9.0) · seen 17.4 s ago at (-19.0, -7.4) · heard at (-12.5, -3.4) · target (-19.0, -7.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[189.7s] WATCH NguoiCanh Patrol→Suspicious (a glimpse) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.30
+[189.9s] WATCH NguoiCanh Suspicious→Investigate (going to check) · at (-10.5, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[190.1s] WATCH NguoiCanh Investigate→Chase (sure it is her) · at (-10.6, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete Infinity m left · 1.2 m/s · awareness 1.00
+[190.1s] WATCH NguoiCanh Chase→Chase (story walk refused: chasing) · at (-10.6, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete Infinity m left · 1.2 m/s · awareness 1.00
+[190.1s] CHASE ok   story walk ordered mid-chase · chasing True · after the order: Chase
+[190.1s] WATCH NguoiCanh Chase→Patrol (forgotten (checkpoint, reset)) · at (-10.6, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete Infinity m left · 1.2 m/s · awareness 0.00
+[190.1s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[190.1s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[190.1s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-10.6, -9.2) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 1.2 m/s · awareness 0.00
+[190.1s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[190.1s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[190.1s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (-6.0, -7.5) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (-10.5, -5.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[190.1s] WATCH NguoiCanh Patrol→Scripted (story walk) · at (-6.0, -7.5) · seen 0.0 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (11.5, 14.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[212.7s] WATCH NguoiCanh Scripted→Return (story walk cannot get there (PathPartial)) · at (11.3, 10.5) · seen 22.6 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (11.5, 14.0) · path PathPartial 0.2 m left · 1.0 m/s · awareness 0.00
+[212.7s] CHASE ok   story walk into a locked room · told he arrived False · 3.5 m from the place · Return@22.6 · Return
+[212.7s] WATCH NguoiCanh Return→Patrol (forgotten (checkpoint, reset)) · at (11.3, 10.5) · seen 22.6 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (11.5, 14.0) · path PathPartial 0.2 m left · 1.0 m/s · awareness 0.00
+[212.7s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[212.7s] WATCH TuBa Patrol→Patrol (forgotten (checkpoint, reset)) · at (-1.9, 14.6) · seen never at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathInvalid 0.0 m left · 0.0 m/s · awareness 0.00
+[212.7s] WATCH NguoiCanh Patrol→Patrol (forgotten (checkpoint, reset)) · at (10.5, -4.0) · seen 22.6 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (11.5, 14.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[212.7s] WATCH NguoiCanhCong Patrol→Patrol (forgotten (checkpoint, reset)) · at (2.4, -17.9) · seen 115.2 s ago at (0.0, 0.0) · heard at (0.0, 0.0) · target (0.0, 0.0) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[212.7s] CHASE probe done
+[213.6s] TAG gameplay:search_drawer
+[213.9s] TAG sfx:paper
+[214.2s] TAG sfx:lock_open
+[214.6s] TAG gameplay:document_deal
+[214.8s] CHOICE 3/3: Để nguyên chỗ cũ — mụ sẽ không phát hiện sớm.
+[214.8s] CHOICE 2/3: Lấy cả túi bạc — tiền bán mình thì phải thuộc về mình.
+[214.9s] TAG sfx:lock_open
+[219.3s] WATCH NguoiCanh Patrol→Scripted (story walk) · at (10.5, 6.2) · seen 39.1 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (11.0, 10.2) · path PathComplete 3.3 m left · 1.1 m/s · awareness 0.00
+[221.4s] WATCH NguoiCanh Scripted→Return (story walk ended) · at (11.0, 10.2) · seen 45.4 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (11.0, 10.2) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[221.6s] WATCH NguoiCanh Return→Patrol (back on his round) · at (10.7, 9.7) · seen 46.1 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (11.0, 10.2) · path PathComplete 0.2 m left · 0.9 m/s · awareness 0.00
+[223.8s] C4 J1 done · mirror seen False
+[226.6s] WATCH NguoiCanh Patrol→Investigate (going to check) · at (-0.5, 9.5) · seen 60.9 s ago at (-10.5, -5.0) · heard at (-12.5, -3.4) · target (0.0, 8.7) · path PathComplete 10.0 m left · 1.1 m/s · awareness 0.00
+[226.6s] WATCH TuBa Patrol→Scripted (story walk) · at (0.0, 10.2) · seen 153.5 s ago at (0.0, 0.0) · heard at (0.0, 0.0) · target (-10.9, 5.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[227.3s] WATCH TuBa Scripted→Investigate (going to check) · at (-2.0, 10.0) · seen 0.0 s ago at (-5.0, 10.2) · heard at (0.0, 0.0) · target (-5.0, 10.2) · path PathComplete Infinity m left · 1.0 m/s · awareness 0.66
+[227.5s] WATCH TuBa Investigate→Suspicious (raised the alarm) · at (-2.6, 10.0) · seen 0.0 s ago at (-5.0, 10.2) · heard at (0.0, 0.0) · target (-5.0, 10.2) · path PathComplete 2.4 m left · 1.0 m/s · awareness 1.00
+[227.5s] WATCH NguoiCanh Investigate→Investigate (going to check) · at (0.0, 8.7) · seen 63.6 s ago at (-5.0, 10.2) · heard at (-12.5, -3.4) · target (-5.0, 10.2) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[228.8s] WATCH TuBa Suspicious→Suspicious (raised the alarm) · at (-2.7, 10.0) · seen 0.0 s ago at (-5.5, 10.4) · heard at (0.0, 0.0) · target (-5.5, 10.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 1.00
+[228.8s] WATCH NguoiCanh Investigate→Investigate (going to check) · at (-5.0, 10.2) · seen 67.7 s ago at (-5.5, 10.4) · heard at (-12.5, -3.4) · target (-5.5, 10.4) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[230.2s] WATCH TuBa Suspicious→Suspicious (raised the alarm) · at (-2.7, 10.0) · seen 0.0 s ago at (-6.1, 10.5) · heard at (0.0, 0.0) · target (-6.1, 10.5) · path PathComplete 0.0 m left · 0.0 m/s · awareness 1.00
+[230.2s] WATCH NguoiCanh Investigate→Investigate (going to check) · at (-5.5, 10.4) · seen 71.7 s ago at (-6.1, 10.5) · heard at (-12.5, -3.4) · target (-6.1, 10.5) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[231.5s] WATCH TuBa Suspicious→Suspicious (raised the alarm) · at (-2.7, 10.0) · seen 0.0 s ago at (-6.6, 10.6) · heard at (0.0, 0.0) · target (-6.6, 10.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 1.00
+[231.5s] WATCH NguoiCanh Investigate→Investigate (going to check) · at (-6.1, 10.5) · seen 75.7 s ago at (-6.6, 10.6) · heard at (-12.5, -3.4) · target (-6.6, 10.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[232.8s] WATCH TuBa Suspicious→Suspicious (raised the alarm) · at (-2.7, 10.0) · seen 0.0 s ago at (-7.2, 10.6) · heard at (0.0, 0.0) · target (-7.2, 10.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 1.00
+[232.8s] WATCH NguoiCanh Investigate→Investigate (going to check) · at (-6.6, 10.6) · seen 79.7 s ago at (-7.2, 10.6) · heard at (-12.5, -3.4) · target (-7.2, 10.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[234.2s] WATCH TuBa Suspicious→Suspicious (raised the alarm) · at (-2.7, 10.0) · seen 0.0 s ago at (-7.7, 10.6) · heard at (0.0, 0.0) · target (-7.7, 10.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 1.00
+[234.2s] WATCH NguoiCanh Investigate→Investigate (going to check) · at (-7.2, 10.6) · seen 83.7 s ago at (-7.7, 10.6) · heard at (-12.5, -3.4) · target (-7.7, 10.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.65
+[235.6s] WATCH NguoiCanh Investigate→Return (checked, nothing there) · at (-7.7, 10.6) · seen 88.1 s ago at (-7.7, 10.6) · heard at (-12.5, -3.4) · target (-7.7, 10.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.00
+[235.8s] WATCH TuBa Suspicious→Return (nothing more) · at (-2.7, 10.0) · seen 4.3 s ago at (-8.1, 10.6) · heard at (0.0, 0.0) · target (-7.7, 10.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.15
+[235.8s] WATCH TuBa Return→Patrol (no round) · at (-2.7, 10.0) · seen 4.3 s ago at (-8.1, 10.6) · heard at (0.0, 0.0) · target (-7.7, 10.6) · path PathComplete 0.0 m left · 0.0 m/s · awareness 0.14
+[236.5s] WATCH NguoiCanh Return→Patrol (back on his round) · at (-10.3, 9.6) · seen 90.7 s ago at (-7.7, 10.6) · heard at (-12.5, -3.4) · target (-7.7, 10.6) · path PathComplete 0.2 m left · 0.9 m/s · awareness 0.00
+[239.9s] C4 J2 done · Tú Bà phase 1
+[240.4s] TAG scene:Dem_BackDoor
+[240.4s] TAG music:none
+[240.7s] TAG gameplay:kieu_voice
+[240.8s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[240.8s] TAG music:resolve
+[240.9s] CHAPTER 4 COMPLETE · lines 35 · choices 4
+[240.9s] FRAMES Chapter04_LauTuBaDem · avg 103 fps · 1% low 68 fps · worst 153 ms · 24502 frames · 1920x1080 · median 6.9 ms · p99 13.9 ms · under 60 fps 0.0% · load 3.7 s (first frame 3564 ms) · warm-up worst 661 ms
+   c4_viec = 2
+   c4_canh_giac = 2
+   c4_tien = 2
+   c4_van_tu = 0
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo, c4_bac_dau

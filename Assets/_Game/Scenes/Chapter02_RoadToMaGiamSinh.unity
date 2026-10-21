@@ -9172,7 +9172,7 @@ MonoBehaviour:
   _chapterNumber: 2
   _chapterTitle: "Tr\xEAn \u0111\u01B0\u1EDDng theo M\xE3 Gi\xE1m Sinh"
   _entryKnot: chapter_2
-  _nextScene: Chapter03_TuBaHouse
+  _nextScene: Chapter03_LauTuBa
   _dialogue: {fileID: 193957201}
   _player: {fileID: 381886786}
   _interaction: {fileID: 381886791}
@@ -16513,6 +16513,7 @@ MonoBehaviour:
   triggerInteraction: 2
   detectionOrigin: {fileID: 0}
   detectionHeight: 1
+  _lookOnly: 0
 --- !u!1001 &382671379
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30153,6 +30154,7 @@ MonoBehaviour:
   _ambienceVolume: 0.35
   _sfxVolume: 0.8
   _overrides: []
+  _foley: {fileID: 0}
 --- !u!4 &707612759
 Transform:
   m_ObjectHideFlags: 0
@@ -50446,9 +50448,12 @@ MonoBehaviour:
   maxPitch: 55
   invertY: 0
   lockCursorOnStart: 1
+  _firstPerson: 0
+  _body: {fileID: 0}
   _collisionMask:
     serializedVersion: 2
     m_Bits: 256
+  _closeBlendSeconds: 0.5
 --- !u!114 &1103055058
 MonoBehaviour:
   m_ObjectHideFlags: 0

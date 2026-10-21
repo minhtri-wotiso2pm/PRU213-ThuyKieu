@@ -1,0 +1,67 @@
+AUTOPILOT PASS
+[3.6s] NAVMESH built in 31 ms · 388 sources
+[3.6s] C4 Foley recorded set loaded
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.8s] TAG scene:Dem_Opening
+[0.8s] TAG music:tension_low
+[1.0s] CHOICE 3/5: Cãi lại: "Tôi không nợ bà thứ gì cả."
+[1.0s] TAG sfx:knock
+[1.1s] TAG sfx:latch_drop
+[1.2s] TAG scene:Dem_Night
+[1.2s] TAG gameplay:tutorial_dem
+[3.8s] CATCH Front by NguoiCanh · shoved · worst frame 21 ms · case A_front_standing
+[3.9s] FAIL → checkpoint restored
+[6.4s] CATCH Front by NguoiCanh · shoved · worst frame 14 ms · case A_front_crouched
+[6.4s] FAIL → checkpoint restored
+[8.8s] CATCH Rear by NguoiCanh · shoved · worst frame 14 ms · case B_rear
+[8.9s] FAIL → checkpoint restored
+[11.4s] CATCH Rear by NguoiCanh · shoved · worst frame 14 ms · case B_rear_crouched
+[11.4s] FAIL → checkpoint restored
+[13.9s] CATCH Front by NguoiCanh · shoved · worst frame 14 ms · case A_front_wall
+[13.9s] FAIL → checkpoint restored
+[16.3s] CATCH Front by NguoiCanh · shoved · worst frame 14 ms · case A_two_guards
+[16.4s] FAIL → checkpoint restored
+[16.5s] CATCH two guards · catch scenes played 1 (one expected)
+[20.7s] CATCH FromHiding Screen by NguoiCanh · shoved · worst frame 14 ms · case C_screen
+[20.8s] FAIL → checkpoint restored
+[25.0s] CATCH FromHiding Wardrobe by NguoiCanh · shoved · worst frame 14 ms · case C_wardrobe
+[25.1s] FAIL → checkpoint restored
+[29.1s] CATCH FromHiding Low by NguoiCanh · shoved · worst frame 21 ms · case C_jars
+[29.2s] FAIL → checkpoint restored
+[33.1s] CATCH FromHiding Low by NguoiCanh · shoved · worst frame 14 ms · case C_cloth
+[33.1s] FAIL → checkpoint restored
+[38.3s] CATCH FromHiding Screen by NguoiCanh · shoved · worst frame 14 ms · case C_archive_screen
+[38.4s] FAIL → checkpoint restored
+[40.9s] CATCH Front by NguoiCanh · shoved · worst frame 14 ms · case A_front_steps
+[41.0s] FAIL → checkpoint restored
+[43.4s] CATCH Front by NguoiCanh · shoved · worst frame 28 ms · case A_front_door
+[43.4s] FAIL → checkpoint restored
+[44.5s] CATCH abort mid-catch · ok · started True · playing False · camera True · FOV 72/72 · time 3.0/3.0 · controls free True · fade 0.00 · pose off True
+[44.5s] CATCH probe done · 14 catch scenes
+[45.9s] TAG gameplay:search_drawer
+[46.3s] TAG sfx:paper
+[46.5s] TAG sfx:lock_open
+[46.9s] TAG gameplay:document_deal
+[46.9s] SEQUENCE document_deal
+[47.0s] CHOICE 1/3: Cất văn tự vào áo — thêm một bằng chứng.
+[47.1s] CHOICE 2/3: Lấy cả túi bạc — tiền bán mình thì phải thuộc về mình.
+[47.2s] TAG sfx:lock_open
+[56.4s] C4 J1 done · mirror seen False
+[72.5s] C4 J2 done · Tú Bà phase 1
+[73.4s] CHOICE 1/4: Lật trang "Hoa trôi bèo dạt đã đành...": "Câu ấy là của người đã buông tay. Mình thì chưa."
+[79.7s] C4 Lam reached the kitchen
+[79.7s] TAG scene:Dem_BackDoor
+[79.7s] TAG music:none
+[80.1s] TAG gameplay:kieu_voice
+[80.1s] CHOICE 2/2: "Ngươi đã ở lại. Ta thì không."
+[80.2s] TAG music:resolve
+[80.2s] CHAPTER 4 COMPLETE · lines 43 · choices 5
+[80.2s] FRAMES Chapter04_LauTuBaDem · avg 115 fps · 1% low 63 fps · worst 35 ms · 9005 frames · 1920x1080 · median 6.9 ms · p99 13.9 ms · under 60 fps 0.2% · load 3.7 s (first frame 3450 ms) · warm-up worst 775 ms
+   c4_viec = 2
+   c4_canh_giac = 2
+   c4_tien = 2
+   c4_van_tu = 1
+   c4_so_no = True
+   c4_ru_co_lam = True
+   c4_bi_bat = 1
+   clues = c4_trang_no, c4_giao_keo, c4_bac_dau, c4_co_lam

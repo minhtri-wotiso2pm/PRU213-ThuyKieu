@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LTB_BrickFloor
+  m_Shader: {fileID: 4800000, guid: 73a060cdb0d92314e821534cabab829a, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _ARM_MAP
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 1
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: ada4f7625fac37c4a9055a05797c8f32, type: 3}
+        m_Scale: {x: 0.625, y: 0.625}
+        m_Offset: {x: 0, y: 0}
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 89924d500c5691c4cbdae06563dcb678, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 2800000, guid: b76185995baf1dc48b78ba7f63c0c2e5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _BumpScale: 0.5
+    - _ClearCoatMask: 0.6
+    - _ClearCoatSmoothness: 0.5
+    - _Cutoff: 0.5
+    - _Metallic: 0
+    - _OcclusionStrength: 0.5
+    - _Parallax: 0.4
+    - _Smoothness: 0.6
+    - _Surface: 0
+    m_Colors:
+    - _BaseColor: {r: 0.8, g: 0.5, b: 0.4, a: 1}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

@@ -1,0 +1,63 @@
+Mono path[0] = 'D:/PRU213/ThuyKieu_Share-20261009T182626Z-1-001/ThuyKieu_Share/Builds/Windows/ThuyKieu_Data/Managed'
+Mono config path = 'D:/PRU213/ThuyKieu_Share-20261009T182626Z-1-001/ThuyKieu_Share/Builds/Windows/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.6.0f1 (f7f8ed4d1e24)
+[EntityIdStore] init: VM path (explicit commit), pageSize=4096, blockCount=1048576, entitiesPerBlock=256, slots reserved=4294967296 bytes
+[Subsystems] Discovering subsystems at path D:/PRU213/ThuyKieu_Share-20261009T182626Z-1-001/ThuyKieu_Share/Builds/Windows/ThuyKieu_Data/UnitySubsystems
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 3050 Laptop GPU (ID=0x25a2)
+    Vendor:   NVIDIA
+    VRAM:     3964 MB
+    Driver:   32.0.15.6607
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.011 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+<RI> Initializing input.
+Using Windows.Gaming.Input
+UnloadTime: 1.738000 ms
+Unloading 11 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 0.857600 ms
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 22656.
+Total: 3.840300 ms (FindLiveObjects: 1.445500 ms CreateObjectMapping: 0.191100 ms MarkObjects: 1.951700 ms  DeleteObjects: 0.022600 ms)
+
+Shader 'Hidden/Universal Render Pipeline/GaussianDepthOfField' is not supported or has been stripped from the build (in 'DepthOfFieldGaussianPostProcessPass'). PostProcessing render passes will not execute.
+Shader 'Hidden/Universal Render Pipeline/GaussianDepthOfField' is not supported or has been stripped from the build (in 'DepthOfFieldGaussianPostProcessPass'). PostProcessing render passes will not execute.
+Shader 'Hidden/Universal Render Pipeline/BokehDepthOfField' is not supported or has been stripped from the build (in 'DepthOfFieldBokehPostProcessPass'). PostProcessing render passes will not execute.
+Shader 'Hidden/Universal Render Pipeline/PaniniProjection' is not supported or has been stripped from the build (in 'PaniniProjectionPostProcessPass'). PostProcessing render passes will not execute.
+GPU Resident Drawer created.
+Reduced additional punctual light shadows resolution by 4 to make 36 shadow maps fit in the 2048x2048 shadow atlas. To avoid this, increase shadow atlas size, decrease big shadow resolutions, or reduce the number of shadow maps active in the same frame
+Curl error 35: Cert verify failed. Certificate could not be verified (either omitted or unsupported). UnityTls error code: 7
+Curl error 35: Cert verify failed. Certificate could not be verified (either omitted or unsupported). UnityTls error code: 7
+[Probe] CHASE ok   lost round a corner, stays still · chased True · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 · came within 1.3 m of where he last knew · stuck up to 0.0 s · searched none · caught 1 · back on his round no
+[Probe] CHASE ok   lost round a corner, makes noise there · chased True · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 · came within 1.3 m of where he last knew · stuck up to 0.0 s · searched none · caught 1 · back on his round no
+Curl error 35: Cert verify failed. Certificate could not be verified (either omitted or unsupported). UnityTls error code: 7
+[Probe] CHASE ok   lost round a corner, slips away · chased True · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 → Search@6.9 → Return@24.1 → Patrol@38.1 · came within 0.0 m of where he last knew · stuck up to 0.0 s · searched (-11.66, 0.00, 0.69) PathComplete (across something), (-13.57, 0.00, -1.79) PathComplete, (-18.46, 0.00, -1.98) PathComplete · caught 0 · back on his round 0.3 m from it
+Curl error 35: Cert verify failed. Certificate could not be verified (either omitted or unsupported). UnityTls error code: 7
+[Probe] CHASE ok   three sounds, each further away · after each sound he was heading 0.0 / 0.0 / 0.0 m from it · Return@11.7 → Patrol@23.5 · back on his round 0.2 m from it
+[Probe] CHASE ok   door bolted behind her · chased True · he was 1.8 m behind her when it shut · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 → Search@6.2 → Return@19.9 → Patrol@31.4 · stuck up to 0.1 s · searched (-7.58, 0.00, 0.67) PathComplete (across something), (-11.66, 0.00, 2.60) PathComplete, (-11.66, 0.00, -0.02) PathComplete · caught 0 · back on his round 0.3 m from it
+[Probe] CHASE ok   a 150 ms frame as he gives up · Return@11.9 → Patrol@18.5 · back on his round 0.2 m from it
+Curl error 35: Cert verify failed. Certificate could not be verified (either omitted or unsupported). UnityTls error code: 7
+[Probe] CHASE ok   paused 2 s while walking to a search spot · searching True · 2.3 m from the spot before the pause, 0.7 m 1.2 s after · Search
+[Probe] CHASE ok   saw her hide, the way there bolted · knew the place True · Search@9.9 → Return@21.7 · came within 2.0 m of the screen · caught 0 (a catch from outside the bolted room would be wrong)
+[Probe] CHASE ok   saw her hide, she left before he came · knew the place True · forgot it when she left True · Search@7.3 → Return@20.4 → Patrol@25.3 · caught 0
+[Probe] CHASE ok   story walk ordered mid-chase · chasing True · after the order: Chase
+[Probe] CHASE ok   story walk into a locked room · told he arrived False · 3.5 m from the place · Return@22.6 · Return
+[Probe] CHASE probe done
+[Autopilot] Report written to D:/PRU213/ThuyKieu_Share-20261009T182626Z-1-001/ThuyKieu_Share/ThuyKieuGame_With_Unity/Tools/LauTuBa/QA/exe15_chase_trace3.txt
+GPU Resident Drawer disposed.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

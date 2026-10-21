@@ -55,6 +55,14 @@ namespace ThuyKieu.Core.Story
         public bool HasRig => _animator != null;
         public bool IsMoving => _agent != null && _agent.enabled && _agent.isOnNavMesh && !_agent.isStopped
                                 && (_agent.pathPending || _agent.remainingDistance > _agent.stoppingDistance + 0.05f);
+        /// <summary>The walk's path: complete, partial (it stops short of the goal) or invalid; Invalid without an agent.</summary>
+        public NavMeshPathStatus PathStatus => _agent != null && _agent.enabled && _agent.isOnNavMesh ? _agent.pathStatus : NavMeshPathStatus.PathInvalid;
+        public bool PathPending => _agent != null && _agent.enabled && _agent.isOnNavMesh && _agent.pathPending;
+        public float RemainingDistance => _agent != null && _agent.enabled && _agent.isOnNavMesh ? _agent.remainingDistance : 0f;
+        public Vector3 Destination => _agent != null && _agent.enabled && _agent.isOnNavMesh ? _agent.destination : transform.position;
+        /// <summary>Where he was last told to walk (the agent's own destination stops short when a shut door is in the way).</summary>
+        public Vector3 Requested { get; private set; }
+        public float Velocity => _agent != null && _agent.enabled ? _agent.velocity.magnitude : 0f;
 
         private void Awake()
         {
@@ -98,6 +106,7 @@ namespace ThuyKieu.Core.Story
 
         public bool MoveTo(Vector3 destination, float speed = 1.6f)
         {
+            Requested = destination;
             if (_agent == null || !_agent.enabled || !_agent.isOnNavMesh) return false;
             _faceTarget = null;
             _agent.speed = speed;
@@ -139,6 +148,26 @@ namespace ThuyKieu.Core.Story
             SetTalking(false, 0);
         }
 
+        public bool IsLying => _lyingHeight > 0f;
+
+        /// <summary>Undoes <see cref="LieDown"/>: the model rights itself at <paramref name="position"/> and can walk again.</summary>
+        public void StandUp(Vector3 position, Quaternion rotation)
+        {
+            if (_lyingHeight <= 0f) { Place(position, rotation); return; }
+            if (_staticVisual != null) { _staticVisual.localPosition = _visualBase; _staticVisual.localRotation = _visualRotation; }
+            else if (_animator != null)
+            {
+                var model = _animator.transform;
+                model.localRotation = Quaternion.Euler(90f, 0f, 0f) * model.localRotation;
+                model.localPosition -= Vector3.up * _lyingHeight;
+                _animator.speed = 1f;
+            }
+            _lying = false;
+            _lyingHeight = 0f;
+            transform.SetPositionAndRotation(position, rotation);
+            if (_agent != null) { _agent.enabled = true; if (_agent.isOnNavMesh) _agent.Warp(position); }
+        }
+
         /// <summary>Sits down on the spot (a chair must stand behind the actor), or stands up again.</summary>
         public void Sit(bool sitting)
         {
@@ -167,7 +196,8 @@ namespace ThuyKieu.Core.Story
         public void EnableNavigation()
         {
             if (_agent == null) return;
-            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+            var filter = new NavMeshQueryFilter { agentTypeID = _agent.agentTypeID, areaMask = NavMesh.AllAreas };
+            if (NavMesh.SamplePosition(transform.position, out NavMeshHit hit, 3f, filter))
             {
                 _agent.enabled = true;
                 _agent.Warp(hit.position);

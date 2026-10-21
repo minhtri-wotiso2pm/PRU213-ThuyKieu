@@ -1,0 +1,60 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.1s] NAVMESH built in 35 ms · 388 sources
+[0.1s] C4 Foley recorded set loaded
+[1.2s] TAG scene:Dem_Opening
+[1.2s] TAG music:tension_low
+[1.3s] CHOICE 3/5: Cãi lại: "Tôi không nợ bà thứ gì cả."
+[1.3s] TAG sfx:knock
+[1.4s] TAG sfx:latch_drop
+[1.5s] TAG scene:Dem_Night
+[1.5s] TAG gameplay:tutorial_dem
+[1.6s] C4 KEYS standing (opening): ok · hook 24 cm out from her hip bone, -7 cm below it · keys hang 6° from straight down · reach 0.71 m above her feet · size 20 cm · breathing False · keys can be taken False · scene running True
+[15.4s] C4 Tú Bà on her sập: body 12 cm above the mat with the old lift, lift now 0.33 m
+[26.7s] SOUND ok   asleep, crouching next door · Asleep · disturbance 0.00 · 4.4 m from her
+[27.4s] SOUND ok   asleep, Kiều's door flung far away · Asleep · 14.8 m
+[27.7s] C4 Tú Bà calls the guard to (0.70, 0.35, 11.15) · guard Investigate → (0.70, 0.35, 11.15)
+[41.7s] SOUND ok   her door flung: roused, no failure · Roused · guard Investigate, sent 0.0 m from the door · asleep again after 14 s · failures 0
+[41.7s] SOUND info rug spot 3.0 m from her head, on a covering True (Mat)
+[43.8s] SOUND info stirring, walking on her rug about 3 m away · Stirring (a walking step on the rug carries 2.4 m)
+[45.5s] C4 Tú Bà calls the guard to (1.02, 0.38, 16.67) · guard Investigate → (1.02, 0.38, 16.67)
+[45.8s] SOUND info running on her rug: 2 steps, carrying 5.4 m, 3.1 m from her ear · she last heard a sound from 1.1 m away from the rug spot
+[59.7s] SOUND ok   stirring, running on her rug about 3 m away · Roused · still free True · then Asleep
+[59.7s] C4 Tú Bà calls the guard to (0.70, 0.35, 11.15) · guard Investigate → (0.70, 0.35, 11.15)
+[61.4s] CATCH Front by TuBa · shoved · worst frame 13 ms
+[61.5s] FAIL → checkpoint restored
+[61.5s] SOUND ok   roused, Kiều at the bedside · catch played True (Front) · after the checkpoint: lying True, Asleep, her eyes off True
+[64.4s] CATCH Front by TuBa · shoved · worst frame 10 ms
+[64.5s] FAIL → checkpoint restored
+[64.5s] SOUND ok   hand at her belt while she stirs · catch played True
+[67.5s] SOUND ok   after the checkpoint · sounds heard 0 · Tú Bà Asleep, disturbance 0.00 · guard Patrol
+[69.4s] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 640×480
+[73.3s] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 640×480
+[90.7s] SOUND ok   12 s of drawing on her out-breaths frees the ring, once · taken 1× · keys in hand 1 · keys shown False · stage 2 · catches 0
+[90.7s] SOUND ok   time: counted work vs. time taken · setting 12.0 s · counted 12.00 s of work (E down 12.10 s) over 6 out-breaths · 23.2 s in all, leaning in and waiting included (aim 20–30 s)
+[90.7s] SOUND ok   key ring taken on her out-breaths · stage 2 · Tú Bà Asleep
+[90.7s] SOUND probe done
+[91.2s] TAG gameplay:search_drawer
+[91.5s] TAG sfx:paper
+[91.8s] TAG sfx:lock_open
+[92.1s] TAG gameplay:document_deal
+[92.2s] CHOICE 1/3: Cất văn tự vào áo — thêm một bằng chứng.
+[92.3s] CHOICE 1/3: Chỉ lấy vài lạng làm lộ phí.
+[92.3s] TAG sfx:lock_open
+[102.0s] C4 J1 done · mirror seen False
+[118.0s] C4 J2 done · Tú Bà phase 1 · after J2: Awake, breathing False, snore False · breath played on 31536 frames · while not asleep in bed 0 · breath sources on her 1
+[118.5s] TAG scene:Dem_BackDoor
+[118.5s] TAG music:none
+[118.9s] TAG gameplay:kieu_voice
+[118.9s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[118.9s] TAG music:resolve
+[119.0s] CHAPTER 4 COMPLETE · lines 33 · choices 4
+[119.0s] FRAMES Chapter04_LauTuBaDem · avg 723 fps · 1% low 308 fps · worst 25 ms · 84502 frames · 640x480 · median 1.3 ms · p99 2.3 ms · under 60 fps 0.0% · load 2.8 s (first frame 2585 ms) · warm-up worst 1161 ms
+   c4_viec = 2
+   c4_canh_giac = 2
+   c4_tien = 1
+   c4_van_tu = 1
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo

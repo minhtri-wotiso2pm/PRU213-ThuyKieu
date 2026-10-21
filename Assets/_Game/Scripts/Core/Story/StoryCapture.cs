@@ -28,9 +28,16 @@ namespace ThuyKieu.Core.Story
         public static void Shot(string name, int width = 1600, int height = 900)
         {
             string folder = Directory;
-            var camera = Camera.main;
-            if (folder == null || camera == null) return;
+            if (folder == null) return;
             System.IO.Directory.CreateDirectory(folder);
+            ShotFile(Path.Combine(folder, name + ".png"), width, height);
+        }
+
+        /// <summary>The main camera and the HUD as the player sees them, saved to <paramref name="path"/> (QA frames).</summary>
+        public static void ShotFile(string path, int width, int height)
+        {
+            var camera = Camera.main;
+            if (camera == null) return;
             var canvases = Object.FindObjectsByType<Canvas>();
             var modes = new RenderMode[canvases.Length];
             for (int i = 0; i < canvases.Length; i++)
@@ -55,7 +62,7 @@ namespace ThuyKieu.Core.Story
             RenderTexture.active = active;
             camera.targetTexture = previous;
             for (int i = 0; i < canvases.Length; i++) canvases[i].renderMode = modes[i];
-            File.WriteAllBytes(Path.Combine(folder, name + ".png"), image.EncodeToPNG());
+            File.WriteAllBytes(path, image.EncodeToPNG());
             Object.Destroy(image);
             texture.Release();
         }

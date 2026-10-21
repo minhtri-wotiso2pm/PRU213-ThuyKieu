@@ -1,0 +1,13 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.0s] NAVMESH built in 29 ms · 388 sources
+[0.0s] C4 Foley recorded set loaded
+[0.9s] TAG scene:Dem_Opening
+[0.9s] TAG music:tension_low
+[1.0s] CHOICE 3/5: Cãi lại: "Tôi không nợ bà thứ gì cả."
+[1.1s] TAG sfx:knock
+[1.1s] TAG sfx:latch_drop
+[1.3s] TAG scene:Dem_Night
+[1.3s] TAG gameplay:tutorial_dem
+[1.3s] C4 KEYS standing (opening): ok · hook 24 cm out from her hip bone, -7 cm below it · keys hang 6° from straight down · reach 0.72 m above her feet · size 20 cm · breathing False · keys can be taken False · scene running False
+[1.8s] STOP at explore 2 · player (-12.80, 0.37, 5.60) · clues 0
