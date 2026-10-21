@@ -12,7 +12,9 @@ namespace ThuyKieu.Gameplay.Sequences
 {
     /// <summary>
     /// Free play on the hồ cầm: six keys pluck the ngũ cung strings (hò xự xang xê cống liu), Space sweeps them all,
-    /// E puts the instrument down. Playing the opening of "Bạc mệnh" (xự xang xê xang xự) draws a word from Kiều Thật.
+    /// E puts the instrument down. Secret: playing the opening of "Bạc mệnh" (xự xang xê xang xự, the motif that rings
+    /// out as she lifts the lute) makes Kiều's hands remember the rest: she plays the whole piece herself, and the
+    /// bond with Kiều Thật (đồng điệu) grows by one.
     /// The world animates the plucking hand through <see cref="Plucked"/>.
     /// </summary>
     public class LuteSequence : StorySequence
@@ -23,6 +25,15 @@ namespace ThuyKieu.Gameplay.Sequences
         private static readonly Key[] Keys = { Key.A, Key.S, Key.D, Key.F, Key.G, Key.H };
         private static readonly Key[] Digits = { Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4, Key.Digit5, Key.Digit6 };
         private static readonly int[] BacMenh = { 1, 2, 3, 2, 1 };
+        // The whole "Bạc mệnh" as her hands remember it: (string, beat in seconds). Four sad phrases, the last one let ring.
+        private static readonly (int note, float beat)[] BacMenhSong =
+        {
+            (1, 0.45f), (2, 0.45f), (3, 0.6f), (2, 0.45f), (1, 0.9f),
+            (0, 0.45f), (1, 0.45f), (3, 0.45f), (4, 0.6f), (3, 0.9f),
+            (5, 0.45f), (4, 0.45f), (3, 0.45f), (2, 0.6f), (1, 0.45f), (2, 0.45f), (1, 1.2f),
+            (0, 0.6f), (1, 1.6f)
+        };
+        private bool _performing;
         private const float BaseNote = 261.63f;
 
         private readonly List<int> _played = new List<int>();
@@ -54,8 +65,9 @@ namespace ThuyKieu.Gameplay.Sequences
                 _strings[i].pitch = Pitches[i] / BaseNote;
             }
             _played.Clear();
+            _performing = false;
             var view = LuteView.Create(Labels, Names, "Phím A–H hoặc 1–6: gảy từng dây · Space: vuốt dây · E: đặt đàn xuống\n" +
-                "<color=#E8C27A>Thử mở đầu khúc Bạc mệnh: S · D · F · D · S</color>");
+                "<color=#E8C27A><i>Khúc đàn vừa ngân... ngón tay có còn nhớ?</i></color>");
             director.Hud.SetControls("A–H / 1–6: gảy dây · Space: vuốt dây · E: đặt đàn xuống");
             bool heard = false;
 
@@ -68,7 +80,8 @@ namespace ThuyKieu.Gameplay.Sequences
                 yield return null; // the key that closed the last line must not pluck or put the lute down
                 for (float t = 0f; ; t += Time.deltaTime)
                 {
-                    if (!GamePause.IsPaused)
+                    // While her hands play "Bạc mệnh" by themselves the player only listens.
+                    if (!GamePause.IsPaused && !_performing)
                     {
                         if (t > 0.5f && InputReader.InteractPressedThisFrame) break;
                         for (int i = 0; i < Keys.Length; i++)
@@ -108,18 +121,30 @@ namespace ThuyKieu.Gameplay.Sequences
             }
         }
 
-        /// <summary>The motif is recognised: Kiều Thật speaks, every string lights and the whole "Bạc mệnh" phrase rings out.</summary>
+        /// <summary>
+        /// The secret: the motif is recognised and Kiều's hands play the whole "Bạc mệnh" by themselves (each note
+        /// plucks a string and moves her hand), the music fading under it; then the reveal and +1 đồng điệu.
+        /// </summary>
         private IEnumerator Remember(StoryDirector director, LuteView view)
         {
+            _performing = true;
             view.SetFeedback("<size=130%><color=#E8C27A>Khúc Bạc mệnh</color></size>");
-            director.Hud.ShowBark("KieuThat", "Khúc ấy... ngón tay này vẫn còn nhớ.", 4.5f);
-            yield return new WaitForSeconds(0.35f);
-            if (director.Audio != null) director.Audio.PlaySfx("dan", 0.9f);
-            for (float t = 0f; t < 3f && view != null; t += 0.12f)
+            director.Hud.ShowBark("KieuThat", "Khúc ấy... Để ta.", 3f);
+            if (director.Audio != null) director.Audio.Duck(0.2f);
+            yield return new WaitForSeconds(0.9f);
+            foreach (var (note, beat) in BacMenhSong)
             {
-                view.Pluck(Mathf.FloorToInt(t / 0.12f) % Pitches.Length);
-                yield return new WaitForSeconds(0.12f);
+                if (view == null) break;
+                Pluck(note, view);
+                yield return new WaitForSeconds(beat);
             }
+            yield return new WaitForSeconds(0.5f);
+            if (director.Audio != null) { director.Audio.Duck(1f); director.Audio.PlaySfx("memory", 0.6f); }
+            director.SetInt("dong_dieu", Mathf.Min(10, director.GetInt("dong_dieu") + 1));
+            director.Hud.ShowToast("BÍ MẬT · KHÚC BẠC MỆNH", "Tay Kiều vẫn nhớ khúc đàn nàng tự soạn. Đồng điệu +1");
+            director.Hud.ShowBark("KieuThat", "Ngươi gảy được nửa câu đầu. Nửa sau... là đời ta.", 4.5f);
+            if (view != null) view.SetFeedback("");
+            _performing = false;
         }
 
         private bool EndsWithBacMenh()

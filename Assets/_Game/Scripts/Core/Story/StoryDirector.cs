@@ -63,6 +63,7 @@ namespace ThuyKieu.Core.Story
         private Dictionary<string, StorySequence> _sequences;
         private StoryActor[] _actors;
         private StoryActor _playerActor;
+        private StoryActor _lastSpeakerActor;
         private Checkpoint _checkpoint;
         private string _pendingSequence;
         private bool _exploreRequested, _chapterEnded, _busy;
@@ -466,6 +467,12 @@ namespace ThuyKieu.Core.Story
             if (!hasCamera && _shots != null) _shots.Auto(speaker);
 
             var speakerActor = FindActor(speaker);
+            StoryActor partner = _lastSpeakerActor != null && _lastSpeakerActor != speakerActor
+                && _lastSpeakerActor.isActiveAndEnabled
+                && speakerActor != null
+                && Vector3.Distance(_lastSpeakerActor.transform.position, speakerActor.transform.position) < ConversationRange
+                    ? _lastSpeakerActor
+                    : _playerActor;
             int gesture = Gesture(emotion);
             foreach (var actor in _actors)
             {
@@ -475,12 +482,13 @@ namespace ThuyKieu.Core.Story
                 // Only people within talking distance turn: a line called out to someone in another room swivels nobody.
                 if (actor == speakerActor)
                 {
-                    if (_playerActor != null && actor != _playerActor && Vector3.Distance(actor.transform.position, _playerActor.transform.position) < ConversationRange)
-                        actor.TurnForLine(_playerActor.transform.position);
+                    if (partner != null && actor != partner && Vector3.Distance(actor.transform.position, partner.transform.position) < ConversationRange)
+                        actor.TurnForLine(partner.transform.position);
                 }
                 else if (speakerActor != null && Vector3.Distance(actor.transform.position, speakerActor.transform.position) < ConversationRange)
                     actor.TurnForLine(speakerActor.transform.position);
             }
+            if (speakerActor != null) _lastSpeakerActor = speakerActor;
         }
 
         private void RouteTag(string key, string value)
@@ -504,6 +512,7 @@ namespace ThuyKieu.Core.Story
 
         private void ResetActorTalking()
         {
+            _lastSpeakerActor = null;
             foreach (var actor in _actors)
             {
                 if (actor == null) continue;
@@ -519,11 +528,13 @@ namespace ThuyKieu.Core.Story
             switch (emotion)
             {
                 case "crying": return 1;
-                case "irritated_hidden": case "annoyed": case "cold": case "angry": case "mocking": case "rage": return 2;
+                case "irritated_hidden": case "annoyed": case "angry": case "mocking": case "rage": return 2;
                 case "satisfied": case "smug": case "amused": case "warm_fake": return 3;
-                case "defensive": case "caught_off_guard": case "determined": case "firm": case "collapse": return 4;
-                case "thoughtful": case "calm_probe": case "realization": return 5;
-                case "suspicious": case "fearful": case "businesslike": return 7;
+                case "defensive": case "caught_off_guard": return 4;
+                case "thoughtful": case "realization": case "suspicious": case "fearful": return 5;
+                // The shared controller has states 0–6 only. Calm, controlled and businesslike lines use its normal
+                // talking state; returning 7 here previously left those speakers in the preceding animation.
+                case "pickup": return 6;
                 default: return 0;
             }
         }

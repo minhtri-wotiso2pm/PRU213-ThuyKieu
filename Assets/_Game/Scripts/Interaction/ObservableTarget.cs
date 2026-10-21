@@ -23,6 +23,18 @@ namespace ThuyKieu.Interaction
         public Vector3 FocusPoint => _focusPoint != null ? _focusPoint.position : transform.position + Vector3.up * 1.4f;
         public bool IsAvailable => _director != null && _director.IsExploreAvailable(_exploreId);
 
+        /// <summary>Configures targets created at runtime so existing scenes can gain an observation beat without YAML edits.</summary>
+        public void Configure(StoryDirector director, string exploreId, string label, Transform focusPoint,
+            float requiredSeconds, float maxDistance)
+        {
+            _director = director;
+            _exploreId = exploreId;
+            _label = label;
+            _focusPoint = focusPoint;
+            _requiredSeconds = requiredSeconds;
+            _maxDistance = maxDistance;
+        }
+
         public void Complete() { if (IsAvailable) _director.ChooseExplore(_exploreId, transform); }
     }
 }

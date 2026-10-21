@@ -4176,6 +4176,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ThuyKieu.Interaction.PlayerInteraction
   interactionDistance: 2.5
   interactionRadius: 0.4
+  minimumFacingDot: 0.1
   interactionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -92484,27 +92485,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 954.5399
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 477.26996
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -351.96292
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3258551896888162254, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_sharedMaterial

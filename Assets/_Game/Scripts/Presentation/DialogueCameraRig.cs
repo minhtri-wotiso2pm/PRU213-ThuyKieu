@@ -327,8 +327,8 @@ namespace ThuyKieu.Presentation
             Vector3 delta = to - from;
             float length = delta.magnitude;
             if (length > 0.01f && Physics.SphereCast(from, 0.12f, delta / length, out RaycastHit hit, length, _obstruction, QueryTriggerInteraction.Ignore))
-                // No 0.35 m floor: it is thicker than a wall, so a short gap put the lens on the far side of it.
-                return from + delta / length * Mathf.Max(0.05f, hit.distance - 0.05f);
+                // Keep enough room for the near clip plane; five centimetres still let wall faces fill the frame.
+                return from + delta / length * Mathf.Max(0.05f, hit.distance - 0.18f);
             return to;
         }
 
@@ -336,9 +336,23 @@ namespace ThuyKieu.Presentation
         {
             if (authored)
             {
+                // Scene-authored anchors used to bypass Compose entirely, so an anchor on the wrong side of a wall
+                // could look straight through it. Pull the lens onto the subject's side before using the shot.
+                var speaker = _director.FindActor(_director.Dialogue.CurrentSpeakerId);
+                var focusActor = speaker != null ? speaker : _director.FindActor("Kieu");
+                Vector3 focus = focusActor != null ? focusActor.HeadPosition : Vector3.zero;
+                // Only use a real person that the authored lens is actually facing. Guessing a point four metres ahead
+                // can put that point beyond the very wall we are trying not to cross.
+                bool hasFocus = focusActor != null && Vector3.Dot(focus - position, rotation * Vector3.forward) > 0f;
+                Vector3 safePosition = hasFocus ? Unblock(focus, position) : position;
+                if (hasFocus && (safePosition - position).sqrMagnitude > 0.0001f)
+                {
+                    position = safePosition;
+                    Vector3 look = focus - position;
+                    if (look.sqrMagnitude > 0.001f) rotation = Quaternion.LookRotation(look);
+                }
                 // Authored anchors: keep whoever is talking visible and nobody's back pressed against the lens.
                 Restore();
-                var speaker = _director.FindActor(_director.Dialogue.CurrentSpeakerId);
                 var others = Bystanders(speaker != null ? new[] { speaker } : new StoryActor[0]);
                 var targets = speaker != null && Vector3.Dot(speaker.HeadPosition - position, rotation * Vector3.forward) > 0f
                     ? new[] { speaker.HeadPosition } : new Vector3[0];

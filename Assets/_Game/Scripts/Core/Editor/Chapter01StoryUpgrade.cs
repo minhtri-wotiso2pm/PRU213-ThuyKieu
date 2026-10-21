@@ -143,10 +143,9 @@ namespace ThuyKieu.Core.Editor
             Target(targets, director, "AltarTarget", new Vector3(0f, 0f, 5.14f), "c1_ban_tho", "Thắp hương trên bàn thờ", new Vector3(1.4f, 1.6f, 1.2f), new Vector3(0f, 0.05f, 5.14f), 0f);
             Target(targets, director, "GateKnock", new Vector3(0f, 0f, -12.0f), "c1_cong", "Ra mở cổng", new Vector3(3.2f, 2f, 1.8f), null, 0f);
             Target(targets, director, "GateLeave", new Vector3(0f, 0f, -11.8f), "c1_ra_di", "Bước ra cổng", new Vector3(3.2f, 2f, 1.8f), new Vector3(0f, 0.05f, -11.5f), 180f);
-            Target(targets, director, "SilverTarget", new Vector3(0.7f, 0f, 1.95f), "c1_tui_bac", "Nhìn túi bạc", new Vector3(1.1f, 1.4f, 0.9f), new Vector3(0.65f, 0.05f, 1.6f), 0f);
+            Observable(silver, director, "c1_tui_bac", "Dấu trên nén bạc", silver.transform.position, 8f);
             Target(targets, director, "ContractTarget", new Vector3(-0.35f, 0f, 1.95f), "c1_khe", "Ngồi vào bàn, xem tờ khế", new Vector3(1.0f, 1.4f, 0.9f), new Vector3(-0.25f, 0.05f, 1.6f), 0f);
             Explore(ma.gameObject, director, "c1_hoi", "Đáp lời Mã Giám Sinh", Vector3.one * 1.9f);
-            Observable(ma.gameObject, director, "c1_quan_sat", "Quan sát Mã Giám Sinh", ma.transform.position + Vector3.up * 1.55f, 11f);
             var askServant = Explore(servant.gameObject, director, "c1_tuy_tung", "Hỏi chuyện tên tùy tùng", Vector3.one * 1.9f);
             Set(askServant, "_standPoint", Point("ServantAskStand", new Vector3(1.2f, 0.05f, -3.1f), 105f, targets));
             var courtyard = Point("CourtyardObserve", new Vector3(4.8f, 0f, -6.0f), 0f, targets);
@@ -190,11 +189,10 @@ namespace ThuyKieu.Core.Editor
                 "Trước khi khách đến, hãy tìm hiểu tình cảnh gia đình: ngồi với Mẹ Kiều và xem quanh nhà, quanh sân.",
                 "WASD: đi · Shift: chạy · Chuột phải: quan sát · E: tương tác · J: sổ tay");
             Tutorial(sequences, "tutorial_suspicion",
-                "<color=#E8C27A>Tìm hiểu Mã Giám Sinh</color> trước khi ký khế — nhưng đừng để hắn sinh nghi.\n\n" +
-                "<color=#E8C27A>Giữ chuột phải</color>: quan sát hắn.   <color=#E8C27A>E</color>: đáp lời, xem túi bạc, ra hiên hỏi chuyện.\n" +
-                "Thanh <color=#F08080>Nghi ngờ</color> tăng khi bạn nhìn chằm chằm lúc hắn đang nhìn lại, hoặc khi hỏi quá thẳng. Đầy thanh là hắn bỏ đi.\n\n" +
-                "Có câu trả lời phải chọn trong <color=#E8C27A>vài giây</color>: hết giờ thì Kiều im lặng.",
-                "WASD: đi · Chuột phải: quan sát · E: tương tác · J: sổ tay");
+                "<color=#E8C27A>Nhìn dấu trên túi bạc</color> khi Mã Giám Sinh quay sang phía Mẹ.\n\n" +
+                "Giữ <color=#E8C27A>chuột phải</color> và hướng camera vào túi bạc. Khi hắn nhìn lại, hãy buông ra; bị bắt gặp chỉ làm hắn nghi ngờ hơn, câu chuyện vẫn tiếp tục.\n\n" +
+                "Bạn cũng có thể bỏ qua túi bạc và nhấn <color=#E8C27A>E</color> để đối chất ngay.",
+                "WASD: đi · Chuột phải: quan sát bạc · E: đối chất · J: sổ tay");
             var document = Child<DocumentSequence>(sequences, "document_khe");
             Set(document, "_id", "document_khe");
             Set(document, "_view", s.Hud.GetComponent<DocumentView>());

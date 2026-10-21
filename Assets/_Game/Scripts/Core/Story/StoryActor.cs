@@ -83,6 +83,27 @@ namespace ThuyKieu.Core.Story
             _animator.transform.localScale *= height / current;
         }
 
+        /// <summary>
+        /// Height of the head bone above the feet. Unlike <see cref="VisualHeight"/> it ignores hats, hair ornaments and
+        /// flaring sleeves, so it compares people by their bodies.
+        /// </summary>
+        public float HeadHeight
+        {
+            get
+            {
+                var head = _animator != null && _animator.isHuman ? _animator.GetBoneTransform(HumanBodyBones.Head) : null;
+                return head != null ? head.position.y - transform.position.y : _headHeight;
+            }
+        }
+
+        /// <summary>Scales the model so its head bone sits <paramref name="height"/> metres above its feet.</summary>
+        public void FitHeadHeight(float height)
+        {
+            float current = HeadHeight;
+            if (_animator == null || current < 0.1f) return;
+            _animator.transform.localScale *= height / current;
+        }
+
         /// <summary>Feet-to-crown capsule axis used by cameras to keep bystanders out of a shot.</summary>
         public float StandingHeight => _headHeight + 0.15f;
         public NavMeshAgent Agent => _agent;
@@ -116,12 +137,22 @@ namespace ThuyKieu.Core.Story
             }
         }
 
+        /// <summary>
+        /// Gesture used for lines with no particular emotion (0 plays the broad "Talking" clip). A composed or scheming
+        /// character can talk with a calmer one instead.
+        /// </summary>
+        public int CalmGesture { get; set; }
+
+        /// <summary>While seated, lines do not start the seated talking clip (which turns the head about): for someone
+        /// weeping into her hands at the table.</summary>
+        public bool StillWhileSeated { get; set; }
+
         public void SetTalking(bool talking, int emotion)
         {
             _talkingRequested = talking;
-            _talkingEmotion = talking ? emotion : 0;
+            _talkingEmotion = talking ? (emotion == 0 ? CalmGesture : emotion) : 0;
             if (_animator == null || !_animator.isActiveAndEnabled) return;
-            if (_hasTalking) _animator.SetBool(Talking, talking && !IsMoving);
+            if (_hasTalking) _animator.SetBool(Talking, talking && !IsMoving && !(StillWhileSeated && IsSitting));
             if (_hasEmotion) _animator.SetInteger(Emotion, _talkingEmotion);
         }
 

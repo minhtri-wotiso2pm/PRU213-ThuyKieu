@@ -35,10 +35,12 @@ namespace ThuyKieu.Gameplay.Chapters
         // Mã Giám Sinh's walking pace; he stops and turns when she comes up to talk.
         private const float EscortSpeed = 1.45f;
         // Straying this far from him sends the servant after her; coming back within GiveUpDistance calls him off.
-        private const float StrayDistance = 13f, GiveUpDistance = 6f, ChaseSpeed = 6.2f;
+        private const float StrayDistance = 13f, GiveUpDistance = 6f, ChaseSpeed = 4.2f;
+        private const float StrayGraceTime = 2.25f;
 
+        private Transform _profileShot;
         private int _waypoint;
-        private float _glanceTimer = 10f, _glanceHold, _barkCooldown;
+        private float _glanceTimer = 10f, _glanceHold, _barkCooldown, _strayTimer;
         private bool _waiting, _restCalled, _paperDropped, _chasing, _shouted;
         private float _suspicionCarry;
 
@@ -62,12 +64,13 @@ namespace ThuyKieu.Gameplay.Chapters
             // Runtime bake: the road is generated geometry, and agents join once the mesh exists.
             if (_navMesh != null) _navMesh.BuildNavMesh();
             foreach (var actor in FindObjectsByType<StoryActor>()) actor.EnableNavigation();
-            // The road cast was imported at different sizes: a head taller than Kiều, not a giant beside her.
-            float kieu = _director.Player.GetComponent<StoryActor>().VisualHeight;
+            _ma.CalmGesture = StoryDirector.Gesture("satisfied");
+            // Sized against Kiều by the head bone (whole-model bounds count hats and hairpins).
+            float kieu = _director.Player.GetComponent<StoryActor>().HeadHeight;
             if (kieu > 0.5f)
             {
-                _ma.FitVisualHeight(kieu * 1.08f);
-                _servant.FitVisualHeight(kieu * 1.05f);
+                _ma.FitHeadHeight(kieu * 1.07f);
+                _servant.FitHeadHeight(kieu * 1.05f);
             }
             _director.Player.AllowCrouch = true;
             _director.Hud.SetControls("WASD: đi · Shift: chạy · Chuột phải: quan sát · Ctrl: khom · E: tương tác · J: sổ tay");
@@ -76,6 +79,7 @@ namespace ThuyKieu.Gameplay.Chapters
 
         private void Update()
         {
+            KeepProfileShot();
             if (_barkCooldown > 0f) _barkCooldown -= Time.deltaTime;
             if (!_director.InExplore)
             {
@@ -96,6 +100,7 @@ namespace ThuyKieu.Gameplay.Chapters
 
         private void HoldEscort()
         {
+            _strayTimer = 0f;
             if (_ma.IsMoving) _ma.Stop();
             if (_servant.IsMoving) _servant.Stop();
         }
@@ -162,7 +167,27 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             Vector3 slot = _ma.transform.position - _ma.transform.forward * 1.7f + _ma.transform.right * 0.9f;
             if (!follow || Flat(slot - _servant.transform.position) < 0.8f) { if (_servant.IsMoving && !follow) _servant.Stop(); return; }
-            _servant.MoveTo(slot, 1.7f);
+            // He is an attendant keeping formation, not a guard charging at Kiều.
+            _servant.MoveTo(slot, 1.35f);
+        }
+
+        /// <summary>
+        /// "Kieu_Profile": side-on at her eye line, along the woven screen she listens through, so the moment she
+        /// understands is on her face (from the far side the poles cover it, from behind there is no face).
+        /// </summary>
+        private void KeepProfileShot()
+        {
+            if (_profileShot == null)
+            {
+                _profileShot = new GameObject("CAM_Kieu_Profile").transform;
+                _profileShot.SetParent(transform, false);
+            }
+            var kieu = _director.Player.GetComponent<StoryActor>();
+            Vector3 head = kieu.HeadPosition;
+            Vector3 facing = Vector3.ProjectOnPlane(kieu.transform.forward, Vector3.up).normalized;
+            Vector3 side = Vector3.Cross(Vector3.up, facing);
+            _profileShot.position = head - side * 1.25f + facing * 0.35f + Vector3.up * 0.05f;
+            _profileShot.rotation = Quaternion.LookRotation(head - Vector3.up * 0.08f - _profileShot.position);
         }
 
         /// <summary>Kiều wanders off: Mã Giám Sinh shouts and his servant runs her down; catching her restores the checkpoint.</summary>
@@ -174,7 +199,16 @@ namespace ThuyKieu.Gameplay.Chapters
             {
                 // At the end of the road he waits at the tea house: walking up to it is not running away.
                 bool resting = _waypoint >= _path.Length - 1 || (_bench != null && Flat(player - _bench.position) < 9f);
-                if (distance < StrayDistance || resting) return;
+                if (distance < StrayDistance || resting)
+                {
+                    _strayTimer = 0f;
+                    return;
+                }
+                // Scene entry, a corner in the NavMesh, or stopping to inspect the dropped note can briefly put Kiều
+                // over the distance threshold. Only a sustained separation counts as trying to flee.
+                _strayTimer += Time.deltaTime;
+                if (_strayTimer < StrayGraceTime) return;
+                _strayTimer = 0f;
                 _chasing = true;
                 _shouted = false;
                 _ma.Stop();
@@ -188,6 +222,7 @@ namespace ThuyKieu.Gameplay.Chapters
             if (distance < GiveUpDistance)
             {
                 _chasing = false;
+                _strayTimer = 0f;
                 _servant.Stop();
                 Bark("TuyTung", "Nương tử đi lạc sao? Đừng để chủ ta nổi giận.");
                 return;
@@ -264,6 +299,7 @@ namespace ThuyKieu.Gameplay.Chapters
             _glanceHold = 0f;
             _waiting = false;
             _chasing = false;
+            _strayTimer = 0f;
             // Bring the escort back beside Kiều so the restored state is readable.
             Vector3 player = _director.Player.transform.position;
             Vector3 forward = _director.Player.transform.forward;

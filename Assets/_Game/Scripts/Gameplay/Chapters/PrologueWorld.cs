@@ -222,12 +222,23 @@ namespace ThuyKieu.Gameplay.Chapters
             switch (speaker)
             {
                 case "QuanSai":
+                    // Before Kiều intervenes he confronts Vương Ông. Once she has chosen an answer, he is
+                    // replying to her and must not keep speaking over her shoulder at her father.
+                    StoryActor addressee = _director.GetInt("pl_hanh_dong") > 0 ? kieu : _father;
+                    foreach (var guard in _officials) guard.TurnForLine(addressee.transform.position);
+                    _father.TurnForLine(official.transform.position);
+                    kieu.TurnForLine(official.transform.position);
+                    break;
                 case "VuongOng":
                     foreach (var guard in _officials) guard.TurnForLine(_father.transform.position);
                     _father.TurnForLine(official.transform.position);
-                    kieu.TurnForLine((speaker == "QuanSai" ? official : _father).transform.position);
+                    kieu.TurnForLine(_father.transform.position);
                     break;
                 case "Kieu":
+                    foreach (var guard in _officials) guard.TurnForLine(kieu.transform.position);
+                    _father.TurnForLine(official.transform.position);
+                    kieu.TurnForLine(official.transform.position);
+                    break;
                 case "NoiTam":
                     kieu.TurnForLine(official.transform.position);
                     break;

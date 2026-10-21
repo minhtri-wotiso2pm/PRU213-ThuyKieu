@@ -14,15 +14,7 @@
 # speaker:MaGiamSinh
 # emotion:polite_fake
 # camera:CU_MaGiamSinh
-Mã Giám Sinh: Nàng cứ yên tâm. Đi kịp trước tối thì đêm nay đã có người lo cơm ấm cho nàng.
-
-# speaker:Kieu
-# emotion:controlled
-# camera:CU_Kieu
-Kiều: Đa tạ công tử.
-
-# speaker:NoiTam
-Sách gọi hắn là kẻ buôn người. Nhưng ở đây hắn đang cười rất tử tế. Mình phải tự nhìn bằng mắt mình.
+Mã Giám Sinh: Đi kịp trước tối, đêm nay sẽ có người lo chỗ nghỉ cho nàng.
 
 # speaker:Narrator
 # objective:Theo Mã Giám Sinh · Quan sát và tìm hiểu, nhưng đừng để hắn sinh nghi
@@ -47,7 +39,7 @@ Theo sát hắn. Tụt lại quá xa hay nhìn quá lộ liễu, hắn sẽ sinh
 === c2_observe ===
 # speaker:Narrator
 # camera:OTS_Kieu_MaGiamSinh
-Mã Giám Sinh đếm đi đếm lại một xâu bạc, môi lẩm nhẩm như người buôn tính lãi. Tên tùy tùng ghé tai hắn, cả hai cùng liếc về phía Kiều.
+Mã Giám Sinh đếm lại xâu bạc, môi lẩm nhẩm tính toán. Tên tùy tùng ghé tai hắn, cả hai cùng liếc về phía Kiều.
 
 ~ mm_ban_tay = true
 ~ manh_moi += 1
@@ -87,7 +79,8 @@ Hỏi thế nào để hắn trả lời thật, mà không biết mình đang d
     Mã Giám Sinh: Phụ mẫu? À... Ở Lâm Tri. Nhà ta... ở đó có người lo liệu cả.
 
     # speaker:NoiTam
-    Lúc dạm hỏi, hắn nói quê ở huyện Lâm Thanh. Giờ lại thành Lâm Tri. Và hỏi về cha mẹ thì hắn trả lời về "người lo liệu".
+    # clue:c2_lam_tri
+    Lúc dạm hỏi hắn nói Lâm Thanh. Giờ lại là Lâm Tri. Hắn đang nói dối.
     ~ tinh_tao += 1
 
 * [Hỏi thẳng: "Rốt cuộc công tử đưa ta đi đâu?"]
@@ -102,6 +95,7 @@ Hỏi thế nào để hắn trả lời thật, mà không biết mình đang d
     Mã Giám Sinh: Nàng hỏi lạ thật. Đã là vợ chồng, ta đưa đi đâu thì nàng theo đó. Lâm Tri, được chưa?
 
     # speaker:NoiTam
+    # clue:c2_lam_tri
     Hỏng rồi, hắn bắt đầu để ý. Lần sau phải mềm mỏng hơn.
 
 * [Giả vờ than mệt: "Đường xa quá, thiếp mỏi chân rồi..." #timeout]
@@ -115,7 +109,8 @@ Hỏi thế nào để hắn trả lời thật, mà không biết mình đang d
     Mã Giám Sinh: Gắng chút. Tới Lâm Tri sẽ có người lo cho nàng từ miếng ăn tới manh áo... à, gia nhân nhà ta.
 
     # speaker:NoiTam
-    "Người lo cho nàng." Hắn nói câu này đến lần thứ hai rồi. Mà người đó không phải mẹ chồng.
+    # clue:c2_lam_tri
+    Lại là "người lo cho nàng". Chắc chắn không phải gia đình hắn.
 
 * {ts_ma_mat == 2} [Lật trang "Quá niên trạc ngoại tứ tuần...": khen hắn chững chạc, hỏi chuyện làm ăn #page:ts_ma_mat]
     ~ dung(ts_ma_mat, 10)
@@ -127,14 +122,12 @@ Hỏi thế nào để hắn trả lời thật, mà không biết mình đang d
     Kiều: Công tử ngoài bốn mươi mà phong thái thế này, chắc buôn bán khắp nơi. Ở Lâm Tri công tử làm ăn lớn lắm nhỉ?
     # speaker:MaGiamSinh
     # emotion:smug
+    # clue:c2_lam_tri
     Mã Giám Sinh: Nàng tinh mắt đấy. Lâm Tri có một nhà quen, mối nào ta đưa về cũng được giá. Ha... à, ý ta là hàng lụa.
 
 - (g1)
 ~ mm_hoi_duong = true
 ~ manh_moi += 1
-# speaker:Narrator
-# clue:c2_lam_tri
-Kiều ghi nhớ: điểm đến là Lâm Tri. Không ai nhắc đến lễ cưới.
 -> c2_road
 
 
@@ -142,11 +135,11 @@ Kiều ghi nhớ: điểm đến là Lâm Tri. Không ai nhắc đến lễ cư�
 # speaker:Narrator
 # camera:OTS_Kieu_Paper
 # gameplay:document_paper
-Một mẩu giấy gấp tư vừa rơi khỏi tay áo Mã Giám Sinh. Kiều cúi xuống nhặt, mở ra thật nhanh.
+Một mẩu giấy gấp tư rơi khỏi tay áo Mã Giám Sinh. Kiều nhặt lên, mở thật nhanh.
 
 # speaker:NoiTam
 # clue:c2_mau_giay
-"Bà T. ở Lâm Tri nhận hàng." "Giá bốn trăm năm mươi lạng." Hắn mua mình bốn trăm... để bán lại bốn trăm năm mươi?
+"Bà T. ở Lâm Tri nhận hàng. Giá bốn trăm năm mươi lạng." Hắn định bán lại mình?
 
 ~ mm_mau_giay = true
 ~ manh_moi += 1
@@ -170,9 +163,6 @@ Nhanh lên. Trả hay giữ?
     # emotion:polite_fake
     Mã Giám Sinh: Giấy nợ vặt thôi. Nàng đưa đây.
 
-    # speaker:Narrator
-    Hắn nhét mẩu giấy vào sâu trong ngực áo. Nhưng Kiều đã nhớ từng chữ.
-
 * [Lén giấu vào tay áo: "Chỉ là lá khô thôi."]
     ~ nghi_ngo = MIN(nghi_ngo + 15, 100)
     ~ giu_mau_giay = true
@@ -186,7 +176,7 @@ Nhanh lên. Trả hay giữ?
     Mã Giám Sinh: ...Thế à.
 
     # speaker:Narrator
-    Hắn sờ tay áo mình, nhíu mày, rồi im lặng bước tiếp. Mẩu giấy nằm yên trong tay áo Kiều — một bằng chứng nhỏ, đổi bằng một ánh nhìn ngờ vực.
+    Hắn sờ tay áo mình, nhíu mày, rồi im lặng bước tiếp.
 
 - (g2)
 -> c2_road
@@ -196,11 +186,8 @@ Nhanh lên. Trả hay giữ?
 # scene:Road_RestStop
 # speaker:Narrator
 # camera:Wide_TeaHouse
-Trời sẩm tối. Mã Giám Sinh dừng ở một quán nước ven đường, bảo Kiều ngồi nghỉ rồi kéo tên tùy tùng ra sau vách tre.
-
-# speaker:Narrator
 # gameplay:eavesdrop_c2
-Khom người (giữ Ctrl), lẻn sát vách tre và ở ngoài tầm nhìn của chúng để nghe trọn câu chuyện.
+Mã Giám Sinh kéo tên tùy tùng ra sau vách tre. Khom người (giữ Ctrl), lẻn sát vách để nghe.
 
 # speaker:TuyTung
 # camera:CU_Kieu_Listens
@@ -233,7 +220,7 @@ Tú Bà? Khoan... cái tên này... trong Truyện Kiều...
 
 # speaker:Kieu
 # emotion:realization
-# camera:CU_Kieu_Listens
+# camera:Kieu_Profile
 Kiều: (Mã Giám Sinh không cưới Kiều. Hắn đang bán mình.)
 
 # speaker:NoiTam
@@ -252,7 +239,7 @@ Ghép lại từng mảnh... hay tin vào câu thơ vừa hiện lên?
 - (g_suy)
 {suy_luan >= 3:
     # speaker:NoiTam
-    Không còn nghi ngờ gì nữa. Mọi mảnh ghép đều khớp: tiền, nơi đến, giá bán, và cái tên Tú Bà.
+    Mọi mảnh ghép đều khớp: Lâm Tri, giá bán, Tú Bà.
 - else:
     # speaker:NoiTam
     Chưa đủ mọi mảnh ghép... nhưng cái tên Tú Bà thì không thể nhầm được.
@@ -269,10 +256,7 @@ Bây giờ... phải làm gì?
 * [Bỏ chạy ngay bây giờ, khi trời còn tối.]
     # speaker:NoiTam
     # gameplay:imagine_run
-    Mình chạy vào rừng tre. Hắn sẽ không đuổi được ngay...
-
-    # speaker:NoiTam
-    ...rồi hắn sẽ quay về làng, cầm tờ khế đòi lại bốn trăm lạng. Cha và em lại bị giải lên quan, lần này không ai cứu.
+    Mình chạy được, hắn sẽ cầm tờ khế về đòi bạc. Cha và em lại bị giải lên quan.
 
     # speaker:NoiTam
     Không. Chạy lúc này là ném chính gia đình mình vào ngục.
@@ -365,14 +349,10 @@ Câu này là thử mình.
         # speaker:MaGiamSinh
         # emotion:suspicious
         Mã Giám Sinh: (nói với tùy tùng) Đêm nay canh nó cho kỹ. Ta không thích ánh mắt ấy.
-        # speaker:NoiTam
-        Hắn vẫn còn nghi. Từ giờ mình sẽ bị để mắt nhiều hơn.
     - else:
         # speaker:MaGiamSinh
         # emotion:smug
         Mã Giám Sinh: (nói với tùy tùng) Dễ bảo hơn ta tưởng. Đỡ tốn công.
-        # speaker:NoiTam
-        Hắn tin rồi. Tốt. Cứ để hắn nghĩ mình là con cừu.
   }
 
 -> c2_ending
@@ -385,9 +365,6 @@ Câu này là thử mình.
 # speaker:Kieu
 # emotion:determined
 # camera:CU_Kieu
-Kiều: Kiều ngày trước bước vào đây mà không biết gì.
-
-# speaker:Kieu
-Kiều: Còn ta... ta biết. Và ta sẽ giả vờ như không biết — cho đến khi đủ sức lật ngược ván cờ này.
+Kiều: Kiều ngày trước bước vào đây mà không biết gì. Còn ta biết, và ta sẽ giả vờ như không biết, cho đến khi đủ sức lật ngược ván cờ này.
 
 -> chapter_3

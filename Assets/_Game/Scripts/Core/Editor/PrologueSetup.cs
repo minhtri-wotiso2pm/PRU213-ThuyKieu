@@ -153,6 +153,8 @@ namespace ThuyKieu.Core.Editor
             Set(arrest, "_gateways", new Object[] { Point("ArrestGateA", new Vector3(0.7f, 0f, -7f), 180f, marks), Point("ArrestGateB", new Vector3(-0.6f, 0f, -7f), 180f, marks) });
 
             Save(scene, ScenePath);
+            // Brings the generated house in line with the painted panels (bars for windows, longans for palms).
+            ThuyKieu.Environment.Editor.PaintedLookUpgrade.ApplyPrologue();
         }
 
         // ------------------------------------------------------------------ characters

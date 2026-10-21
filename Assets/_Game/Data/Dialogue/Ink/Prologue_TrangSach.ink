@@ -300,7 +300,7 @@ Một bữa sáng yên lành. Mình nhớ đoạn này. Rồi...
 # sfx:gong
 # music:tension_low
 # camera:Gate
-Quan sai: Vương Ông, Vương Quan đâu? Có đơn tố cáo nhà các người chứa hàng gian! Trói cả lại!
+Quan sai: Vương Ông, Vương Quan! Có đơn tố nhà ngươi chứa hàng gian. Trói lại!
 
 # speaker:VuongOng
 # emotion:fearful
@@ -315,7 +315,7 @@ Quan sai: Thằng bán tơ khai đã gửi tơ lụa ăn cắp ở nhà ngươi.
     ~ pl_hanh_dong = 1
     # speaker:Kieu
     # emotion:determined
-    Kiều: Dừng tay! Cha tôi không có tội!
+    Kiều: Khoan đã! Cha tôi không có tội!
     # speaker:QuanSai
     # emotion:angry
     Quan sai: Đàn bà con gái biết gì mà xen vào! Tránh ra!
@@ -326,10 +326,10 @@ Quan sai: Thằng bán tơ khai đã gửi tơ lụa ăn cắp ở nhà ngươi.
     ~ tinh_tao += 1
     # speaker:Kieu
     # emotion:calm_probe
-    Kiều: Đơn tố cáo đâu? Ai làm chứng? Cha tôi phạm vào luật nào?
+    Kiều: Xin cho xem đơn. Ai làm chứng cho lời buộc tội ấy?
     # speaker:QuanSai
     # emotion:mocking
-    Quan sai: Ha! Con gái nhà này lý sự gớm. Đơn ở trên huyện. Muốn đọc thì mang bạc lên mà đọc!
+    Quan sai: Con gái nhà này lý sự gớm. Muốn xem đơn thì mang bạc lên huyện!
     # speaker:NoiTam
     Ở đây, công lý cũng có giá. Mình phải nhớ điều đó.
 * [Đứng yên, ghi nhớ từng gương mặt. #timeout]

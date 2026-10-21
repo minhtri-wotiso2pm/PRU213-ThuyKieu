@@ -62,12 +62,44 @@ namespace ThuyKieu.Environment.Editor
             AssetDatabase.SaveAssets();
         }
 
-        /// <summary>The Prologue house already has brick, plaster walls with tiled copings and dirt lanes: only the walls warm to ochre.</summary>
+        /// <summary>
+        /// The Prologue house already has brick, plaster walls with tiled copings and dirt lanes. Its walls warm to ochre,
+        /// the paper-grid house windows become vertical wooden bars over a dim interior (as in Chapter 1), and the areca
+        /// palms in and outside the yard become longan trees. Kiều's own room window keeps its lit paper (it is her light).
+        /// </summary>
         [MenuItem("ThuyKieu/Prologue/Apply painted look")]
         public static void ApplyPrologue()
         {
-            if (Application.isPlaying) throw new InvalidOperationException("Stop Play Mode before the painted look.");
             StoryArtKit.Surface("PlPlaster", "plastered_wall_02", PrologueSetup.PlasterTint, 2.6f, 0.08f, 1.1f, 0.45f, 0.8f, StorySceneKit.MaterialFolder);
+            var scene = Open(PrologueSetup.ScenePath);
+            var interior = StorySceneKit.Material("PlWindowInterior", new Color(0.16f, 0.11f, 0.08f), 0.1f);
+            foreach (var t in scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Transform>(true)).ToArray())
+            {
+                if (t.name != "HouseWindow" && t.name != "EastWingWindow") continue;
+                foreach (Transform part in t)
+                {
+                    if (part.name == "SlatH" && part.TryGetComponent(out Renderer slat)) slat.enabled = false;
+                    if (part.name == "Paper" && part.TryGetComponent(out Renderer paper)) paper.sharedMaterial = interior;
+                }
+            }
+            var longan = AssetDatabase.LoadAssetAtPath<GameObject>(LonganTree);
+            if (longan != null)
+                foreach (var t in scene.GetRootGameObjects().SelectMany(g => g.GetComponentsInChildren<Transform>(true)).ToArray())
+                {
+                    if (t == null || !t.name.StartsWith("ArecaPalm")) continue;
+                    var tree = (GameObject)PrefabUtility.InstantiatePrefab(longan, t.parent);
+                    tree.transform.SetPositionAndRotation(t.position, Quaternion.Euler(0f, t.eulerAngles.y + 40f, 0f));
+                    tree.transform.localScale = Vector3.one * 0.62f;
+                    foreach (var collider in tree.GetComponentsInChildren<Collider>()) UnityEngine.Object.DestroyImmediate(collider);
+                    // Only the trunk blocks the way.
+                    var trunk = tree.AddComponent<CapsuleCollider>();
+                    trunk.center = Vector3.up * 1.5f / 0.62f;
+                    trunk.radius = 0.25f / 0.62f;
+                    trunk.height = 3f / 0.62f;
+                    UnityEngine.Object.DestroyImmediate(t.gameObject);
+                }
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
             AssetDatabase.SaveAssets();
         }
 
@@ -320,6 +352,19 @@ namespace ThuyKieu.Environment.Editor
             float top = platform.GetComponent<Renderer>().bounds.max.y;
             model.transform.position += Vector3.up * (top - floor);
             foreach (var renderer in model.GetComponentsInChildren<Renderer>()) renderer.shadowCastingMode = ShadowCastingMode.On;
+            // The four corner posts get colliders on the environment layer: dialogue shots orbit away from them (they
+            // stood in the middle of frame), and nobody walks through them.
+            Vector3 middle = model.transform.position;
+            foreach (var corner in new[] { new Vector2(-2.03f, -1.6f), new Vector2(-2.03f, 1.6f), new Vector2(1.97f, -1.6f), new Vector2(1.97f, 1.6f) })
+            {
+                var post = new GameObject("PostCollider");
+                post.layer = StorySceneKit.EnvironmentLayer;
+                post.transform.SetParent(model.transform, true);
+                post.transform.position = new Vector3(middle.x + corner.x, top + 1.3f, middle.z + corner.y);
+                var capsule = post.AddComponent<CapsuleCollider>();
+                capsule.radius = 0.12f / Mathf.Max(0.01f, post.transform.lossyScale.x);
+                capsule.height = 2.6f / Mathf.Max(0.01f, post.transform.lossyScale.y);
+            }
         }
 
         /// <summary>The lowest walkable surface a little off the model's centre (temporary mesh colliders for the probe).</summary>

@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using ThuyKieu.Core.Story;
+using ThuyKieu.Gameplay.Sequences;
+using ThuyKieu.Interaction;
 using ThuyKieu.Player;
 using UnityEngine;
 
@@ -8,7 +10,7 @@ namespace ThuyKieu.Gameplay.Chapters
 {
     /// <summary>
     /// Chapter 1 — the rainy night at the Vương house. Stages the family and Mã Giám Sinh for each Ink scene,
-    /// knocks at the gate once Kiều has learned enough, and runs his suspicion while she sizes him up.
+    /// brings Mã Giám Sinh in after one purposeful investigation, and runs the risky silver-inspection beat.
     /// </summary>
     public class Chapter01World : MonoBehaviour, IChapterSummary
     {
@@ -29,7 +31,8 @@ namespace ThuyKieu.Gameplay.Chapters
 
         private string _scene = string.Empty;
         private float _glanceTimer = 6f, _glanceHold, _barkCooldown, _suspicionCarry;
-        private bool _knocked;
+        private bool _knocked, _caughtObserving, _safeCueShown;
+        private ObservableTarget _silverObservation;
         private StoryActor _kieu;
         private Coroutine _action, _arrival, _motherRoutine;
         private bool _motherSeated;
@@ -66,11 +69,20 @@ namespace ThuyKieu.Gameplay.Chapters
             PrepareCabinet();
             ClearCabinetDoorway();
             DressSilverBag();
+            PrepareSilverObservation();
+            RefreshSuspicionTutorial();
             CacheContractPose();
-            SetOnTable(GameObject.Find("OilLamp"));
+            PlaceTableLamp();
+            PlaceHairpin();
+            // Mã Giám Sinh is all polite composure: on neutral lines he nods along instead of throwing his arms wide.
+            _ma.CalmGesture = StoryDirector.Gesture("satisfied");
             _kieu.FitVisualHeight(1.72f);
-            _mother.FitVisualHeight(1.67f);
-            _ma.FitVisualHeight(1.72f);
+            // Everyone else is sized against Kiều by the head bone: whole-model bounds count hats and hairpins and made
+            // Mã Giám Sinh tower over her.
+            float kieu = _kieu.HeadHeight;
+            _mother.FitHeadHeight(kieu);
+            _ma.FitHeadHeight(kieu * 1.07f);
+            _servant.FitHeadHeight(kieu * 1.05f);
             if (_scene.Length == 0) { SetGuests(false); _contract.SetActive(false); }
         }
 
@@ -93,7 +105,7 @@ namespace ThuyKieu.Gameplay.Chapters
                 Bark("NoiTam", "Có tiếng gõ cổng. Giữa đêm mưa thế này... là hắn.");
                 MotherDo(MotherRises());
             }
-            if (_scene == Negotiation && _director.InExplore) UpdateSuspicion();
+            if (_scene == Negotiation && _director.IsExploreAvailable("c1_tui_bac")) UpdateSuspicion();
         }
 
         // ------------------------------------------------------------------ suspicion
@@ -118,14 +130,33 @@ namespace ThuyKieu.Gameplay.Chapters
             }
 
             bool watched = Glancing || Vector3.Dot(_ma.transform.forward, (player - _ma.transform.position).normalized) > 0.6f;
-            bool observing = _observe != null && _observe.IsObserving;
-            float rate = -3f;
-            if (observing && watched && distance < 11f)
+            bool inspectingSilver = _observe != null && _observe.IsObserving && _observe.Focus == _silverObservation;
+            float rate = -4f;
+            if (inspectingSilver && watched && distance < 11f)
             {
-                rate = 24f;
-                if (_barkCooldown <= 0f) Bark("MaGiamSinh", "Cô nương nhìn gì ta chằm chằm thế?");
+                rate = _director.GetInt("c1_nghi_ngo") >= 95 ? 0f : 26f;
+                _observe.CancelFocus(_silverObservation);
+                if (!_caughtObserving)
+                {
+                    _caughtObserving = true;
+                    _safeCueShown = false;
+                    Bark("MaGiamSinh", "Cô nương đang nhìn trộm bạc của ta sao?");
+                }
             }
-            else if (observing) rate = 0f;
+            else if (inspectingSilver)
+            {
+                rate = 0f;
+                if (!_safeCueShown)
+                {
+                    _safeCueShown = true;
+                    Bark("NoiTam", "Hắn đang quay đi. Nhìn dấu trên nén bạc, nhanh lên.");
+                }
+            }
+            else if (!watched)
+            {
+                _caughtObserving = false;
+                _safeCueShown = false;
+            }
 
             int value = _director.GetInt("c1_nghi_ngo");
             _suspicionCarry += rate * Time.deltaTime;
@@ -137,11 +168,9 @@ namespace ThuyKieu.Gameplay.Chapters
                 _director.SetInt("c1_nghi_ngo", value);
             }
             float normalized = value / 100f;
-            _director.Hud.SetMeter(value >= 60 ? "MÃ GIÁM SINH ĐANG NGỜ VỰC" : "Nghi ngờ của Mã Giám Sinh",
+            _director.Hud.SetMeter(!watched ? "Mã đang quay đi — có thể quan sát bạc" :
+                    value >= 60 ? "MÃ GIÁM SINH ĐANG NGỜ VỰC" : "Nghi ngờ của Mã Giám Sinh",
                 normalized, Color.Lerp(new Color(1f, 0.85f, 0.4f), new Color(0.9f, 0.2f, 0.15f), normalized));
-            if (value >= 100)
-                _director.Fail("Mã Giám Sinh đã sinh nghi", "Hắn bảo Mẹ Kiều rằng con gái bà \"lắm điều\" rồi đứng dậy toan bỏ đi. " +
-                    "Hãy kín đáo hơn: đừng quan sát khi hắn đang nhìn lại, đừng hỏi quá thẳng.");
         }
 
         private void OnRestored()
@@ -150,6 +179,29 @@ namespace ThuyKieu.Gameplay.Chapters
             _suspicionCarry = 0f;
             _glanceHold = 0f;
             _glanceTimer = 6f;
+            _caughtObserving = false;
+            _safeCueShown = false;
+        }
+
+        private void PrepareSilverObservation()
+        {
+            if (_silver == null) return;
+            _silverObservation = _silver.GetComponent<ObservableTarget>();
+            if (_silverObservation == null) _silverObservation = _silver.AddComponent<ObservableTarget>();
+            _silverObservation.Configure(_director, "c1_tui_bac", "Dấu trên nén bạc", _silver.transform, 2.2f, 8f);
+            if (_observe != null) _observe.RefreshTargets();
+        }
+
+        private static readonly string SuspicionTutorial =
+            "<color=#E8C27A>Nhìn dấu trên túi bạc</color> khi Mã Giám Sinh quay sang phía Mẹ.\n\n" +
+            "Giữ <color=#E8C27A>chuột phải</color> và hướng camera vào túi bạc. Khi hắn nhìn lại, hãy buông ra; bị bắt gặp chỉ làm hắn nghi ngờ hơn, câu chuyện vẫn tiếp tục.\n\n" +
+            "Bạn cũng có thể bỏ qua túi bạc và nhấn <color=#E8C27A>E</color> để đối chất ngay.";
+
+        private void RefreshSuspicionTutorial()
+        {
+            foreach (var tutorial in FindObjectsByType<TutorialSequence>(FindObjectsInactive.Include))
+                if (tutorial.Id == "tutorial_suspicion")
+                    tutorial.Configure(SuspicionTutorial, "WASD: đi · Chuột phải: quan sát bạc · E: đối chất · J: sổ tay");
         }
 
         // ------------------------------------------------------------------ staging
@@ -241,10 +293,12 @@ namespace ThuyKieu.Gameplay.Chapters
             _kieu.Sit(false);
             if (_motherSeated) { if (_motherRoutine != null) StopCoroutine(_motherRoutine); ReleaseMother(); }
 
-            Vector3 maOutside = _maGate.position + Vector3.back * 2.2f;
-            Vector3 servantOutside = _servantGate.position + Vector3.back * 2.5f;
-            Vector3 maInside = _maGate.position + Vector3.forward * 2.2f;
-            Vector3 servantInside = _servantGate.position + Vector3.forward * 2.0f;
+            // Through the middle of the gateway: the gate marks stand on the posts (x ±1.9), right where the leaves
+            // swing open, so walking in along them passed through both. He leads slightly right, the servant follows.
+            Vector3 maOutside = new Vector3(0.35f, 0f, _maGate.position.z - 2.2f);
+            Vector3 servantOutside = new Vector3(-0.3f, 0f, _maGate.position.z - 3.3f);
+            Vector3 maInside = new Vector3(0.6f, 0f, _maGate.position.z + 2.1f);
+            Vector3 servantInside = new Vector3(-0.45f, 0f, _maGate.position.z + 1.0f);
             _ma.DisableNavigation();
             _servant.DisableNavigation();
             _ma.Place(maOutside, Quaternion.LookRotation(Vector3.forward));
@@ -287,6 +341,18 @@ namespace ThuyKieu.Gameplay.Chapters
             }
             SetGateOpen(1f);
             Destroy(pose);
+
+            // Kiều steps aside out of the gateway to let them in, turned towards them.
+            Vector3 from = _director.Player.transform.position;
+            Vector3 aside = new Vector3(-1.15f, from.y, from.z + 0.9f);
+            float step = _director.Autopilot ? 0.01f : 0.55f;
+            for (float t = 0f; t < step; t += Time.deltaTime)
+            {
+                Vector3 at = Vector3.Lerp(from, aside, Mathf.SmoothStep(0f, 1f, t / step));
+                _director.Player.Teleport(at, Quaternion.LookRotation(Vector3.ProjectOnPlane(maOutside - at, Vector3.up)));
+                camera.SetDialogueCue(shot);
+                yield return null;
+            }
 
             float duration = _director.Autopilot ? 0.01f : 2.8f;
             _ma.SetScriptedSpeed(1.5f);
@@ -337,23 +403,45 @@ namespace ThuyKieu.Gameplay.Chapters
             if (!TableSeats(out Vector3 motherSeat, out Quaternion motherFacing, out _, out _)) yield break;
             if (!_motherSeated)
             {
-                // The night opens with Kiều standing at her mother's side, not out by the gate she is speaking across.
-                if (TableSeats(out _, out _, out Vector3 kieuSeat, out Quaternion kieuFacing))
-                    _director.Player.Teleport(kieuSeat - kieuFacing * Vector3.forward * 0.6f, Quaternion.LookRotation(Vector3.ProjectOnPlane(motherSeat - kieuSeat, Vector3.up)));
+                // The night opens with Kiều standing at her mother's side, not out by the gate she is speaking across. She
+                // stands on the mother's own side of the table, in arm's reach: across it she was out of range and the
+                // table blocked talking to her.
+                Vector3 side = motherSeat + new Vector3(0.25f, 0f, -0.9f);
+                _director.Player.Teleport(side, Quaternion.LookRotation(Vector3.ProjectOnPlane(motherSeat - side, Vector3.up)));
                 _mother.DisableNavigation();
                 _mother.Place(motherSeat, motherFacing);
                 yield return null; // the animator needs a frame before the sit trigger takes
                 _mother.Sit(true);
                 _motherSeated = true;
             }
+            _mother.StillWhileSeated = true;
+            // Let the sit settle before layering the crying pose over it.
+            yield return new WaitForSeconds(_director.Autopilot ? 0f : 0.8f);
             var pose = AddPose(_mother);
             Transform body = _mother.transform;
+            // HandReachPose targets the wrists, not the palms. Keep the wrists below and outside the cheeks so the
+            // palms cover her face without driving the forearms and finger roots through it. Follow the animated head
+            // smoothly: pinning this point once left the hands floating while the seated idle continued to breathe.
+            Vector3 head = _mother.HeadPosition;
+            Vector3 face = head - Vector3.up * 0.13f + body.forward * 0.11f;
+            // Head bowed into her hands.
+            Vector3 gaze = head + body.forward * 0.4f - Vector3.up * 0.55f;
+            // Her face is towards +body.forward (checked against a render from each side), so the palms aim back along
+            // −forward to cover it, fingers up. Elbows hang low and close to her sides: the forearms fold up under the
+            // chin instead of spreading into a T.
+            pose.SetHandAim(Vector3.up, -body.forward, Vector3.up, -body.forward);
+            pose.SetElbowHints(head - body.right * 0.14f - Vector3.up * 0.6f + body.forward * 0.05f,
+                head + body.right * 0.14f - Vector3.up * 0.6f + body.forward * 0.05f);
+            pose.LeftCurl = 8f;
+            pose.RightCurl = 8f;
             for (float t = 0f; _motherSeated; t += Time.deltaTime)
             {
-                // Both wrists under the eyes, the shoulders shaking a little with each sob.
+                // The shoulders shake a little with each sob.
                 float sob = Mathf.Sin(t * 5.5f) * 0.012f * (0.5f + 0.5f * Mathf.Sin(t * 0.7f));
-                Vector3 face = _mother.HeadPosition - Vector3.up * (0.13f + sob) + body.forward * 0.1f;
-                pose.SetTargets(face - body.right * 0.06f, face + body.right * 0.06f, face + body.forward);
+                Vector3 desiredFace = _mother.HeadPosition - Vector3.up * 0.13f + body.forward * 0.11f;
+                face = Vector3.Lerp(face, desiredFace, 1f - Mathf.Exp(-12f * Time.deltaTime));
+                Vector3 hands = face - Vector3.up * sob;
+                pose.SetTargets(hands - body.right * 0.05f, hands + body.right * 0.05f, gaze);
                 pose.Weight = Mathf.SmoothStep(0f, 1f, t / 1.2f);
                 yield return null;
             }
@@ -364,6 +452,7 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             if (!_motherSeated) yield break;
             _motherSeated = false;
+            _mother.StillWhileSeated = false;
             foreach (var pose in _mother.GetComponents<HandReachPose>()) Destroy(pose);
             _mother.Sit(false);
             yield return new WaitForSeconds(_director.Autopilot ? 0f : 0.9f);
@@ -385,6 +474,7 @@ namespace ThuyKieu.Gameplay.Chapters
         private void ReleaseMother()
         {
             _motherSeated = false;
+            _mother.StillWhileSeated = false;
             foreach (var pose in _mother.GetComponents<HandReachPose>()) Destroy(pose);
             _mother.Sit(false);
             _mother.EnableNavigation();
@@ -399,9 +489,21 @@ namespace ThuyKieu.Gameplay.Chapters
             _kieu.Sit(true);
             yield return new WaitForSeconds(_director.Autopilot ? 0f : 0.35f);
             while (!_director.InExplore && _scene == "VuongGia_DemMua") yield return null;
-            // Rise half a step back from the bench: standing up in place would put her on the table's edge.
-            _director.Player.Teleport(kieuSeat - kieuFacing * Vector3.forward * 0.55f, kieuFacing);
+            // She stands up where she sat: the stool is clear of the table. Moving her before the stand-up played slid
+            // her off the stool still seated. The Sit To Stand clip carries her hips 35 cm forward and snaps them back
+            // when it ends, so the root counters that drift and she rises straight up (the long skirt hides her feet).
+            Transform hips = _kieu.GetComponentInChildren<Animator>().GetBoneTransform(HumanBodyBones.Hips);
+            Vector3 anchor = hips.position;
             _kieu.Sit(false);
+            float settle = 0.4f;
+            for (float t = 0f; (_kieu.IsSitting || settle > 0f) && t < 3f; t += Time.deltaTime)
+            {
+                if (!_kieu.IsSitting) settle -= Time.deltaTime;
+                Vector3 drift = Vector3.ProjectOnPlane(hips.position - anchor, Vector3.up);
+                if (drift.sqrMagnitude > 0.0001f)
+                    _director.Player.Teleport(_director.Player.transform.position - drift, _director.Player.transform.rotation);
+                yield return null;
+            }
             _action = null;
         }
 
@@ -488,7 +590,9 @@ namespace ThuyKieu.Gameplay.Chapters
             motherFacing = kieuFacing = Quaternion.identity;
             if (table == null) return false;
             motherSeat = table.TransformPoint(new Vector3(-0.77f, 0f, 0f));
-            kieuSeat = table.TransformPoint(new Vector3(0.77f, 0.05f, 0f));
+            // Kiều's stool stands further out than her mother's chair: at 0.77 her hips came down on the gap between the
+            // table edge and the stool and she sank through it.
+            kieuSeat = table.TransformPoint(new Vector3(1.08f, 0.05f, 0f));
             Vector3 centre = table.position;
             motherFacing = Quaternion.LookRotation(Vector3.ProjectOnPlane(centre - motherSeat, Vector3.up));
             kieuFacing = Quaternion.LookRotation(Vector3.ProjectOnPlane(centre - kieuSeat, Vector3.up));
@@ -691,6 +795,21 @@ namespace ThuyKieu.Gameplay.Chapters
             }
 
             MovePoint("MotherTable", new Vector3(-1.35f, 0f, 2.75f));
+            // The servant waited a step from the open right door leaf, which then covered every shot of him, and faced
+            // the house wall. He waits further along the porch, turned to the door Kiều comes out of.
+            GameObject porch = GameObject.Find("ServantPorch");
+            if (porch != null)
+            {
+                var spot = new Vector3(3.5f, 0f, -3.4f);
+                porch.transform.SetPositionAndRotation(spot, Quaternion.LookRotation(new Vector3(0f, 0f, -3f) - spot));
+                // Kiều asks him face to face, a step in front of him (her old mark faced where he used to stand).
+                GameObject ask = GameObject.Find("ServantAskStand");
+                if (ask != null)
+                {
+                    Vector3 stand = spot + porch.transform.forward * 1.25f + Vector3.up * 0.05f;
+                    ask.transform.SetPositionAndRotation(stand, Quaternion.LookRotation(-porch.transform.forward));
+                }
+            }
             MovePoint("MaTable", new Vector3(1.35f, 0f, 2.75f));
             EnsureShot("CAM_OTS_Kieu_Cabinet", new Vector3(3.15f, 1.55f, 4.15f), new Vector3(4.8f, 1.02f, 5.58f));
             EnsureShot("CAM_OTS_Kieu_Altar", new Vector3(-2.15f, 1.62f, 4.28f), new Vector3(0f, 1.18f, 5.95f));
@@ -988,6 +1107,20 @@ namespace ThuyKieu.Gameplay.Chapters
             return best < float.MaxValue ? best : top;
         }
 
+        /// <summary>
+        /// The contract lamp stood right by Kiều's seat and filled her close-ups at the table: it goes to the middle of the
+        /// back edge (the altar side), out of the line between the seats and the cameras, still lighting the contract.
+        /// </summary>
+        private static void PlaceTableLamp()
+        {
+            var lamp = GameObject.Find("ContractOilLamp");
+            Transform table = GameObject.Find("ChairsAndContractTable")?.transform;
+            if (lamp == null || table == null) return;
+            Vector3 back = table.position + table.forward * 0.42f;
+            lamp.transform.position = new Vector3(back.x, lamp.transform.position.y, back.z);
+            SetOnTable(lamp);
+        }
+
         /// <summary>Stands a prop on the table top under it (props were placed before the table was rescaled).</summary>
         private static void SetOnTable(GameObject prop)
         {
@@ -998,6 +1131,63 @@ namespace ThuyKieu.Gameplay.Chapters
             foreach (var r in renderers) bounds.Encapsulate(r.bounds);
             float top = TableTop(bounds.center);
             if (Mathf.Abs(top - bounds.center.y) < 1f) prop.transform.position += Vector3.up * (top - bounds.min.y);
+        }
+
+        /// <summary>
+        /// Secret: the gold hairpin Kim Trọng once found in the garden and gave back lies dropped at the foot of the
+        /// side cabinet. Nothing points to it but a faint glint; picking it up during the night at home earns his trust.
+        /// </summary>
+        private void PlaceHairpin()
+        {
+            if (_director.GetBool("c1_thoa")) return;
+            Transform cabinet = GameObject.Find("SideCabinet")?.transform;
+            if (cabinet == null) return;
+            var hairpin = new GameObject("Secret_ThoaVang").transform;
+            hairpin.position = cabinet.position + new Vector3(0.45f, 0.012f, -0.7f);
+            hairpin.rotation = Quaternion.Euler(0f, 35f, 0f);
+            hairpin.localScale = Vector3.one * 1.6f;
+            var gold = Lit(new Color(0.95f, 0.72f, 0.3f), 0.85f, 1f);
+            Piece(hairpin, PrimitiveType.Cylinder, Vector3.zero, new Vector3(90f, 0f, 0f), new Vector3(0.007f, 0.085f, 0.007f), gold);
+            Piece(hairpin, PrimitiveType.Sphere, new Vector3(0f, 0.008f, 0.09f), Vector3.zero, Vector3.one * 0.028f, gold);
+            Piece(hairpin, PrimitiveType.Sphere, new Vector3(0f, 0.018f, 0.09f), Vector3.zero, Vector3.one * 0.014f,
+                Lit(new Color(0.35f, 0.7f, 0.5f), 0.9f));
+            var glint = new GameObject("Glint").AddComponent<Light>();
+            glint.transform.SetParent(hairpin, false);
+            glint.transform.localPosition = new Vector3(0f, 0.12f, 0.04f);
+            glint.type = LightType.Point;
+            glint.color = new Color(1f, 0.82f, 0.45f);
+            glint.range = 0.7f;
+            glint.shadows = LightShadows.None;
+            var trigger = hairpin.gameObject.AddComponent<SphereCollider>();
+            trigger.isTrigger = true;
+            trigger.radius = 0.2f;
+            trigger.center = new Vector3(0f, 0.1f, 0.04f);
+            hairpin.gameObject.AddComponent<SecretPickup>().Configure("Nhặt vật gì lấp lánh",
+                () => _scene == "VuongGia_DemMua" && _director.InExplore && !_director.GetBool("c1_thoa"),
+                () => FindHairpin(hairpin.position));
+            StartCoroutine(Twinkle(glint));
+        }
+
+        private static IEnumerator Twinkle(Light glint)
+        {
+            while (glint != null)
+            {
+                // Mostly dark, now and then a brief catch of lamplight on the gold.
+                float t = Time.time % 3.2f;
+                glint.intensity = t < 0.5f ? Mathf.Sin(t / 0.5f * Mathf.PI) * 0.9f : 0.08f;
+                yield return null;
+            }
+        }
+
+        private void FindHairpin(Vector3 position)
+        {
+            _kieu.FaceInstant(position);
+            _director.SetBool("c1_thoa", true);
+            _director.SetInt("kt_tin_tuong", _director.GetInt("kt_tin_tuong") + 1);
+            if (_director.Audio != null) _director.Audio.PlaySfx("memory", 0.6f);
+            _director.Hud.ShowToast("BÍ MẬT · CHIẾC THOA VÀNG", "Thoa của Kiều, Kim Trọng nhặt được ở vườn rồi trả lại. Kim Trọng tin tưởng +1");
+            _barkCooldown = 0f;
+            Bark("KieuThat", "Thoa ấy... chàng Kim trả ta qua bức tường hoa. Giữ giùm ta, đừng để ai thấy.");
         }
 
         private static Material Lit(Color color, float smoothness, float metallic = 0f)
@@ -1085,9 +1275,10 @@ namespace ThuyKieu.Gameplay.Chapters
             var v = story.variablesState;
             int clues = (int)v["c1_manh_moi"];
             int suspicion = Mathf.Clamp((int)v["c1_nghi_ngo"], 0, 100);
-            yield return "Manh mối về Mã Giám Sinh: " + clues + " / 6";
+            yield return "Manh mối cốt lõi: " + clues + " / 3";
             yield return "Tỉnh táo: " + (int)v["tinh_tao"];
             yield return (bool)v["doc_ky_khe"] ? "Tờ khế: bạn đã đọc kỹ từng chữ trước khi điểm chỉ." : "Tờ khế: bạn đã ký vội để cứu cha.";
+            if ((bool)v["c1_thoa"]) yield return "Bí mật: chiếc thoa vàng của Kim Trọng nằm trong tay áo bạn.";
             if ((bool)v["c1_bac_dau"]) yield return "Bạc dấu Phúc Ký — ai đó đã đưa tiền cho hắn đi \"hỏi vợ\".";
             yield return "Nghi ngờ của Mã Giám Sinh: " + suspicion + "%" + (suspicion >= 60 ? " — hắn sẽ để mắt tới bạn trên đường đi" : " — hắn tin bạn là cô gái ngoan");
         }
