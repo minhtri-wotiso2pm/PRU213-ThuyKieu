@@ -118,6 +118,7 @@ namespace ThuyKieu.Core.Story
             SetAnimator(_animator != null ? _animator : GetComponentInChildren<Animator>());
             if (_staticVisual != null) { _visualBase = _staticVisual.localPosition; _visualRotation = _staticVisual.localRotation; }
             _phase = Random.value * 10f;
+            ActorMouth.Attach(this);
         }
 
         /// <summary>Switches to another body's animator (see PlayerLook).</summary>

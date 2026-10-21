@@ -184,7 +184,7 @@ namespace ThuyKieu.Core.Editor
             sequences.SetParent(s.Root.transform, false);
             Tutorial(sequences, "tutorial_house",
                 "<color=#E8C27A>Đi lại:</color> WASD · <color=#E8C27A>chạy:</color> Shift · <color=#E8C27A>xoay camera:</color> chuột\n" +
-                "<color=#E8C27A>E</color>: tương tác với thứ có dấu ◆ vàng.   <color=#E8C27A>Giữ chuột phải</color>: quan sát kỹ một nơi ở xa.\n" +
+                "<color=#E8C27A>E</color>: tương tác với thứ có dấu sáng vàng.   <color=#E8C27A>Giữ chuột phải</color>: quan sát kỹ một nơi ở xa.\n" +
                 "<color=#E8C27A>J</color>: sổ tay manh mối.\n\n" +
                 "Trước khi khách đến, hãy tìm hiểu tình cảnh gia đình: ngồi với Mẹ Kiều và xem quanh nhà, quanh sân.",
                 "WASD: đi · Shift: chạy · Chuột phải: quan sát · E: tương tác · J: sổ tay");

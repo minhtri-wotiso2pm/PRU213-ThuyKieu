@@ -128,7 +128,7 @@ namespace ThuyKieu.Core.Editor
             sequences.SetParent(s.Root.transform, false);
             Tutorial(sequences, "tutorial_classroom",
                 "<color=#E8C27A>Đi lại:</color> WASD · <color=#E8C27A>xoay camera:</color> chuột\n" +
-                "<color=#E8C27A>Tương tác:</color> đến gần thứ có dấu ◆ vàng rồi bấm <color=#E8C27A>E</color>\n" +
+                "<color=#E8C27A>Tương tác:</color> đến gần thứ có dấu sáng vàng rồi bấm <color=#E8C27A>E</color>\n" +
                 "<color=#E8C27A>Lời thoại:</color> Space / click để đọc tiếp, 1–4 để chọn câu trả lời\n\n" +
                 "Thu dọn sách vở trước khi về. Còn vài phút — cứ thong thả nhìn quanh lớp.",
                 "WASD: đi · E: tương tác · Space: tiếp lời thoại · Esc: tạm dừng");

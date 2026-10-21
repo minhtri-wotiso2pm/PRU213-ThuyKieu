@@ -15928,6 +15928,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ThuyKieu.Interaction.PlayerInteraction
   interactionDistance: 2.5
   interactionRadius: 0.4
+  minimumFacingDot: 0.1
   interactionLayers:
     serializedVersion: 2
     m_Bits: 4294967295

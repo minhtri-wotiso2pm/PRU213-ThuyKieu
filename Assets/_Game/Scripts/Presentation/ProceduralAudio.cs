@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ThuyKieu.Presentation
@@ -13,6 +14,9 @@ namespace ThuyKieu.Presentation
         public const int Rate = 22050;
         private static readonly float[] MinorPenta = { 0, 3, 5, 7, 10 };
         private static readonly float[] MajorPenta = { 0, 2, 4, 7, 9 };
+        private const int VoiceCacheLimit = 24;
+        private static readonly Dictionary<string, AudioClip> VoiceCache = new Dictionary<string, AudioClip>();
+        private static readonly Queue<string> VoiceOrder = new Queue<string>();
 
         public static AudioClip Music(string id)
         {
@@ -106,6 +110,9 @@ namespace ThuyKieu.Presentation
                 case "creak": data = Creak(1.2f); break;
                 case "snore": data = Swell(1.4f, random); break;
                 case "stumble": data = Add(Thud(0.45f, random), Noise(0.35f, 0.4f, 0.5f, random)); break;
+                case "breath_startled": data = Add(Swell(1.1f, random), Noise(1.1f, 0.08f, 0.25f, random)); break;
+                case "cloth": data = Noise(0.55f, 0.12f, 0.45f, random); break;
+                case "mirror_reveal": data = Add(Notes(new[] { 523.25f, 659.25f, 783.99f }, 0.16f, 1.8f, 0.28f), Swell(1.5f, random)); break;
                 case "whoosh": data = Swell(0.45f, random); break;
                 case "qte_ok": data = Notes(new[] { 880f, 1318.5f }, 0.05f, 0.5f, 0.35f); break;
                 case "qte_fail": data = Bend(180f, 120f, 0.5f, 0.6f); break;
@@ -118,9 +125,57 @@ namespace ThuyKieu.Presentation
                 case "dan": data = Notes(new[] { 293.66f, 349.23f, 392f, 349.23f, 293.66f, 261.63f, 220f }, 0.42f, 3.4f, 0.42f); break;
                 // One hồ cầm string at hò (C4); free play retunes it per string with the source pitch.
                 case "dan_note": data = Notes(new[] { 261.63f }, 0f, 2.6f, 0.5f); break;
+                // A thumb pressed into cinnabar and onto paper: a soft thud and the rasp of the sheet.
+                case "stamp": data = Add(Thud(0.35f, random), Noise(0.3f, 0.25f, 0.6f, random)); break;
+                // Glassy bells climbing a minor pentatonic over a breath of air: something gathering out of nothing.
+                case "shimmer": data = Add(Swell(2.6f, random), Notes(new[] { 587.33f, 698.46f, 880f, 1046.5f, 1174.66f, 1396.91f, 1760f }, 0.2f, 3.4f, 0.26f)); break;
+                // The same bells falling away under a long gust: something scattering on the wind.
+                case "petals": data = Add(Swell(2.8f, random), Notes(new[] { 1760f, 1396.91f, 1174.66f, 880f, 698.46f }, 0.16f, 2.8f, 0.2f, 0.3f)); break;
                 default: return null;
             }
             return Clip(id, data);
+        }
+
+        /// <summary>
+        /// Generates a quiet, non-verbal placeholder voice for dialogue that has no recorded clip.
+        /// It deliberately suggests syllable rhythm without pretending to be intelligible speech.
+        /// </summary>
+        public static AudioClip Voice(string speakerId, string text, bool ethereal, float maxSeconds = 6f)
+        {
+            string normalized = string.IsNullOrWhiteSpace(text) ? "..." : text.Trim();
+            string cacheKey = speakerId + "|" + normalized + "|" + ethereal + "|" + maxSeconds.ToString("0.0");
+            if (VoiceCache.TryGetValue(cacheKey, out AudioClip cached) && cached != null) return cached;
+            float seconds = Mathf.Clamp(normalized.Length * 0.055f, 0.65f, Mathf.Max(0.65f, maxSeconds));
+            int length = Mathf.CeilToInt(seconds * Rate);
+            var data = new float[length];
+            int seed = (speakerId + "|" + normalized).GetHashCode();
+            var random = new System.Random(seed);
+            float baseFrequency = 155f + Mathf.Abs((speakerId ?? string.Empty).GetHashCode() % 95);
+            float phase = 0f;
+
+            for (int i = 0; i < length; i++)
+            {
+                float t = i / (float)Rate;
+                float syllableTime = Mathf.Repeat(t * 5.4f, 1f);
+                float envelope = Mathf.Pow(Mathf.Sin(syllableTime * Mathf.PI), 1.6f);
+                float drift = 1f + 0.035f * Mathf.Sin(t * 8.7f + seed * 0.001f);
+                phase += 2f * Mathf.PI * baseFrequency * drift / Rate;
+                float breath = ((float)random.NextDouble() * 2f - 1f) * 0.035f;
+                data[i] = envelope * (0.13f * Mathf.Sin(phase) + 0.045f * Mathf.Sin(phase * 2.01f) + breath);
+            }
+
+            if (ethereal) Reverb(data, 0.5f);
+            AudioClip clip = Clip("voice_" + seed, data);
+            VoiceCache[cacheKey] = clip;
+            VoiceOrder.Enqueue(cacheKey);
+            while (VoiceOrder.Count > VoiceCacheLimit)
+            {
+                string oldest = VoiceOrder.Dequeue();
+                if (!VoiceCache.TryGetValue(oldest, out AudioClip oldClip)) continue;
+                VoiceCache.Remove(oldest);
+                if (oldClip != null) UnityEngine.Object.Destroy(oldClip);
+            }
+            return clip;
         }
 
         // ------------------------------------------------------------------ music

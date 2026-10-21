@@ -1,4 +1,5 @@
 using System.Collections;
+using ThuyKieu.Core;
 using ThuyKieu.Core.Story;
 using ThuyKieu.Gameplay.Sequences;
 using ThuyKieu.Gameplay.Stealth;
@@ -40,6 +41,7 @@ namespace ThuyKieu.Gameplay.Chapters
 
         private const string Controls = "WASD: đi · E: tương tác · Chuột phải: quan sát · Space: tiếp lời thoại";
         private const string LuteFreePlay = "dan_tu_do";
+        private const string NewBodyBeat = "than_xac";
 
         private bool _seated = true, _classLeft, _nganLeft;
         private Coroutine _interactionGesture, _handling;
@@ -51,6 +53,7 @@ namespace ThuyKieu.Gameplay.Chapters
             lute.ControlsAfter = Controls;
             lute.Plucked += _ => _lastPluck = Time.time;
             _director.RegisterSequence(lute);
+            _director.RegisterSequence(WorldSequence.Create(gameObject, NewBodyBeat, NewBody));
         }
 
         private void OnEnable()
@@ -82,6 +85,7 @@ namespace ThuyKieu.Gameplay.Chapters
                 else actor.EnableNavigation();
             }
             _director.Player.AllowCrouch = false;
+            RefreshTutorials();
             // The hồ cầm prop is built at an adult's size; Kiều is 1.3 m tall with short arms and could not hold it
             // the way it is played, so it is sized to her (absolute, so a re-run never compounds).
             var hoCam = GameObject.Find("HoCam");
@@ -105,11 +109,31 @@ namespace ThuyKieu.Gameplay.Chapters
             foreach (var classmate in _classmates) classmate.Sit(true);
         }
 
+        private void RefreshTutorials()
+        {
+            foreach (var tutorial in FindObjectsByType<TutorialSequence>(FindObjectsInactive.Include))
+            {
+                if (tutorial.Id == "tutorial_classroom")
+                    tutorial.Configure(
+                        "<color=#E8C27A>Đi lại:</color> WASD · <color=#E8C27A>xoay camera:</color> chuột\n" +
+                        "<color=#E8C27A>Tương tác:</color> đến gần thứ có dấu sáng vàng rồi bấm <color=#E8C27A>E</color>\n" +
+                        "<color=#E8C27A>Lời thoại:</color> Space / click để đọc tiếp, 1–4 để chọn câu trả lời\n\n" +
+                        "Cất quyển Truyện Kiều vào cặp. Ngân và những thứ quanh lớp là tùy chọn.",
+                        "WASD: đi · E: tương tác · Space: tiếp lời thoại · Esc: tạm dừng");
+                else if (tutorial.Id == "tutorial_room")
+                    tutorial.Configure(
+                        "<color=#E8C27A>Quan sát:</color> giữ <color=#E8C27A>chuột phải</color> để nhìn kỹ một thứ.\n" +
+                        "<color=#E8C27A>Sổ tay:</color> bấm <color=#E8C27A>J</color> để xem lại những gì đã biết.\n\n" +
+                        "Hãy soi gương trước. Khuôn mặt trong đó sẽ cho biết mình đang ở đâu.",
+                        "WASD: đi · E: xem · Chuột phải: quan sát · J: sổ tay");
+            }
+        }
+
         /// <summary>The collapse clip swings Vương Ông sideways farther than his capsule; move only the nearby veranda
         /// planter out of that swept volume so his body does not pass through its trunk.</summary>
         private void ClearFatherFallSpace()
         {
-            foreach (var transform in FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (var transform in FindObjectsByType<Transform>(FindObjectsInactive.Include))
             {
                 if (!transform.name.StartsWith("ChauMai") || Vector3.Distance(transform.position, _father.transform.position) > 1.7f) continue;
                 transform.position += Vector3.right * 1.35f;
@@ -418,6 +442,129 @@ namespace ThuyKieu.Gameplay.Chapters
             _director.CameraController.SnapBehindTarget(_wake.eulerAngles.y);
         }
 
+        /// <summary>
+        /// Her first moments in Kiều's body, played rather than told. Through Kiều's eyes she raises hands that are not
+        /// hers and turns them over with the mouse; pressing E she tries her voice and hears a stranger's; then, back
+        /// behind her, she takes her first steps in a long skirt, slow and unsteady, stumbling once before she finds
+        /// her feet.
+        /// </summary>
+        private IEnumerator NewBody(StoryDirector director)
+        {
+            bool fast = director.Autopilot;
+            var hud = director.Hud;
+            var player = director.Player;
+            var actor = player.GetComponent<StoryActor>();
+            var animator = player.GetComponentInChildren<Animator>();
+            Transform body = player.transform;
+            Transform head = animator != null && animator.isHuman
+                ? animator.GetBoneTransform(HumanBodyBones.Head)
+                : null;
+            var camera = director.CameraController;
+            bool cameraLocked = camera.ControlLocked;
+
+            // 1. The hands, seen through her own eyes.
+            var view = new GameObject("NewBodyPOV").transform;
+            Vector3 eyePosition = head != null ? head.position : body.position + Vector3.up * 1.5f;
+            // Keep the near plane in front of the face and hair; at the head centre the first-person shot can render
+            // the inside of Kiều's face when her idle animation leans forward.
+            view.SetPositionAndRotation(eyePosition + body.forward * 0.18f + Vector3.up * 0.02f,
+                Quaternion.LookRotation(body.forward - Vector3.up * 0.45f));
+            camera.ControlLocked = true;
+            camera.CutTo(view);
+            if (director.Audio != null) director.Audio.PlaySfx("breath_startled", 0.75f);
+            if (director.Fx != null) director.Fx.Shake(0.08f, 0.35f);
+            var pose = player.gameObject.AddComponent<HandReachPose>();
+            if (animator != null) pose.Initialize(animator);
+            pose.LeftCurl = pose.RightCurl = 12f;
+            hud.SetControls("Di chuột: nhìn hai bàn tay · E: thử cất tiếng");
+            float turn = 0f, turned = 0f, spokeAt = -1f;
+            bool noticedHands = false, reminded = false;
+            for (float t = 0f; !fast && t < 11.5f; t += Time.deltaTime)
+            {
+                float mouse = InputReader.Look.x * 0.012f;
+                turn += mouse;
+                turned += Mathf.Abs(mouse);
+                // Palms towards her face, then the backs of the hands, as the mouse turns them over.
+                float flip = Mathf.Cos(turn) * 0.5f + 0.5f;
+                Vector3 inward = -body.forward, outward = body.forward;
+                Vector3 leftPalm = Vector3.Slerp(outward, inward, flip), rightPalm = leftPalm;
+                Vector3 centre = view.position + view.forward * 0.33f;
+                pose.SetHandAim(Vector3.up, leftPalm, Vector3.up, rightPalm);
+                pose.SetTargets(centre - body.right * 0.08f - Vector3.up * 0.11f, centre + body.right * 0.08f - Vector3.up * 0.11f, centre);
+                pose.Weight = Mathf.MoveTowards(pose.Weight, 1f, Time.deltaTime * 2f);
+                if (!noticedHands && t > 1.5f)
+                {
+                    noticedHands = true;
+                    hud.ShowBark("NoiTam", "Ngón tay thon, móng nhuộm hồng... Không phải tay mình.", 3.5f);
+                }
+                if (!reminded && t > 3.5f && spokeAt < 0f)
+                {
+                    reminded = true;
+                    hud.ShowBark("NoiTam", "Thử lên tiếng đi... nhấn E.", 2.2f);
+                }
+                if (spokeAt < 0f && t > 5.5f)
+                {
+                    // Preserve the identity beat even when the player misses E; never advance without hearing her voice.
+                    spokeAt = t;
+                    hud.ShowBark("Kieu", "Ai... ai đang nói đây?", 2.2f);
+                }
+                if (spokeAt < 0f && t > 0.6f && InputReader.InteractPressedThisFrame)
+                {
+                    spokeAt = t;
+                    hud.ShowBark("Kieu", "Ai... ai đang nói đây?", 2.2f);
+                }
+                if (spokeAt > 0f && t - spokeAt > 2.4f && t - spokeAt < 2.4f + Time.deltaTime)
+                    hud.ShowBark("NoiTam", "Giọng ai mà trong như tiếng đàn thế này? Là giọng... của nàng.", 3.5f);
+                if (spokeAt > 0f && t - spokeAt > 3.8f && turned > 0.35f) break;
+                yield return null;
+            }
+            for (float t = 0f; !fast && t < 0.6f; t += Time.deltaTime)
+            {
+                pose.Weight = 1f - t / 0.6f;
+                yield return null;
+            }
+            Destroy(pose);
+            camera.SetDialogueCue(null);
+            camera.ControlLocked = cameraLocked;
+            camera.SnapBehindTarget(body.eulerAngles.y);
+            Destroy(view.gameObject);
+
+            // 2. The first steps in a long skirt: slow, swaying, one stumble, then her own pace.
+            player.SpeedMultiplier = 0.4f;
+            director.SetFreeControl(true);
+            hud.SetControls("WASD: đi thử vài bước");
+            Vector3 start = body.position;
+            bool stumbled = false, stepReminder = false, heardSkirt = false;
+            for (float t = 0f; !fast && t < 8f; t += Time.deltaTime)
+            {
+                float walked = Vector3.ProjectOnPlane(body.position - start, Vector3.up).magnitude;
+                player.SpeedMultiplier = Mathf.Lerp(0.4f, 1f, Mathf.Clamp01(walked / 1.8f));
+                if (!heardSkirt && walked > 0.2f)
+                {
+                    heardSkirt = true;
+                    if (director.Audio != null) director.Audio.PlaySfx("cloth", 0.32f);
+                }
+                if (!stepReminder && t > 3f && walked < 0.15f)
+                {
+                    stepReminder = true;
+                    hud.ShowBark("NoiTam", "Mình phải đứng dậy... thử bước bằng WASD.", 2.5f);
+                }
+                if (!stumbled && walked > 0.75f)
+                {
+                    stumbled = true;
+                    if (director.Fx != null) director.Fx.Shake(0.25f, 0.45f);
+                    if (director.Audio != null) director.Audio.PlaySfx("stumble");
+                    hud.ShowBark("NoiTam", "Váy dài quá... Suýt nữa thì ngã. Đi từ từ thôi.", 3f);
+                }
+                if (walked > 1.8f) break;
+                yield return null;
+            }
+            player.SpeedMultiplier = 1f;
+            director.SetFreeControl(false);
+            hud.SetControls(Controls);
+            actor.SetTalking(false, 0);
+        }
+
         private void PlayInteractionGesture(int gesture, float duration)
         {
             if (_interactionGesture != null) StopCoroutine(_interactionGesture);
@@ -469,6 +616,8 @@ namespace ThuyKieu.Gameplay.Chapters
             var pose = AddPose();
             var focus = GameObject.Find("Focus_Mirror");
             Transform body = actor.transform;
+            if (_director.Audio != null) _director.Audio.PlaySfx("mirror_reveal", 0.65f);
+            if (_director.Fx != null) _director.Fx.Flash(0.08f);
             for (float t = 0f; !_director.InExplore; t += Time.deltaTime)
             {
                 // The wrist sits under the jaw so the fingers rest on the cheek.

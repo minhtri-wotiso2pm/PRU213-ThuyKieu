@@ -251,7 +251,7 @@ namespace ThuyKieu.Core.Story
             Log.Add($"[{Elapsed()}] CHAPTER {_director.ChapterNumber} COMPLETE · lines {lines} · choices {choices}");
             Log.Add($"[{Elapsed()}] FRAMES {SceneManager.GetActiveScene().name} · {FrameStats()}");
             string[] variables = _director.ChapterNumber == ChapterCatalog.Prologue ? new[] { "pl_che_kieu", "pl_vat", "pl_hanh_dong", "tinh_tao", "tu_trong" }
-                : _director.ChapterNumber == 1 ? new[] { "c1_viec", "c1_manh_moi", "c1_nghi_ngo", "tinh_tao", "tu_trong", "doc_ky_khe", "c1_hoi_tien", "nghi_ngo", "ts_hieu" }
+                : _director.ChapterNumber == 1 ? new[] { "c1_viec", "c1_manh_moi", "c1_nghi_ngo", "tinh_tao", "tu_trong", "doc_ky_khe", "c1_hoi_tien", "c1_bac_truoc", "c1_ma_lo", "c1_ca_hai", "nghi_ngo", "ts_hieu" }
                 : _director.ChapterNumber <= 3 ? new[] { "nghi_ngo", "manh_moi", "suy_luan", "gia_vo", "c3_viec", "c3_khe_uoc", "c3_bi_bat", "tra_loi_kieu_that" }
                 : _director.ChapterNumber == 4 ? new[] { "c4_viec", "c4_canh_giac", "c4_tien", "c4_van_tu", "c4_so_no", "c4_ru_co_lam", "c4_bi_bat" }
                 : _director.ChapterNumber == 5 ? new[] { "c5_lang_le", "c5_duong", "c5_xo_do", "c5_qte", "c5_co_lam_thoat", "c5_bi_bat" }

@@ -47,7 +47,7 @@ namespace ThuyKieu.Player
         private CharacterController controller;
         private float verticalVelocity;
         private Vector3 _planarVelocity;
-        private bool _hasCrouchParameter;
+        private bool _hasCrouchParameter, _parametersCached;
         private float _walkClipSpeed, _runClipSpeed;
 
         /// <summary>True while sneaking. Stealth systems read this to lower visibility.</summary>
@@ -89,18 +89,17 @@ namespace ThuyKieu.Player
             if (_animator != null) _animator.speed = 1f;
             _animator = animator;
             _hasCrouchParameter = false;
+            _parametersCached = false;
             _walkClipSpeed = _runClipSpeed = 0f;
             if (_animator == null) return;
             _animator.applyRootMotion = false;
             _walkClipSpeed = ClipGroundSpeed(_animator, "walk");
             _runClipSpeed = ClipGroundSpeed(_animator, "run");
-            if (_animator.runtimeAnimatorController != null)
-                foreach (var parameter in _animator.parameters)
-                    if (parameter.nameHash == CrouchParameter) _hasCrouchParameter = true;
         }
 
         private void Update()
         {
+            CacheAnimatorParameters();
             Vector3 moveDirection = ScriptedMove.HasValue ? Flat(ScriptedMove.Value) : GetCameraRelativeDirection(ControlLocked ? Vector2.zero : InputReader.Move);
 
             IsCrouching = _allowCrouch && !ControlLocked && !ScriptedMove.HasValue && (InputReader.IsCrouchHeld || ForceCrouch);
@@ -131,6 +130,14 @@ namespace ThuyKieu.Player
                 _animator.SetFloat(SpeedParameter, animationSpeed, _animationSmoothTime, Time.deltaTime);
                 SyncSteps();
             }
+        }
+
+        private void CacheAnimatorParameters()
+        {
+            if (_parametersCached || _animator == null || !_animator.isInitialized || _animator.runtimeAnimatorController == null) return;
+            _parametersCached = true;
+            foreach (var parameter in _animator.parameters)
+                if (parameter.nameHash == CrouchParameter) _hasCrouchParameter = true;
         }
 
         /// <summary>

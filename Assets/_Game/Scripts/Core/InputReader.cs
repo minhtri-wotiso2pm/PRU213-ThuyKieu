@@ -99,6 +99,17 @@ namespace ThuyKieu.Core
             }
         }
 
+        /// <summary>Left mouse button held (press-and-hold story actions, e.g. pressing a fingerprint).</summary>
+        public static bool IsPrimaryHeld
+        {
+            get
+            {
+                if (GamePause.IsPaused) return default; // menus own the mouse while paused
+                Mouse mouse = Mouse.current;
+                return mouse != null && mouse.leftButton.isPressed;
+            }
+        }
+
         /// <summary>Q pressed this frame: throw a pebble.</summary>
         public static bool ThrowPressedThisFrame
         {

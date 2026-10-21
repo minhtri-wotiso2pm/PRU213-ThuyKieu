@@ -42,6 +42,10 @@ Không. Muốn cứu người nhà, trước hết mình phải biết họ bị
     -> c1_me
 * {not c1_tu} [Tìm bản sao hồ sơ quan sai để lại #explore:c1_tu]
     -> c1_tu
+* {not c1_san} [Quan sát khoảng sân bị quan sai lục soát #explore:c1_san]
+    -> c1_san
+* {not c1_ban_tho} [Thắp hương trên bàn thờ #explore:c1_ban_tho]
+    -> c1_ban_tho
 + {c1_me || c1_tu} [Ra mở cổng: có người đang gõ cửa #explore:c1_cong]
     -> c1_ma_den
 
@@ -110,6 +114,7 @@ Ngươi lạ thật. Cầu xin mà nghe như đang ra điều kiện.
 
 
 === c1_ma_den ===
+~ c1_ca_hai = c1_me && c1_tu
 # scene:VuongGia_MaDen
 # sfx:knock
 # music:tension_low
@@ -128,6 +133,14 @@ Mã Giám Sinh: Kẻ hèn họ Mã, nghe Vương gia gặp nạn nên mạo mu�
 
 # speaker:NoiTam
 Là Mã Giám Sinh. Mình biết hắn là kẻ buôn người, nhưng nói ra lúc này ai sẽ tin?
+
+{c1_ca_hai:
+    # speaker:NoiTam
+    Lời hứa của bà mối, bản khai không tên. Hai lá bài trong tay áo. Giờ chỉ cần biết lúc nào lật.
+- else:
+    # speaker:NoiTam
+    Mới nắm được một nửa câu chuyện. Phải dè chừng từng lời.
+}
 
 # speaker:MaGiamSinh
 # emotion:polite_fake
@@ -177,11 +190,16 @@ Người thật lòng cầu thân sẽ hỏi về người mình cưới. Hắn 
 # camera:OTS_Kieu_MaGiamSinh
 Mã Giám Sinh: Cô nương có điều gì muốn hỏi ta trước khi thành thân chăng?
 
+{c1_nghi_ngo >= 50:
+    # speaker:NoiTam
+    Hắn đã đề phòng. Lúc này mà hỏi khéo, hắn sẽ nghe ra ngay mình đang dò.
+}
+
 # speaker:NoiTam
 # timer:10
 Một câu thôi. Hỏi thế nào để hắn trả lời thật, mà không biết mình đang dò?
 
-* [Hỏi khéo: "Quê nhà công tử ở đâu? Thiếp về làm dâu, sợ vụng."]
+* {c1_nghi_ngo < 50} [Hỏi khéo: "Quê nhà công tử ở đâu? Thiếp về làm dâu, sợ vụng."]
     ~ tinh_tao += 1
     ~ c1_manh_moi += 1
     # speaker:Kieu
@@ -308,8 +326,26 @@ Mã Giám Sinh: Chỉ là lệ buôn... à, lệ làm giấy ở chỗ ta.
 # timer:9
 Mình đã biết đây là giấy bán người. Làm gì với điều đó bây giờ?
 
+* {c1_ca_hai} [Dùng cả hai: đòi bạc giao trước, và khẽ đặt bản khai lên bàn.]
+    ~ tinh_tao += 2
+    ~ c1_bac_truoc = true
+    ~ c1_ma_lo = true
+    ~ c1_nghi_ngo = MIN(c1_nghi_ngo + 5, 100)
+    # speaker:Kieu
+    # emotion:firm
+    Kiều: Bà mối đã hứa bạc giao trước, xin ghi rõ vào đây. Còn bản khai này... chắc công tử không lạ gì.
+
+    # speaker:MaGiamSinh
+    # emotion:caught_off_guard
+    # sfx:suspicion_up
+    Mã Giám Sinh: Ghi thì ghi. Còn giấy má quan sai... bên Lâm Tri người ta chỉ dặn ta mang bạc tới, ta biết gì đâu.
+
+    # speaker:NoiTam
+    # clue:c1_ma_lo
+    Lâm Tri. Hắn vừa tự khai nơi hắn đưa mình tới. Và lần này, bạc cứu cha đi trước mình một bước.
 * {c1_me && c1_hoi_tien} [Giữ lời bà mối: "Bạc giao đủ trước khi ta lên đường."]
     ~ tinh_tao += 1
+    ~ c1_bac_truoc = true
     ~ c1_nghi_ngo = MIN(c1_nghi_ngo + 10, 100)
     # speaker:Kieu
     # emotion:firm
@@ -323,6 +359,7 @@ Mình đã biết đây là giấy bán người. Làm gì với điều đó b�
     Một dòng chữ nhỏ. Nhưng ít nhất lần này, tiền cứu cha không phụ thuộc vào lòng tốt của hắn.
 * {c1_tu} [Đặt bản khai cạnh tờ khế: "Ai cho công tử biết hồ sơ vụ án?"]
     ~ tinh_tao += 1
+    ~ c1_ma_lo = true
     ~ c1_nghi_ngo = MIN(c1_nghi_ngo + 15, 100)
     # speaker:Kieu
     # emotion:firm
@@ -331,10 +368,11 @@ Mình đã biết đây là giấy bán người. Làm gì với điều đó b�
     # speaker:MaGiamSinh
     # emotion:caught_off_guard
     # sfx:suspicion_up
-    Mã Giám Sinh: Bà mối lo liệu mọi chuyện. Ta chỉ mang bạc tới. Cô nương đừng suy diễn.
+    Mã Giám Sinh: Bà mối lo liệu mọi chuyện. Bên Lâm Tri người ta chỉ dặn ta mang bạc tới. Cô nương đừng suy diễn.
 
     # speaker:NoiTam
-    Hắn chối quá nhanh. Bản khai, bà mối và túi bạc chắc chắn nối với nhau.
+    # clue:c1_ma_lo
+    Hắn chối quá nhanh, và lỡ nhắc "bên Lâm Tri". Bản khai, bà mối và túi bạc chắc chắn nối với nhau.
 * [Đòi xóa câu "toàn quyền định đoạt".]
     ~ c1_nghi_ngo = MIN(c1_nghi_ngo + 25, 100)
     # speaker:Kieu
@@ -362,6 +400,10 @@ Mình đã biết đây là giấy bán người. Làm gì với điều đó b�
     Cứ để hắn nghĩ mình là con cừu. Con cừu nhớ từng chữ trên tờ giấy bán nó.
 
 - # speaker:Narrator
+# gameplay:diem_chi
+Mã Giám Sinh đẩy hộp son lại gần. Chỉ còn chờ một dấu tay.
+
+# speaker:Narrator
 Kiều điểm chỉ. Chưa lật được bàn, nhưng nàng biết rõ mình đang bước vào đâu.
 -> c1_decision
 
@@ -370,6 +412,7 @@ Kiều điểm chỉ. Chưa lật được bàn, nhưng nàng biết rõ mình �
 ~ tu_trong -= 1
 # speaker:Kieu
 # emotion:pained
+# gameplay:diem_chi
 Kiều: Một chữ của ta đổi lấy mạng người nhà. Nếu đây là cái giá duy nhất... ta trả.
 
 # speaker:KieuThat
@@ -465,6 +508,33 @@ Kiều: Mẹ đợi con. Con sẽ về.
     # speaker:NoiTam
     Mình còn biết quá ít về hắn. Trên đường đi phải nhìn kỹ hơn, hỏi khéo hơn.
 }
+
+// Ra cổng với cả hai lá bài thì Mã bớt đề phòng; vội mở cổng khi mới biết một nửa thì hắn để ý hơn.
+{c1_ca_hai:
+    ~ nghi_ngo = MAX(nghi_ngo - 10, 0)
+- else:
+    ~ nghi_ngo = nghi_ngo + 5
+}
+
+// Câu người chơi đã nói về Kiều trong lớp học quay lại, từ chính miệng Kiều.
+{
+- pl_che_kieu == 1:
+    # speaker:KieuThat
+    # gameplay:kieu_voice
+    "Em sẽ làm tốt hơn Kiều nhiều." Ngươi đã nói thế, ở một nơi rất xa. Giờ tờ khế mang dấu tay ngươi. Còn thấy dễ không?
+- pl_che_kieu == 2:
+    # speaker:KieuThat
+    # gameplay:kieu_voice
+    "Phải có cách khác, chứ không phải bán chính mình." Ngươi đã tìm suốt đêm nay. Giờ thì ngươi biết: có những đêm, cách khác duy nhất là bước đi mà mắt vẫn mở.
+- else:
+    # speaker:KieuThat
+    # gameplay:kieu_voice
+    Ngươi từng chê ta cam chịu. Đêm nay ngươi cũng điểm chỉ, cũng bước ra cổng. Cam chịu với chịu đựng, giờ ngươi phân biệt được chưa?
+}
+
+# fx:none
+# speaker:NoiTam
+Mình đã nói câu ấy dễ dàng biết bao. Giờ mới hiểu cái giá của nó.
 
 -> chapter_2
 

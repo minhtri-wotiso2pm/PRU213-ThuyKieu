@@ -4,6 +4,7 @@ using ThuyKieu.Core.Story;
 using ThuyKieu.Gameplay.Sequences;
 using ThuyKieu.Interaction;
 using ThuyKieu.Player;
+using ThuyKieu.Presentation;
 using UnityEngine;
 
 namespace ThuyKieu.Gameplay.Chapters
@@ -15,6 +16,8 @@ namespace ThuyKieu.Gameplay.Chapters
     public class Chapter01World : MonoBehaviour, IChapterSummary
     {
         private const string Negotiation = "VuongGia_DamPhan";
+        private const string Fingerprint = "diem_chi";
+        private const string Controls = "WASD: đi · Shift: chạy · Chuột phải: quan sát · E: tương tác · J: sổ tay";
 
         [SerializeField] private StoryDirector _director;
         [SerializeField] private StoryActor _mother;
@@ -28,10 +31,20 @@ namespace ThuyKieu.Gameplay.Chapters
         [SerializeField] private Transform _kieuMeet, _motherMeet, _maMeet, _servantPorch;
         [SerializeField] private Transform _motherTable, _maTable, _tableFocus;
         [SerializeField] private Transform _kieuDoor, _motherDoor, _maGate, _servantGate;
+        [Header("Secret: the gold hairpin")]
+        [Tooltip("Kim Trọng's rigged model, drawn as a figure of light when the hairpin is found.")]
+        [SerializeField] private GameObject _kimTrongModel;
+        [SerializeField] private RuntimeAnimatorController _kimTrongAnimator;
 
         private string _scene = string.Empty;
         private float _glanceTimer = 6f, _glanceHold, _barkCooldown, _suspicionCarry;
         private bool _knocked, _caughtObserving, _safeCueShown;
+        private float _knockWait;
+        private int _knockStage;
+        // How far Mã Giám Sinh has closed up during the negotiation (see ReactToSuspicion).
+        private int _guard;
+        private Vector3 _silverRest;
+        private FingerprintSequence _fingerprint;
         private ObservableTarget _silverObservation;
         private StoryActor _kieu;
         private Coroutine _action, _arrival, _motherRoutine;
@@ -43,6 +56,13 @@ namespace ThuyKieu.Gameplay.Chapters
         private Vector3 _contractCentreOffset;
 
         public bool Glancing => _glanceHold > 0f;
+
+        private void Awake()
+        {
+            _fingerprint = FingerprintSequence.Create(gameObject, Fingerprint);
+            _fingerprint.ControlsAfter = Controls;
+            _director.RegisterSequence(_fingerprint);
+        }
 
         private void OnEnable()
         {
@@ -62,7 +82,7 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             _kieu = _director.Player.GetComponent<StoryActor>();
             _director.Player.AllowCrouch = false;
-            _director.Hud.SetControls("WASD: đi · Shift: chạy · Chuột phải: quan sát · E: tương tác · J: sổ tay");
+            _director.Hud.SetControls(Controls);
             // Mã Giám Sinh only arrives later; a resumed save replays its scene tag and stages him again.
             ArrangeInterior();
             PrepareGate();
@@ -71,8 +91,10 @@ namespace ThuyKieu.Gameplay.Chapters
             DressSilverBag();
             PrepareSilverObservation();
             RefreshSuspicionTutorial();
+            RefreshHouseTutorial();
             CacheContractPose();
             PlaceTableLamp();
+            PreloadChapterPresentation();
             PlaceHairpin();
             // Mã Giám Sinh is all polite composure: on neutral lines he nods along instead of throwing his arms wide.
             _ma.CalmGesture = StoryDirector.Gesture("satisfied");
@@ -86,6 +108,30 @@ namespace ThuyKieu.Gameplay.Chapters
             if (_scene.Length == 0) { SetGuests(false); _contract.SetActive(false); }
         }
 
+        private static void PreloadChapterPresentation()
+        {
+            string[] panels =
+            {
+                "montage_c1_mo_1", "montage_c1_mo_2", "montage_c1_mo_3",
+                "montage_c1_sang_1", "montage_c1_sang_2",
+                "montage_c1_ra_di_1", "montage_c1_ra_di_2"
+            };
+            foreach (string panel in panels) Resources.Load<Texture2D>("StoryPanels/" + panel);
+            AudioBank.Get(AudioBank.Sfx, "whoosh");
+        }
+
+        private void RefreshHouseTutorial()
+        {
+            foreach (var tutorial in FindObjectsByType<TutorialSequence>(FindObjectsInactive.Include))
+                if (tutorial.Id == "tutorial_house")
+                    tutorial.Configure(
+                        "<color=#E8C27A>Đi lại:</color> WASD · <color=#E8C27A>chạy:</color> Shift · <color=#E8C27A>xoay camera:</color> chuột\n" +
+                        "<color=#E8C27A>E</color>: tương tác với thứ có dấu sáng vàng.   <color=#E8C27A>Giữ chuột phải</color>: quan sát kỹ một nơi ở xa.\n" +
+                        "<color=#E8C27A>J</color>: sổ tay manh mối.\n\n" +
+                        "Tìm hiểu tình cảnh gia đình trước khi ra mở cổng. Tiếng gõ sẽ thúc giục, nhưng không khóa mất thời gian điều tra.",
+                        "WASD: đi · Shift: chạy · Chuột phải: quan sát · E: tương tác · J: sổ tay");
+        }
+
         private void OnTag(string key, string value)
         {
             if (key == "camera" && value == "OTS_Kieu_Cabinet") Begin(OpenCabinet());
@@ -93,6 +139,7 @@ namespace ThuyKieu.Gameplay.Chapters
             if (key == "camera" && value == "MCU_MeKieu" && _scene == "VuongGia_DemMua") Begin(SitWithMother());
             if (key == "camera" && value == "Hug_MeKieu") Begin(Embrace());
             if (key == "gameplay" && value == "document_khe") Begin(InspectContract());
+            if (key == "gameplay" && value == Fingerprint) Begin(PressFingerprint());
         }
 
         private void Update()
@@ -102,10 +149,45 @@ namespace ThuyKieu.Gameplay.Chapters
             {
                 _knocked = true;
                 if (_director.Audio != null) _director.Audio.PlaySfx("knock");
-                Bark("NoiTam", "Có tiếng gõ cổng. Giữa đêm mưa thế này... là hắn.");
+                string unfinished = _director.IsExploreAvailable("c1_me") ? " Còn kịp hỏi Mẹ một câu trước khi mở cổng."
+                    : _director.IsExploreAvailable("c1_tu") ? " Còn kịp lục nốt cái tủ." : "";
+                Bark("NoiTam", "Có tiếng gõ cổng. Giữa đêm mưa thế này... là hắn." + unfinished);
                 MotherDo(MotherRises());
             }
+            else if (_knocked && _scene == "VuongGia_DemMua" && _director.InExplore && _director.IsExploreAvailable("c1_cong"))
+                UpdateKnocking();
             if (_scene == Negotiation && _director.IsExploreAvailable("c1_tui_bac")) UpdateSuspicion();
+        }
+
+        /// <summary>
+        /// The longer the gate stays shut the harder they knock: the mother begs her to answer, the servant calls in
+        /// and Mã Giám Sinh's patience runs out, each wait costing a little of his trust. After that a knock now and then.
+        /// Only time spent free in the house counts, so reading and talking are never punished.
+        /// </summary>
+        private void UpdateKnocking()
+        {
+            _knockWait += Time.deltaTime;
+            float due = _knockStage < 3 ? 20f * (_knockStage + 1) : 60f + 15f * (_knockStage - 2);
+            if (_knockWait < due) return;
+            var audio = _director.Audio;
+            if (audio != null) audio.PlaySfx("knock", Mathf.Min(1f, 0.8f + 0.1f * _knockStage));
+            _barkCooldown = 0f;
+            switch (_knockStage)
+            {
+                case 0:
+                    Bark("MeKieu", "Con ơi, người ta gõ mãi... Ra mở cổng đi con, kẻo người ta giận.");
+                    break;
+                case 1:
+                    Bark("TuyTung", "Nhà họ Vương có ai không? Khách quý đứng ngoài mưa đây!");
+                    _director.SetInt("c1_nghi_ngo", Mathf.Min(100, _director.GetInt("c1_nghi_ngo") + 5));
+                    break;
+                case 2:
+                    Bark("MaGiamSinh", "Vương gia để khách đứng ngoài mưa thế này sao? Ta không có cả đêm đâu.");
+                    _director.SetInt("c1_nghi_ngo", Mathf.Min(100, _director.GetInt("c1_nghi_ngo") + 5));
+                    if (_director.Fx != null) _director.Fx.Shake(0.12f, 0.3f);
+                    break;
+            }
+            _knockStage++;
         }
 
         // ------------------------------------------------------------------ suspicion
@@ -124,7 +206,8 @@ namespace ThuyKieu.Gameplay.Chapters
                 _ma.FaceTowards(_tableFocus.position);
                 if ((_glanceTimer -= Time.deltaTime) <= 0f)
                 {
-                    _glanceTimer = Random.Range(6f, 10f);
+                    // Once he is on his guard he looks round far more often.
+                    _glanceTimer = _guard >= 2 ? Random.Range(3f, 5f) : Random.Range(6f, 10f);
                     _glanceHold = 2f;
                 }
             }
@@ -167,15 +250,76 @@ namespace ThuyKieu.Gameplay.Chapters
                 value = Mathf.Clamp(value + step, 0, 100);
                 _director.SetInt("c1_nghi_ngo", value);
             }
+            ReactToSuspicion(value);
             float normalized = value / 100f;
             _director.Hud.SetMeter(!watched ? "Mã đang quay đi — có thể quan sát bạc" :
                     value >= 60 ? "MÃ GIÁM SINH ĐANG NGỜ VỰC" : "Nghi ngờ của Mã Giám Sinh",
                 normalized, Color.Lerp(new Color(1f, 0.85f, 0.4f), new Color(0.9f, 0.2f, 0.15f), normalized));
         }
 
+        /// <summary>
+        /// The meter is not just a bar: the more Mã Giám Sinh suspects, the more he closes up. At 30 he draws the silver
+        /// to his side of the table, at 55 he calls his servant in behind Kiều and watches her more often, and at 80 he
+        /// lays his hand over the bag so the mark on the silver can no longer be read.
+        /// </summary>
+        private void ReactToSuspicion(int value)
+        {
+            if (_guard < 1 && value >= 30)
+            {
+                _guard = 1;
+                _barkCooldown = 0f;
+                Bark("MaGiamSinh", "Bạc này là sính lễ. Cô nương chưa cần xem vội.");
+                StartCoroutine(DrawSilverIn());
+            }
+            if (_guard < 2 && value >= 55)
+            {
+                _guard = 2;
+                _barkCooldown = 0f;
+                Bark("MaGiamSinh", "Ngươi, vào đây đứng.");
+                Transform kieu = _director.Player.transform;
+                _servant.EnableNavigation();
+                _servant.MoveTo(kieu.position - kieu.forward * 1.3f + kieu.right * 0.5f, 1.3f);
+            }
+            if (_guard < 3 && value >= 80)
+            {
+                _guard = 3;
+                _barkCooldown = 0f;
+                Bark("NoiTam", "Hắn đặt tay lên túi bạc. Lần này mình không nhìn được nữa.");
+                if (_observe != null && _silverObservation != null) _observe.CancelFocus(_silverObservation);
+                Destroy(_silverObservation);
+                if (_observe != null) _observe.RefreshTargets();
+                var cover = AddPose(_ma);
+                cover.SetTargets(null, _silver.transform.position + Vector3.up * 0.09f, _silver.transform.position);
+                cover.SetHandAim(null, null, _ma.transform.forward, Vector3.down);
+                cover.Weight = 1f;
+            }
+        }
+
+        private IEnumerator DrawSilverIn()
+        {
+            Transform silver = _silver.transform;
+            Vector3 from = silver.position;
+            Vector3 to = from + Vector3.ProjectOnPlane(_ma.transform.position - from, Vector3.up).normalized * 0.22f;
+            float duration = _director.Autopilot ? 0.01f : 0.6f;
+            for (float t = 0f; t < duration; t += Time.deltaTime)
+            {
+                silver.position = Vector3.Lerp(from, to, Mathf.SmoothStep(0f, 1f, t / duration));
+                yield return null;
+            }
+            silver.position = to;
+        }
+
         private void OnRestored()
         {
             _director.SetInt("c1_nghi_ngo", Mathf.Min(_director.GetInt("c1_nghi_ngo"), 45));
+            // Back from a checkpoint he is wary but no longer covering the silver.
+            if (_guard > 0 && _silver != null)
+            {
+                _silver.transform.position = _silverRest;
+                foreach (var pose in _ma.GetComponents<HandReachPose>()) Destroy(pose);
+                if (_silverObservation == null) PrepareSilverObservation();
+                _guard = 0;
+            }
             _suspicionCarry = 0f;
             _glanceHold = 0f;
             _glanceTimer = 6f;
@@ -246,6 +390,7 @@ namespace ThuyKieu.Gameplay.Chapters
             Place(_mother, _motherTable);
             Place(_ma, _maTable);
             Place(_servant, _servantPorch);
+            _silverRest = _silver.transform.position;
         }
 
         private void SetGuests(bool present)
@@ -419,29 +564,35 @@ namespace ThuyKieu.Gameplay.Chapters
             yield return new WaitForSeconds(_director.Autopilot ? 0f : 0.8f);
             var pose = AddPose(_mother);
             Transform body = _mother.transform;
-            // HandReachPose targets the wrists, not the palms. Keep the wrists below and outside the cheeks so the
-            // palms cover her face without driving the forearms and finger roots through it. Follow the animated head
-            // smoothly: pinning this point once left the hands floating while the seated idle continued to breathe.
-            Vector3 head = _mother.HeadPosition;
-            Vector3 face = head - Vector3.up * 0.13f + body.forward * 0.11f;
-            // Head bowed into her hands.
-            Vector3 gaze = head + body.forward * 0.4f - Vector3.up * 0.55f;
-            // Her face is towards +body.forward (checked against a render from each side), so the palms aim back along
-            // −forward to cover it, fingers up. Elbows hang low and close to her sides: the forearms fold up under the
-            // chin instead of spreading into a T.
-            pose.SetHandAim(Vector3.up, -body.forward, Vector3.up, -body.forward);
-            pose.SetElbowHints(head - body.right * 0.14f - Vector3.up * 0.6f + body.forward * 0.05f,
-                head + body.right * 0.14f - Vector3.up * 0.6f + body.forward * 0.05f);
-            pose.LeftCurl = 8f;
-            pose.RightCurl = 8f;
+            // She weeps as a woman of her house would: head bowed, her right hand laid across her mouth to keep the
+            // sobs in, her left pressed to her heart. HandReachPose targets the wrists, so each wrist sits a palm's
+            // length from the spot the palm should cover. The mouth is read off the head bone (the spot ActorMouth
+            // uses), so the hand stays on it as the head bows and breathes.
+            var animator = _mother.GetComponentInChildren<Animator>();
+            Transform head = animator.GetBoneTransform(HumanBodyBones.Head);
+            Transform chest = animator.GetBoneTransform(HumanBodyBones.UpperChest) ?? animator.GetBoneTransform(HumanBodyBones.Chest);
+            var face = animator.GetComponentInChildren<SkinnedMeshRenderer>();
+            bool hasMouth = MouthSpots.TryGet(MouthSpots.KeyFor(face), out var spot);
+            pose.LeftCurl = 22f;
+            pose.RightCurl = 16f;
             for (float t = 0f; _motherSeated; t += Time.deltaTime)
             {
-                // The shoulders shake a little with each sob.
-                float sob = Mathf.Sin(t * 5.5f) * 0.012f * (0.5f + 0.5f * Mathf.Sin(t * 0.7f));
-                Vector3 desiredFace = _mother.HeadPosition - Vector3.up * 0.13f + body.forward * 0.11f;
-                face = Vector3.Lerp(face, desiredFace, 1f - Mathf.Exp(-12f * Time.deltaTime));
-                Vector3 hands = face - Vector3.up * sob;
-                pose.SetTargets(hands - body.right * 0.05f, hands + body.right * 0.05f, gaze);
+                // A sob now and then: the shoulders catch and the bowed head dips with them.
+                float sob = Mathf.Max(0f, Mathf.Sin(t * 4.2f)) * 0.008f * (0.4f + 0.6f * Mathf.Max(0f, Mathf.Sin(t * 0.55f)));
+                Quaternion faceTurn = hasMouth ? head.rotation * spot.Rotation : body.rotation;
+                Vector3 outOfFace = faceTurn * Vector3.forward, across = faceTurn * Vector3.left;
+                Vector3 mouth = hasMouth ? head.TransformPoint(spot.Position) : _mother.HeadPosition - Vector3.up * 0.04f + body.forward * 0.11f;
+                Vector3 heart = chest.position + body.forward * 0.12f - body.right * 0.06f;
+                // Fingers run across the mouth towards her left, palm against it; the left fingers lie towards her
+                // right shoulder over the heart.
+                Vector3 mouthFingers = (across + Vector3.up * 0.15f).normalized;
+                Vector3 heartFingers = (body.right + Vector3.up * 0.5f).normalized;
+                pose.SetHandAim(heartFingers, -body.forward, mouthFingers, -outOfFace);
+                Vector3 right = mouth + outOfFace * 0.02f - mouthFingers * 0.075f - Vector3.up * sob;
+                Vector3 left = heart + body.forward * 0.02f - heartFingers * 0.07f - Vector3.up * sob;
+                Vector3 gaze = _mother.HeadPosition + body.forward * 0.6f - Vector3.up * (0.45f + sob * 6f);
+                pose.SetTargets(left, right, gaze);
+                pose.SetElbowHints(heart - body.right * 0.2f - Vector3.up * 0.22f, mouth + body.right * 0.1f - Vector3.up * 0.5f + body.forward * 0.18f);
                 pose.Weight = Mathf.SmoothStep(0f, 1f, t / 1.2f);
                 yield return null;
             }
@@ -730,6 +881,103 @@ namespace ThuyKieu.Gameplay.Chapters
             _action = null;
         }
 
+        /// <summary>
+        /// The fingerprint: a close shot on the contract, Kiều's hand hovering over the cinnabar mark. Holding the
+        /// button lowers her thumb (FingerprintSequence); the hand trembles, worse when she signs in haste, and the
+        /// red print stays on the paper once it is down.
+        /// </summary>
+        private IEnumerator PressFingerprint()
+        {
+            for (float t = 0f; _director.CurrentSequence != Fingerprint && t < 30f; t += Time.deltaTime) yield return null;
+            if (_director.CurrentSequence != Fingerprint) yield break;
+            if (!_contract.activeSelf) _contract.SetActive(true);
+            // She steps up to the end of the table away from Mã Giám Sinh (the camera cuts to the paper, so the step is
+            // not seen) and presses beside the mark already printed at that end of the sheet; the cinnabar box sits on
+            // the table just past the paper.
+            var sheet = _contract.transform.Find("Tờ khế")?.GetComponent<Renderer>() ?? _contract.GetComponentInChildren<Renderer>();
+            Bounds paper = sheet.bounds;
+            Vector3 towardKieu = Vector3.ProjectOnPlane(paper.center - _ma.transform.position, Vector3.up).normalized;
+            Vector3 across = Vector3.Cross(Vector3.up, towardKieu);
+            Vector3 stand = paper.center + towardKieu * (paper.extents.x + 0.14f);
+            stand.y = _director.Player.transform.position.y;
+            _director.Player.Teleport(stand, Quaternion.LookRotation(-towardKieu));
+            Vector3 spot = new Vector3(paper.center.x, paper.max.y + 0.002f, paper.center.z) + towardKieu * (paper.extents.x - 0.15f) - across * 0.03f;
+            var pad = InkPad(paper.center + towardKieu * (paper.extents.x - 0.06f) + across * (paper.extents.z + 0.07f));
+
+            var camera = _director.CameraController;
+            bool cameraLocked = camera.ControlLocked;
+            var shot = new GameObject("FingerprintShot").transform;
+            // From across the paper, looking back at her hand coming down: her own sleeve never fills the frame.
+            Vector3 eye = spot + Vector3.up * 0.5f - towardKieu * 0.32f - across * 0.3f;
+            shot.SetPositionAndRotation(eye, Quaternion.LookRotation(spot + towardKieu * 0.05f - eye));
+            camera.ControlLocked = true;
+            camera.CutTo(shot);
+
+            bool haste = !_director.GetBool("doc_ky_khe");
+            var pose = AddPose(_kieu);
+            pose.Lean = 30f;
+            // Palm down, fingers reaching forward and down onto the paper.
+            Vector3 fingers = (Vector3.down * 0.8f - towardKieu).normalized;
+            pose.SetHandAim(null, null, fingers, Vector3.down);
+            pose.RightCurl = 28f;
+            bool halfway = false;
+            for (float t = 0f; _director.CurrentSequence == Fingerprint && !_fingerprint.Done; t += Time.deltaTime)
+            {
+                float p = _fingerprint.Progress;
+                // Hands shake more the closer the thumb comes to the paper.
+                float shake = (haste ? 0.009f : 0.005f) * (0.4f + p);
+                Vector3 jitter = new Vector3(Mathf.PerlinNoise(t * 9f, 0.1f) - 0.5f, Mathf.PerlinNoise(0.3f, t * 8f) - 0.5f,
+                    Mathf.PerlinNoise(t * 7f, 0.7f) - 0.5f) * 2f * shake;
+                Vector3 wrist = spot - fingers * 0.11f + Vector3.up * (0.16f * (1f - p)) + jitter;
+                pose.SetTargets(null, wrist, spot);
+                pose.Weight = Mathf.MoveTowards(pose.Weight, 1f, Time.deltaTime * 2.5f);
+                if (!halfway && p >= 0.5f)
+                {
+                    halfway = true;
+                    _barkCooldown = 0f;
+                    Bark("NoiTam", haste ? "Tay mình run quá. Cứ ấn xuống đi, đừng nghĩ nữa." : "Son đỏ như máu. Một dấu tay, một đời người.");
+                }
+                yield return null;
+            }
+            if (_fingerprint.Done) LayFingerprint(spot);
+            yield return new WaitForSeconds(_director.Autopilot ? 0f : 0.6f);
+            float lift = _director.Autopilot ? 0.01f : 0.7f;
+            for (float t = 0f; t < lift; t += Time.deltaTime)
+            {
+                pose.Weight = 1f - Mathf.SmoothStep(0f, 1f, t / lift);
+                yield return null;
+            }
+            Destroy(pose);
+            camera.SetDialogueCue(null);
+            camera.ControlLocked = cameraLocked;
+            Destroy(shot.gameObject);
+            if (pad != null) pad.SetParent(_contract.transform, true);
+            _action = null;
+        }
+
+        /// <summary>A lacquered cinnabar box beside the contract, its red paste showing.</summary>
+        private Transform InkPad(Vector3 at)
+        {
+            var pad = new GameObject("HopSon").transform;
+            pad.position = new Vector3(at.x, TableTop(at), at.z);
+            Piece(pad, PrimitiveType.Cylinder, new Vector3(0f, 0.008f, 0f), Vector3.zero, new Vector3(0.065f, 0.008f, 0.065f), Lit(new Color(0.18f, 0.06f, 0.04f), 0.7f));
+            Piece(pad, PrimitiveType.Cylinder, new Vector3(0f, 0.0165f, 0f), Vector3.zero, new Vector3(0.05f, 0.001f, 0.05f), Lit(new Color(0.72f, 0.1f, 0.08f), 0.4f));
+            return pad;
+        }
+
+        /// <summary>The red print left on the contract, a little smudged, riding with the paper from now on.</summary>
+        private void LayFingerprint(Vector3 spot)
+        {
+            var mark = new GameObject("DauTay").transform;
+            mark.SetParent(_contract.transform, true);
+            mark.position = spot;
+            mark.rotation = Quaternion.Euler(0f, Random.Range(-20f, 20f), 0f);
+            var red = Lit(new Color(0.62f, 0.06f, 0.06f), 0.2f);
+            Piece(mark, PrimitiveType.Cylinder, Vector3.zero, Vector3.zero, new Vector3(0.016f, 0.0004f, 0.022f), red);
+            Piece(mark, PrimitiveType.Cylinder, new Vector3(0.002f, 0.0002f, 0.004f), Vector3.zero, new Vector3(0.011f, 0.0004f, 0.015f),
+                Lit(new Color(0.45f, 0.03f, 0.04f), 0.2f));
+        }
+
         private HandReachPose AddPose(StoryActor actor)
         {
             foreach (var old in actor.GetComponents<HandReachPose>()) Destroy(old);
@@ -869,7 +1117,7 @@ namespace ThuyKieu.Gameplay.Chapters
         private void ClearCabinetDoorway()
         {
             if (_cabinet == null) return;
-            foreach (Transform item in FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            foreach (Transform item in FindObjectsByType<Transform>(FindObjectsInactive.Include))
             {
                 if (!item.name.StartsWith("Jar")) continue;
                 Vector3 offset = item.position - _cabinet.position;
@@ -1134,29 +1382,25 @@ namespace ThuyKieu.Gameplay.Chapters
         }
 
         /// <summary>
-        /// Secret: the gold hairpin Kim Trọng once found in the garden and gave back lies dropped at the foot of the
-        /// side cabinet. Nothing points to it but a faint glint; picking it up during the night at home earns his trust.
+        /// Secret: the gold hairpin Kim Trọng once found in the garden and gave back lies half-buried at the foot of the
+        /// potted plant in the far corner of the yard, against the wall his house stands behind. Nothing points to it
+        /// but a faint glint seen only up close. Finding it becomes a lasting clue and restores Kiều's resolve.
         /// </summary>
         private void PlaceHairpin()
         {
             if (_director.GetBool("c1_thoa")) return;
-            Transform cabinet = GameObject.Find("SideCabinet")?.transform;
-            if (cabinet == null) return;
-            var hairpin = new GameObject("Secret_ThoaVang").transform;
-            hairpin.position = cabinet.position + new Vector3(0.45f, 0.012f, -0.7f);
+            Transform pot = CornerPot();
+            if (pot == null) return;
+            var hairpin = HairpinModel("Secret_ThoaVang");
+            // On the yard side of the pot, between the pot and the gate wall, where the stone path never leads.
+            hairpin.position = new Vector3(pot.position.x - 0.42f, 0.012f, pot.position.z + 0.2f);
             hairpin.rotation = Quaternion.Euler(0f, 35f, 0f);
-            hairpin.localScale = Vector3.one * 1.6f;
-            var gold = Lit(new Color(0.95f, 0.72f, 0.3f), 0.85f, 1f);
-            Piece(hairpin, PrimitiveType.Cylinder, Vector3.zero, new Vector3(90f, 0f, 0f), new Vector3(0.007f, 0.085f, 0.007f), gold);
-            Piece(hairpin, PrimitiveType.Sphere, new Vector3(0f, 0.008f, 0.09f), Vector3.zero, Vector3.one * 0.028f, gold);
-            Piece(hairpin, PrimitiveType.Sphere, new Vector3(0f, 0.018f, 0.09f), Vector3.zero, Vector3.one * 0.014f,
-                Lit(new Color(0.35f, 0.7f, 0.5f), 0.9f));
             var glint = new GameObject("Glint").AddComponent<Light>();
             glint.transform.SetParent(hairpin, false);
             glint.transform.localPosition = new Vector3(0f, 0.12f, 0.04f);
             glint.type = LightType.Point;
             glint.color = new Color(1f, 0.82f, 0.45f);
-            glint.range = 0.7f;
+            glint.range = 0.85f;
             glint.shadows = LightShadows.None;
             var trigger = hairpin.gameObject.AddComponent<SphereCollider>();
             trigger.isTrigger = true;
@@ -1166,15 +1410,39 @@ namespace ThuyKieu.Gameplay.Chapters
                 () => _scene == "VuongGia_DemMua" && _director.InExplore && !_director.GetBool("c1_thoa"),
                 () => FindHairpin(hairpin.position));
             StartCoroutine(Twinkle(glint));
+            // These two are synthesised on first use; do it now rather than with a hitch in the middle of the moment.
+            AudioBank.Get(AudioBank.Sfx, "shimmer");
+            AudioBank.Get(AudioBank.Sfx, "petals");
         }
 
-        private static IEnumerator Twinkle(Light glint)
+        /// <summary>The gold hairpin: a slim gold pin, a gold bead at its head and a jade one set on top. Its length runs along z.</summary>
+        private static Transform HairpinModel(string name)
         {
+            var hairpin = new GameObject(name).transform;
+            hairpin.localScale = Vector3.one * 1.6f;
+            var gold = Lit(new Color(0.95f, 0.72f, 0.3f), 0.85f, 1f);
+            Piece(hairpin, PrimitiveType.Cylinder, Vector3.zero, new Vector3(90f, 0f, 0f), new Vector3(0.007f, 0.085f, 0.007f), gold);
+            Piece(hairpin, PrimitiveType.Sphere, new Vector3(0f, 0.008f, 0.09f), Vector3.zero, Vector3.one * 0.028f, gold);
+            Piece(hairpin, PrimitiveType.Sphere, new Vector3(0f, 0.018f, 0.09f), Vector3.zero, Vector3.one * 0.014f,
+                Lit(new Color(0.35f, 0.7f, 0.5f), 0.9f));
+            return hairpin;
+        }
+
+        private IEnumerator Twinkle(Light glint)
+        {
+            int lastPulse = -1;
             while (glint != null)
             {
                 // Mostly dark, now and then a brief catch of lamplight on the gold.
                 float t = Time.time % 3.2f;
-                glint.intensity = t < 0.5f ? Mathf.Sin(t / 0.5f * Mathf.PI) * 0.9f : 0.08f;
+                glint.intensity = t < 0.55f ? Mathf.Sin(t / 0.55f * Mathf.PI) * 0.85f : 0f;
+                int pulse = Mathf.FloorToInt(Time.time / 3.2f);
+                if (pulse != lastPulse && _director != null && _director.InExplore
+                    && Vector3.Distance(_director.Player.transform.position, glint.transform.position) < 4f)
+                {
+                    lastPulse = pulse;
+                    if (_director.Audio != null) _director.Audio.PlaySfx("shimmer", 0.16f);
+                }
                 yield return null;
             }
         }
@@ -1183,11 +1451,155 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             _kieu.FaceInstant(position);
             _director.SetBool("c1_thoa", true);
-            _director.SetInt("kt_tin_tuong", _director.GetInt("kt_tin_tuong") + 1);
-            if (_director.Audio != null) _director.Audio.PlaySfx("memory", 0.6f);
-            _director.Hud.ShowToast("BÍ MẬT · CHIẾC THOA VÀNG", "Thoa của Kiều, Kim Trọng nhặt được ở vườn rồi trả lại. Kim Trọng tin tưởng +1");
-            _barkCooldown = 0f;
-            Bark("KieuThat", "Thoa ấy... chàng Kim trả ta qua bức tường hoa. Giữ giùm ta, đừng để ai thấy.");
+            _director.SetInt("tu_trong", _director.GetInt("tu_trong") + 1);
+            _director.AddClue("c1_thoa");
+            StartCoroutine(BeyondTheWall(position));
+        }
+
+        /// <summary>The potted plant in the corner where the east wall meets the gate wall.</summary>
+        private static Transform CornerPot()
+        {
+            Transform best = null;
+            foreach (var t in FindObjectsByType<Transform>())
+                if (t.name == "PottedPlant" && (best == null || t.position.x - t.position.z > best.position.x - best.position.z)) best = t;
+            return best;
+        }
+
+        /// <summary>
+        /// The night stops for a breath: the rain hangs in the air and falls silent, and the hanging drops gather into
+        /// Kim Trọng made of light. He comes to her and holds out his hand as on the day he returned the hairpin; she
+        /// holds the hairpin out to him and they say their old vow. Just before their fingers meet he comes apart into
+        /// peach petals that circle her once and blow back over the wall to his garden. Then the rain falls again.
+        /// </summary>
+        private IEnumerator BeyondTheWall(Vector3 hairpin)
+        {
+            bool fast = _director.Autopilot;
+            _director.SetFreeControl(false);
+            yield return new WaitForSeconds(fast ? 0f : 0.6f);
+
+            var rain = new List<ParticleSystem>();
+            foreach (var system in FindObjectsByType<ParticleSystem>())
+                if (system.name == "CourtyardRain" || system.name == "RainMist") { system.Pause(true); rain.Add(system); }
+            AudioSource rainSound = GameObject.Find("RainSource")?.GetComponent<AudioSource>();
+            if (rainSound != null) rainSound.Pause();
+            var audio = _director.Audio;
+            string music = audio != null ? audio.CurrentMusic : null;
+            if (audio != null)
+            {
+                audio.DuckAmbience(0f);
+                audio.PlaySfx("whoosh", 0.8f);
+                audio.PlaySfx("memory", 0.7f);
+                audio.PlayMusic("spirit");
+            }
+            if (_director.Fx != null) _director.Fx.Flash(0.2f);
+
+            // Kiều by the pot, Kim Trọng a step away towards the yard, both turned to each other; the camera watches
+            // them in profile from the yard with the wall to his garden behind.
+            Vector3 kieu = new Vector3(hairpin.x - 0.55f, _director.Player.transform.position.y, hairpin.z + 0.15f);
+            Vector3 kim = kieu + new Vector3(-0.35f, 0f, 1.55f);
+            _director.Player.Teleport(kieu, Quaternion.LookRotation(Vector3.ProjectOnPlane(kim - kieu, Vector3.up)));
+            Vector3 middle = (kieu + kim) * 0.5f;
+            Vector3 side = Vector3.Cross(kim - kieu, Vector3.up).normalized; // towards the yard, away from the east wall
+            var camera = _director.CameraController;
+            var shot = new GameObject("BeyondTheWallShot").transform;
+            Vector3 eye = middle + side * 2.6f + Vector3.up * 1.45f;
+            shot.SetPositionAndRotation(eye, Quaternion.LookRotation(middle + Vector3.up * 1.3f - eye));
+            camera.CutTo(shot);
+            yield return new WaitForSeconds(fast ? 0f : 1.2f);
+
+            // The yard lamps sink so that he is the only warm light in the corner.
+            var lamps = new List<(Light light, float intensity)>();
+            foreach (var light in FindObjectsByType<Light>()) lamps.Add((light, light.intensity));
+            StartCoroutine(DimLamps(lamps, 1f, 0.25f, fast ? 0.01f : 2.5f));
+
+            // Where their hands meet: between them at chest height. He comes close enough to hold his out to it.
+            Vector3 towards = Vector3.ProjectOnPlane(kim - kieu, Vector3.up).normalized;
+            Vector3 near = kieu + towards * 0.95f;
+            Vector3 meet = kieu + towards * 0.47f + Vector3.up * 1.12f;
+
+            LightApparition apparition = null;
+            if (_kimTrongModel != null)
+            {
+                apparition = LightApparition.Create(_kimTrongModel, _kimTrongAnimator, kim, Quaternion.LookRotation(kieu - kim), 1.76f);
+                if (audio != null) audio.PlaySfx("shimmer", 0.9f);
+                yield return apparition.Gather(fast ? 0.01f : 3f);
+                float glide = fast ? 0.01f : 2.2f;
+                StartCoroutine(apparition.Glide(near, glide));
+                for (float t = 0f; t < glide; t += Time.deltaTime)
+                {
+                    apparition.Offer(meet + towards * 0.06f, Mathf.SmoothStep(0f, 1f, t / glide) * 0.85f);
+                    yield return null;
+                }
+                apparition.Offer(meet + towards * 0.06f, 0.85f);
+            }
+            _director.Hud.ShowBark("KimTrong", "Thoa này bắt được hư không, biết đâu Hợp Phố mà mong châu về?", 5f);
+            yield return new WaitForSeconds(fast ? 0f : 2.5f);
+
+            // She holds the hairpin out to him on her open hand.
+            var reach = AddPose(_kieu);
+            var held = HairpinModel("ThoaVang_TrongTay");
+            held.localScale = Vector3.one; // the pin on the ground is enlarged to catch the eye; in her hand it is its true size
+            reach.SetHandAim(null, null, towards, Vector3.up);
+            reach.RightCurl = 12f;
+            reach.AfterPose = () =>
+            {
+                if (held != null && reach.RightHand != null)
+                    held.SetPositionAndRotation(reach.RightHand.position + towards * 0.07f + Vector3.up * 0.025f, Quaternion.LookRotation(towards));
+            };
+            Vector3 kimFace = near + Vector3.up * 1.6f;
+            float lift = fast ? 0.01f : 1.8f;
+            for (float t = 0f; t < lift; t += Time.deltaTime)
+            {
+                reach.SetTargets(null, meet - towards * 0.1f, kimFace);
+                reach.Weight = Mathf.SmoothStep(0f, 1f, t / lift);
+                yield return null;
+            }
+            reach.Weight = 1f;
+            yield return new WaitForSeconds(fast ? 0f : 0.9f);
+
+            _director.Hud.ShowBark("KieuThat", "Vầng trăng vằng vặc giữa trời... Chàng còn nhớ lời thề đêm ấy chăng?", 4.5f);
+            yield return new WaitForSeconds(fast ? 0f : 4.7f);
+            _director.Hud.ShowBark("KimTrong", "Đinh ninh hai miệng một lời song song.", 4f);
+            yield return new WaitForSeconds(fast ? 0f : 4.2f);
+            _director.Hud.ShowBark("KieuThat", "Ơn lòng quân tử sá gì của rơi... Vậy mà đêm nay, ta phải phụ chàng.", 5f);
+            yield return new WaitForSeconds(fast ? 0f : 2.2f);
+
+            if (apparition != null)
+            {
+                if (audio != null) audio.PlaySfx("petals", 0.9f);
+                yield return apparition.Scatter(Vector3.right, fast ? 0.01f : 2.5f, kieu + Vector3.up * 0.9f);
+            }
+            // Her hand stays out a moment where his was, then comes slowly back to her with the hairpin in it.
+            yield return new WaitForSeconds(fast ? 0f : 1.2f);
+            float lower = fast ? 0.01f : 1.6f;
+            for (float t = 0f; t < lower; t += Time.deltaTime)
+            {
+                reach.Weight = 1f - Mathf.SmoothStep(0f, 1f, t / lower);
+                yield return null;
+            }
+            Destroy(reach);
+            Destroy(held.gameObject);
+            yield return DimLamps(lamps, 0.25f, 1f, fast ? 0.01f : 2f);
+
+            foreach (var system in rain) if (system != null) system.Play(true);
+            if (rainSound != null) rainSound.UnPause();
+            if (audio != null) { audio.DuckAmbience(1f); audio.PlayMusic(music); }
+            camera.SetDialogueCue(null);
+            Destroy(shot.gameObject);
+            _director.Hud.ShowToast("BÍ MẬT · CHIẾC THOA VÀNG", "Chiếc thoa nằm lại trong tay áo Kiều · Tự trọng +1 · đã ghi vào nhật ký.");
+            _barkCooldown = 4f;
+            _director.SetFreeControl(true);
+        }
+
+        private static IEnumerator DimLamps(List<(Light light, float intensity)> lamps, float from, float to, float duration)
+        {
+            for (float t = 0f; t < duration; t += Time.deltaTime)
+            {
+                float k = Mathf.Lerp(from, to, Mathf.SmoothStep(0f, 1f, t / duration));
+                foreach (var (light, intensity) in lamps) if (light != null) light.intensity = intensity * k;
+                yield return null;
+            }
+            foreach (var (light, intensity) in lamps) if (light != null) light.intensity = intensity * to;
         }
 
         private static Material Lit(Color color, float smoothness, float metallic = 0f)
@@ -1278,6 +1690,10 @@ namespace ThuyKieu.Gameplay.Chapters
             yield return "Manh mối cốt lõi: " + clues + " / 3";
             yield return "Tỉnh táo: " + (int)v["tinh_tao"];
             yield return (bool)v["doc_ky_khe"] ? "Tờ khế: bạn đã đọc kỹ từng chữ trước khi điểm chỉ." : "Tờ khế: bạn đã ký vội để cứu cha.";
+            if ((bool)v["c1_bac_truoc"]) yield return "Lời bà mối: tờ khế ghi rõ bạc giao trước. Cha và em được thả trước khi bạn lên đường.";
+            if ((bool)v["c1_ma_lo"]) yield return "Bản khai: Mã Giám Sinh lỡ lời nhắc tới \"bên Lâm Tri\".";
+            yield return (bool)v["c1_ca_hai"] ? "Đủ cả hai manh mối trước khi mở cổng: Mã bớt đề phòng khi lên đường."
+                : "Mở cổng khi mới biết một nửa: Mã để ý bạn hơn trên đường đi.";
             if ((bool)v["c1_thoa"]) yield return "Bí mật: chiếc thoa vàng của Kim Trọng nằm trong tay áo bạn.";
             if ((bool)v["c1_bac_dau"]) yield return "Bạc dấu Phúc Ký — ai đó đã đưa tiền cho hắn đi \"hỏi vợ\".";
             yield return "Nghi ngờ của Mã Giám Sinh: " + suspicion + "%" + (suspicion >= 60 ? " — hắn sẽ để mắt tới bạn trên đường đi" : " — hắn tin bạn là cô gái ngoan");

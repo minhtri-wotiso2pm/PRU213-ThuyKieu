@@ -14494,6 +14494,8 @@ MonoBehaviour:
   _motherDoor: {fileID: 1992598617}
   _maGate: {fileID: 1465957112}
   _servantGate: {fileID: 788270886}
+  _kimTrongModel: {fileID: 919132149155446097, guid: d968655cd1066974794c9133fd346729, type: 3}
+  _kimTrongAnimator: {fileID: 22100000, guid: ba30840dbaec4fa42b3525b1b3e049d0, type: 2}
 --- !u!114 &351159839
 MonoBehaviour:
   m_ObjectHideFlags: 0

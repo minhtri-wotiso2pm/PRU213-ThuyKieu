@@ -15,16 +15,7 @@
 # speaker:ThayGiao
 # emotion:thoughtful
 # camera:Wide_Classroom
-Thầy giáo: Gia đình gặp nạn, cha và em bị bắt oan, cần bốn trăm lạng bạc. Và Thúy Kiều đã quyết định bán mình chuộc cha.
-
-# speaker:TrangSach
-# camera:Board
-"Duyên hội ngộ, đức cù lao, bên tình bên hiếu bên nào nặng hơn?"
-
-# speaker:ThayGiao
-# camera:CU_ThayGiao
-# hands:up
-Thầy giáo: Hôm nay thầy muốn nghe các em nghĩ gì. Nếu các em là Kiều, các em có làm như thế không?
+Thầy giáo: Cha và em bị bắt oan, cần bốn trăm lạng. Kiều đã bán mình chuộc cha. Nếu là Kiều, các em có làm thế không?
 
 # speaker:Ngan
 # emotion:amused
@@ -34,7 +25,7 @@ Ngân: (thì thầm) Ê, giơ tay đi. Tiết trước mày chê Kiều suốt m
 # speaker:ThayGiao
 # emotion:calm_probe
 # hands:pick
-Thầy giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
+Thầy giáo: Bàn thứ ba. Em trả lời đi.
 
 # timer:14
 * ["Dễ mà thầy. Em sẽ làm tốt hơn Kiều nhiều."]
@@ -79,12 +70,12 @@ Thầy giáo: Em ngồi bàn thứ ba. Em nghĩ sao?
 - # speaker:ThayGiao
 # sfx:school_bell
 # camera:Wide_Classroom
-Thầy giáo: Bài về nhà: viết một đoạn, nếu em là Kiều. Nhớ là viết bằng tấm lòng, đừng viết bằng cái đầu biết trước kết cục!
+Thầy giáo: Bài về nhà: nếu em là Kiều. Viết bằng tấm lòng, đừng viết bằng cái đầu biết trước kết cục!
 
 # speaker:NoiTam
-# objective:Thu dọn sách vở trước khi về · E để tương tác
+# objective:Cất quyển Truyện Kiều vào cặp · E để tương tác
 # gameplay:tutorial_classroom
-Còn vài phút. Quyển Truyện Kiều vẫn mở trên bàn.
+Quyển Truyện Kiều vẫn mở trên bàn. Ngân, bảng và cửa sổ là tùy chọn.
 
 -> pl_lop
 
@@ -218,12 +209,14 @@ Hãy sống một ngày của ta. Rồi hãy nói cho ta biết... ta đã chọ
 # gameplay:wake_room
 Giường gỗ, màn the, rèm tre... Đây không phải phòng mình.
 
+# gameplay:than_xac
+
 # speaker:MeKieu
 # emotion:warm
 Mẹ Kiều: (gọi vọng từ ngoài sân) Kiều ơi! Dậy chưa con? Ra ăn sáng với cha mẹ nào!
 
 # speaker:NoiTam
-# objective:Tìm hiểu căn phòng · đi bằng WASD, E để xem, giữ chuột phải để quan sát
+# objective:Soi gương để hiểu chuyện gì vừa xảy ra
 # gameplay:tutorial_room
 "Kiều"?
 
@@ -233,9 +226,9 @@ Mẹ Kiều: (gọi vọng từ ngoài sân) Kiều ơi! Dậy chưa con? Ra ăn
 === pl_phong_hub ===
 * {not pl_guong} [Soi chiếc gương đồng #explore:pl_guong]
     -> pl_guong_k
-* {not pl_dan} [Cây hồ cầm dựng bên vách #explore:pl_dan]
+* {pl_guong && not pl_dan} [Cây hồ cầm dựng bên vách #explore:pl_dan]
     -> pl_dan_k
-* {not pl_tho} [Bàn viết bên cửa sổ #explore:pl_tho]
+* {pl_guong && not pl_tho} [Bàn viết bên cửa sổ #explore:pl_tho]
     -> pl_tho_k
 * {pl_vat >= 2} [Ra sân #explore:pl_san]
     -> pl_san_k

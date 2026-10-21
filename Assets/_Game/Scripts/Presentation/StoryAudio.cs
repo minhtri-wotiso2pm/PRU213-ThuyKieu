@@ -23,7 +23,7 @@ namespace ThuyKieu.Presentation
         private AudioSource _musicA, _musicB, _ambience, _sfx, _steps;
         private AudioSource _activeMusic;
         private string _musicId;
-        private float _duck = 1f, _stepDistance;
+        private float _duck = 1f, _ambienceDuck = 1f, _stepDistance;
 
         private void Awake()
         {
@@ -56,6 +56,9 @@ namespace ThuyKieu.Presentation
             return AudioBank.Get(kind, id);
         }
 
+        /// <summary>The music id last asked for, so a passing moment can hand the score back afterwards.</summary>
+        public string CurrentMusic => _musicId;
+
         public void PlayMusic(string id)
         {
             if (id == _musicId) return;
@@ -85,6 +88,9 @@ namespace ThuyKieu.Presentation
         /// <summary>Lowers music (e.g. while eavesdropping) without stopping it.</summary>
         public void Duck(float amount) { _duck = Mathf.Clamp01(amount); }
 
+        /// <summary>Lowers the ambience bed (e.g. while the world holds its breath) without stopping it.</summary>
+        public void DuckAmbience(float amount) { _ambienceDuck = Mathf.Clamp01(amount); }
+
         private void Update()
         {
             float k = 1 - Mathf.Exp(-1.6f * Time.unscaledDeltaTime);
@@ -92,7 +98,7 @@ namespace ThuyKieu.Presentation
             _activeMusic.volume = Mathf.Lerp(_activeMusic.volume, _activeMusic.clip != null ? _musicVolume * _duck * GameSettings.Music : 0f, k);
             other.volume = Mathf.Lerp(other.volume, 0f, k * 1.5f);
             if (other.volume < 0.005f && other.isPlaying) other.Stop();
-            _ambience.volume = Mathf.Lerp(_ambience.volume, _ambienceVolume * GameSettings.Ambience, k);
+            _ambience.volume = Mathf.Lerp(_ambience.volume, _ambienceVolume * _ambienceDuck * GameSettings.Ambience, k);
             Footsteps();
         }
 

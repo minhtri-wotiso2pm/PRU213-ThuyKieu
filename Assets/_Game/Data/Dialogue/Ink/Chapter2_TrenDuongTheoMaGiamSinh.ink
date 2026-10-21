@@ -30,7 +30,7 @@ Theo sát hắn. Tụt lại quá xa hay nhìn quá lộ liễu, hắn sẽ sinh
     -> c2_observe
 * {not mm_hoi_duong} [Bắt chuyện, hỏi hắn đang đưa mình đi đâu #explore:c2_ask]
     -> c2_ask
-* {not mm_mau_giay} [Nhặt mẩu giấy rơi trên đường #explore:c2_paper]
+* {not mm_mau_giay && not c2_giay_mat} [Nhặt mẩu giấy rơi trên đường #explore:c2_paper]
     -> c2_paper
 * {manh_moi >= 2} [Nghỉ chân ở quán nước ven đường #explore:c2_eavesdrop]
     -> c2_eavesdrop
@@ -223,6 +223,11 @@ Tú Bà? Khoan... cái tên này... trong Truyện Kiều...
 # camera:Kieu_Profile
 Kiều: (Mã Giám Sinh không cưới Kiều. Hắn đang bán mình.)
 
+{c2_nghe_duong >= 3:
+    # speaker:NoiTam
+    "Chuyến này lãi được năm mươi lạng." Mình đã nghe chính miệng họ nói, ngay trên đường.
+}
+
 # speaker:NoiTam
 Ghép lại từng mảnh... hay tin vào câu thơ vừa hiện lên?
 
@@ -230,6 +235,7 @@ Ghép lại từng mảnh... hay tin vào câu thơ vừa hiện lên?
     ~ dung(ts_co_ke, 10)
     ~ suy_luan = 3
     # speaker:NoiTam
+    # gameplay:c2_page_deduction
     Bốn trăm lạng mua về, bán lại cho Tú Bà có lãi. Không cần ghép, câu thơ đã nói hết rồi.
 * [Tự ghép các manh mối.]
     # speaker:Narrator
@@ -237,12 +243,16 @@ Ghép lại từng mảnh... hay tin vào câu thơ vừa hiện lên?
     Ghép các manh mối đã thu thập để xác nhận sự thật.
 
 - (g_suy)
-{suy_luan >= 3:
+{
+- suy_luan >= 3:
     # speaker:NoiTam
     Mọi mảnh ghép đều khớp: Lâm Tri, giá bán, Tú Bà.
+- c2_sai_nguoi_nhan:
+    # speaker:NoiTam
+    Người đang chờ mình ở Lâm Tri... mình nghĩ mình đã đoán ra. Mong là mình đúng.
 - else:
     # speaker:NoiTam
-    Chưa đủ mọi mảnh ghép... nhưng cái tên Tú Bà thì không thể nhầm được.
+    Chưa chắc từng mảnh ghép... nhưng cái tên Tú Bà thì không thể nhầm được.
 }
 -> c2_decision
 
@@ -255,12 +265,26 @@ Bây giờ... phải làm gì?
 
 * [Bỏ chạy ngay bây giờ, khi trời còn tối.]
     # speaker:NoiTam
-    # gameplay:imagine_run
-    Mình chạy được, hắn sẽ cầm tờ khế về đòi bạc. Cha và em lại bị giải lên quan.
+    # gameplay:c2_flee
+    Chạy. Ngay bây giờ, khi họ còn ở sau vách.
+    {
+    - c2_bo_chay == 1:
+        # speaker:MaGiamSinh
+        # emotion:cold
+        Mã Giám Sinh: Đêm hôm nàng định đi đâu? Đường này lắm cướp. Ta chỉ lo cho nàng thôi.
 
+        # speaker:NoiTam
+        Bàn tay tên tùy tùng còn hằn trên cổ tay. Mình không chạy thoát, mà nếu thoát thì cha cũng không thoát.
+    - c2_bo_chay == 2:
+        # speaker:NoiTam
+        Cha... Mình chạy được một đêm, cha phải trả cả đời. Tờ khế vẫn nằm trong tay hắn.
+    - else:
+        # speaker:NoiTam
+        Mình tự dừng lại. Chạy thì dễ. Ở lại mà vẫn tỉnh táo mới là việc khó.
+    }
     # speaker:NoiTam
-    Không. Chạy lúc này là ném chính gia đình mình vào ngục.
-    -> c2_decision
+    Không chạy nữa. Giả vờ như chưa biết gì, cho đến khi tìm được đường ra không khiến cha phải trả giá.
+    -> c2_mask
 
 * [Giả vờ như chưa biết gì.]
     # speaker:NoiTam
@@ -345,6 +369,19 @@ Câu này là thử mình.
 
 - (g5)
 {
+    - gia_vo >= 2:
+        ~ nghi_ngo = MAX(nghi_ngo - 15, 0)
+        # speaker:NoiTam
+        Hắn đã tin vẻ cam chịu này. Ít nhất từ giờ đến Lâm Tri, mình còn khoảng trống để quan sát.
+    - gia_vo <= 0:
+        ~ nghi_ngo = MIN(nghi_ngo + 15, 100)
+        # speaker:NoiTam
+        Hắn không tin. Tên tùy tùng đã đi sát hơn một bước — đến Lâm Tri, chúng sẽ canh mình kỹ.
+    - else:
+        # speaker:NoiTam
+        Hắn chưa tin hẳn, nhưng cũng chưa dám hỏi thêm.
+}
+{
     - nghi_ngo >= 60:
         # speaker:MaGiamSinh
         # emotion:suspicious
@@ -362,9 +399,34 @@ Câu này là thử mình.
 # scene:Road_LamTriGate
 # music:road_night
 # montage:c2_lam_tri
-# speaker:Kieu
-# emotion:determined
-# camera:CU_Kieu
-Kiều: Kiều ngày trước bước vào đây mà không biết gì. Còn ta biết, và ta sẽ giả vờ như không biết, cho đến khi đủ sức lật ngược ván cờ này.
+# speaker:NoiTam
+Cổng thành Lâm Tri. Phía trong, đèn lồng đỏ treo kín hiên một ngôi nhà lớn.
+
+// Những kết luận sai ở bảng suy luận lộ ra ngay trước cổng, không cần ai nói.
+{c2_sai_noi_den:
+    # speaker:NoiTam
+    Lâm Tri, không phải Lâm Thanh. Mình đã tin đúng câu hắn nói lúc dạm hỏi.
+}
+{c2_sai_bac:
+    # speaker:NoiTam
+    Không có chủ nợ nào ra đón. Chỉ có người đứng chờ đếm bạc. Mình đã đoán sai cái giá của chính mình.
+}
+{c2_sai_nguoi_nhan:
+    # speaker:NoiTam
+    Chẳng có quan lớn nào, cũng chẳng có mẹ già nào chờ ở đây. Chỉ có một mụ đàn bà phấn son đứng tựa cửa.
+}
+
+{
+- c2_sai_noi_den || c2_sai_bac || c2_sai_nguoi_nhan:
+    # speaker:Kieu
+    # emotion:determined
+    # camera:CU_Kieu
+    Kiều: Ta tưởng mình đã biết hết. Hóa ra vẫn đoán sai. Từ giờ, nhìn kỹ hơn, và giả vờ như chẳng biết gì.
+- else:
+    # speaker:Kieu
+    # emotion:determined
+    # camera:CU_Kieu
+    Kiều: Kiều ngày trước bước vào đây mà không biết gì. Còn ta biết, và ta sẽ giả vờ như không biết, cho đến khi đủ sức lật ngược ván cờ này.
+}
 
 -> chapter_3
