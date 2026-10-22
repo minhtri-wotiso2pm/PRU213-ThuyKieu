@@ -30,7 +30,6 @@ namespace ThuyKieu.Core.Editor
         public static void Create()
         {
             var scene = NewScene(ScenePath);
-            var shared = StoryAnimationSetup.Controller();
             var start = new Vector3(1.3f, 0.05f, 0f);
             var s = CreateSystems(5, "Đào thoát", "chapter_5", Chapter06Setup.SceneName, start, 90f, "night");
             var moon = NightLook(s.Fx, s.CameraComponent, "Ch5SkyNight", 60f, new Vector3(34, 120, 0));
@@ -59,11 +58,10 @@ namespace ThuyKieu.Core.Editor
             Set(follower, "_player", s.Player);
             var pursuers = new List<StoryActor>();
             var pursuerStarts = new List<Object>();
-            Color[] liveries = { new Color(0.6f, 0.5f, 0.42f), new Color(0.48f, 0.5f, 0.55f), new Color(0.55f, 0.42f, 0.38f) };
             for (int i = 0; i < 3; i++)
             {
-                var pursuer = RiggedActor("GiaNhan" + i, "GiaNhan", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
-                    "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.72f + i * 0.03f, new Vector3(11.5f + i, 0, 2.5f + i * 1.6f), 90f, liveries[i], shared);
+                var pursuer = CharacterActor("GiaNhan" + i, "GiaNhan", "LinhCanh",
+                    1.72f + i * 0.03f, new Vector3(11.5f + i, 0, 2.5f + i * 1.6f), 90f);
                 StoryPropKit.Torch(pursuer.transform, new Vector3(0.32f, 1.2f, 0.22f));
                 pursuers.Add(pursuer);
                 pursuerStarts.Add(Point("PursuerStart" + i, new Vector3(13f + i * 0.8f, 0, 3.2f + i * 0.9f), 90f, world));
@@ -101,6 +99,7 @@ namespace ThuyKieu.Core.Editor
             Set(worldScript, "_tuBa", tuBa);
             Set(worldScript, "_companion", follower);
             Set(worldScript, "_pursuers", pursuers.ToArray());
+            Set(worldScript, "_soKhanh", Chapter05PursuerSetup.CreateSoKhanh(worldScript.transform));
             Set(worldScript, "_gateBlocker", gateBlocker);
             Set(worldScript, "_rain", rain);
             Set(worldScript, "_rainSpot", rainSpot);
