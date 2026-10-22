@@ -1505,6 +1505,7 @@ namespace ThuyKieu.Gameplay.Chapters
             Vector3 eye = middle + side * 2.6f + Vector3.up * 1.45f;
             shot.SetPositionAndRotation(eye, Quaternion.LookRotation(middle + Vector3.up * 1.3f - eye));
             camera.CutTo(shot);
+            HangRain(rain, middle, side);
             yield return new WaitForSeconds(fast ? 0f : 1.2f);
 
             // The yard lamps sink so that he is the only warm light in the corner.
@@ -1589,6 +1590,30 @@ namespace ThuyKieu.Gameplay.Chapters
             _director.Hud.ShowToast("BÍ MẬT · CHIẾC THOA VÀNG", "Chiếc thoa nằm lại trong tay áo Kiều · Tự trọng +1 · đã ghi vào nhật ký.");
             _barkCooldown = 4f;
             _director.SetFreeControl(true);
+        }
+
+        /// <summary>
+        /// The courtyard rain is a sparse box over the middle of the yard, and this corner sits at its edge: once paused,
+        /// hardly a drop hangs in the shot. Fill the space around the pair and in front of the lens with drops caught
+        /// mid-fall; they keep their falling velocity, so they draw as streaks and simply fall on when the rain resumes.
+        /// </summary>
+        private static void HangRain(List<ParticleSystem> rain, Vector3 middle, Vector3 towardsCamera)
+        {
+            var system = rain.Find(r => r != null && r.name == "CourtyardRain");
+            if (system == null) return;
+            var random = new System.Random(17);
+            float Range(float min, float max) => min + (float)random.NextDouble() * (max - min);
+            Vector3 along = Vector3.Cross(Vector3.up, towardsCamera);
+            var drop = new ParticleSystem.EmitParams { applyShapeToPosition = false, startLifetime = 1.2f };
+            for (int i = 0; i < 900; i++)
+            {
+                // Kept at least a metre short of the lens (it stands 2.6 m out), so no streak lies across a face.
+                drop.position = middle + along * Range(-3.2f, 3.2f) + towardsCamera * Range(-1.8f, 1.5f) + Vector3.up * Range(0.1f, 4f);
+                drop.velocity = Vector3.down * Range(16f, 20f);
+                drop.startSize = Range(0.025f, 0.04f);
+                system.Emit(drop, 1);
+            }
+            system.Pause(true);
         }
 
         private static IEnumerator DimLamps(List<(Light light, float intensity)> lamps, float from, float to, float duration)

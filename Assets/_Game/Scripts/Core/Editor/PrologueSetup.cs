@@ -107,6 +107,7 @@ namespace ThuyKieu.Core.Editor
             Set(worldScript, "_classmates", classmates.Cast<Object>().ToArray());
             Set(worldScript, "_classDoor", room.Door);
             Set(worldScript, "_bookGlow", room.BookGlow);
+            Set(worldScript, "_lookAtHands", LookAtHandsClip());
             Set(worldScript, "_wake", wake);
             Set(worldScript, "_courtyard", courtyard);
             Set(worldScript, "_father", father);
@@ -371,6 +372,49 @@ namespace ThuyKieu.Core.Editor
         /// What the main door frames from the courtyard: a shallow lit bay of the hall with the ancestral altar facing
         /// the door under a lacquered plaque, instead of a black void.
         /// </summary>
+        private const string LookAtHandsPath = "Assets/_Game/Animations/ThuyKieu/TK-LookAtHands.fbx";
+
+        /// <summary>
+        /// Kiều studying her new hands, authored in ArtSource/ThuyKieu/ThuyKieu_LookAtHands.blend on the same rig as her
+        /// walk: imported as a one-shot Humanoid clip. The export is the bare skeleton (no "Armature" node above the hips),
+        /// so it builds its own avatar from that skeleton rather than copying the walk model's.
+        /// </summary>
+        public static AnimationClip LookAtHandsClip()
+        {
+            if (AssetImporter.GetAtPath(LookAtHandsPath) is not ModelImporter importer) return null;
+            if (importer.animationType != ModelImporterAnimationType.Human || importer.avatarSetup != ModelImporterAvatarSetup.CreateFromThisModel
+                || importer.clipAnimations.Length == 0)
+            {
+                importer.animationType = ModelImporterAnimationType.Human;
+                importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+                importer.importAnimation = true;
+                importer.clipAnimations = new ModelImporterClipAnimation[0];
+                importer.SaveAndReimport();
+                var clips = importer.defaultClipAnimations;
+                foreach (var clip in clips)
+                {
+                    clip.name = "TK-LookAtHands";
+                    clip.loopTime = false;
+                    clip.lockRootRotation = clip.lockRootHeightY = clip.lockRootPositionXZ = true;
+                    clip.keepOriginalPositionY = true;
+                }
+                importer.clipAnimations = clips;
+                importer.SaveAndReimport();
+            }
+            return AssetDatabase.LoadAllAssetsAtPath(LookAtHandsPath).OfType<AnimationClip>().FirstOrDefault(c => !c.name.StartsWith("__preview"));
+        }
+
+        /// <summary>Gives the open prologue scene's world script the hands clip without rebuilding the scene.</summary>
+        [MenuItem("ThuyKieu/Prologue/Assign look-at-hands clip")]
+        public static void AssignLookAtHands()
+        {
+            var world = Object.FindFirstObjectByType<PrologueWorld>(FindObjectsInactive.Include);
+            if (world == null) return;
+            Set(world, "_lookAtHands", LookAtHandsClip());
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(world.gameObject.scene);
+            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(world.gameObject.scene);
+        }
+
         public static void HallAltar(Transform root)
         {
             var dim = Material("PlHallWall", new Color(0.42f, 0.35f, 0.27f));

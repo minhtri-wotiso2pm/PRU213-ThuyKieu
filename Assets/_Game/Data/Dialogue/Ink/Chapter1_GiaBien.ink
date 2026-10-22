@@ -44,8 +44,6 @@ Không. Muốn cứu người nhà, trước hết mình phải biết họ bị
     -> c1_tu
 * {not c1_san} [Quan sát khoảng sân bị quan sai lục soát #explore:c1_san]
     -> c1_san
-* {not c1_ban_tho} [Thắp hương trên bàn thờ #explore:c1_ban_tho]
-    -> c1_ban_tho
 + {c1_me || c1_tu} [Ra mở cổng: có người đang gõ cửa #explore:c1_cong]
     -> c1_ma_den
 
@@ -92,24 +90,6 @@ Hòm xiểng lật tung, tơ lụa nát trong bùn. Bên miệng giếng còn s�
 # speaker:NoiTam
 # clue:c1_so_hang
 Từng cuộn tơ đều ghi ngày mua, người bán. "Hàng gian" mà sổ sách đàng hoàng. Họ không cần sự thật, chỉ cần bạc.
--> c1_nha
-
-
-=== c1_ban_tho ===
-~ c1_viec += 1
-# speaker:KieuThat
-# camera:OTS_Kieu_Altar
-# gameplay:kieu_voice
-Ngày trước ta cũng đứng đây. Ta xin tổ tiên cho ta đủ can đảm để đi. Ta chưa bao giờ xin cho mình được quay về.
-
-# speaker:NoiTam
-Vậy thì mình sẽ xin thêm một điều. Đi, nhưng phải có ngày quay về.
-
-~ soul(1)
-# fx:none
-# music:sad_strings
-# speaker:KieuThat
-Ngươi lạ thật. Cầu xin mà nghe như đang ra điều kiện.
 -> c1_nha
 
 

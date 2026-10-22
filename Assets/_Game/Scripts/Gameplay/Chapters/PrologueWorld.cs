@@ -6,6 +6,8 @@ using ThuyKieu.Gameplay.Stealth;
 using ThuyKieu.Player;
 using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 
 namespace ThuyKieu.Gameplay.Chapters
 {
@@ -27,6 +29,8 @@ namespace ThuyKieu.Gameplay.Chapters
         [SerializeField] private StoryActor[] _classmates;
         [SerializeField] private Transform _classDoor;
         [SerializeField] private GameObject _bookGlow;
+        [Tooltip("Kiều studying her new hands (Animations/ThuyKieu/TK-LookAtHands).")]
+        [SerializeField] private AnimationClip _lookAtHands;
 
         [Header("Vương house")]
         [SerializeField] private Transform _wake, _courtyard;
@@ -443,10 +447,9 @@ namespace ThuyKieu.Gameplay.Chapters
         }
 
         /// <summary>
-        /// Her first moments in Kiều's body, played rather than told. Through Kiều's eyes she raises hands that are not
-        /// hers and turns them over with the mouse; pressing E she tries her voice and hears a stranger's; then, back
-        /// behind her, she takes her first steps in a long skirt, slow and unsteady, stumbling once before she finds
-        /// her feet.
+        /// Her first moments in Kiều's body, played rather than told. In a close shot she raises hands that are not hers
+        /// and turns them over, studying them (the authored TK-LookAtHands clip); a moment later she hears her own voice
+        /// and it is a stranger's. Then the view returns behind her and she is free to move.
         /// </summary>
         private IEnumerator NewBody(StoryDirector director)
         {
@@ -456,113 +459,97 @@ namespace ThuyKieu.Gameplay.Chapters
             var actor = player.GetComponent<StoryActor>();
             var animator = player.GetComponentInChildren<Animator>();
             Transform body = player.transform;
-            Transform head = animator != null && animator.isHuman
-                ? animator.GetBoneTransform(HumanBodyBones.Head)
-                : null;
+            Transform head = animator != null && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.Head) : null;
+            Transform leftHand = animator != null && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.LeftHand) : null;
+            Transform rightHand = animator != null && animator.isHuman ? animator.GetBoneTransform(HumanBodyBones.RightHand) : null;
             var camera = director.CameraController;
             bool cameraLocked = camera.ControlLocked;
+            // The clip bows her head to her hands; no glance left over from a conversation may turn it away.
+            actor.FaceTowards(null);
 
-            // 1. The hands, seen through her own eyes.
             var view = new GameObject("NewBodyPOV").transform;
             Vector3 eyePosition = head != null ? head.position : body.position + Vector3.up * 1.5f;
-            // Keep the near plane in front of the face and hair; at the head centre the first-person shot can render
-            // the inside of Kiều's face when her idle animation leans forward.
-            view.SetPositionAndRotation(eyePosition + body.forward * 0.18f + Vector3.up * 0.02f,
-                Quaternion.LookRotation(body.forward - Vector3.up * 0.45f));
+            // A close three-quarter shot from her front right: her face and her hands in the one frame.
+            Vector3 lens = eyePosition - Vector3.up * 0.1f + body.forward * 0.62f + body.right * 0.5f;
+            view.SetPositionAndRotation(lens, Quaternion.LookRotation(eyePosition + body.forward * 0.2f - Vector3.up * 0.15f - lens));
             camera.ControlLocked = true;
             camera.CutTo(view);
             if (director.Audio != null) director.Audio.PlaySfx("breath_startled", 0.75f);
             if (director.Fx != null) director.Fx.Shake(0.08f, 0.35f);
-            var pose = player.gameObject.AddComponent<HandReachPose>();
-            if (animator != null) pose.Initialize(animator);
-            pose.LeftCurl = pose.RightCurl = 12f;
-            hud.SetControls("Di chuột: nhìn hai bàn tay · E: thử cất tiếng");
-            float turn = 0f, turned = 0f, spokeAt = -1f;
-            bool noticedHands = false, reminded = false;
-            for (float t = 0f; !fast && t < 11.5f; t += Time.deltaTime)
+
+            // The clip plays over the story controller through a short-lived graph, blended in and out of her idle.
+            PlayableGraph graph = default;
+            AnimationMixerPlayable mixer = default;
+            float length = _lookAtHands != null ? _lookAtHands.length : 10f;
+            // What she sees, what she blurts out loud, then whose voice that was: each line waits for the one before
+            // it to be heard out, and she holds her hands up until the last has been said.
+            var lines = new[]
             {
-                float mouse = InputReader.Look.x * 0.012f;
-                turn += mouse;
-                turned += Mathf.Abs(mouse);
-                // Palms towards her face, then the backs of the hands, as the mouse turns them over.
-                float flip = Mathf.Cos(turn) * 0.5f + 0.5f;
-                Vector3 inward = -body.forward, outward = body.forward;
-                Vector3 leftPalm = Vector3.Slerp(outward, inward, flip), rightPalm = leftPalm;
-                Vector3 centre = view.position + view.forward * 0.33f;
-                pose.SetHandAim(Vector3.up, leftPalm, Vector3.up, rightPalm);
-                pose.SetTargets(centre - body.right * 0.08f - Vector3.up * 0.11f, centre + body.right * 0.08f - Vector3.up * 0.11f, centre);
-                pose.Weight = Mathf.MoveTowards(pose.Weight, 1f, Time.deltaTime * 2f);
-                if (!noticedHands && t > 1.5f)
+                Say("NoiTam", "Ngón tay thon, trắng như ngà... Đây không phải tay mình."),
+                Say("Kieu", "Tay... tay của ai thế này?"),
+                Say("NoiTam", "Giọng ai mà trong như tiếng đàn thế này? Là giọng... của nàng.")
+            };
+            var starts = new float[lines.Length];
+            var spoken = new float[lines.Length];
+            float cue = 2.6f;
+            for (int i = 0; i < lines.Length; i++)
+            {
+                starts[i] = cue;
+                spoken[i] = SpokenLength(lines[i].Item1, lines[i].Item2);
+                cue += spoken[i] + 0.35f;
+            }
+            float total = Mathf.Max(length, cue + 0.4f);
+            var handsClip = default(AnimationClipPlayable);
+            if (_lookAtHands != null && animator != null && animator.runtimeAnimatorController != null)
+            {
+                graph = PlayableGraph.Create("NewBodyHands");
+                graph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+                mixer = AnimationMixerPlayable.Create(graph, 2);
+                graph.Connect(AnimatorControllerPlayable.Create(graph, animator.runtimeAnimatorController), 0, mixer, 0);
+                handsClip = AnimationClipPlayable.Create(graph, _lookAtHands);
+                graph.Connect(handsClip, 0, mixer, 1);
+                AnimationPlayableOutput.Create(graph, "Hands", animator).SetSourcePlayable(mixer);
+                mixer.SetInputWeight(0, 1f);
+                graph.Play();
+            }
+            for (float t = 0f; !fast && t < total; t += Time.deltaTime)
+            {
+                if (graph.IsValid())
                 {
-                    noticedHands = true;
-                    hud.ShowBark("NoiTam", "Ngón tay thon, móng nhuộm hồng... Không phải tay mình.", 3.5f);
+                    // Past the clip's last held pose, keep her on it until the lines are done.
+                    if (t > length - 0.7f) handsClip.SetTime(length - 0.7f);
+                    float weight = Mathf.SmoothStep(0f, 1f, Mathf.Min(t / 0.4f, (total - t) / 0.6f));
+                    mixer.SetInputWeight(0, 1f - weight);
+                    mixer.SetInputWeight(1, weight);
                 }
-                if (!reminded && t > 3.5f && spokeAt < 0f)
+                // The shot keeps both her face and her hands in frame as they come up.
+                if (leftHand != null && rightHand != null)
                 {
-                    reminded = true;
-                    hud.ShowBark("NoiTam", "Thử lên tiếng đi... nhấn E.", 2.2f);
+                    Vector3 aim = Vector3.Lerp((leftHand.position + rightHand.position) * 0.5f, eyePosition, 0.45f);
+                    view.rotation = Quaternion.Slerp(view.rotation, Quaternion.LookRotation(aim - view.position), 1f - Mathf.Exp(-4f * Time.deltaTime));
                 }
-                if (spokeAt < 0f && t > 5.5f)
-                {
-                    // Preserve the identity beat even when the player misses E; never advance without hearing her voice.
-                    spokeAt = t;
-                    hud.ShowBark("Kieu", "Ai... ai đang nói đây?", 2.2f);
-                }
-                if (spokeAt < 0f && t > 0.6f && InputReader.InteractPressedThisFrame)
-                {
-                    spokeAt = t;
-                    hud.ShowBark("Kieu", "Ai... ai đang nói đây?", 2.2f);
-                }
-                if (spokeAt > 0f && t - spokeAt > 2.4f && t - spokeAt < 2.4f + Time.deltaTime)
-                    hud.ShowBark("NoiTam", "Giọng ai mà trong như tiếng đàn thế này? Là giọng... của nàng.", 3.5f);
-                if (spokeAt > 0f && t - spokeAt > 3.8f && turned > 0.35f) break;
+                for (int i = 0; i < lines.Length; i++)
+                    if (t < starts[i] && t + Time.deltaTime >= starts[i])
+                        hud.ShowBark(lines[i].Item1, lines[i].Item2, spoken[i] + 0.3f);
                 yield return null;
             }
-            for (float t = 0f; !fast && t < 0.6f; t += Time.deltaTime)
-            {
-                pose.Weight = 1f - t / 0.6f;
-                yield return null;
-            }
-            Destroy(pose);
+            if (graph.IsValid()) graph.Destroy();
             camera.SetDialogueCue(null);
             camera.ControlLocked = cameraLocked;
             camera.SnapBehindTarget(body.eulerAngles.y);
             Destroy(view.gameObject);
-
-            // 2. The first steps in a long skirt: slow, swaying, one stumble, then her own pace.
-            player.SpeedMultiplier = 0.4f;
-            director.SetFreeControl(true);
-            hud.SetControls("WASD: đi thử vài bước");
-            Vector3 start = body.position;
-            bool stumbled = false, stepReminder = false, heardSkirt = false;
-            for (float t = 0f; !fast && t < 8f; t += Time.deltaTime)
-            {
-                float walked = Vector3.ProjectOnPlane(body.position - start, Vector3.up).magnitude;
-                player.SpeedMultiplier = Mathf.Lerp(0.4f, 1f, Mathf.Clamp01(walked / 1.8f));
-                if (!heardSkirt && walked > 0.2f)
-                {
-                    heardSkirt = true;
-                    if (director.Audio != null) director.Audio.PlaySfx("cloth", 0.32f);
-                }
-                if (!stepReminder && t > 3f && walked < 0.15f)
-                {
-                    stepReminder = true;
-                    hud.ShowBark("NoiTam", "Mình phải đứng dậy... thử bước bằng WASD.", 2.5f);
-                }
-                if (!stumbled && walked > 0.75f)
-                {
-                    stumbled = true;
-                    if (director.Fx != null) director.Fx.Shake(0.25f, 0.45f);
-                    if (director.Audio != null) director.Audio.PlaySfx("stumble");
-                    hud.ShowBark("NoiTam", "Váy dài quá... Suýt nữa thì ngã. Đi từ từ thôi.", 3f);
-                }
-                if (walked > 1.8f) break;
-                yield return null;
-            }
-            player.SpeedMultiplier = 1f;
-            director.SetFreeControl(false);
             hud.SetControls(Controls);
             actor.SetTalking(false, 0);
+        }
+
+        /// <summary>A bark to say later; written as a call so the voice manifest exporter finds its line.</summary>
+        private static (string, string) Say(string speakerId, string text) => (speakerId, text);
+
+        /// <summary>How long a bark takes to say: its voice clip's length, or a reading pace when it has none.</summary>
+        private static float SpokenLength(string speakerId, string text)
+        {
+            var clip = Resources.Load<AudioClip>(Dialogue.VoiceLine.ResourceFolder + "/" + Dialogue.VoiceLine.Key(speakerId, text));
+            return clip != null ? clip.length : Mathf.Clamp(text.Length * 0.06f, 1.5f, 5f);
         }
 
         private void PlayInteractionGesture(int gesture, float duration)

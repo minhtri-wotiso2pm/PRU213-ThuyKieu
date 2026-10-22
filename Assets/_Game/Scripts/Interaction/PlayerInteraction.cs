@@ -54,18 +54,33 @@ namespace ThuyKieu.Interaction
             Vector3 origin = detectionOrigin.position + Vector3.up * detectionHeight;
             Vector3 forward = Vector3.ProjectOnPlane(detectionOrigin.forward, Vector3.up).normalized;
             IInteractable nearest = null;
-            float bestDistance = interactionDistance;
-            foreach (Collider collider in Physics.OverlapSphere(transform.position, interactionDistance, interactionLayers, triggerInteraction))
+            float bestDistance = float.MaxValue;
+            // Wide enough to catch a target whose stand point is in reach while its body is a little farther away.
+            float searchRadius = Mathf.Max(interactionDistance, ExploreTarget.StandPointRange) + 1.5f;
+            foreach (Collider collider in Physics.OverlapSphere(transform.position, searchRadius, interactionLayers, triggerInteraction))
             {
                 var availability = collider.GetComponentInParent<IInteractionAvailability>();
                 var candidate = collider.GetComponentInParent<IInteractable>();
                 if (candidate == null || (availability != null && !availability.IsAvailable)) continue;
 
                 var explore = collider.GetComponentInParent<ExploreTarget>();
-                Vector3 nearestPoint = explore != null ? explore.InteractionPosition : collider.transform.position;
-                float distance = Vector3.ProjectOnPlane(nearestPoint - transform.position, Vector3.up).magnitude;
-                if (explore != null && explore.HasStandPoint && distance > ExploreTarget.StandPointRange) continue;
-                if (distance > interactionDistance || !Faces(collider.bounds.center, origin, forward)) continue;
+                float distance;
+                if (explore != null && explore.HasStandPoint)
+                {
+                    distance = Vector3.ProjectOnPlane(explore.InteractionPosition - transform.position, Vector3.up).magnitude;
+                    // Close to the stand point it always answers (her own desk: she is seated across it). Farther out
+                    // it needs a clear way there, so it never moves her through a wall or a row of desks.
+                    if (distance > ExploreTarget.StandPointRange
+                        || distance > ExploreTarget.StandPointNearRange && !PathClear(explore.InteractionPosition, collider)) continue;
+                }
+                else
+                {
+                    // Measure to the object's edge, not its pivot, so large props answer before Kiều is pressed against them.
+                    Vector3 edge = collider.bounds.ClosestPoint(transform.position);
+                    distance = Vector3.ProjectOnPlane(edge - transform.position, Vector3.up).magnitude;
+                    if (distance > interactionDistance) continue;
+                }
+                if (!Faces(collider.bounds.center, origin, forward)) continue;
                 if (!HasLineOfSight(origin, collider, candidate)) continue;
                 if (distance < bestDistance) { nearest = candidate; bestDistance = distance; }
             }
@@ -79,12 +94,33 @@ namespace ThuyKieu.Interaction
                    || Vector3.Dot(forward, direction.normalized) >= minimumFacingDot;
         }
 
+        /// <summary>
+        /// Kiều is moved to a target's stand point when she uses it, so nothing solid (a desk, a wall) may lie between her
+        /// and that point at hip height; otherwise the prompt would teleport her through it.
+        /// </summary>
+        private bool PathClear(Vector3 standPoint, Collider target)
+        {
+            Vector3 from = transform.position + Vector3.up * 0.5f;
+            Vector3 delta = standPoint + Vector3.up * 0.5f - from;
+            float distance = delta.magnitude;
+            if (distance < 0.05f) return true;
+            foreach (RaycastHit hit in Physics.RaycastAll(from, delta / distance, distance, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (hit.collider.transform.IsChildOf(transform) || hit.collider == target) continue;
+                return false;
+            }
+            return true;
+        }
+
         /// <summary>The first solid thing between Kiều and a target must be the target itself, never a wall.</summary>
         private bool HasLineOfSight(Vector3 origin, Collider targetCollider, IInteractable target)
         {
             // Aim at the upper half of the target volume (chest height for a person): the centre of someone seated
             // behind a table lies below its top, so the table read as a wall between Kiều and them.
             Bounds bounds = targetCollider.bounds;
+            // Standing inside the target's own volume: a ray cast from inside a collider never hits it, so this would
+            // otherwise hide the prompt exactly when she is right at the thing.
+            if (bounds.Contains(origin)) return true;
             Vector3 destination = bounds.center + Vector3.up * bounds.extents.y * 0.5f;
             Vector3 delta = destination - origin;
             float distance = delta.magnitude;

@@ -30,10 +30,21 @@ namespace ThuyKieu.Dialogue.Editor
             ("chapter_6", 6), ("chapter_7", 7), ("epilogue", 8)
         };
 
+        private static Ink.Runtime.Story _story;
+        private static string _storyJson;
+
         /// <summary>A fresh story positioned at an entry, with random outcomes for the chapters before it.</summary>
         internal static Ink.Runtime.Story Start(string json, string knot, int chapter, System.Random random)
         {
-            var story = new Ink.Runtime.Story(json);
+            // Walks run thousands of times; parsing Main.json once and resetting its state keeps them fast.
+            // Callers finish with the returned story before asking for the next one.
+            if (_story == null || !ReferenceEquals(_storyJson, json))
+            {
+                _story = new Ink.Runtime.Story(json);
+                _storyJson = json;
+            }
+            else _story.ResetState();
+            var story = _story;
             if (knot == "chapter_1") return story;
             RandomisePriorChapters(story, chapter, random);
             story.ChoosePathString(knot);

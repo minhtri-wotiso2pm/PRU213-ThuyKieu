@@ -24,7 +24,12 @@ namespace ThuyKieu.Player
             _student.SetActive(student);
             var animator = (student ? _student : _kieu).GetComponentInChildren<Animator>();
             if (_movement != null) _movement.SetAnimator(animator);
-            if (_actor != null) _actor.SetAnimator(animator);
+            if (_actor != null)
+            {
+                _actor.SetAnimator(animator);
+                // The modern student talks plainly in class; the broad story gestures belong to Kiều's world.
+                _actor.StillWhileTalking = student;
+            }
         }
     }
 }
