@@ -16,14 +16,14 @@ namespace ThuyKieu.Core.Story
         {
             get
             {
-                var args = System.Environment.GetCommandLineArgs();
+                var args = StoryAutopilot.Args;
                 int index = System.Array.IndexOf(args, "-autopilotCapture");
                 return index >= 0 && index + 1 < args.Length ? args[index + 1] : null;
             }
         }
 
         /// <summary>-autopilotCaptureLines: shoot every dialogue line (camera review) instead of one per speaker style.</summary>
-        public static bool EveryLine => System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-autopilotCaptureLines") >= 0;
+        public static bool EveryLine => System.Array.IndexOf(StoryAutopilot.Args, "-autopilotCaptureLines") >= 0;
 
         public static void Shot(string name, int width = 1600, int height = 900)
         {

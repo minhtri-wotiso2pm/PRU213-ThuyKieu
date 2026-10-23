@@ -62,12 +62,9 @@ namespace ThuyKieu.Core.Editor
             Set(follower, "_player", s.Player);
             Set(follower, "_distance", 1.8f);
             var coLam = CharacterActor("CoLam", "CoLam", "LauXanh1", 1.6f, new Vector3(-13.4f, 0, 4.6f), 60f);
-            var baNuoc = RiggedActor("BaHangNuoc", "BaHangNuoc", "Assets/_Game/Art/Characters/MeThuyKieu/Models/MeThuyKieu_Rigged.fbx",
-                "Assets/_Game/Art/Characters/MeThuyKieu/Tectures", 1.56f, new Vector3(-20f, 0, 21.3f), 180f, new Color(0.9f, 0.75f, 0.55f), shared);
-            var thuLai = RiggedActor("ThuLai", "ThuLai", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
-                "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.74f, new Vector3(29.4f, 0, 18f), 270f, new Color(0.6f, 0.66f, 0.78f), shared);
-            var chuBac = RiggedActor("ChuHieuBac", "ChuHieuBac", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
-                "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.7f, new Vector3(15f, 0, 11.3f), 0f, new Color(0.85f, 0.72f, 0.4f), shared);
+            var baNuoc = Chapter06TeaVendorSetup.Create(new Vector3(-20f, 0, 21.3f), 180f);
+            var thuLai = Chapter06ClerkSetup.Create(new Vector3(29.4f, 0, 18f), 270f);
+            var chuBac = Chapter06SilverMerchantSetup.Create(new Vector3(15f, 0, 11.3f), 0f);
             var messenger = RiggedActor("GiaNhan", "GiaNhan", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
                 "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.7f, new Vector3(-9f, 0, 12.4f), 180f, new Color(0.55f, 0.55f, 0.55f), shared);
             var searcher = CharacterActor("NguoiCuaTuBa", "NguoiCanh", "LinhCanh", 1.78f, new Vector3(-24f, 0, 18f), 90f);

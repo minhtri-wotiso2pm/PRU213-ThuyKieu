@@ -17,6 +17,9 @@ namespace ThuyKieu.Core.Editor
     /// </summary>
     public static class ClassroomKit
     {
+        private const string GirlSeatFbx = "Assets/_Game/Animations/animationhocsinhnu/seat.fbx";
+        private const string GirlTextureFolder = "Assets/_Game/Art/Characters/hocsinhnu";
+        private const string GirlController = "Assets/_Game/Animations/ClassroomRigged/HocSinhNu.controller";
         public sealed class Parts
         {
             public Transform Root;
@@ -31,10 +34,17 @@ namespace ThuyKieu.Core.Editor
             public List<Transform> ClassmateSeats = new List<Transform>();
         }
 
-        // Row centres of the desks (front to back) and the seat offset behind a desk (hips over the bench).
+        // Row centres of the desks (front to back) and the bench centre behind a desk's centre.
         private static readonly float[] Rows = { 2.3f, 0.85f, -0.6f, -2.05f };
         private static readonly float[] Columns = { -3.2f, 0f, 3.2f };
-        public const float SeatBehindDesk = 0.55f;
+        // The seated takes rest the hands ~0.11 m in front of and above the hips: the bench sits close enough that
+        // the desk edge meets the pupil's waist, and the top is low enough (for these ~1.3 m pupils) to carry the hands.
+        public const float SeatBehindDesk = 0.34f;
+        private const float DeskTopHeight = 0.68f;
+        private const float BenchHeight = 0.44f;
+        // The seated Mixamo takes put the hips ~0.18 m behind the model origin: standing the origin this far in
+        // front of a bench's centre lands the hips on the bench instead of its back edge.
+        private const float SeatedOriginAheadOfBench = 0.2f;
 
         public static Parts Build(Transform world, Vector3 o, bool sunset)
         {
@@ -181,8 +191,42 @@ namespace ThuyKieu.Core.Editor
             return go;
         }
 
-        public const string StudentModel = "Assets/_Game/Art/Characters/LauXanh1/Rigged/LauXanh1_Rigged.fbx";
-        public const string StudentTextures = "Assets/_Game/Art/Characters/LauXanh1/Rigged";
+        public const string StudentModel = "Assets/_Game/Animations/animationnuchinh/idle.fbx";
+        public const string StudentTextures = "Assets/_Game/Art/Characters/nuchinh";
+
+        public static StoryActor SeatedGirl(string name, string speakerId, float height, Vector3 seatPosition, float yaw = 0f)
+        {
+            var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(GirlController);
+            if (controller == null) throw new System.IO.FileNotFoundException("Missing seated-girl animator controller", GirlController);
+
+            var actor = StorySceneKit.RiggedActor(name, speakerId, GirlSeatFbx, GirlTextureFolder, height,
+                SeatedOrigin(seatPosition), yaw, Color.white, controller);
+            var animator = actor.GetComponentInChildren<Animator>();
+            if (animator != null && animator.GetComponent<AnimatorRootAnchor>() == null)
+                animator.gameObject.AddComponent<AnimatorRootAnchor>();
+            actor.Sit(true);
+            var agent = actor.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            if (agent != null) Object.DestroyImmediate(agent);
+            return actor;
+        }
+
+        /// <summary>
+        /// Floor point for a board-facing seated body near <paramref name="near"/> so its hips rest on the closest bench.
+        /// Works from the bench rather than an actor's root, which older scenes left offset from its seat marker.
+        /// </summary>
+        public static Vector3 SeatedOrigin(Vector3 near)
+        {
+            Transform bench = null;
+            float best = float.MaxValue;
+            foreach (var candidate in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (candidate.name != "Bench" || Mathf.Abs(candidate.position.x - near.x) > 0.6f) continue;
+                float distance = Mathf.Abs(candidate.position.z - near.z);
+                if (distance < best) { best = distance; bench = candidate; }
+            }
+            if (bench == null) throw new System.InvalidOperationException("No classroom bench near " + near);
+            return new Vector3(near.x, bench.position.y - BenchHeight, bench.position.z + SeatedOriginAheadOfBench);
+        }
 
         /// <summary>
         /// The modern student's body inside the player object, next to Kiều's (PlayerLook switches between them).
@@ -193,8 +237,16 @@ namespace ThuyKieu.Core.Editor
             var player = s.Player.transform;
             Transform kieu = player.GetComponentInChildren<Animator>().transform;
             while (kieu.parent != player) kieu = kieu.parent;
+            var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(
+                "Assets/_Game/Animations/ClassroomRigged/NuChinh.controller");
+            if (controller == null) throw new System.IO.FileNotFoundException("Missing modern-student controller");
             var student = Body(player, "StudentBody", StudentModel, StudentTextures,
-                1.5f, new Color(0.96f, 0.98f, 1f), StoryAnimationSetup.KieuController());
+                1.5f, Color.white, controller);
+            var animator = student.GetComponentInChildren<Animator>();
+            if (animator != null && animator.GetComponent<AnimatorRootAnchor>() == null)
+                animator.gameObject.AddComponent<AnimatorRootAnchor>();
+            // Her seat clip leaves the hips at bench height; lift her while seated so she sits on it, not in it.
+            Set(s.Player.GetComponent<StoryActor>(), "_seatLift", 0.13f);
             var look = player.gameObject.AddComponent<ThuyKieu.Player.PlayerLook>();
             Set(look, "_kieu", kieu.gameObject);
             Set(look, "_student", student);
@@ -253,41 +305,48 @@ namespace ThuyKieu.Core.Editor
                 for (int c = 0; c < Columns.Length; c++)
                 {
                     Vector3 d = o + new Vector3(Columns[c], 0, Rows[r]);
-                    Block("DeskTop", d + new Vector3(0, 0.74f, 0), new Vector3(1.24f, 0.04f, 0.46f), wood, root);
-                    Block("DeskFront", d + new Vector3(0, 0.5f, 0.21f), new Vector3(1.2f, 0.44f, 0.03f), wood, root, false);
-                    Block("DeskShelf", d + new Vector3(0, 0.56f, 0.02f), new Vector3(1.16f, 0.02f, 0.4f), wood, root, false);
+                    float top = DeskTopHeight;
+                    bool hers = r == 2 && c == 2;
+                    // Her desk top is not solid: seated, her capsule reaches under it (its DeskCollider covers the front).
+                    Block("DeskTop", d + new Vector3(0, top - 0.02f, 0), new Vector3(1.24f, 0.04f, 0.46f), wood, root, !hers);
+                    Block("DeskFront", d + new Vector3(0, top - 0.26f, 0.21f), new Vector3(1.2f, 0.44f, 0.03f), wood, root, false);
+                    // The shelf only spans the front of the desk: the pupils' knees go under the back half.
+                    Block("DeskShelf", d + new Vector3(0, top - 0.2f, 0.13f), new Vector3(1.16f, 0.02f, 0.16f), wood, root, false);
                     foreach (int side in new[] { -1, 1 })
                     {
-                        Block("DeskLeg", d + new Vector3(side * 0.58f, 0.36f, 0), new Vector3(0.04f, 0.72f, 0.42f), metal, root, false);
-                        Block("BenchLeg", d + new Vector3(side * 0.56f, 0.21f, -SeatBehindDesk - 0.3f), new Vector3(0.04f, 0.42f, 0.24f), metal, root, false);
+                        Block("DeskLeg", d + new Vector3(side * 0.58f, (top - 0.04f) / 2f, 0), new Vector3(0.04f, top - 0.04f, 0.42f), metal, root, false);
+                        Block("BenchLeg", d + new Vector3(side * 0.56f, 0.21f, -SeatBehindDesk), new Vector3(0.04f, 0.42f, 0.24f), metal, root, false);
                     }
-                    Block("Bench", d + new Vector3(0, 0.44f, -SeatBehindDesk - 0.3f), new Vector3(1.2f, 0.04f, 0.3f), wood, root, false);
+                    Block("Bench", d + new Vector3(0, BenchHeight, -SeatBehindDesk), new Vector3(1.2f, 0.04f, 0.3f), wood, root, false);
                     // A few things left on the desks.
                     if (random.NextDouble() < 0.6)
-                        Block("Notebook", d + new Vector3((float)random.NextDouble() * 0.8f - 0.4f, 0.765f, 0), new Vector3(0.21f, 0.01f, 0.29f),
+                        Block("Notebook", d + new Vector3((float)random.NextDouble() * 0.8f - 0.4f, top + 0.005f, 0), new Vector3(0.21f, 0.01f, 0.29f),
                             Material("ClassNotebook", new Color(0.92f, 0.9f, 0.82f)), root, false, (float)random.NextDouble() * 30f - 15f);
                     if (random.NextDouble() < 0.3)
                     {
-                        var bottle = Cylinder("Bottle", d + new Vector3((float)random.NextDouble() * 0.9f - 0.45f, 0.76f, 0.12f), 0.035f, 0.22f, Material("ClassBottle", new Color(0.55f, 0.75f, 0.9f), 0.85f), root, false);
+                        var bottle = Cylinder("Bottle", d + new Vector3((float)random.NextDouble() * 0.9f - 0.45f, top, 0.12f), 0.035f, 0.22f, Material("ClassBottle", new Color(0.55f, 0.75f, 0.9f), 0.85f), root, false);
                         Cylinder("BottleCap", bottle.transform.position + Vector3.up * 0.22f, 0.02f, 0.03f, Material("ClassBottleCap", new Color(0.2f, 0.45f, 0.85f), 0.5f), root, false);
                     }
                     if (random.NextDouble() < 0.45)
-                        Block("Bag", d + new Vector3((float)random.NextDouble() * 0.6f - 0.3f, 0.55f, -0.02f), new Vector3(0.32f, 0.12f, 0.24f), bag[random.Next(bag.Length)], root, false);
+                        Block("Bag", d + new Vector3((float)random.NextDouble() * 0.6f - 0.3f, top - 0.13f, 0.13f), new Vector3(0.32f, 0.12f, 0.14f), bag[random.Next(bag.Length)], root, false);
                     // Seats face the board (north). The student sits third row, right column, by the window.
                     for (int side = -1; side <= 1; side += 2)
                     {
                         float spacing = r == 2 && c == 2 ? 0.38f : 0.3f;
-                        float seatDepth = r == 2 && c == 2 ? SeatBehindDesk + 0.33f : SeatBehindDesk;
+                        // Her own sit take puts the hips ~0.03 m ahead of the root, so her mark stands just behind the bench centre.
+                        float seatDepth = r == 2 && c == 2 ? SeatBehindDesk + 0.03f : SeatBehindDesk;
                         var seat = Point("Seat_" + r + "_" + c + (side < 0 ? "L" : "R"), d + new Vector3(side * spacing, 0f, -seatDepth), 0f, root);
                         if (r == 2 && c == 2 && side < 0) parts.Seat = seat;
                         else if (r == 2 && c == 2) parts.NganSeat = seat;
                         else parts.ClassmateSeats.Add(seat);
                     }
-                    if (r == 2 && c == 2) StudentBook(root, d + new Vector3(-0.3f, 0.76f, -0.02f), parts);
+                    if (r == 2 && c == 2) StudentBook(root, d + new Vector3(-0.3f, top, -0.02f), parts);
                     // Invisible blockers so the player and walking actors go round the furniture. Her own bench stays
-                    // open: she is teleported onto it to sit, and a collider there would push her off.
-                    Solid("DeskCollider", d + new Vector3(0f, 0.38f, 0f), new Vector3(1.24f, 0.76f, 0.46f), root);
-                    if (r != 2 || c != 2) Solid("BenchCollider", d + new Vector3(0f, 0.23f, -SeatBehindDesk - 0.3f), new Vector3(1.2f, 0.46f, 0.3f), root);
+                    // open and her desk only blocks its front: she is teleported onto the bench to sit, and a collider
+                    // under her would push her off.
+                    if (hers) Solid("DeskCollider", d + new Vector3(0f, top / 2f, 0.09f), new Vector3(1.24f, top, 0.28f), root);
+                    else Solid("DeskCollider", d + new Vector3(0f, top / 2f, 0f), new Vector3(1.24f, top, 0.46f), root);
+                    if (r != 2 || c != 2) Solid("BenchCollider", d + new Vector3(0f, 0.23f, -SeatBehindDesk), new Vector3(1.2f, 0.46f, 0.3f), root);
                 }
         }
 
@@ -347,8 +406,7 @@ namespace ThuyKieu.Core.Editor
                         i % 3 == 0 ? new Color(0.95f, 0.93f, 0.85f) : i % 3 == 1 ? new Color(0.98f, 0.88f, 0.55f) : new Color(0.7f, 0.85f, 0.95f)), root, false, (float)random.NextDouble() * 10f - 5f);
             WorldText(root, "ClassSign", "<b>LỚP 10A2</b>", o + new Vector3(1.5f, 2.4f, -4.45f), 180f, new Vector2(1.6f, 0.3f), 0.2f, new Color(0.25f, 0.2f, 0.15f));
             // The cupboard stands in the east corner: on the west side it narrowed the back passage to the door.
-            Block("Cupboard", o + new Vector3(3.9f, 0.9f, -4.25f), new Vector3(1.6f, 1.8f, 0.45f), wood, root);
-            Block("CupboardLine", o + new Vector3(3.9f, 0.9f, -4.02f), new Vector3(0.02f, 1.7f, 0.01f), metal, root, false);
+            Cupboard(root, o + new Vector3(3.9f, 0f, -4.25f), metal);
             Cylinder("Broom", o + new Vector3(-4.6f, 0f, -4.2f), 0.02f, 1.3f, Material("ClassBroom", new Color(0.7f, 0.6f, 0.35f)), root, false);
             // The bin stands under the notice board, clear of the doorway.
             Cylinder("Bin", o + new Vector3(-0.3f, 0f, -4.2f), 0.18f, 0.42f, Material("ClassBin", new Color(0.2f, 0.45f, 0.3f), 0.4f), root, false);
@@ -423,6 +481,21 @@ namespace ThuyKieu.Core.Editor
         /// <paramref name="lineHeight"/> and <paramref name="size"/> are in metres; yaw 0 reads from the south (facing +Z),
         /// lying text faces up with its top towards +Z.
         /// </summary>
+        /// <summary>A painted two-door classroom cupboard (back to the south wall) at floor point <paramref name="foot"/>.</summary>
+        public static void Cupboard(Transform root, Vector3 foot, Material metal)
+        {
+            var paint = Material("ClassCupboardPaint", new Color(0.44f, 0.31f, 0.2f), 0.35f);
+            var panel = Material("ClassCupboardPanel", new Color(0.5f, 0.36f, 0.24f), 0.3f);
+            Block("Cupboard", foot + new Vector3(0, 0.95f, 0), new Vector3(1.4f, 1.74f, 0.44f), paint, root);
+            Block("CupboardTop", foot + new Vector3(0, 1.85f, 0.01f), new Vector3(1.5f, 0.06f, 0.5f), paint, root, false);
+            Block("CupboardBase", foot + new Vector3(0, 0.04f, 0.01f), new Vector3(1.42f, 0.08f, 0.46f), metal, root, false);
+            foreach (int side in new[] { -1, 1 })
+            {
+                Block("CupboardPanel", foot + new Vector3(side * 0.35f, 0.97f, 0.225f), new Vector3(0.58f, 1.56f, 0.012f), panel, root, false);
+                Block("CupboardHandle", foot + new Vector3(side * 0.06f, 1.0f, 0.24f), new Vector3(0.02f, 0.14f, 0.02f), metal, root, false);
+            }
+        }
+
         public static TMP_Text WorldText(Transform parent, string name, string text, Vector3 position, float yaw, Vector2 size, float lineHeight, Color color, bool lying = false)
         {
             var go = new GameObject(name, typeof(RectTransform));

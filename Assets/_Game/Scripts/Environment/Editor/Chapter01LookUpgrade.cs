@@ -97,11 +97,10 @@ namespace ThuyKieu.Environment.Editor
             Piece(root, "RugBorder", new Vector3(0, 0.02f, 3.1f), new Vector3(3.1f, 0.005f, 2.3f), Mat("Ch1RugBorder", new Color(0.55f, 0.4f, 0.16f), 0.1f));
 
             var glaze = Mat("Ch1JarGlaze", new Color(0.24f, 0.15f, 0.09f), 0.7f);
-            foreach (var corner in new[] { new Vector3(wall.min.x + 0.7f, 0, face - 0.6f), new Vector3(wall.max.x - 0.7f, 0, face - 0.6f) })
-            {
-                Piece(root, "Jar", corner + Vector3.up * 0.34f, new Vector3(0.56f, 0.68f, 0.56f), glaze, PrimitiveType.Sphere);
-                Piece(root, "JarSmall", corner + new Vector3(corner.x < cx ? 0.55f : -0.55f, 0.22f, 0.1f), new Vector3(0.36f, 0.44f, 0.36f), glaze, PrimitiveType.Sphere);
-            }
+            // Keep the cabinet side clear so its doors and the actor can move naturally.
+            Vector3 jarCorner = new Vector3(wall.min.x + 0.7f, 0, face - 0.6f);
+            Piece(root, "Jar", jarCorner + Vector3.up * 0.34f, new Vector3(0.56f, 0.68f, 0.56f), glaze, PrimitiveType.Sphere);
+            Piece(root, "JarSmall", jarCorner + new Vector3(0.55f, 0.22f, 0.1f), new Vector3(0.36f, 0.44f, 0.36f), glaze, PrimitiveType.Sphere);
         }
 
         /// <summary>Rain-night sky, orbit framing and colour grade on the chapter camera (also used by the story upgrade).</summary>

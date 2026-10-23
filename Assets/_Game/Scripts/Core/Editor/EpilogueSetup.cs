@@ -33,8 +33,8 @@ namespace ThuyKieu.Core.Editor
                 new Vector3(3.28f, 1.92f, -3.42f),
                 Quaternion.Euler(10f, 0f, 0f));
             var look = ClassroomKit.StudentBody(s);
-            // Ngân still at the next seat when she wakes (static seated model from ThuyKieuKiemTien).
-            ModernActor("Ngan", "Ngan", "NuSinhToxic", 1.3f, room.NganSeat.position, 0f, Color.white, seat: true);
+            // Ngân still sits at the next seat when she wakes.
+            ClassroomKit.SeatedGirl("Ngan", "Ngan", 1.3f, room.NganSeat.position);
             Set(Explore(Anchor(world, "WindowTarget", room.WindowAnchor.position), director, "ep_window", "Nhìn ra cửa sổ", new Vector3(1.2f, 1.6f, 1.8f)), "_standPoint", room.WindowStand);
             Set(Explore(Anchor(world, "BookTarget", room.Seat.position + new Vector3(0, 0, 0.1f)), director, "ep_book", "Mở lại quyển Truyện Kiều", new Vector3(1.2f, 1.6f, 1.2f)), "_standPoint", room.Seat);
 

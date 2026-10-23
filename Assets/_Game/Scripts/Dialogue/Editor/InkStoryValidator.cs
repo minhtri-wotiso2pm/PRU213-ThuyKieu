@@ -17,7 +17,7 @@ namespace ThuyKieu.Dialogue.Editor
     {
         public const string ReportPath = "Tools/Ink/InkValidationReport.txt";
         private static readonly HashSet<string> KnownKeys = new HashSet<string>
-        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx", "page", "page_half" };
+        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx", "page", "page_half", "montage", "hands" };
         private static readonly HashSet<string> KnownSpeakers = new HashSet<string>
         { "Narrator", "Kieu", "NoiTam", "KieuThat", "TrangSach", "MeKieu", "MaGiamSinh", "TuyTung", "TuBa", "MaKieu", "CoHong", "CoLam", "NguoiCanh",
           "KimTrong", "BaHangNuoc", "ThuLai", "ChuHieuBac", "GiaNhan",
@@ -186,7 +186,7 @@ namespace ThuyKieu.Dialogue.Editor
                 chapterOne.state.LoadJson(saved);
                 string first = chapterOne.Continue().Trim();
                 while (string.IsNullOrEmpty(first) && chapterOne.canContinue) first = chapterOne.Continue().Trim();
-                if (!first.StartsWith("Mưa quất lên mái ngói")) problems.Add("Chapter 1 does not open on its first line after the prologue: " + first);
+                if (!first.StartsWith("Mẹ Kiều: Bốn trăm lạng")) problems.Add("Chapter 1 does not open on its first line after the prologue: " + first);
                 else if ((int)chapterOne.variablesState["pl_che_kieu"] == 0) problems.Add("prologue choices lost at the Chapter 1 hand-off");
                 else ok++;
             }
