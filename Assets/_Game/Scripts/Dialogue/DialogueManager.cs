@@ -49,7 +49,7 @@ namespace ThuyKieu.Dialogue
         }
 
         /// <summary>True when the last line of the node is on screen and choices should show.</summary>
-        public bool IsAtChoicePoint => _inkActive ? InkStory.currentChoices.Count > 0 && !InkAtExploreChoices : IsDialogueActive
+        public bool IsAtChoicePoint => _inkActive ? InkStory != null && InkStory.currentChoices.Count > 0 && !InkAtExploreChoices : IsDialogueActive
                                        && CurrentNode.HasChoices
                                        && CurrentLineIndex >= CurrentNode.Lines.Count - 1;
 

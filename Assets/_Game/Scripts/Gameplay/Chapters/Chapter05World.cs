@@ -27,10 +27,10 @@ namespace ThuyKieu.Gameplay.Chapters
         [SerializeField] private Transform _rainSpot;
         [SerializeField] private Light _moon;
         [SerializeField] private Stamina _stamina;
+        [SerializeField] private StoryActor _soKhanh;
 
         private MaterialPropertyBlock _coneBlock;
         private float _coneAlpha = 0.18f;
-        private StoryActor _soKhanh;
 
         private void OnEnable() { _director.SceneChanged += OnScene; }
         private void OnDisable() { _director.SceneChanged -= OnScene; }
@@ -95,9 +95,9 @@ namespace ThuyKieu.Gameplay.Chapters
                 }
                 _soKhanh = copy.GetComponent<StoryActor>();
                 _soKhanh.Recast("SoKhanh");
-                _director.RegisterActor(_soKhanh);
             }
             if (_soKhanh == null) return;
+            _director.RegisterActor(_soKhanh);
             var player = _director.Player.transform;
             Vector3 spot = player.position + player.forward * 2.4f;
             _soKhanh.gameObject.SetActive(true);

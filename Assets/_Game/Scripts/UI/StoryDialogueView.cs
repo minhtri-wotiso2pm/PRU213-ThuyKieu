@@ -49,7 +49,24 @@ namespace ThuyKieu.UI
             _timerFill = StoryUIBuilder.Find<RectTransform>(t, "Dialogue/Choices/Timer/Fill");
             _innerObject = _inner.gameObject;
             _spiritObject = _spirit.gameObject;
+            Haloed(_spirit);
+            Haloed(_inner);
             HideAll();
+        }
+
+        /// <summary>
+        /// The floating voices (inner thoughts, Kiều Thật) sit over the scene with no panel: a soft dark halo behind the
+        /// letters keeps them readable over rain, sky and lit roofs.
+        /// </summary>
+        private static void Haloed(TMP_Text text)
+        {
+            if (text == null) return;
+            var material = text.fontMaterial; // per-text instance
+            material.EnableKeyword(ShaderUtilities.Keyword_Underlay);
+            material.SetColor(ShaderUtilities.ID_UnderlayColor, new Color(0.03f, 0.02f, 0.02f, 0.85f));
+            material.SetFloat(ShaderUtilities.ID_UnderlayDilate, 0.55f);
+            material.SetFloat(ShaderUtilities.ID_UnderlaySoftness, 0.65f);
+            text.fontMaterial = material;
         }
 
         private void Start()

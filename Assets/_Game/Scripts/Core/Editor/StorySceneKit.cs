@@ -196,6 +196,23 @@ namespace ThuyKieu.Core.Editor
 
         // ------------------------------------------------------------------ characters
 
+        /// <summary>
+        /// Skinned bounds are padded, so <see cref="Fit"/> can leave a standing body hovering 0.1–0.2 m: moves
+        /// <paramref name="mover"/> down (or up) until the lowest baked vertex of <paramref name="model"/> meets the floor.
+        /// </summary>
+        public static void GroundFeet(Transform mover, GameObject model, float floorY)
+        {
+            float lowest = float.MaxValue;
+            var mesh = new Mesh();
+            foreach (var skinned in model.GetComponentsInChildren<SkinnedMeshRenderer>())
+            {
+                skinned.BakeMesh(mesh, true);
+                foreach (var vertex in mesh.vertices) lowest = Mathf.Min(lowest, skinned.transform.TransformPoint(vertex).y);
+            }
+            UnityEngine.Object.DestroyImmediate(mesh);
+            if (lowest < float.MaxValue) mover.position += Vector3.up * (floorY - lowest);
+        }
+
         public static StoryActor RiggedActor(string name, string speakerId, string fbxPath, string textureFolder, float height, Vector3 position, float yaw, Color tint, RuntimeAnimatorController controller)
         {
             var importer = AssetImporter.GetAtPath(fbxPath) as ModelImporter;
@@ -243,6 +260,10 @@ namespace ThuyKieu.Core.Editor
             var model = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath));
             model.transform.SetParent(holder.transform, false);
             Fit(model, height);
+            // Humanoid playback already puts the feet on the Animator's origin; Fit's lift (from the bind-pose mesh
+            // bottom) would leave the body floating above the CharacterController.
+            var lifted = model.transform.localPosition;
+            model.transform.localPosition = new Vector3(lifted.x, 0f, lifted.z);
             holder.transform.SetParent(root, false);
             Vector3 rootScale = root.lossyScale;
             holder.transform.localScale = new Vector3(1f / rootScale.x, 1f / rootScale.y, 1f / rootScale.z);

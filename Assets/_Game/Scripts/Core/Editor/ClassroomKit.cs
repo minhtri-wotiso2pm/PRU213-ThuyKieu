@@ -17,6 +17,9 @@ namespace ThuyKieu.Core.Editor
     /// </summary>
     public static class ClassroomKit
     {
+        private const string GirlSeatFbx = "Assets/_Game/Animations/animationhocsinhnu/seat.fbx";
+        private const string GirlTextureFolder = "Assets/_Game/Art/Characters/hocsinhnu";
+        private const string GirlController = "Assets/_Game/Animations/ClassroomRigged/HocSinhNu.controller";
         public sealed class Parts
         {
             public Transform Root;
@@ -31,10 +34,17 @@ namespace ThuyKieu.Core.Editor
             public List<Transform> ClassmateSeats = new List<Transform>();
         }
 
-        // Row centres of the desks (front to back) and the seat offset behind a desk (hips over the bench).
+        // Row centres of the desks (front to back) and the bench centre behind a desk's centre.
         private static readonly float[] Rows = { 2.3f, 0.85f, -0.6f, -2.05f };
         private static readonly float[] Columns = { -3.2f, 0f, 3.2f };
-        public const float SeatBehindDesk = 0.55f;
+        // The seated takes rest the hands ~0.11 m in front of and above the hips: the bench sits close enough that
+        // the desk edge meets the pupil's waist, and the top is low enough (for these ~1.3 m pupils) to carry the hands.
+        public const float SeatBehindDesk = 0.34f;
+        private const float DeskTopHeight = 0.68f;
+        private const float BenchHeight = 0.44f;
+        // The seated Mixamo takes put the hips ~0.18 m behind the model origin: standing the origin this far in
+        // front of a bench's centre lands the hips on the bench instead of its back edge.
+        private const float SeatedOriginAheadOfBench = 0.2f;
 
         public static Parts Build(Transform world, Vector3 o, bool sunset)
         {
@@ -64,6 +74,9 @@ namespace ThuyKieu.Core.Editor
             Block("DoorFrame", o + new Vector3(-5.0f, 1.1f, -3.1f), new Vector3(0.08f, 2.2f, 0.08f), frameGreen, root, false);
             Block("DoorFrame", o + new Vector3(-5.0f, 1.1f, -4.3f), new Vector3(0.08f, 2.2f, 0.08f), frameGreen, root, false);
             var leaf = Block("DoorLeaf", o + new Vector3(-5.55f, 1.05f, -3.15f), new Vector3(0.05f, 2.1f, 1.1f), frameGreen, root, false, 70f);
+            // Continuous solid step from classroom floor to the west corridor. This also
+            // prevents the CharacterController/NavMeshAgent catching the narrow floor seam.
+            Block("DoorThreshold", o + new Vector3(-5.15f, -0.06f, -3.7f), new Vector3(0.7f, 0.12f, 1.28f), floor, root);
             leaf.transform.position = o + new Vector3(-5.55f, 1.05f, -2.7f);
             // East wall: three tall windows between piers, open onto the corridor.
             Block("WallEastSill", o + new Vector3(5.1f, 0.45f, 0), new Vector3(0.2f, 0.9f, 9.4f), wall, root);
@@ -80,23 +93,27 @@ namespace ThuyKieu.Core.Editor
             Board(root, o, frameGreen, deskWood);
             Desks(root, o, deskWood, metal, parts);
             Dressing(root, o, metal, deskWood);
-            Outside(root, o, sunset);
+            SchoolCampusKit.Build(root, o, sunset);
             Fans(root, o, metal);
             Lights(root, o, sunset);
 
             parts.TeacherSpot = Point("TeacherSpot", o + new Vector3(-1.2f, 0.18f, 3.55f), 180f, root);
-            parts.Door = Point("ClassDoor", o + new Vector3(-6.4f, 0f, -3.7f), 270f, root);
+            parts.Door = Point("ClassDoor", o + new Vector3(-5.65f, 0f, -3.7f), 270f, root);
             parts.BoardAnchor = Point("BoardSpot", o + new Vector3(0f, 0f, 3.1f), 0f, root);
             parts.WindowAnchor = Point("WindowSpot", o + new Vector3(4.4f, 0f, 0f), 90f, root);
             Point("Focus_Board", o + new Vector3(0f, 1.6f, 4.45f), 0f, root);
-            Look("CAM_Wide_Classroom", o + new Vector3(-4.2f, 2.7f, -4f), o + new Vector3(1.6f, 0.9f, 1.4f), root);
+            // Keep the establishing camera inside the rear wall and frame the teacher,
+            // blackboard and both banks of students without grazing the ceiling.
+            Look("CAM_Wide_Classroom", o + new Vector3(-3.55f, 2.35f, -3.72f), o + new Vector3(0.45f, 1.2f, 1.45f), root);
             Look("CAM_Board", o + new Vector3(0.6f, 1.75f, 1.6f), o + new Vector3(-0.2f, 1.7f, 4.5f), root);
             parts.WindowStand = Point("WindowStand", o + new Vector3(4.42f, 0f, 0.25f), 90f, root);
             Look("CAM_Window", o + new Vector3(3.55f, 1.62f, -0.55f), o + new Vector3(7.5f, 1.6f, 1.2f), root);
             var book = parts.BookAnchor.position;
             Look("CAM_Book", book + new Vector3(0.48f, 0.9f, -0.78f), book + new Vector3(0, 0.02f, 0), root);
             Look("CAM_BookClose", book + new Vector3(0.05f, 0.42f, -0.22f), book + new Vector3(0.12f, 0.02f, 0.02f), root);
-            Zone("Classroom", o + new Vector3(0, 1.5f, 0), new Vector3(10f, 4f, 9f), 2.4f, 0.32f, 58f, 0.25f, root);
+            // A tighter classroom frame keeps the player readable between the desks
+            // and leaves safe clearance from the rear wall at maximum pitch.
+            Zone("Classroom", o + new Vector3(0, 1.5f, 0), new Vector3(10f, 4f, 9f), 2.15f, 0.38f, 52f, 0.18f, root);
             return parts;
         }
 
@@ -146,8 +163,8 @@ namespace ThuyKieu.Core.Editor
             return material;
         }
 
-        /// <summary>Flat five-pointed star facing −Z (the flag's star).</summary>
-        private static void Star(Transform root, Vector3 centre, float radius, Material material)
+        /// <summary>Flat five-pointed star facing −Z (the flag's star); each <paramref name="meshName"/> is its own mesh asset.</summary>
+        internal static GameObject Star(Transform root, Vector3 centre, float radius, Material material, string meshName = "FlagStar")
         {
             var vertices = new List<Vector3> { Vector3.zero };
             for (int i = 0; i < 10; i++)
@@ -158,12 +175,12 @@ namespace ThuyKieu.Core.Editor
             }
             var triangles = new List<int>();
             for (int i = 0; i < 10; i++) { triangles.Add(0); triangles.Add(1 + (i + 1) % 10); triangles.Add(1 + i); }
-            var mesh = new Mesh { name = "FlagStar" };
+            var mesh = new Mesh { name = meshName };
             mesh.SetVertices(vertices);
             mesh.SetTriangles(triangles, 0);
             mesh.RecalculateNormals();
             mesh.RecalculateBounds();
-            string meshPath = AssetFolder + "/FlagStar.asset";
+            string meshPath = AssetFolder + "/" + meshName + ".asset";
             AssetDatabase.DeleteAsset(meshPath);
             AssetDatabase.CreateAsset(mesh, meshPath);
             var go = new GameObject("FlagStar");
@@ -171,10 +188,45 @@ namespace ThuyKieu.Core.Editor
             go.transform.position = centre;
             go.AddComponent<MeshFilter>().sharedMesh = mesh;
             go.AddComponent<MeshRenderer>().sharedMaterial = material;
+            return go;
         }
 
-        public const string StudentModel = "Assets/_Game/Art/Characters/LauXanh1/Rigged/LauXanh1_Rigged.fbx";
-        public const string StudentTextures = "Assets/_Game/Art/Characters/LauXanh1/Rigged";
+        public const string StudentModel = "Assets/_Game/Animations/animationnuchinh/idle.fbx";
+        public const string StudentTextures = "Assets/_Game/Art/Characters/nuchinh";
+
+        public static StoryActor SeatedGirl(string name, string speakerId, float height, Vector3 seatPosition, float yaw = 0f)
+        {
+            var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(GirlController);
+            if (controller == null) throw new System.IO.FileNotFoundException("Missing seated-girl animator controller", GirlController);
+
+            var actor = StorySceneKit.RiggedActor(name, speakerId, GirlSeatFbx, GirlTextureFolder, height,
+                SeatedOrigin(seatPosition), yaw, Color.white, controller);
+            var animator = actor.GetComponentInChildren<Animator>();
+            if (animator != null && animator.GetComponent<AnimatorRootAnchor>() == null)
+                animator.gameObject.AddComponent<AnimatorRootAnchor>();
+            actor.Sit(true);
+            var agent = actor.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            if (agent != null) Object.DestroyImmediate(agent);
+            return actor;
+        }
+
+        /// <summary>
+        /// Floor point for a board-facing seated body near <paramref name="near"/> so its hips rest on the closest bench.
+        /// Works from the bench rather than an actor's root, which older scenes left offset from its seat marker.
+        /// </summary>
+        public static Vector3 SeatedOrigin(Vector3 near)
+        {
+            Transform bench = null;
+            float best = float.MaxValue;
+            foreach (var candidate in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (candidate.name != "Bench" || Mathf.Abs(candidate.position.x - near.x) > 0.6f) continue;
+                float distance = Mathf.Abs(candidate.position.z - near.z);
+                if (distance < best) { best = distance; bench = candidate; }
+            }
+            if (bench == null) throw new System.InvalidOperationException("No classroom bench near " + near);
+            return new Vector3(near.x, bench.position.y - BenchHeight, bench.position.z + SeatedOriginAheadOfBench);
+        }
 
         /// <summary>
         /// The modern student's body inside the player object, next to Kiều's (PlayerLook switches between them).
@@ -185,8 +237,16 @@ namespace ThuyKieu.Core.Editor
             var player = s.Player.transform;
             Transform kieu = player.GetComponentInChildren<Animator>().transform;
             while (kieu.parent != player) kieu = kieu.parent;
+            var controller = AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(
+                "Assets/_Game/Animations/ClassroomRigged/NuChinh.controller");
+            if (controller == null) throw new System.IO.FileNotFoundException("Missing modern-student controller");
             var student = Body(player, "StudentBody", StudentModel, StudentTextures,
-                1.6f, new Color(0.96f, 0.98f, 1f), StoryAnimationSetup.KieuController());
+                1.5f, Color.white, controller);
+            var animator = student.GetComponentInChildren<Animator>();
+            if (animator != null && animator.GetComponent<AnimatorRootAnchor>() == null)
+                animator.gameObject.AddComponent<AnimatorRootAnchor>();
+            // Her seat clip leaves the hips at bench height; lift her while seated so she sits on it, not in it.
+            Set(s.Player.GetComponent<StoryActor>(), "_seatLift", 0.13f);
             var look = player.gameObject.AddComponent<ThuyKieu.Player.PlayerLook>();
             Set(look, "_kieu", kieu.gameObject);
             Set(look, "_student", student);
@@ -245,36 +305,61 @@ namespace ThuyKieu.Core.Editor
                 for (int c = 0; c < Columns.Length; c++)
                 {
                     Vector3 d = o + new Vector3(Columns[c], 0, Rows[r]);
-                    Block("DeskTop", d + new Vector3(0, 0.74f, 0), new Vector3(1.24f, 0.04f, 0.46f), wood, root);
-                    Block("DeskFront", d + new Vector3(0, 0.5f, 0.21f), new Vector3(1.2f, 0.44f, 0.03f), wood, root, false);
-                    Block("DeskShelf", d + new Vector3(0, 0.56f, 0.02f), new Vector3(1.16f, 0.02f, 0.4f), wood, root, false);
+                    float top = DeskTopHeight;
+                    bool hers = r == 2 && c == 2;
+                    // Her desk top is not solid: seated, her capsule reaches under it (its DeskCollider covers the front).
+                    Block("DeskTop", d + new Vector3(0, top - 0.02f, 0), new Vector3(1.24f, 0.04f, 0.46f), wood, root, !hers);
+                    Block("DeskFront", d + new Vector3(0, top - 0.26f, 0.21f), new Vector3(1.2f, 0.44f, 0.03f), wood, root, false);
+                    // The shelf only spans the front of the desk: the pupils' knees go under the back half.
+                    Block("DeskShelf", d + new Vector3(0, top - 0.2f, 0.13f), new Vector3(1.16f, 0.02f, 0.16f), wood, root, false);
                     foreach (int side in new[] { -1, 1 })
                     {
-                        Block("DeskLeg", d + new Vector3(side * 0.58f, 0.36f, 0), new Vector3(0.04f, 0.72f, 0.42f), metal, root, false);
-                        Block("BenchLeg", d + new Vector3(side * 0.56f, 0.21f, -SeatBehindDesk - 0.3f), new Vector3(0.04f, 0.42f, 0.24f), metal, root, false);
+                        Block("DeskLeg", d + new Vector3(side * 0.58f, (top - 0.04f) / 2f, 0), new Vector3(0.04f, top - 0.04f, 0.42f), metal, root, false);
+                        Block("BenchLeg", d + new Vector3(side * 0.56f, 0.21f, -SeatBehindDesk), new Vector3(0.04f, 0.42f, 0.24f), metal, root, false);
                     }
-                    Block("Bench", d + new Vector3(0, 0.44f, -SeatBehindDesk - 0.3f), new Vector3(1.2f, 0.04f, 0.3f), wood, root, false);
+                    Block("Bench", d + new Vector3(0, BenchHeight, -SeatBehindDesk), new Vector3(1.2f, 0.04f, 0.3f), wood, root, false);
                     // A few things left on the desks.
                     if (random.NextDouble() < 0.6)
-                        Block("Notebook", d + new Vector3((float)random.NextDouble() * 0.8f - 0.4f, 0.765f, 0), new Vector3(0.21f, 0.01f, 0.29f),
+                        Block("Notebook", d + new Vector3((float)random.NextDouble() * 0.8f - 0.4f, top + 0.005f, 0), new Vector3(0.21f, 0.01f, 0.29f),
                             Material("ClassNotebook", new Color(0.92f, 0.9f, 0.82f)), root, false, (float)random.NextDouble() * 30f - 15f);
                     if (random.NextDouble() < 0.3)
                     {
-                        var bottle = Cylinder("Bottle", d + new Vector3((float)random.NextDouble() * 0.9f - 0.45f, 0.76f, 0.12f), 0.035f, 0.22f, Material("ClassBottle", new Color(0.55f, 0.75f, 0.9f), 0.85f), root, false);
+                        var bottle = Cylinder("Bottle", d + new Vector3((float)random.NextDouble() * 0.9f - 0.45f, top, 0.12f), 0.035f, 0.22f, Material("ClassBottle", new Color(0.55f, 0.75f, 0.9f), 0.85f), root, false);
                         Cylinder("BottleCap", bottle.transform.position + Vector3.up * 0.22f, 0.02f, 0.03f, Material("ClassBottleCap", new Color(0.2f, 0.45f, 0.85f), 0.5f), root, false);
                     }
                     if (random.NextDouble() < 0.45)
-                        Block("Bag", d + new Vector3((float)random.NextDouble() * 0.6f - 0.3f, 0.55f, -0.02f), new Vector3(0.32f, 0.12f, 0.24f), bag[random.Next(bag.Length)], root, false);
+                        Block("Bag", d + new Vector3((float)random.NextDouble() * 0.6f - 0.3f, top - 0.13f, 0.13f), new Vector3(0.32f, 0.12f, 0.14f), bag[random.Next(bag.Length)], root, false);
                     // Seats face the board (north). The student sits third row, right column, by the window.
                     for (int side = -1; side <= 1; side += 2)
                     {
-                        var seat = Point("Seat_" + r + "_" + c + (side < 0 ? "L" : "R"), d + new Vector3(side * 0.3f, 0f, -SeatBehindDesk), 0f, root);
+                        float spacing = r == 2 && c == 2 ? 0.38f : 0.3f;
+                        // Her own sit take puts the hips ~0.03 m ahead of the root, so her mark stands just behind the bench centre.
+                        float seatDepth = r == 2 && c == 2 ? SeatBehindDesk + 0.03f : SeatBehindDesk;
+                        var seat = Point("Seat_" + r + "_" + c + (side < 0 ? "L" : "R"), d + new Vector3(side * spacing, 0f, -seatDepth), 0f, root);
                         if (r == 2 && c == 2 && side < 0) parts.Seat = seat;
                         else if (r == 2 && c == 2) parts.NganSeat = seat;
                         else parts.ClassmateSeats.Add(seat);
                     }
-                    if (r == 2 && c == 2) StudentBook(root, d + new Vector3(-0.3f, 0.76f, -0.02f), parts);
+                    if (r == 2 && c == 2) StudentBook(root, d + new Vector3(-0.3f, top, -0.02f), parts);
+                    // Invisible blockers so the player and walking actors go round the furniture. Her own bench stays
+                    // open and her desk only blocks its front: she is teleported onto the bench to sit, and a collider
+                    // under her would push her off.
+                    if (hers) Solid("DeskCollider", d + new Vector3(0f, top / 2f, 0.09f), new Vector3(1.24f, top, 0.28f), root);
+                    else Solid("DeskCollider", d + new Vector3(0f, top / 2f, 0f), new Vector3(1.24f, top, 0.46f), root);
+                    if (r != 2 || c != 2) Solid("BenchCollider", d + new Vector3(0f, 0.23f, -SeatBehindDesk), new Vector3(1.2f, 0.46f, 0.3f), root);
                 }
+        }
+
+        private static void Solid(string name, Vector3 centre, Vector3 size, Transform root)
+        {
+            var go = new GameObject(name) { layer = EnvironmentLayer, isStatic = true };
+            go.transform.SetParent(root, false);
+            go.transform.position = centre;
+            go.AddComponent<BoxCollider>().size = size;
+            // The shared agent climbs 0.75 m, enough to step onto a desk: mark the furniture not walkable instead.
+            var modifier = go.AddComponent<Unity.AI.Navigation.NavMeshModifier>();
+            modifier.overrideArea = true;
+            modifier.area = UnityEngine.AI.NavMesh.GetAreaFromName("Not Walkable");
         }
 
         /// <summary>Her open copy of Truyện Kiều, a pencil case, the glow for the prologue and the words for the epilogue.</summary>
@@ -320,10 +405,11 @@ namespace ThuyKieu.Core.Editor
                     new Vector3(0.22f + (float)random.NextDouble() * 0.15f, 0.28f, 0.005f), Material(i % 3 == 0 ? "ClassNoticeA" : i % 3 == 1 ? "ClassNoticeB" : "ClassNoticeC",
                         i % 3 == 0 ? new Color(0.95f, 0.93f, 0.85f) : i % 3 == 1 ? new Color(0.98f, 0.88f, 0.55f) : new Color(0.7f, 0.85f, 0.95f)), root, false, (float)random.NextDouble() * 10f - 5f);
             WorldText(root, "ClassSign", "<b>LỚP 10A2</b>", o + new Vector3(1.5f, 2.4f, -4.45f), 180f, new Vector2(1.6f, 0.3f), 0.2f, new Color(0.25f, 0.2f, 0.15f));
-            Block("Cupboard", o + new Vector3(-2.6f, 0.9f, -4.25f), new Vector3(1.6f, 1.8f, 0.45f), wood, root);
-            Block("CupboardLine", o + new Vector3(-2.6f, 0.9f, -4.02f), new Vector3(0.02f, 1.7f, 0.01f), metal, root, false);
+            // The cupboard stands in the east corner: on the west side it narrowed the back passage to the door.
+            Cupboard(root, o + new Vector3(3.9f, 0f, -4.25f), metal);
             Cylinder("Broom", o + new Vector3(-4.6f, 0f, -4.2f), 0.02f, 1.3f, Material("ClassBroom", new Color(0.7f, 0.6f, 0.35f)), root, false);
-            Cylinder("Bin", o + new Vector3(-4.5f, 0f, -3.6f), 0.18f, 0.42f, Material("ClassBin", new Color(0.2f, 0.45f, 0.3f), 0.4f), root, false);
+            // The bin stands under the notice board, clear of the doorway.
+            Cylinder("Bin", o + new Vector3(-0.3f, 0f, -4.2f), 0.18f, 0.42f, Material("ClassBin", new Color(0.2f, 0.45f, 0.3f), 0.4f), root, false);
             // Clock on the west wall.
             var face = Cylinder("ClockFace", o + new Vector3(-4.98f, 2.55f, 1.5f), 0.2f, 0.03f, Material("ClassClock", new Color(0.95f, 0.95f, 0.92f), 0.6f), root, false);
             face.transform.rotation = Quaternion.Euler(0, 0, 90f);
@@ -344,48 +430,14 @@ namespace ThuyKieu.Core.Editor
             foreach (float x in new[] { -0.19f, 0.19f })
                 foreach (float z in new[] { -0.18f, 0.18f })
                     Block("ChairLeg", o + new Vector3(-3.1f + x, 0.4f, 3.98f + z), new Vector3(0.03f, 0.44f, 0.03f), metal, root, false);
-            var extinguisher = Cylinder("Extinguisher", o + new Vector3(-4.8f, 0f, -2.7f), 0.08f, 0.52f, Material("ClassExtinguisher", new Color(0.8f, 0.08f, 0.06f), 0.6f), root, false);
-            Cylinder("ExtinguisherHead", extinguisher.transform.position + Vector3.up * 0.52f, 0.03f, 0.08f, metal, root, false);
+            // The extinguisher hangs on a bracket on the west wall, between the door and the timetable.
+            Cylinder("Extinguisher", o + new Vector3(-4.88f, 0.45f, -1.0f), 0.08f, 0.52f, Material("ClassExtinguisher", new Color(0.8f, 0.08f, 0.06f), 0.6f), root, false);
+            Cylinder("ExtinguisherHead", o + new Vector3(-4.88f, 0.97f, -1.0f), 0.03f, 0.08f, metal, root, false);
+            Block("ExtinguisherBracket", o + new Vector3(-4.97f, 0.8f, -1.0f), new Vector3(0.04f, 0.3f, 0.12f), metal, root, false);
+            Block("ExtinguisherHose", o + new Vector3(-4.83f, 0.75f, -0.93f), new Vector3(0.02f, 0.4f, 0.02f), metal, root, false);
             // A potted plant by the board and the class flag holder.
             PottedPlant(o + new Vector3(4.4f, 0.18f, 3.9f), 0.8f, root, 101);
             PottedPlant(o + new Vector3(-4.4f, 0.18f, 3.9f), 0.7f, root, 102);
-        }
-
-        /// <summary>The corridor outside the windows, its railing, trees in the yard and the opposite wing of the school.</summary>
-        private static void Outside(Transform root, Vector3 o, bool sunset)
-        {
-            var tiles = Surface("ClassCorridor", "brick_floor", new Color(0.92f, 0.78f, 0.66f), 1.2f, 0.25f, 0.8f, 0.3f);
-            var wall = Surface("ClassWall", "plastered_wall_02", new Color(1f, 0.9f, 0.62f), 2.2f, 0.12f, 0.6f, 0.25f);
-            var green = Material("ClassFrame", new Color(0.24f, 0.42f, 0.36f), 0.45f);
-            Block("Corridor", o + new Vector3(6.6f, -0.1f, 0f), new Vector3(2.8f, 0.2f, 13f), tiles, root);
-            Block("CorridorWest", o + new Vector3(-6.5f, -0.1f, -1f), new Vector3(2.6f, 0.2f, 11f), tiles, root);
-            Block("Railing", o + new Vector3(7.9f, 0.5f, 0f), new Vector3(0.12f, 1f, 13f), wall, root);
-            Block("RailCap", o + new Vector3(7.9f, 1.03f, 0f), new Vector3(0.22f, 0.06f, 13f), green, root, false);
-            Block("CorridorRoof", o + new Vector3(6.6f, 3.5f, 0f), new Vector3(3f, 0.2f, 13f), Material("ClassCeiling", new Color(0.93f, 0.92f, 0.88f), 0.1f), root, false);
-            for (float z = -6f; z <= 6.1f; z += 3f) Block("CorridorPost", o + new Vector3(7.85f, 1.75f, z), new Vector3(0.22f, 3.5f, 0.22f), wall, root, false);
-            var yard = Surface("ClassYard", "brick_floor", new Color(0.85f, 0.7f, 0.6f), 1.6f, 0.2f, 0.8f, 0.35f);
-            Block("Yard", o + new Vector3(16f, -0.3f, 0f), new Vector3(16f, 0.2f, 24f), yard, root, false);
-            Prop("Assets/_Game/Prefabs/Vegetation/BananaTree.prefab", o + new Vector3(11f, -0.2f, -3.5f), 30, 1.1f, root);
-            Prop("Assets/_Game/Prefabs/Vegetation/ArecaPalm.prefab", o + new Vector3(12.5f, -0.2f, 3f), 0, 1.2f, root);
-            Prop("Assets/_Game/Prefabs/Vegetation/ArecaPalm.prefab", o + new Vector3(10.2f, -0.2f, 6.5f), 80, 1f, root);
-            // A big flame tree (phượng) in the middle of the yard: a trunk and a wide crown of red blossom.
-            var trunk = Material("ClassTrunk", new Color(0.32f, 0.25f, 0.2f));
-            Cylinder("FlameTreeTrunk", o + new Vector3(15f, -0.2f, 0f), 0.35f, 4f, trunk, root, false);
-            var leaves = Material("ClassFlameLeaves", sunset ? new Color(0.3f, 0.4f, 0.2f) : new Color(0.35f, 0.55f, 0.25f), 0.1f);
-            var blossom = Material("ClassFlameBlossom", new Color(0.85f, 0.18f, 0.1f), 0.1f);
-            var random = new System.Random(21);
-            for (int i = 0; i < 9; i++)
-            {
-                var p = o + new Vector3(15f + (float)random.NextDouble() * 5f - 2.5f, 4.2f + (float)random.NextDouble() * 1.2f, (float)random.NextDouble() * 5f - 2.5f);
-                Sphere("Crown", p, new Vector3(2.4f, 1.1f, 2.4f) * (0.8f + (float)random.NextDouble() * 0.5f), i % 3 == 0 ? leaves : blossom, root);
-            }
-            // The opposite wing: a long yellow building with rows of green windows.
-            Block("OppositeWing", o + new Vector3(25f, 3f, 0f), new Vector3(3f, 6.4f, 26f), wall, root, false);
-            for (int floorIndex = 0; floorIndex < 2; floorIndex++)
-                for (float z = -11f; z <= 11.1f; z += 2.6f)
-                    Block("OppositeWindow", o + new Vector3(23.45f, 1.5f + floorIndex * 3f, z), new Vector3(0.05f, 1.4f, 1.3f), green, root, false);
-            Block("OppositeRoof", o + new Vector3(25f, 6.35f, 0f), new Vector3(3.6f, 0.3f, 26.6f), Material("ClassRoofTile", new Color(0.62f, 0.3f, 0.22f)), root, false);
-            if (sunset) Fireflies("EveningMotes", o + new Vector3(16f, 2f, 0f), new Vector3(8f, 3f, 14f), root, 25);
         }
 
         private static void Fans(Transform root, Vector3 o, Material metal)
@@ -429,6 +481,21 @@ namespace ThuyKieu.Core.Editor
         /// <paramref name="lineHeight"/> and <paramref name="size"/> are in metres; yaw 0 reads from the south (facing +Z),
         /// lying text faces up with its top towards +Z.
         /// </summary>
+        /// <summary>A painted two-door classroom cupboard (back to the south wall) at floor point <paramref name="foot"/>.</summary>
+        public static void Cupboard(Transform root, Vector3 foot, Material metal)
+        {
+            var paint = Material("ClassCupboardPaint", new Color(0.44f, 0.31f, 0.2f), 0.35f);
+            var panel = Material("ClassCupboardPanel", new Color(0.5f, 0.36f, 0.24f), 0.3f);
+            Block("Cupboard", foot + new Vector3(0, 0.95f, 0), new Vector3(1.4f, 1.74f, 0.44f), paint, root);
+            Block("CupboardTop", foot + new Vector3(0, 1.85f, 0.01f), new Vector3(1.5f, 0.06f, 0.5f), paint, root, false);
+            Block("CupboardBase", foot + new Vector3(0, 0.04f, 0.01f), new Vector3(1.42f, 0.08f, 0.46f), metal, root, false);
+            foreach (int side in new[] { -1, 1 })
+            {
+                Block("CupboardPanel", foot + new Vector3(side * 0.35f, 0.97f, 0.225f), new Vector3(0.58f, 1.56f, 0.012f), panel, root, false);
+                Block("CupboardHandle", foot + new Vector3(side * 0.06f, 1.0f, 0.24f), new Vector3(0.02f, 0.14f, 0.02f), metal, root, false);
+            }
+        }
+
         public static TMP_Text WorldText(Transform parent, string name, string text, Vector3 position, float yaw, Vector2 size, float lineHeight, Color color, bool lying = false)
         {
             var go = new GameObject(name, typeof(RectTransform));

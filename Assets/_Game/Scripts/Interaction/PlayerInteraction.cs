@@ -12,8 +12,10 @@ namespace ThuyKieu.Interaction
     {
         [Header("Detection")]
         [SerializeField] private float interactionDistance = 2.5f;
-        [Tooltip("Radius of the sphere cast, so the player does not need pixel perfect aim.")]
+        [Tooltip("Within this radius, a target may be used without an exact facing check.")]
         [SerializeField] private float interactionRadius = 0.4f;
+        [Tooltip("How far to either side an object may be and still show its E prompt.")]
+        [Range(-1f, 1f)] [SerializeField] private float minimumFacingDot = 0.1f;
         [Tooltip("Which layers can be interacted with. Default: everything.")]
         [SerializeField] private LayerMask interactionLayers = ~0;
         [SerializeField] private QueryTriggerInteraction triggerInteraction = QueryTriggerInteraction.Collide;
@@ -100,31 +102,58 @@ namespace ThuyKieu.Interaction
 
         private IInteractable FindInteractable()
         {
-            // Opt-in range detection also works when standing beside an NPC.
+            Vector3 origin = detectionOrigin.position + Vector3.up * detectionHeight;
+            Vector3 forward = Vector3.ProjectOnPlane(detectionOrigin.forward, Vector3.up).normalized;
             IInteractable nearest = null;
             float bestDistance = interactionDistance;
             foreach (Collider collider in Physics.OverlapSphere(transform.position, interactionDistance, interactionLayers, triggerInteraction))
             {
                 var availability = collider.GetComponentInParent<IInteractionAvailability>();
                 var candidate = collider.GetComponentInParent<IInteractable>();
-                if (availability == null || !availability.IsAvailable || candidate == null) continue;
-                float distance = Vector3.Distance(transform.position, collider.transform.position);
+                if (candidate == null || (availability != null && !availability.IsAvailable)) continue;
+
+                var explore = collider.GetComponentInParent<ExploreTarget>();
+                Vector3 nearestPoint = explore != null ? explore.InteractionPosition : collider.transform.position;
+                float distance = Vector3.ProjectOnPlane(nearestPoint - transform.position, Vector3.up).magnitude;
+                if (explore != null && explore.HasStandPoint && distance > ExploreTarget.StandPointRange) continue;
+                if (distance > interactionDistance || !Faces(collider.bounds.center, origin, forward)) continue;
+                if (!HasLineOfSight(origin, collider, candidate)) continue;
                 if (distance < bestDistance) { nearest = candidate; bestDistance = distance; }
             }
-            if (nearest != null) return nearest;
-            Vector3 origin = detectionOrigin.position + Vector3.up * detectionHeight;
-            Vector3 direction = detectionOrigin.forward;
+            return nearest;
+        }
 
-            if (!Physics.SphereCast(origin, interactionRadius, direction, out RaycastHit hit,
-                    interactionDistance, interactionLayers, triggerInteraction))
+        private bool Faces(Vector3 point, Vector3 origin, Vector3 forward)
+        {
+            Vector3 direction = Vector3.ProjectOnPlane(point - origin, Vector3.up);
+            return direction.sqrMagnitude < interactionRadius * interactionRadius
+                   || Vector3.Dot(forward, direction.normalized) >= minimumFacingDot;
+        }
+
+        /// <summary>The first solid thing between Kiều and a target must be the target itself, never a wall.</summary>
+        private bool HasLineOfSight(Vector3 origin, Collider targetCollider, IInteractable target)
+        {
+            // Aim at the upper half of the target volume (chest height for a person): the centre of someone seated
+            // behind a table lies below its top, so the table read as a wall between Kiều and them.
+            Bounds bounds = targetCollider.bounds;
+            Vector3 destination = bounds.center + Vector3.up * bounds.extents.y * 0.5f;
+            Vector3 delta = destination - origin;
+            float distance = delta.magnitude;
+            if (distance < 0.05f) return true;
+
+            RaycastHit[] hits = Physics.RaycastAll(origin, delta / distance, distance + 0.05f,
+                interactionLayers, triggerInteraction);
+            float targetDistance = float.MaxValue;
+            float blockerDistance = float.MaxValue;
+            foreach (RaycastHit hit in hits)
             {
-                return null;
+                if (hit.collider.transform.IsChildOf(transform)) continue;
+                var hitTarget = hit.collider.GetComponentInParent<IInteractable>();
+                if (ReferenceEquals(hitTarget, target)) targetDistance = Mathf.Min(targetDistance, hit.distance);
+                else if (!hit.collider.isTrigger) blockerDistance = Mathf.Min(blockerDistance, hit.distance);
             }
-
-            // GetComponentInParent so a collider on a child of an NPC still resolves to the NPC.
-            var available = hit.collider.GetComponentInParent<IInteractionAvailability>();
-            if (available != null && !available.IsAvailable) return null;
-            return hit.collider.GetComponentInParent<IInteractable>();
+            // Trigger volumes are valid targets but never blockers. A solid wall closer than the target rejects it.
+            return targetDistance < float.MaxValue && targetDistance <= blockerDistance + 0.02f;
         }
 
         private void OnDrawGizmosSelected()

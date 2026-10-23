@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ThuyKieu.Core;
+using UnityEngine.Rendering;
 using ThuyKieu.Environment;
 using UnityEngine;
 
@@ -24,7 +25,10 @@ namespace ThuyKieu.Player
         [SerializeField] private string fallbackTargetChildName = "CameraTarget";
 
         [Header("Framing")]
-        [SerializeField] private float distance = 4.5f;
+        [SerializeField] private float distance = 2.2f;
+        [SerializeField] private float minDistance = 1.15f;
+        [SerializeField] private float maxDistance = 3.2f;
+        [SerializeField] private float zoomStep = 0.35f;
         [SerializeField] private Vector3 targetOffset = Vector3.zero;
         [Tooltip("Sideways offset of the pivot (positive = right shoulder). 0 keeps the classic centred orbit.")]
         [SerializeField] private float _shoulder = 0f;
@@ -37,8 +41,8 @@ namespace ThuyKieu.Player
 
         [Header("Rotation")]
         [SerializeField] private float mouseSensitivity = 0.15f;
-        [SerializeField] private float minPitch = -30f;
-        [SerializeField] private float maxPitch = 70f;
+        [SerializeField] private float minPitch = -15f;
+        [SerializeField] private float maxPitch = 45f;
         [SerializeField] private bool invertY = false;
 
         [Header("Cursor")]
@@ -72,6 +76,10 @@ namespace ThuyKieu.Player
 
         private float yaw;
         private float pitch;
+        private bool ignoreNextLookDelta;
+        private bool portraitMode;
+        private float gameplayYaw;
+        private float gameplayPitch;
         private Vector3 followVelocity;
         [SerializeField] private LayerMask _collisionMask;
         public bool ControlLocked { get; set; }
@@ -91,10 +99,13 @@ namespace ThuyKieu.Player
         public float ObserveFov { get; set; }
 
         private Camera _camera;
-        private float _baseFov, _currentDistance, _currentShoulder, _currentHeight, _collisionDistance = -1f;
+        private float _baseFov, _userDistance, _currentDistance, _currentShoulder, _currentHeight, _collisionDistance = -1f;
         private readonly RaycastHit[] _hits = new RaycastHit[16];
         private readonly HashSet<CameraFadeable> _faded = new HashSet<CameraFadeable>();
         private readonly HashSet<CameraFadeable> _fadeNow = new HashSet<CameraFadeable>();
+        private readonly List<(Renderer renderer, ShadowCastingMode mode)> _bodyHidden = new List<(Renderer, ShadowCastingMode)>();
+        // Closer than this the lens is inside the character's head: the body is drawn as shadow only.
+        private const float HideBodyDistance = 0.45f;
 
         // ---------------------------------------------------------------- close view (first person)
 
@@ -167,7 +178,8 @@ namespace ThuyKieu.Player
             pitch = Mathf.Clamp(NormalizeAngle(euler.x), minPitch, maxPitch);
             _camera = GetComponent<Camera>();
             _baseFov = _camera != null ? _camera.fieldOfView : 60f;
-            _currentDistance = distance;
+            _userDistance = Mathf.Clamp(distance, minDistance, maxDistance);
+            _currentDistance = _userDistance;
             _currentShoulder = _shoulder;
         }
 
@@ -183,7 +195,7 @@ namespace ThuyKieu.Player
                     renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
         }
 
-        private void OnDisable() { RestoreFaded(); }
+        private void OnDisable() { RestoreFaded(); HideBody(false); }
 
         private Vector3 EyePosition() => _body.transform.position + Vector3.up * _body.EyeHeight;
 
@@ -233,6 +245,7 @@ namespace ThuyKieu.Player
             if (ControlLocked && _dialogueCue != null)
             {
                 RestoreFaded();
+                HideBody(false);
                 Vector3 shotPosition = _dialogueCue.position;
                 if (target != null && _dialogueCue.IsChildOf(target.root))
                     shotPosition = ResolveObstruction(target.position, shotPosition);
@@ -267,20 +280,64 @@ namespace ThuyKieu.Player
 
             if (!ControlLocked) HandleCursorToggle();
 
-            if (!ControlLocked && Cursor.lockState == CursorLockMode.Locked)
+            if (!ControlLocked && InputReader.PortraitPressedThisFrame)
             {
-                Vector2 look = InputReader.Look * mouseSensitivity * GameSettings.MouseSensitivity;
-                yaw += look.x;
-                pitch += invertY != GameSettings.InvertY ? look.y : -look.y;
-                pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+                portraitMode = !portraitMode;
+                if (portraitMode)
+                {
+                    gameplayYaw = yaw;
+                    gameplayPitch = pitch;
+                }
+                else
+                {
+                    yaw = gameplayYaw;
+                    pitch = gameplayPitch;
+                    ignoreNextLookDelta = true;
+                }
+            }
+
+            if (!ControlLocked && !portraitMode && Cursor.lockState == CursorLockMode.Locked)
+            {
+                Vector2 rawLook = InputReader.Look;
+                if (ignoreNextLookDelta)
+                {
+                    ignoreNextLookDelta = false;
+                }
+                else
+                {
+                    // Locking the cursor can produce a one-frame warp delta large enough to throw the
+                    // camera straight above the player. Cap only that implausible per-frame spike.
+                    rawLook.x = Mathf.Clamp(rawLook.x, -30f, 30f);
+                    rawLook.y = Mathf.Clamp(rawLook.y, -30f, 30f);
+                    Vector2 look = rawLook * mouseSensitivity * GameSettings.MouseSensitivity;
+                    yaw += look.x;
+                    pitch += invertY != GameSettings.InvertY ? look.y : -look.y;
+                    pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+                }
+
+                float zoom = InputReader.Zoom;
+                if (Mathf.Abs(zoom) > 0.001f)
+                {
+                    _userDistance = Mathf.Clamp(_userDistance - zoom * zoomStep, minDistance, maxDistance);
+                }
             }
 
             // Framing: blend towards the zone the player stands in; observing pulls in over the shoulder.
             var zone = CameraZone.Find(target.position);
-            float wantDistance = zone != null ? zone.Distance : distance;
+            if (portraitMode)
+            {
+                yaw = target.root.eulerAngles.y + 180f;
+                pitch = 5f;
+            }
+            float wantDistance = portraitMode ? minDistance : zone != null ? zone.Distance : _userDistance;
             float wantShoulder = zone != null ? zone.Shoulder : _shoulder;
             float wantHeight = zone != null ? zone.Height : 0f;
-            float wantFov = zone != null && zone.Fov > 0f ? zone.Fov : _fov > 0f ? _fov : _baseFov;
+            float wantFov = portraitMode ? 34f : zone != null && zone.Fov > 0f ? zone.Fov : _fov > 0f ? _fov : _baseFov;
+            if (portraitMode)
+            {
+                wantShoulder = 0f;
+                wantHeight = -0.18f;
+            }
             if (ObserveFov > 0f)
             {
                 wantDistance *= 0.8f;
@@ -303,6 +360,7 @@ namespace ThuyKieu.Player
                 ? Mathf.Lerp(_collisionDistance, allowed, 1 - Mathf.Exp(-30f * Time.deltaTime))
                 : Mathf.Lerp(_collisionDistance, allowed, 1 - Mathf.Exp(-4f * Time.deltaTime));
             Vector3 desiredPosition = pivot + back * _collisionDistance;
+            HideBody(_collisionDistance < HideBodyDistance);
 
             transform.position = followSmoothTime > 0f
                 ? Vector3.SmoothDamp(transform.position, desiredPosition, ref followVelocity, followSmoothTime)
@@ -334,10 +392,15 @@ namespace ThuyKieu.Player
                 for (int i = 0; i < count; i++)
                 {
                     var hit = _hits[i];
-                    if (hit.distance <= 0f && hit.point == Vector3.zero) continue; // started inside: ignore
+                    if (hit.distance <= 0f && hit.point == Vector3.zero) continue; // started inside: the ray below covers it
                     if (hit.collider.GetComponentInParent<CameraFadeable>() != null) continue;
-                    allowed = Mathf.Min(allowed, Mathf.Max(0.35f, hit.distance - 0.1f));
+                    // No minimum distance: a floor wider than the gap to the wall put the lens behind thin walls.
+                    allowed = Mathf.Min(allowed, Mathf.Max(0.05f, hit.distance - 0.1f));
                 }
+                // With the player's back to a wall the sphere starts inside it and reports nothing; a thin ray still sees it.
+                if (Physics.Raycast(pivot, back, out RaycastHit ray, length, _collisionMask, QueryTriggerInteraction.Ignore)
+                    && ray.collider.GetComponentInParent<CameraFadeable>() == null)
+                    allowed = Mathf.Min(allowed, Mathf.Max(0.05f, ray.distance - 0.15f));
                 for (int i = 0; i < count; i++)
                 {
                     var fade = _hits[i].collider.GetComponentInParent<CameraFadeable>();
@@ -349,6 +412,23 @@ namespace ThuyKieu.Player
             _faded.Clear();
             _faded.UnionWith(_fadeNow);
             return allowed;
+        }
+
+        /// <summary>Shadow-only body while the lens is pressed against the player's head (back to a wall).</summary>
+        private void HideBody(bool hide)
+        {
+            if (hide == _bodyHidden.Count > 0 || target == null) return;
+            if (!hide)
+            {
+                foreach (var (renderer, mode) in _bodyHidden) if (renderer != null) renderer.shadowCastingMode = mode;
+                _bodyHidden.Clear();
+                return;
+            }
+            foreach (var renderer in target.root.GetComponentsInChildren<Renderer>())
+            {
+                _bodyHidden.Add((renderer, renderer.shadowCastingMode));
+                renderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+            }
         }
 
         private void RestoreFaded()
@@ -378,6 +458,7 @@ namespace ThuyKieu.Player
         {
             Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
             Cursor.visible = !locked;
+            if (locked) ignoreNextLookDelta = true;
         }
 
         private void HandleCursorToggle()

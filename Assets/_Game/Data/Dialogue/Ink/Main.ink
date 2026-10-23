@@ -32,18 +32,28 @@ VAR danh_tieng = 0
 VAR tu_trong = 2
 VAR tien = 0
 VAR doc_ky_khe = false
-VAR c1_viec = 0           // số việc đã làm trong nhà trước khi Mã Giám Sinh đến
+VAR c1_viec = 0           // số việc đã làm trong nhà trước khi ra mở cổng (hỏi Mẹ, tìm bản khai)
 VAR c1_biet_moi = false   // đã nghe Mẹ Kiều kể chuyện bà mối
-VAR c1_manh_moi = 0       // số manh mối Chương 1
+VAR c1_manh_moi = 0       // số manh mối cốt lõi Chương 1 (tối đa 3)
 VAR c1_nghi_ngo = 0       // 0–100: nghi ngờ của Mã Giám Sinh trong buổi dạm hỏi. Unity cộng khi nhìn lộ liễu. 100 = bị lộ (checkpoint)
 VAR c1_hoi_xong = false   // đã đáp lời hắn (mở tờ khế)
-VAR c1_hoi_tien = false   // đã bắt hắn hứa bạc đến trước
+VAR c1_hoi_tien = false   // đã biết lời hứa của bà mối: bạc phải giao trước
 VAR c1_bac_dau = false    // đã thấy dấu Phúc Ký trên nén bạc
+VAR c1_bac_truoc = false  // nhờ lời bà mối (hỏi Mẹ): tờ khế ghi rõ bạc giao trước, cha và em được thả trước khi Kiều đi
+VAR c1_ma_lo = false      // nhờ bản khai (lục tủ): đối chất khiến Mã buột miệng nhắc Lâm Tri
+VAR c1_ca_hai = false     // ra mở cổng khi đã có cả hai manh mối: Mã bớt đề phòng khi lên đường (nghi_ngo Ch2 thấp hơn)
 VAR c1_tam_biet = false   // đã từ biệt Mẹ Kiều
+VAR c1_thoa = false       // bí mật: nhặt chiếc thoa vàng Kim Trọng trả lại, rơi dưới chân tủ (Unity ghi, chỉ dùng trong Chương 1)
 
 // --- Chương 2 ---
 VAR nghi_ngo = 0          // 0–100. Unity cộng theo hành vi, Ink cộng theo lời nói. 100 = bị lộ (checkpoint). Bắt đầu ở 15 nếu Ch1 kết thúc với c1_nghi_ngo ≥ 60
 VAR manh_moi = 0          // số manh mối Chương 2
+VAR c2_nghe_duong = 0     // Unity ghi: số câu thì thầm nghe lỏm khi đi sát sau lưng Mã (0–3)
+VAR c2_giay_mat = false   // Unity ghi: tụt lại quá xa lúc mẩu giấy rơi, tùy tùng đã nhặt lại
+VAR c2_sai_noi_den = false    // Unity ghi từ bảng suy luận: Kiều tin sai nơi hắn đưa nàng tới
+VAR c2_sai_bac = false        // ... tin sai ý nghĩa bốn trăm / bốn trăm năm mươi lạng
+VAR c2_sai_nguoi_nhan = false // ... tin sai người chờ nhận nàng ở Lâm Tri
+VAR c2_bo_chay = 0        // Unity ghi khi thử bỏ chạy ở quán nước: 1 bị tùy tùng bắt · 2 thấy ảo ảnh cha bị giải đi · 3 tự quay về
 VAR mm_ban_tay = false    // quan sát hắn đếm bạc
 VAR mm_hoi_duong = false  // hỏi được nơi đến: Lâm Tri
 VAR mm_mau_giay = false   // đọc mẩu giấy "giao hàng"
@@ -157,6 +167,7 @@ INCLUDE Chapter3_LauTuBa.ink
 INCLUDE Chapter4_DemLauTuBa.ink
 INCLUDE Chapter5_DaoThoat.ink
 INCLUDE Chapter6_KimTrong.ink
+// Mở đầu: lớp học rút gọn và nhịp làm quen thân xác Kiều trước khi khám phòng.
 INCLUDE Prologue_TrangSach.ink
 INCLUDE Chapter7_NghichMenh.ink
 INCLUDE Epilogue_LopHoc.ink
@@ -188,5 +199,3 @@ INCLUDE Epilogue_LopHoc.ink
 
 === function soul(n) ===
 ~ dong_dieu = MAX(0, MIN(10, dong_dieu + n))
-
-

@@ -25,7 +25,7 @@ namespace ThuyKieu.Presentation
         private AudioSource _musicA, _musicB, _ambience, _sfx, _steps;
         private AudioSource _activeMusic;
         private string _musicId;
-        private float _duck = 1f, _stepDistance;
+        private float _duck = 1f, _ambienceDuck = 1f, _stepDistance;
 
         private void Awake()
         {
@@ -47,7 +47,8 @@ namespace ThuyKieu.Presentation
             source.loop = loop;
             source.playOnAwake = false;
             source.spatialBlend = 0f;
-            source.volume = 0f;
+            // Loops fade in from silence in Update; one-shots set their level per PlayOneShot, which this volume scales.
+            source.volume = loop ? 0f : 1f;
             return source;
         }
 
@@ -68,6 +69,9 @@ namespace ThuyKieu.Presentation
 
         /// <summary>Whether this scene has recorded takes for an effect id (callers may ask for a finer id first).</summary>
         public bool HasFoley(string id) => _foley != null && _foley.Has(id);
+
+        /// <summary>The music id last asked for, so a passing moment can hand the score back afterwards.</summary>
+        public string CurrentMusic => _musicId;
 
         public void PlayMusic(string id)
         {
@@ -164,8 +168,6 @@ namespace ThuyKieu.Presentation
 
         /// <summary>Lowers music (e.g. while eavesdropping) without stopping it.</summary>
         public void Duck(float amount) { _duck = Mathf.Clamp01(amount); }
-
-        private float _ambienceDuck = 1f;
 
         /// <summary>Lowers the ambience bed (the rain going quiet before something happens). 1 = normal.</summary>
         public void DuckAmbience(float amount) { _ambienceDuck = Mathf.Clamp01(amount); }

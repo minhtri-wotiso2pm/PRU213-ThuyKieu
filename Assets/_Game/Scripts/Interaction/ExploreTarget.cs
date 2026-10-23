@@ -24,6 +24,13 @@ namespace ThuyKieu.Interaction
         public string DisplayName => _label;
         public bool IsRevealed => _revealed;
         public bool IsAvailable => _revealed && _director != null && _director.IsExploreAvailable(_exploreId);
+        /// <summary>
+        /// Where Kiều must stand before the prompt becomes usable. Targets with an authored stand point no longer
+        /// activate from the far side of a desk, door or wall and then teleport her through it.
+        /// </summary>
+        public bool HasStandPoint => _standPoint != null;
+        public Vector3 InteractionPosition => _standPoint != null ? _standPoint.position : transform.position;
+        public const float StandPointRange = 1.25f;
 
         private void Awake() { _revealed = !_startHidden; }
 

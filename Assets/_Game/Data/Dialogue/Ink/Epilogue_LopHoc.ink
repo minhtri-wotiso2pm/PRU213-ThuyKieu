@@ -3,17 +3,14 @@
 // Scene Unity: Chapter08_Epilogue (lớp học lúc hoàng hôn)
 // Nhân vật tỉnh dậy trên bàn học như chưa có gì xảy ra; mở lại đoạn bán mình, không còn chê Kiều;
 // dòng chữ "Cảm ơn." hiện ở cuối trang → tựa game → tổng kết hành trình → credits.
+// Kể bằng hình ảnh: nắng chiều, quyển sách và câu thơ thay cho lời dẫn.
 // ============================================================
 
 === epilogue ===
 # chapter:8
 # scene:LopHoc_HoangHon
 # music:{c7_ket == 0:bac_menh|epilogue}
-# speaker:Narrator
-# camera:Wide_Classroom
 # gameplay:wake_class
-Tiếng quạt trần. Tiếng ve. Tiếng ai đó gọi tên mình.
-
 # fx:none
 # speaker:Ngan
 # emotion:amused
@@ -21,23 +18,22 @@ Tiếng quạt trần. Tiếng ve. Tiếng ai đó gọi tên mình.
 Ngân: Ê! Dậy! Ngủ gục từ lúc tan học đến giờ luôn hả? Tao quay lại lấy áo khoác mà mày vẫn nằm đây.
 
 # speaker:NoiTam
-Lớp học. Bàn ghế, bảng đen, nắng chiều đỏ ối ngoài cửa sổ. Đồng hồ trên tường chỉ mới qua mười lăm phút.
-
-# speaker:NoiTam
-Mọi thứ giống hệt như chưa từng xảy ra.
+# camera:Wide_Classroom
+Lớp học. Nắng chiều. Đồng hồ mới qua mười lăm phút. Như chưa từng có chuyện gì.
 
 # speaker:HocSinh
 # emotion:thoughtful
+# camera:OTS_Kieu_Ngan
 Tôi: ...Tao ngủ bao lâu rồi?
 
 # speaker:Ngan
 # emotion:amused
 Ngân: Mười lăm phút chứ mấy. Mặt mày như vừa đi đâu xa lắm về ấy.
 
-# speaker:Narrator
+# speaker:NoiTam
 # objective:Quyển Truyện Kiều vẫn nằm trên bàn · E để mở
 # gameplay:tutorial_epilogue
-Quyển Truyện Kiều vẫn nằm trước mặt, mở đúng trang cũ.
+Quyển sách vẫn mở đúng trang cũ.
 
 -> ep_lop
 
@@ -50,35 +46,31 @@ Quyển Truyện Kiều vẫn nằm trước mặt, mở đúng trang cũ.
 
 
 === ep_window ===
-# speaker:Narrator
-# camera:Window
-Hoàng hôn trải trên sân trường. Ở đâu đó, có tiếng mưa rất xa, rồi tạnh hẳn.
-
 {
 - c7_ket == 0:
     # speaker:NoiTam
+    # camera:Window
     Ở trong trang sách kia, giờ này cánh cửa lầu xanh vẫn đóng. Và sẽ còn đóng rất lâu.
 - kt_tin_tuong >= 3:
     # speaker:NoiTam
+    # camera:Window
     Lần này chàng không đến muộn. Không biết ở trong trang sách kia, giờ này họ đang làm gì.
 - else:
     # speaker:NoiTam
+    # camera:Window
     Cha, mẹ, Vương Quan, chị Lam... Không biết giờ này họ thế nào.
 }
 -> ep_lop
 
 
 === ep_book ===
-# speaker:Narrator
-# camera:Book
-Tôi mở lại quyển sách. Vẫn đoạn ấy. Vẫn những câu thơ mà vài tiếng trước tôi đã gọi là "ngốc".
-
 # speaker:TrangSach
+# camera:Book
 # gameplay:open_book
 "Duyên hội ngộ, đức cù lao, bên tình bên hiếu bên nào nặng hơn?"
 
 # speaker:NoiTam
-Lần này, tôi đọc chậm từng chữ.
+Vẫn đoạn ấy. Vài tiếng trước mình còn gọi là "ngốc". Lần này, mình đọc chậm từng chữ.
 
 {
 - c7_ket == 3:
@@ -116,20 +108,11 @@ Lần này, tôi đọc chậm từng chữ.
 # speaker:HocSinh
 # emotion:thoughtful
 # camera:CU_Kieu
-Tôi: Ừ.
-
-# speaker:Narrator
-Tôi dừng lại một chút.
-
-# speaker:HocSinh
-Tôi: Nhưng tao nghĩ lại rồi.
-
-# speaker:HocSinh
-Tôi: Có những chuyện...
+Tôi: Ừ. Nhưng tao nghĩ lại rồi.
 
 # speaker:HocSinh
 # emotion:warm
-Tôi: ...chỉ khi ở trong hoàn cảnh đó mới hiểu được.
+Tôi: Có những chuyện... chỉ khi ở trong hoàn cảnh đó mới hiểu được.
 
 # speaker:Ngan
 # emotion:thoughtful
@@ -144,8 +127,8 @@ Ngân: ...Mày ngủ một giấc mà nói chuyện như bà cụ non ấy.
     # emotion:amused
     Tôi: Mai tao kể cho mày nghe. Dài lắm.
 * [Mỉm cười, không nói gì.]
-    # speaker:Narrator
-    Tôi chỉ cười. Có những chuyện kể ra cũng chẳng ai tin.
+    # speaker:NoiTam
+    Có những chuyện kể ra cũng chẳng ai tin.
 
 - # speaker:Ngan
 # emotion:amused
@@ -153,38 +136,32 @@ Ngân: Thôi về đi, trường sắp đóng cổng rồi.
 
 {
 - c7_ket == 0:
-    # speaker:Narrator
-    # camera:BookClose
-    # music:spirit
-    Khi tôi gấp sách lại, mắt tôi dừng ở một câu tôi vẫn đọc lướt qua.
     # speaker:TrangSach
+    # camera:BookClose
+    # music:bac_menh
     "Đau đớn thay phận đàn bà, lời rằng bạc mệnh cũng là lời chung."
     # speaker:NoiTam
-    Lần này mình không lướt qua nữa.
+    Câu này mình vẫn đọc lướt qua. Lần này mình không lướt qua nữa.
 - dong_dieu <= 3:
-    # speaker:Narrator
-    # camera:BookClose
-    # music:spirit
-    Khi tôi gấp sách lại, cuối trang trống trơn. Không có dòng chữ nào cả.
     # speaker:NoiTam
-    Mình đã thắng thay nàng. Nhưng chưa từng hỏi nàng muốn gì.
-- else:
-    # speaker:Narrator
     # camera:BookClose
-    # music:spirit
-    # gameplay:thank_you
-    Khi tôi gấp sách lại, ở cuối trang có một dòng chữ nhỏ, mực còn như vừa khô.
+    # music:epilogue
+    Cuối trang trống trơn. Mình đã thắng thay nàng. Nhưng chưa từng hỏi nàng muốn gì.
+- else:
     # speaker:TrangSach
+    # camera:BookClose
+    # music:epilogue
+    # gameplay:thank_you
     "Cảm ơn."
+    # speaker:NoiTam
+    Một dòng chữ nhỏ ở cuối trang, mực còn như vừa khô.
     {
     - ket_hon == 1:
         # speaker:NoiTam
         Ở đâu đó trong trang sách, nàng đang sống nốt đời mình. Lần này không ai viết sẵn.
     - ket_hon == 2:
-        # speaker:KieuThat
-        Lớp học của ngươi... nắng đẹp thật.
         # speaker:NoiTam
-        Ừ. Mai mình dẫn nàng đi xem cả trường.
+        Nếu nàng được thấy lớp học này... nắng chiều ở đây đẹp lắm.
     }
 }
 

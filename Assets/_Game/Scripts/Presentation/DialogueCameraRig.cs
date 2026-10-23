@@ -9,7 +9,8 @@ namespace ThuyKieu.Presentation
     /// <summary>
     /// Builds dialogue shots from Ink camera ids and speakers.
     /// "CAM_&lt;id&gt;" scene anchors win; otherwise CU_&lt;actor&gt;, MCU_&lt;actor&gt;, OTS_&lt;from&gt;_&lt;to|Focus_to&gt;.
-    /// Without a camera tag it alternates over-the-shoulder shots between Kiều and the speaker.
+    /// Without a camera tag it alternates over-the-shoulder shots between Kiều and the speaker;
+    /// inner thoughts after an authored CAM_ shot stay on it.
     /// </summary>
     public class DialogueCameraRig : MonoBehaviour
     {
@@ -26,6 +27,7 @@ namespace ThuyKieu.Presentation
         private Light _key;
         private StoryActor _lastOther;
         private bool _active;
+        private bool _onAnchor;
         private readonly List<(Renderer renderer, ShadowCastingMode mode)> _hidden = new List<(Renderer, ShadowCastingMode)>();
 
         private void Awake()
@@ -52,15 +54,28 @@ namespace ThuyKieu.Presentation
         public void Clear()
         {
             _active = false;
+            _onAnchor = false;
             _lastOther = null;
             _camera.SetDialogueCue(null);
             Restore();
             if (_key != null) _key.enabled = false;
         }
 
+        private string _lastShot;
+
+        /// <summary>Takes the current line's shot again, after staging has moved the people in it (a fade-and-place).</summary>
+        public void Reshoot()
+        {
+            if (!_director.Dialogue.IsDialogueActive) return;
+            if (_lastShot != null) Shot(_lastShot);
+            else Auto(_director.Dialogue.CurrentSpeakerId);
+        }
+
         public void Shot(string id)
         {
+            _lastShot = id;
             var anchor = GameObject.Find("CAM_" + id);
+            _onAnchor = anchor != null;
             if (anchor != null) { Apply(anchor.transform.position, anchor.transform.rotation); return; }
             string[] parts = id.Split('_');
             if (parts.Length >= 2 && (parts[0] == "CU" || parts[0] == "MCU"))
@@ -85,8 +100,13 @@ namespace ThuyKieu.Presentation
 
         public void Auto(string speaker)
         {
+            _lastShot = null;
             var kieu = _director.FindActor("Kieu");
             if (kieu == null) return;
+            // Kiều's thoughts about what she is looking at (the hồ cầm, the mirror): a close-up of her face
+            // would swing round in front of her, often into the wall she faces.
+            if (speaker == "NoiTam" && _onAnchor) return;
+            _onAnchor = false;
             switch (speaker)
             {
                 case "NoiTam": case "KieuThat": case "TrangSach":
@@ -118,7 +138,9 @@ namespace ThuyKieu.Presentation
             var kieu = _director.FindActor("Kieu");
             var partner = actor == kieu ? _lastOther : kieu;
             Vector3 forward = actor.transform.forward;
-            if (partner != null && Vector3.Distance(partner.transform.position, actor.transform.position) < 7f)
+            // Seated people are framed from the front, across their desk; from the partner's side the lens sits
+            // beside the bench and looks along their legs.
+            if (partner != null && !actor.IsSitting && Vector3.Distance(partner.transform.position, actor.transform.position) < 7f)
             {
                 Vector3 toPartner = partner.transform.position - actor.transform.position;
                 toPartner.y = 0;
@@ -126,7 +148,7 @@ namespace ThuyKieu.Presentation
             }
             Vector3 right = Vector3.Cross(Vector3.up, forward);
             distance *= _lens;
-            Vector3 position = head + forward * distance + right * 0.28f * _lens + Vector3.up * 0.04f;
+            Vector3 position = head + forward * distance + right * 0.28f * _lens + Vector3.up * (0.04f + SeatedRise(actor));
             // Aim past the face towards the camera's side so the speaker sits on a third, looking into the open frame.
             Vector3 look = head - Vector3.up * (0.1f + 0.04f * distance) + right * 0.11f * distance;
             Compose(head, position, look, new[] { actor }, new[] { head, head - Vector3.up * 0.35f });
@@ -140,11 +162,18 @@ namespace ThuyKieu.Presentation
             if (direction.sqrMagnitude < 0.01f) direction = from.transform.forward;
             direction.Normalize();
             Vector3 right = Vector3.Cross(Vector3.up, direction);
-            Vector3 position = head - direction * 1.05f * _lens + right * 0.5f * Mathf.Sqrt(_lens) + Vector3.up * 0.12f;
+            float rise = Mathf.Max(SeatedRise(from), targetActor != null ? SeatedRise(targetActor) : 0f);
+            Vector3 position = head - direction * 1.05f * _lens + right * 0.5f * Mathf.Sqrt(_lens) + Vector3.up * (0.12f + rise);
             // Turning around the person being looked at keeps them in frame if the shoulder shot is blocked.
             var subjects = targetActor != null ? new[] { from, targetActor } : new[] { from };
             Compose(target, position, target, subjects, new[] { target, target - Vector3.up * 0.35f }, head + Vector3.up * 0.1f);
         }
+
+        /// <summary>
+        /// Seated people are framed from above eye level, looking down across the desk: at a seated head's height the
+        /// bottom of the frame falls on the laps of whoever sits in front of the lens.
+        /// </summary>
+        private static float SeatedRise(StoryActor actor) => actor != null && actor.IsSitting ? 0.45f : 0f;
 
         private void Wide(StoryActor kieu)
         {
@@ -190,8 +219,27 @@ namespace ThuyKieu.Presentation
             }
             var hide = new List<StoryActor>();
             Blockers(bestPosition, targets, others, hide);
-            foreach (var actor in hide) Hide(actor);
+            foreach (var actor in hide) if (CanHide(actor)) Hide(actor);
             Apply(bestPosition, Quaternion.LookRotation(bestLook - bestPosition), false);
+        }
+
+        /// <summary>
+        /// Principal members of the Vương-family arrest must remain visible. Losing one of them between dialogue cuts
+        /// reads as a continuity error, even when that actor happens to stand across the chosen sight line.
+        /// </summary>
+        private static bool CanHide(StoryActor actor)
+        {
+            if (actor == null) return false;
+            switch (actor.SpeakerId)
+            {
+                case "VuongOng":
+                case "VuongQuan":
+                case "MeKieu":
+                case "QuanSai":
+                    return false;
+                default:
+                    return true;
+            }
         }
 
         private List<StoryActor> Bystanders(StoryActor[] subjects)
@@ -202,7 +250,7 @@ namespace ThuyKieu.Presentation
             return list;
         }
 
-        /// <summary>Counts the bystanders standing on the sight lines from the lens to the targets (or right at the lens).</summary>
+        /// <summary>Counts the bystanders standing on the sight lines from the lens to the targets, at the lens or just in front of it.</summary>
         private static int Blockers(Vector3 lens, Vector3[] targets, List<StoryActor> others, List<StoryActor> found)
         {
             int count = 0;
@@ -212,6 +260,10 @@ namespace ThuyKieu.Presentation
                 Vector3 crown = actor.HeadPosition + Vector3.up * 0.12f;
                 Vector3 hips = new Vector3(crown.x, Mathf.Min(feet.y + 0.35f, crown.y), crown.z);
                 bool blocks = SegmentDistance(lens, lens, hips, crown) < 0.5f;
+                // A head looming just in front of the lens fills the foreground even off the sight lines. It is only
+                // hidden (found != null), never scored: scoring it swung seated shots round to worse angles.
+                if (!blocks && found != null && targets.Length > 0 && Vector3.Distance(lens, crown) < 0.9f && Vector3.Dot(crown - lens, targets[0] - lens) > 0f)
+                    blocks = true;
                 foreach (var target in targets)
                 {
                     if (blocks) break;
@@ -275,7 +327,8 @@ namespace ThuyKieu.Presentation
             Vector3 delta = to - from;
             float length = delta.magnitude;
             if (length > 0.01f && Physics.SphereCast(from, 0.12f, delta / length, out RaycastHit hit, length, _obstruction, QueryTriggerInteraction.Ignore))
-                return from + delta / length * Mathf.Max(0.35f, hit.distance - 0.05f);
+                // Keep enough room for the near clip plane; five centimetres still let wall faces fill the frame.
+                return from + delta / length * Mathf.Max(0.05f, hit.distance - 0.18f);
             return to;
         }
 
@@ -283,15 +336,29 @@ namespace ThuyKieu.Presentation
         {
             if (authored)
             {
+                // Scene-authored anchors used to bypass Compose entirely, so an anchor on the wrong side of a wall
+                // could look straight through it. Pull the lens onto the subject's side before using the shot.
+                var speaker = _director.FindActor(_director.Dialogue.CurrentSpeakerId);
+                var focusActor = speaker != null ? speaker : _director.FindActor("Kieu");
+                Vector3 focus = focusActor != null ? focusActor.HeadPosition : Vector3.zero;
+                // Only use a real person that the authored lens is actually facing. Guessing a point four metres ahead
+                // can put that point beyond the very wall we are trying not to cross.
+                bool hasFocus = focusActor != null && Vector3.Dot(focus - position, rotation * Vector3.forward) > 0f;
+                Vector3 safePosition = hasFocus ? Unblock(focus, position) : position;
+                if (hasFocus && (safePosition - position).sqrMagnitude > 0.0001f)
+                {
+                    position = safePosition;
+                    Vector3 look = focus - position;
+                    if (look.sqrMagnitude > 0.001f) rotation = Quaternion.LookRotation(look);
+                }
                 // Authored anchors: keep whoever is talking visible and nobody's back pressed against the lens.
                 Restore();
-                var speaker = _director.FindActor(_director.Dialogue.CurrentSpeakerId);
                 var others = Bystanders(speaker != null ? new[] { speaker } : new StoryActor[0]);
                 var targets = speaker != null && Vector3.Dot(speaker.HeadPosition - position, rotation * Vector3.forward) > 0f
                     ? new[] { speaker.HeadPosition } : new Vector3[0];
                 var hide = new List<StoryActor>();
                 Blockers(position, targets, others, hide);
-                foreach (var actor in hide) Hide(actor);
+                foreach (var actor in hide) if (CanHide(actor)) Hide(actor);
             }
             _shot.SetPositionAndRotation(position, rotation);
             _camera.SetDialogueCue(_shot);
