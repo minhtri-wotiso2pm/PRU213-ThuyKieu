@@ -8,7 +8,10 @@ using UnityEngine.UI;
 
 namespace ThuyKieu.UI
 {
-    /// <summary>Deduction board: a series of questions answered from the clues the player gathered.</summary>
+    /// <summary>
+    /// Deduction board: Kiều settles what she believes, one question at a time, from the clues she gathered. It never
+    /// says whether an answer is right: a wrong but reasonable conclusion goes with her to Lâm Tri, as it would.
+    /// </summary>
     public class DeductionView : MonoBehaviour
     {
         public struct Question
@@ -16,8 +19,6 @@ namespace ThuyKieu.UI
             public string Prompt;
             public string[] Options;
             public int Correct;
-            /// <summary>Shown under a wrong answer so the player learns which clue they missed.</summary>
-            public string Hint;
         }
 
         private GameObject _root;
@@ -40,11 +41,15 @@ namespace ThuyKieu.UI
             _template = StoryUIBuilder.Find<Button>(transform, "Deduction/Panel/Options/Template");
         }
 
-        public IEnumerator Run(IList<Question> questions, string conclusion, Action<int> onScore)
+        /// <summary>
+        /// Asks every question, then shows the conclusion built from what she picked. <paramref name="onPicks"/> gets the
+        /// chosen option of each question, in order.
+        /// </summary>
+        public IEnumerator Run(IList<Question> questions, Func<int[], string> conclusion, Action<int[]> onPicks)
         {
             _root.SetActive(true);
             _verdict.text = string.Empty;
-            int score = 0;
+            var picks = new int[questions.Count];
             for (int q = 0; q < questions.Count; q++)
             {
                 var question = questions[q];
@@ -61,19 +66,18 @@ namespace ThuyKieu.UI
                         if (keyboard[Key.Digit1 + i].wasPressedThisFrame) _picked = i;
                     yield return null;
                 }
-                bool right = _picked == question.Correct;
-                if (right) score++;
-                Mark(question.Correct, _picked);
-                _question.text = question.Prompt + "\n<size=24><color=" + (right ? "#9BE39B>Khớp." : "#F08080>Chưa khớp. " + question.Hint) + "</color></size>";
-                yield return new WaitForSecondsRealtime(FastMode ? ThuyKieu.Core.Story.StoryCapture.Hold * 0.5f : right ? 1.1f : 2.4f);
+                picks[q] = _picked;
+                Mark(_picked);
+                _question.text = question.Prompt + "\n<size=24><color=#E8C27A>Kiều ghi nhớ điều ấy.</color></size>";
+                yield return new WaitForSecondsRealtime(FastMode ? ThuyKieu.Core.Story.StoryCapture.Hold * 0.5f : 1.2f);
             }
             Build(new string[0]);
             _question.text = string.Empty;
-            _progress.text = score + " / " + questions.Count + " mảnh khớp";
-            _verdict.text = conclusion;
-            yield return new WaitForSecondsRealtime(FastMode ? ThuyKieu.Core.Story.StoryCapture.Hold : 2.6f);
+            _progress.text = "Điều Kiều tin";
+            _verdict.text = conclusion(picks);
+            yield return new WaitForSecondsRealtime(FastMode ? ThuyKieu.Core.Story.StoryCapture.Hold : 2.8f);
             _root.SetActive(false);
-            onScore(score);
+            onPicks(picks);
         }
 
         private void Build(string[] options)
@@ -91,13 +95,12 @@ namespace ThuyKieu.UI
             }
         }
 
-        private void Mark(int correct, int picked)
+        /// <summary>Highlights her choice in the same neutral gold whatever it is.</summary>
+        private void Mark(int picked)
         {
             for (int i = 0; i < _buttons.Count; i++)
             {
-                var image = _buttons[i].GetComponent<Image>();
-                if (i == correct) image.color = new Color(0.2f, 0.45f, 0.22f, 0.9f);
-                else if (i == picked) image.color = new Color(0.5f, 0.12f, 0.1f, 0.9f);
+                if (i == picked) _buttons[i].GetComponent<Image>().color = new Color(0.55f, 0.42f, 0.18f, 0.9f);
                 _buttons[i].interactable = false;
             }
         }

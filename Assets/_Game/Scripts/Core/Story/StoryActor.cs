@@ -15,18 +15,31 @@ namespace ThuyKieu.Core.Story
         [SerializeField] private Transform _staticVisual;
         [SerializeField] private float _headHeight = 1.55f;
         [SerializeField] private float _turnSpeed = 240f;
+        [Tooltip("Keep a staged actor facing its authored direction (useful for seated classroom extras).")]
+        [SerializeField] private bool _lockFacing;
+        [Tooltip("Raises the rigged body while seated, for sit clips authored for a lower seat than the bench it sits on.")]
+        [SerializeField] private float _seatLift;
 
         private static readonly int Speed = Animator.StringToHash("Speed");
         private static readonly int Talking = Animator.StringToHash("DialogueTalking");
         private static readonly int Emotion = Animator.StringToHash("DialogueEmotion");
         private NavMeshAgent _agent;
         private Vector3? _faceTarget;
+        // Facing held before dialogue lines turned the actor; cleared when the actor is placed or walks somewhere new.
+        private Quaternion? _restBeforeLines;
+        private float? _scriptedSpeed;
         private bool _hasEmotion, _hasTalking, _hasSpeed;
+        private bool _talkingRequested;
+        private int _talkingEmotion;
+        // Controllers with an arm-masked "RaiseHand" layer: its weight fades in and out on RaiseHand().
+        private int _raiseHandLayer = -1;
+        private float _raiseHandTarget;
         private Vector3 _visualBase;
         private Quaternion _visualRotation;
         private float _phase;
         private bool _lying;
         private float _lyingHeight;
+        private float _currentLift;
 
         public string SpeakerId => _speakerId;
         /// <summary>Recasts a copy of an actor as another speaker (runtime placeholders reuse an existing rig).</summary>
@@ -48,6 +61,49 @@ namespace ThuyKieu.Core.Story
             }
         }
 
+        /// <summary>Height of the visible model (its renderers' bounds), as the camera sees it.</summary>
+        public float VisualHeight
+        {
+            get
+            {
+                var model = _animator != null ? _animator.transform : transform;
+                var renderers = model.GetComponentsInChildren<Renderer>(true);
+                if (renderers.Length == 0) return 0f;
+                Bounds bounds = renderers[0].bounds;
+                for (int i = 1; i < renderers.Length; i++) bounds.Encapsulate(renderers[i].bounds);
+                return bounds.size.y;
+            }
+        }
+
+        /// <summary>Scales the model so it stands <paramref name="height"/> metres tall; characters imported at mismatched sizes then stand together believably.</summary>
+        public void FitVisualHeight(float height)
+        {
+            float current = VisualHeight;
+            if (_animator == null || current < 0.1f) return;
+            _animator.transform.localScale *= height / current;
+        }
+
+        /// <summary>
+        /// Height of the head bone above the feet. Unlike <see cref="VisualHeight"/> it ignores hats, hair ornaments and
+        /// flaring sleeves, so it compares people by their bodies.
+        /// </summary>
+        public float HeadHeight
+        {
+            get
+            {
+                var head = _animator != null && _animator.isHuman ? _animator.GetBoneTransform(HumanBodyBones.Head) : null;
+                return head != null ? head.position.y - transform.position.y : _headHeight;
+            }
+        }
+
+        /// <summary>Scales the model so its head bone sits <paramref name="height"/> metres above its feet.</summary>
+        public void FitHeadHeight(float height)
+        {
+            float current = HeadHeight;
+            if (_animator == null || current < 0.1f) return;
+            _animator.transform.localScale *= height / current;
+        }
+
         /// <summary>Feet-to-crown capsule axis used by cameras to keep bystanders out of a shot.</summary>
         public float StandingHeight => _headHeight + 0.15f;
         public NavMeshAgent Agent => _agent;
@@ -62,14 +118,18 @@ namespace ThuyKieu.Core.Story
             SetAnimator(_animator != null ? _animator : GetComponentInChildren<Animator>());
             if (_staticVisual != null) { _visualBase = _staticVisual.localPosition; _visualRotation = _staticVisual.localRotation; }
             _phase = Random.value * 10f;
+            ActorMouth.Attach(this);
         }
 
         /// <summary>Switches to another body's animator (see PlayerLook).</summary>
         public void SetAnimator(Animator animator)
         {
+            ApplySeatLift(0f);
             _animator = animator;
             _hasEmotion = _hasTalking = _hasSpeed = false;
+            _raiseHandLayer = -1;
             if (_animator == null || _animator.runtimeAnimatorController == null) return;
+            _raiseHandLayer = _animator.GetLayerIndex("RaiseHand");
             foreach (var parameter in _animator.parameters)
             {
                 if (parameter.nameHash == Emotion) _hasEmotion = true;
@@ -78,18 +138,74 @@ namespace ThuyKieu.Core.Story
             }
         }
 
+        /// <summary>
+        /// Gesture used for lines with no particular emotion (0 plays the broad "Talking" clip). A composed or scheming
+        /// character can talk with a calmer one instead.
+        /// </summary>
+        public int CalmGesture { get; set; }
+
+        /// <summary>While seated, lines do not start the seated talking clip (which turns the head about): for someone
+        /// weeping into her hands at the table.</summary>
+        public bool StillWhileSeated { get; set; }
+
         public void SetTalking(bool talking, int emotion)
         {
+            _talkingRequested = talking;
+            _talkingEmotion = talking ? (emotion == 0 ? CalmGesture : emotion) : 0;
             if (_animator == null || !_animator.isActiveAndEnabled) return;
-            if (_hasTalking) _animator.SetBool(Talking, talking);
-            if (_hasEmotion) _animator.SetInteger(Emotion, talking ? emotion : 0);
+            if (_hasTalking) _animator.SetBool(Talking, talking && !IsMoving && !(StillWhileSeated && IsSitting));
+            if (_hasEmotion) _animator.SetInteger(Emotion, _talkingEmotion);
         }
 
         /// <summary>Smoothly turns to look at a world point (only while not walking).</summary>
-        public void FaceTowards(Vector3? point) => _faceTarget = point;
+        public void FaceTowards(Vector3? point)
+        {
+            // Seated people do not swivel towards each speaker: turning about the root slides them off the bench.
+            if ((_lockFacing || IsSitting) && point.HasValue) return;
+            _faceTarget = point;
+        }
+
+        /// <summary>Turns to a speaker for a dialogue line; <see cref="EndLineTurn"/> turns back to how the actor stood before.</summary>
+        public void TurnForLine(Vector3 point)
+        {
+            if (_lockFacing || IsSitting) return;
+            if (!_restBeforeLines.HasValue) _restBeforeLines = transform.rotation;
+            _faceTarget = point;
+        }
+
+        /// <summary>The conversation is over: face the way the actor stood before the first line turned them.</summary>
+        public void EndLineTurn()
+        {
+            _faceTarget = _restBeforeLines.HasValue ? transform.position + _restBeforeLines.Value * Vector3.forward : (Vector3?)null;
+            _restBeforeLines = null;
+        }
+
+        /// <summary>Walking speed (m/s) for the animator while a sequence moves the actor by hand; null hands it back to the agent.</summary>
+        public void SetScriptedSpeed(float? metresPerSecond) => _scriptedSpeed = metresPerSecond;
+
+        /// <summary>
+        /// Ends a one-shot dialogue gesture immediately before an authored movement sequence takes ownership.
+        /// Without this, a fall animation can keep the legs frozen while the sequence moves the actor's root.
+        /// </summary>
+        public void ResetToLocomotion(float blend = 0.12f)
+        {
+            _talkingRequested = false;
+            _talkingEmotion = 0;
+            if (_animator == null || !_animator.isActiveAndEnabled) return;
+            if (_hasTalking) _animator.SetBool(Talking, false);
+            if (_hasEmotion) _animator.SetInteger(Emotion, 0);
+            _animator.CrossFade("Idle", blend, 0, 0f);
+        }
+
+        public void SetFacingLocked(bool locked)
+        {
+            _lockFacing = locked;
+            if (locked) _faceTarget = null;
+        }
 
         public void FaceInstant(Vector3 point)
         {
+            if (_lockFacing || IsSitting) return;
             Vector3 direction = point - transform.position;
             direction.y = 0;
             if (direction.sqrMagnitude > 0.001f) transform.rotation = Quaternion.LookRotation(direction);
@@ -100,6 +216,7 @@ namespace ThuyKieu.Core.Story
         {
             if (_agent == null || !_agent.enabled || !_agent.isOnNavMesh) return false;
             _faceTarget = null;
+            _restBeforeLines = null;
             _agent.speed = speed;
             _agent.isStopped = false;
             return _agent.SetDestination(destination);
@@ -117,6 +234,7 @@ namespace ThuyKieu.Core.Story
             else transform.position = position;
             transform.rotation = rotation;
             _faceTarget = null;
+            _restBeforeLines = null;
         }
 
         /// <summary>
@@ -138,6 +256,9 @@ namespace ThuyKieu.Core.Story
             _animator.speed = 0.35f;
             SetTalking(false, 0);
         }
+
+        /// <summary>Puts a hand up (answering in class) or down; does nothing on bodies without a RaiseHand layer.</summary>
+        public void RaiseHand(bool raised) => _raiseHandTarget = raised ? 1f : 0f;
 
         /// <summary>Sits down on the spot (a chair must stand behind the actor), or stands up again.</summary>
         public void Sit(bool sitting)
@@ -174,18 +295,45 @@ namespace ThuyKieu.Core.Story
             }
         }
 
+        /// <summary>Leaves a staged actor under sequence control instead of letting NavMesh snap it onto furniture.</summary>
+        public void DisableNavigation()
+        {
+            if (_agent == null) return;
+            if (_agent.enabled && _agent.isOnNavMesh) _agent.ResetPath();
+            _agent.enabled = false;
+        }
+
         private void Update()
         {
-            float speed = _agent != null && _agent.enabled ? _agent.velocity.magnitude : 0f;
-            if (_hasSpeed) _animator.SetFloat(Speed, Mathf.Clamp01(speed / 3.2f), 0.12f, Time.deltaTime);
-            if (_faceTarget.HasValue && speed < 0.1f)
+            float speed = _scriptedSpeed ?? (_agent != null && _agent.enabled ? _agent.velocity.magnitude : 0f);
+            // A speaker may deliver its line while entering the shot. Locomotion must win during that movement;
+            // otherwise the Talking state freezes the legs while the root keeps sliding across the ground.
+            if (_hasTalking && _animator != null && _animator.isActiveAndEnabled)
+                _animator.SetBool(Talking, _talkingRequested && speed < 0.1f);
+            // PlayerMovement owns the Speed parameter on the playable actor. Writing zero
+            // here as well made the classroom student's idle/walk states flicker each frame.
+            if (_hasSpeed && (_agent != null || _scriptedSpeed.HasValue))
+                _animator.SetFloat(Speed, Mathf.Clamp01(speed / 3.2f), 0.12f, Time.deltaTime);
+            if (_faceTarget.HasValue && speed < 0.1f && !IsSitting)
             {
                 Vector3 direction = _faceTarget.Value - transform.position;
                 direction.y = 0;
                 if (direction.sqrMagnitude > 0.01f)
                     transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(direction), _turnSpeed * Time.deltaTime);
             }
+            if (_raiseHandLayer >= 0 && _animator.isActiveAndEnabled)
+                _animator.SetLayerWeight(_raiseHandLayer, Mathf.MoveTowards(_animator.GetLayerWeight(_raiseHandLayer), _raiseHandTarget, Time.deltaTime * 3f));
+            if (_seatLift != 0f) ApplySeatLift(Mathf.MoveTowards(_currentLift, IsSitting ? _seatLift : 0f, Time.deltaTime * 0.6f));
             AnimateStaticVisual(speed);
+        }
+
+        private void ApplySeatLift(float lift)
+        {
+            if (_animator == null || Mathf.Approximately(lift, _currentLift)) return;
+            Vector3 offset = Vector3.up * (lift - _currentLift);
+            if (_animator.TryGetComponent(out AnimatorRootAnchor anchor)) anchor.Shift(offset);
+            else _animator.transform.localPosition += offset;
+            _currentLift = lift;
         }
 
         // Placeholder life for unrigged models: a stepping bob and sway while walking, breathing when idle.

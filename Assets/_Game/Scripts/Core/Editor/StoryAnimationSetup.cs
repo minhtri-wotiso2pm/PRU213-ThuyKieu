@@ -90,12 +90,18 @@ namespace ThuyKieu.Core.Editor
 
         public static AnimatorOverrideController KieuController()
         {
-            var existing = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(KieuOverridePath);
-            if (existing != null) return existing;
-            var controller = new AnimatorOverrideController(Controller()) { name = "ThuyKieuStory" };
-            controller["Walking"] = ThuyKieuClip("TK-Walking");
-            controller["Running"] = ThuyKieuClip("TK-Running");
-            AssetDatabase.CreateAsset(controller, KieuOverridePath);
+            var controller = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(KieuOverridePath);
+            bool create = controller == null;
+            if (create) controller = new AnimatorOverrideController(Controller()) { name = "ThuyKieuStory" };
+            controller["Walking"] = ThuyKieu.Player.Editor.ThuyKieuLocomotionSetup.Clip(ThuyKieu.Player.Editor.ThuyKieuLocomotionSetup.ModelFolder + "ThuyKieu_Walk.fbx");
+            controller["Running"] = ThuyKieu.Player.Editor.ThuyKieuLocomotionSetup.Clip(ThuyKieu.Player.Editor.ThuyKieuLocomotionSetup.ModelFolder + "ThuyKieu_Run.fbx");
+            controller["Looking Around"] = AssetDatabase.LoadAllAssetsAtPath("Assets/_Game/Animations/ThuyKieu/TK-Look Around.fbx")
+                .OfType<AnimationClip>().First(c => !c.name.StartsWith("__preview__"));
+            controller["Picking Up Object"] = AssetDatabase.LoadAllAssetsAtPath("Assets/_Game/Animations/ThuyKieu/TK-Picking Up Object.fbx")
+                .OfType<AnimationClip>().First(c => !c.name.StartsWith("__preview__"));
+            if (create) AssetDatabase.CreateAsset(controller, KieuOverridePath);
+            else EditorUtility.SetDirty(controller);
+            AssetDatabase.SaveAssets();
             return controller;
         }
 
@@ -151,9 +157,6 @@ namespace ThuyKieu.Core.Editor
         }
 
         private static AnimationClip Clip(string name) => AssetDatabase.LoadAllAssetsAtPath(Folder + "/" + name + ".fbx")
-            .OfType<AnimationClip>().First(c => !c.name.StartsWith("__preview__"));
-
-        private static AnimationClip ThuyKieuClip(string name) => AssetDatabase.LoadAllAssetsAtPath("Assets/_Game/Animations/ThuyKieu/" + name + ".fbx")
             .OfType<AnimationClip>().First(c => !c.name.StartsWith("__preview__"));
     }
 }

@@ -29,8 +29,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Haze: 0.14
-    - _RimDarken: 0.45
+    - _Haze: 0.06
+    - _RimDarken: 0.3
     m_Colors:
     - _BaseColor: {r: 1, g: 0.88, b: 0.66, a: 1}
     - _HazeColor: {r: 0.54999995, g: 0.41999996, b: 0.24999997, a: 1}

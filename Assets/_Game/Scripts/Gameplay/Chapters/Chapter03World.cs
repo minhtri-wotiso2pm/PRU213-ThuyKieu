@@ -62,6 +62,32 @@ namespace ThuyKieu.Gameplay.Chapters
             if (_tuBaDoor != null) _tuBaDoor.SetActive(false);
             if (_roomSensors != null) foreach (var sensor in _roomSensors) if (sensor != null) sensor.Active = false;
             if (_director.Audio != null) _director.Audio.SetAmbience("house");
+            int escapeOutcome = _director.GetInt("c2_bo_chay");
+            if (escapeOutcome == 1)
+            {
+                _guard.Vision.Sensitivity = 1.25f;
+                _guard.Vision.Alert(0.2f);
+            }
+            else if (escapeOutcome == 2) _guard.Vision.Sensitivity = 1.1f;
+            int acting = _director.GetInt("gia_vo");
+            bool arrivedFromRoad = _director.GetInt("manh_moi") > 0 || _director.GetInt("suy_luan") > 0 || escapeOutcome > 0;
+            if (arrivedFromRoad && acting <= 0)
+            {
+                _guard.Vision.Sensitivity = Mathf.Max(_guard.Vision.Sensitivity, 1.35f);
+                _guard.Vision.Alert(0.3f);
+                StartCoroutine(ShowRoadConsequence("Mã Giám Sinh đã báo trước · người canh phát hiện bạn nhanh hơn."));
+            }
+            else if (arrivedFromRoad && acting >= 2)
+            {
+                _guard.Vision.Sensitivity = Mathf.Min(_guard.Vision.Sensitivity, 0.85f);
+                StartCoroutine(ShowRoadConsequence("Màn giả vờ đã có tác dụng · người canh đang chủ quan."));
+            }
+        }
+
+        private IEnumerator ShowRoadConsequence(string detail)
+        {
+            yield return new WaitForSeconds(_director.Autopilot ? 0f : 2f);
+            _director.Hud.ShowToast("HẬU QUẢ TỪ CHUYẾN ĐI", detail);
         }
 
         private void OnExplore(bool exploring)

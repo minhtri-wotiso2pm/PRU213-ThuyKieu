@@ -13,7 +13,9 @@ namespace ThuyKieu.Core.Story
                 case "c1_ngon_tay": title = "Người đi hỏi vợ vội vàng"; body = "Mã Giám Sinh không hỏi gì về người mình cưới. Hắn chỉ ngồi thẳng lưng khi nói đến bạc, và hỏi bao giờ ký giấy."; return true;
                 case "c1_lam_thanh": title = "\"Huyện Lâm Thanh cũng gần\""; body = "Hắn nói quê ở huyện Lâm Thanh, \"ở nhà đã có người lo liệu\". Không nhắc đến cha mẹ."; return true;
                 case "c1_bac_phuc_ky": title = "Bạc dấu Phúc Ký"; body = "Bốn trăm lạng mới tinh, nén nào cũng đóng dấu hiệu bạc Phúc Ký, như vừa rút cùng một lúc. Ai đã đưa bạc cho hắn?"; return true;
+                case "c1_ma_lo": title = "\"Bên Lâm Tri người ta dặn...\""; body = "Bị dồn bằng bản khai, Mã Giám Sinh lỡ lời: có người \"bên Lâm Tri\" dặn hắn mang bạc tới. Hắn không đi hỏi vợ cho mình."; return true;
                 case "c1_nhieu_vo": title = "\"Hỏi vợ ở nhiều nơi\""; body = "Tên tùy tùng lỡ lời: năm nay chủ hắn đã \"cưới\" nhiều lần, nhiều nơi, không đếm xuể."; return true;
+                case "c1_thoa": title = "Chiếc thoa vàng"; body = "Kỷ vật Kim Trọng từng nhặt trả bên tường hoa. Trong đêm mưa, nó nhắc Kiều rằng nàng từng được nhìn như một con người, không phải một món hàng."; return true;
                 case "c2_ban_tay": title = "Bàn tay đếm bạc"; body = "Mã Giám Sinh đếm bạc như người buôn tính lãi. Hắn và tùy tùng nhìn Kiều như nhìn một món hàng."; return true;
                 case "c2_lam_tri": title = "Điểm đến: Lâm Tri"; body = "Hắn nói sẽ đưa Kiều về Lâm Tri, nơi \"có người lo liệu\". Không ai nhắc đến cha mẹ chồng hay lễ cưới."; return true;
                 case "c2_mau_giay": title = "Mẩu giấy giao hàng"; body = "\"Bà T. ở Lâm Tri nhận hàng — giá bốn trăm năm mươi lạng.\" Hắn mua bốn trăm, định bán lại bốn trăm năm mươi."; return true;

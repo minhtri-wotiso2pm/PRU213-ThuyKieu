@@ -10,6 +10,13 @@ namespace ThuyKieu.Gameplay.Sequences
         [SerializeField, TextArea(4, 10)] private string _body;
         [SerializeField] private string _controlsHint;
 
+        /// <summary>Lets a chapter refresh legacy serialized tutorial copy after its mechanic changes.</summary>
+        public void Configure(string body, string controlsHint)
+        {
+            _body = body;
+            _controlsHint = controlsHint;
+        }
+
         public override IEnumerator Run(StoryDirector director)
         {
             director.Hud.FastMode = director.Autopilot;

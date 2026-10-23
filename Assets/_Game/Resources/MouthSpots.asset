@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d87439521f726d4c887cc6fa1fe9a83, type: 3}
+  m_Name: MouthSpots
+  m_EditorClassIdentifier: Assembly-CSharp::ThuyKieu.Core.Story.MouthSpots
+  _spots:
+  - Key: ThuyKieu_WalkAvatar/tripo_node_f1bebe54
+    OnHeadBone: 1
+    Position: {x: -0.00010837751, y: 0.0024362316, z: 0.06222724}
+    Rotation: {x: -0.01956625, y: -0.0008664111, z: 0.0038867188, w: 0.9998008}
+    Width: 0.012035509
+  - Key: idleAvatar/node_0
+    OnHeadBone: 1
+    Position: {x: 0.000063107036, y: 0.00023854083, z: 0.00084670156}
+    Rotation: {x: -0.09149696, y: 0.042159326, z: 0.14713493, w: 0.9839727}
+    Width: 0.00017781553
+  - Key: seatAvatar/node_0
+    OnHeadBone: 1
+    Position: {x: -0.000051860927, y: 0.00016399226, z: 0.00088628323}
+    Rotation: {x: 0.0495963, y: -0.027246486, z: 0.009040428, w: 0.99835694}
+    Width: 0.00023858243
+  - Key: VuongOng_RiggedAvatar/laoVuong
+    OnHeadBone: 1
+    Position: {x: 0.009602889, y: -0.022037629, z: 0.10384816}
+    Rotation: {x: 0.09023012, y: 0.04641244, z: -0.008528671, w: 0.9948023}
+    Width: 0.032156248
+  - Key: MeThuyKieu_RiggedAvatar/node_0
+    OnHeadBone: 1
+    Position: {x: -4.418265e-10, y: 0.00024600478, z: 0.0008828803}
+    Rotation: {x: -0.000000029574771, y: 0, z: 3.5812301e-12, w: 1}
+    Width: 0.00021108934
+  - Key: MaGiamSinh_RiggedAvatar/node_0
+    OnHeadBone: 1
+    Position: {x: -0.0000000010454465, y: 0.00024063219, z: 0.0007901424}
+    Rotation: {x: -0.0000000027274896, y: -7.862626e-10, z: 3.9192933e-12, w: 1.0000002}
+    Width: 0.00021490848
+  - Key: LinhCanh_RiggedAvatar/node_0
+    OnHeadBone: 1
+    Position: {x: -0.000019727184, y: 0.00010507102, z: 0.0007969932}
+    Rotation: {x: 0.15621887, y: -0.063614786, z: -0.107260585, w: 0.9798186}
+    Width: 0.0001900968
+  _scenes:
+  - Chapter00_Prologue
+  - Chapter01_GiaBien
+  - Chapter02_RoadToMaGiamSinh

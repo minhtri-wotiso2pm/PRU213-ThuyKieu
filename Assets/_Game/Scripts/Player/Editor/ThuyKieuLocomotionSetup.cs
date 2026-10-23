@@ -11,8 +11,8 @@ namespace ThuyKieu.Player.Editor
 
         public static AnimatorOverrideController GetController(RuntimeAnimatorController shared)
         {
-            var walk = Clip("TK-Walking");
-            var run = Clip("TK-Running");
+            var walk = Clip(ModelFolder + "ThuyKieu_Walk.fbx");
+            var run = Clip(ModelFolder + "ThuyKieu_Run.fbx");
             var controller = AssetDatabase.LoadAssetAtPath<AnimatorOverrideController>(ControllerPath);
             if (controller == null)
             {
@@ -39,12 +39,15 @@ namespace ThuyKieu.Player.Editor
             EditorUtility.SetDirty(movement);
         }
 
-        private static AnimationClip Clip(string name)
+        // Hanfu walk/run exported from Blender together with the model (ArtSource/ThuyKieu/ThuyKieu_DiBo_Chay.blend).
+        public const string ModelFolder = "Assets/_Game/Art/Characters/ThuyKieu/Models/";
+
+        public static AnimationClip Clip(string path)
         {
-            var clip = AssetDatabase.LoadAllAssetsAtPath("Assets/_Game/Animations/ThuyKieu/" + name + ".fbx")
+            var clip = AssetDatabase.LoadAllAssetsAtPath(path)
                 .OfType<AnimationClip>().FirstOrDefault(c => !c.name.StartsWith("__preview__"));
             if (clip == null || !clip.isHumanMotion || !clip.isLooping)
-                throw new InvalidOperationException(name + " must be a looping Humanoid clip.");
+                throw new InvalidOperationException(path + " must be a looping Humanoid clip.");
             return clip;
         }
     }

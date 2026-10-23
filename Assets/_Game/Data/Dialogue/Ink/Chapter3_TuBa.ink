@@ -14,6 +14,19 @@
 # camera:Wide_TuBaCourtyard
 Sáng hôm sau. Lầu son ở Lâm Tri rực rỡ như nhà quan: rèm lụa, đèn lồng đỏ, tiếng đàn văng vẳng từ gác trên.
 
+{c2_bo_chay == 1:
+    # speaker:NoiTam
+    Tên tùy tùng đã kể chuyện mình bỏ chạy. Người canh ngoài sân cứ nhìn sang — hôm nay hắn sẽ cảnh giác hơn.
+}
+{c2_bo_chay == 2:
+    # speaker:NoiTam
+    Đêm qua mình đã chạy rất xa rồi quay lại. Họ không nói gì, nhưng người canh ngoài sân đã được dặn để mắt đến mình.
+}
+{manh_moi > 0 && gia_vo <= 0:
+    # speaker:NoiTam
+    Mã Giám Sinh đã dặn mụ rằng mình không dễ bảo. Nụ cười của Tú Bà ấm, nhưng người canh đã đứng gần cửa hơn.
+}
+
 # speaker:TuBa
 # emotion:warm_fake
 # camera:CU_TuBa

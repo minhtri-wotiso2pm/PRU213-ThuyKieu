@@ -32,9 +32,19 @@ namespace ThuyKieu.Player
 
         private void Start()
         {
-            // Include targets on characters who only arrive later in the chapter; FindTarget skips inactive ones.
-            _targets = FindObjectsByType<ObservableTarget>(FindObjectsInactive.Include);
+            RefreshTargets();
             _orbit = _camera.GetComponent<ThirdPersonCameraController>();
+        }
+
+        /// <summary>Includes targets added by a chapter at runtime; inactive late-arrival targets are retained.</summary>
+        public void RefreshTargets() => _targets = FindObjectsByType<ObservableTarget>(FindObjectsInactive.Include);
+
+        /// <summary>Breaks observation progress when an NPC catches the player looking at a protected target.</summary>
+        public void CancelFocus(ObservableTarget target)
+        {
+            if (_focus != target) return;
+            _focus = null;
+            _progress = 0f;
         }
 
         private void Update()

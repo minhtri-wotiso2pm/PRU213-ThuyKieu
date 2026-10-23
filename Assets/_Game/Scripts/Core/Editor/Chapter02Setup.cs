@@ -313,7 +313,7 @@ namespace ThuyKieu.Core.Editor
             var root = new GameObject("Vegetation").transform;
             root.SetParent(world, false);
             string[] plants = { "Assets/_Game/Prefabs/Vegetation/Bamboo.prefab", "Assets/_Game/Prefabs/Vegetation/Bamboo.prefab", "Assets/_Game/Prefabs/Vegetation/Bamboo.prefab",
-                "Assets/_Game/Prefabs/Vegetation/ArecaPalm.prefab", "Assets/_Game/Prefabs/Vegetation/BananaTree.prefab" };
+                "Assets/_Game/Prefabs/Props/CayNhan.prefab", "Assets/_Game/Prefabs/Vegetation/BananaTree.prefab" };
             void Plant(string path, Vector3 position, float yaw, float scale)
             {
                 var plant = Prop(path, position, yaw, scale, root);
@@ -345,7 +345,7 @@ namespace ThuyKieu.Core.Editor
                     float offset = 14f + layer * 9f + (float)random.NextDouble() * 8f;
                     Plant(plants[random.Next(plants.Length)], new Vector3(RoadX(z) + offset, 0, z + (float)random.NextDouble() * 3f), (float)random.NextDouble() * 360f, 0.9f + (float)random.NextDouble() * 0.7f);
                 }
-            // Lone palms and banana clumps on the paddy dikes to the west.
+            // Lone longans and banana clumps on the paddy dikes to the west.
             for (int i = 0; i < 18; i++)
                 Plant(plants[3 + random.Next(2)], new Vector3(-20f - (float)random.NextDouble() * 45f, 0, (float)random.NextDouble() * 120f), random.Next(360), 0.9f + (float)random.NextDouble() * 0.5f);
 

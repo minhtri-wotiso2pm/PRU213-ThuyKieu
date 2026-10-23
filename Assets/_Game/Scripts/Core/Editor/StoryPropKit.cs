@@ -236,14 +236,15 @@ namespace ThuyKieu.Core.Editor
         }
 
         /// <summary>Low table (sitting on mats) with an optional tea set.</summary>
-        public static GameObject LowTable(Vector3 position, float yaw, Transform parent, bool tea = true, int seed = 0)
+        public static GameObject LowTable(Vector3 position, float yaw, Transform parent, bool tea = true, int seed = 0, bool backCushion = true)
         {
             var root = Root("LowTable", position, yaw, parent);
             Box(root, "Top", new Vector3(0, 0.36f, 0), new Vector3(1f, 0.05f, 0.62f), Lacquer);
             foreach (float x in new[] { -0.44f, 0.44f })
                 foreach (float z in new[] { -0.25f, 0.25f })
                     Box(root, "Leg", new Vector3(x, 0.17f, z), new Vector3(0.06f, 0.34f, 0.06f), WoodDark);
-            foreach (float z in new[] { -0.55f, 0.55f })
+            // Without the back (-Z) cushion the table can stand against a wall.
+            foreach (float z in backCushion ? new[] { -0.55f, 0.55f } : new[] { 0.55f })
                 Box(root, "Cushion", new Vector3(0, 0.05f, z), new Vector3(0.55f, 0.1f, 0.42f), Cloth(new Color(0.5f, 0.18f, 0.14f)));
             if (tea) TeaSet(root, new Vector3(0, 0.385f, 0), seed);
             Solid(root, new Vector3(0, 0.2f, 0), new Vector3(1f, 0.4f, 0.62f));
