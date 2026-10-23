@@ -688,6 +688,9 @@ Vậy ngươi còn nghĩ...
 * [Lắc đầu.]
     # speaker:Narrator
     Cô lắc đầu thật chậm.
+    # speaker:KieuThat
+    # camera:Spirit
+    Ngươi không nói. Nhưng lần này, ta thấy ngươi đã hiểu.
 
 - # speaker:Kieu
 # camera:Spirit
