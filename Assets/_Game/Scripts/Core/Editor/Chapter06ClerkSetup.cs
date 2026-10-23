@@ -11,10 +11,10 @@ namespace ThuyKieu.Core.Editor
 {
     public static class Chapter06ClerkSetup
     {
-        private const string ArtFolder = "Assets/_Game/Art/Characters/thulai";
-        private const string ModelPath = "Assets/_Game/Animations/animationthulai/talking.fbx";
+        private const string ArtFolder = "Assets/_Game/Art/Characters/thulai1";
+        private const string ModelPath = "Assets/_Game/Animations/animationthulai1/Talking.fbx";
         private const string ControllerPath = StoryAnimationSetup.CharacterFolder + "/ClerkStory.overrideController";
-        private const string VisualName = "ClerkVisual";
+        private const string VisualName = "ClerkVisual1";
 
         private static RuntimeAnimatorController Controller()
         {
