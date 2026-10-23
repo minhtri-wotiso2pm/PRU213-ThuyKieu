@@ -68825,27 +68825,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 955.22656
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 477.61328
       objectReference: {fileID: 0}
     - target: {fileID: 2566799368112619932, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -351.70782
       objectReference: {fileID: 0}
     - target: {fileID: 3258551896888162254, guid: d7313a4c527928340afa2f8e052b6f2a, type: 3}
       propertyPath: m_sharedMaterial
@@ -110275,7 +110275,8 @@ MonoBehaviour:
   _gateways:
   - {fileID: 1741658230}
   - {fileID: 747665710}
-  _speed: 1.5
+  _speed: 1.1
+  _draggedWalk: {fileID: -203655887218126122, guid: 298e91a4ac22c2f4bba66c00877c28d6, type: 3}
   _sfx: stumble
   _shake: 0.15
   _ground:

@@ -31,6 +31,8 @@ namespace ThuyKieu.Gameplay.Chapters
         [SerializeField] private GameObject _bookGlow;
         [Tooltip("Kiều studying her new hands (Animations/ThuyKieu/TK-LookAtHands).")]
         [SerializeField] private AnimationClip _lookAtHands;
+        [Tooltip("Kiều shoved down onto her knees (Animations/ThuyKieu/TK-KneelDown).")]
+        [SerializeField] private AnimationClip _kneelDown;
 
         [Header("Vương house")]
         [SerializeField] private Transform _wake, _courtyard;
@@ -58,6 +60,47 @@ namespace ThuyKieu.Gameplay.Chapters
             lute.Plucked += _ => _lastPluck = Time.time;
             _director.RegisterSequence(lute);
             _director.RegisterSequence(WorldSequence.Create(gameObject, NewBodyBeat, NewBody));
+            BuildRoomDoorway();
+            // The mother runs after her husband and son when they are taken.
+            foreach (var escort in GetComponentsInChildren<EscortSequence>(true))
+                if (escort.Mourner == null) escort.Mourner = _mother;
+        }
+
+        private Collider _doorwayBlock;
+        private Transform _doorway;
+
+        /// <summary>
+        /// Kiều's doorway to the courtyard is an open frame: she could walk out before the story lets her. Until "Ra sân"
+        /// is on offer an invisible panel closes it; once it is, simply stepping through it goes out (no E needed).
+        /// </summary>
+        private void BuildRoomDoorway()
+        {
+            var door = GameObject.Find("DoorTarget");
+            if (door == null) return;
+            _doorway = door.transform;
+            // The door's own volume no longer answers E; walking through is the way out.
+            foreach (var collider in door.GetComponents<Collider>()) collider.enabled = false;
+            var block = new GameObject("DoorwayBlock") { layer = 0 };
+            block.transform.SetParent(door.transform.parent, false);
+            block.transform.position = new Vector3(DoorwayX, 1f, door.transform.position.z);
+            var box = block.AddComponent<BoxCollider>();
+            box.size = new Vector3(0.15f, 2f, 1.3f);
+            _doorwayBlock = box;
+        }
+
+        // The doorway's sill (the courtyard is +X of it); the frame is 1.2 m wide around the door marker's z.
+        private const float DoorwayX = -6.4f;
+
+        private void Update()
+        {
+            if (_doorwayBlock == null) return;
+            bool mayLeave = _director.IsExploreAvailable("pl_san");
+            // Only the room's free exploration is gated; scripted walks (ToCourtyard) pass while it is off.
+            _doorwayBlock.enabled = _director.InExplore && !mayLeave;
+            if (!mayLeave) return;
+            Vector3 at = _director.Player.transform.position;
+            if (at.x > DoorwayX - 0.15f && Mathf.Abs(at.z - _doorway.position.z) < 0.8f && at.y < 1f)
+                _director.ChooseExplore("pl_san", _doorway);
         }
 
         private void OnEnable()
@@ -235,6 +278,125 @@ namespace ThuyKieu.Gameplay.Chapters
             if (key == "speaker" && _officials[0].gameObject.activeSelf && _director.CurrentSequence == null) StartCoroutine(Address(value));
             if (key == "gameplay" && value == "arrest") StartCoroutine(WatchArrest());
             if (key == "hands") Hands(value);
+            if (key == "act")
+            {
+                // A quick reader can reach the next beat while she is still moving: finish the last one cleanly first.
+                if (_acting != null) StopCoroutine(_acting);
+                _director.Player.ScriptedMove = null;
+                _acting = StartCoroutine(Act(value));
+            }
+            // The family is marched out: whoever was knocked down gets up to watch them go.
+            if (key == "gameplay" && value == "arrest") GetUp();
+        }
+
+        /// <summary>
+        /// Kiều's answer to the officials, acted as the line is said: she rushes between her father and the official
+        /// (lao_ra) and is shoved down onto the brick floor (xo_nga), or steps up to the official to demand the warrant
+        /// (buoc_toi).
+        /// </summary>
+        private IEnumerator Act(string beat)
+        {
+            var player = _director.Player;
+            StoryActor official = _officials[0];
+            Vector3 father = _father.transform.position, at = official.transform.position;
+            Vector3 towards = Vector3.ProjectOnPlane(at - father, Vector3.up).normalized;
+            switch (beat)
+            {
+                case "lao_ra":
+                {
+                    // Between them, as near her father as the yard floor allows (he stands up on the veranda, whose
+                    // step she cannot run up), facing the official.
+                    Vector3 spot = Vector3.Lerp(father, at, 0.5f);
+                    for (float k = 0.15f; k <= 0.6f; k += 0.05f)
+                    {
+                        Vector3 p = Vector3.Lerp(father, at, k);
+                        if (Physics.Raycast(p + Vector3.up * 1.5f, Vector3.down, out RaycastHit floor, 3f, 1 << 8, QueryTriggerInteraction.Ignore)
+                            && floor.point.y < player.transform.position.y + 0.12f) { spot = floor.point; break; }
+                    }
+                    yield return WalkPlayer(spot, 3.4f, 1.6f);
+                    player.Teleport(player.transform.position, Quaternion.LookRotation(towards));
+                    yield break;
+                }
+                case "buoc_toi":
+                {
+                    Vector3 spot = at - Vector3.ProjectOnPlane(at - player.transform.position, Vector3.up).normalized * 1.1f;
+                    yield return WalkPlayer(spot, 1.2f, 2.5f);
+                    yield break;
+                }
+                case "xo_nga":
+                {
+                    // His hand shoves her in the chest; she stumbles back and drops to her knees.
+                    var shove = official.gameObject.AddComponent<HandReachPose>();
+                    shove.Initialize(official.GetComponentInChildren<Animator>());
+                    Vector3 chest = player.transform.position + Vector3.up * 1.15f;
+                    for (float t = 0f; t < 0.25f; t += Time.deltaTime)
+                    {
+                        shove.SetTargets(null, chest, null);
+                        shove.Weight = t / 0.25f;
+                        yield return null;
+                    }
+                    if (_director.Audio != null) _director.Audio.PlaySfx("stumble");
+                    if (_director.Fx != null) _director.Fx.Shake(0.3f, 0.45f);
+                    // Back and to the side: straight back would be into her father, who stands right behind her.
+                    Vector3 back = Vector3.ProjectOnPlane(player.transform.position - at, Vector3.up).normalized;
+                    Vector3 sideways = Vector3.Cross(Vector3.up, back);
+                    if (Vector3.Dot(sideways, player.transform.position - father) < 0f) sideways = -sideways;
+                    Vector3 away = (back * 0.55f + sideways).normalized;
+                    Quaternion facing = player.transform.rotation;
+                    player.ScriptedSpeed = 3f;
+                    player.ScriptedMove = away;
+                    yield return new WaitForSeconds(0.28f);
+                    player.ScriptedMove = null;
+                    player.Teleport(player.transform.position, facing);
+                    Kneel();
+                    for (float t = 0f; t < 0.5f; t += Time.deltaTime)
+                    {
+                        shove.Weight = 1f - t / 0.5f;
+                        yield return null;
+                    }
+                    Destroy(shove);
+                    yield break;
+                }
+            }
+        }
+
+        private Coroutine _acting;
+
+        private PlayableGraph _kneelGraph;
+
+        /// <summary>Drops her to her knees with the authored clip and holds her there until she gets up.</summary>
+        private void Kneel()
+        {
+            var animator = _director.Player.GetComponentInChildren<Animator>();
+            if (_kneelDown == null || animator == null || animator.runtimeAnimatorController == null) return;
+            if (_kneelGraph.IsValid()) _kneelGraph.Destroy();
+            _director.Player.ControlLocked = true;
+            _kneelGraph = PlayableGraph.Create("Kneel");
+            _kneelGraph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+            var clip = AnimationClipPlayable.Create(_kneelGraph, _kneelDown);
+            clip.SetDuration(_kneelDown.length);
+            AnimationPlayableOutput.Create(_kneelGraph, "Kneel", animator).SetSourcePlayable(clip);
+            _kneelGraph.Play();
+            StartCoroutine(HoldKneel(clip));
+        }
+
+        /// <summary>Stops the clip on its last frame: she stays down rather than looping back up.</summary>
+        private IEnumerator HoldKneel(AnimationClipPlayable clip)
+        {
+            while (_kneelGraph.IsValid() && clip.GetTime() < _kneelDown.length - 0.05f) yield return null;
+            if (_kneelGraph.IsValid()) { clip.SetTime(_kneelDown.length - 0.05f); clip.Pause(); }
+        }
+
+        private void GetUp()
+        {
+            if (!_kneelGraph.IsValid()) return;
+            _kneelGraph.Destroy();
+            if (_director.Player != null) _director.Player.ControlLocked = !_director.InExplore;
+        }
+
+        private void OnDestroy()
+        {
+            if (_kneelGraph.IsValid()) _kneelGraph.Destroy();
         }
 
         /// <summary>
@@ -274,8 +436,10 @@ namespace ThuyKieu.Gameplay.Chapters
         }
 
         /// <summary>
-        /// While the father and brother are marched out, the shot stays at Kiều's eyes as she follows them to the gate;
-        /// it must not be replaced by the following dialogue's Gate shot while the escort is still moving.
+        /// While the father and brother are marched out, the camera follows the escort across the yard from its open
+        /// side, high enough to see over the family and keep the mother running after them in frame. (A shot from Kiều's
+        /// eyes put the lens inside whichever guard or pillar she happened to be standing by.) It must not be replaced by
+        /// the following dialogue's Gate shot while the escort is still moving.
         /// </summary>
         private IEnumerator WatchArrest()
         {
@@ -286,30 +450,41 @@ namespace ThuyKieu.Gameplay.Chapters
             var shot = new GameObject("ArrestShot").transform;
             camera.ControlLocked = true;
             var kieu = _director.Player.GetComponent<StoryActor>();
-            Vector3 localEye = kieu.transform.InverseTransformPoint(kieu.HeadPosition);
-            Vector3 look = _father.transform.position + Vector3.up;
-            shot.position = kieu.transform.TransformPoint(localEye) + kieu.transform.forward * 0.12f;
-            shot.rotation = Quaternion.LookRotation(look - shot.position);
+            Vector3 centre = EscortCentre();
+            shot.position = ArrestLens(centre, shot.position, true);
+            shot.rotation = Quaternion.LookRotation(centre + Vector3.up * 0.9f - shot.position);
             camera.CutTo(shot);
             while (_director.CurrentSequence == "arrest")
             {
-                Vector3 father = _father.transform.position;
-                look = Vector3.Lerp(look, father + Vector3.up, 1f - Mathf.Exp(-3f * Time.deltaTime));
-                shot.position = kieu.transform.TransformPoint(localEye) + kieu.transform.forward * 0.12f;
-                shot.rotation = Quaternion.LookRotation(look - shot.position);
-                // DialogueCameraRig receives camera:Gate on Vương Quan's next line. Reassert Kiều's POV until the
-                // escort is actually over, otherwise that tag drags the viewer away from her mid-shot.
+                centre = Vector3.Lerp(centre, EscortCentre(), 1f - Mathf.Exp(-3f * Time.deltaTime));
+                shot.position = ArrestLens(centre, shot.position, false);
+                shot.rotation = Quaternion.Slerp(shot.rotation, Quaternion.LookRotation(centre + Vector3.up * 0.9f - shot.position),
+                    1f - Mathf.Exp(-4f * Time.deltaTime));
+                // DialogueCameraRig receives camera:Gate on Vương Quan's next line; hold this shot until the escort is over.
                 camera.SetDialogueCue(shot);
-                kieu.FaceTowards(father);
-                _mother.FaceTowards(father);
-                _mother.SetTalking(true, StoryDirector.Gesture("crying"));
+                kieu.FaceTowards(_father.transform.position);
                 yield return null;
             }
             kieu.FaceTowards(null);
-            _mother.FaceTowards(null);
             camera.SetDialogueCue(null);
             camera.ControlLocked = locked;
             Destroy(shot.gameObject);
+        }
+
+        /// <summary>Between the father and the brother: the middle of the escort.</summary>
+        private Vector3 EscortCentre() => (_father.transform.position + _brother.transform.position) * 0.5f;
+
+        /// <summary>
+        /// The lens for the escort: off to the yard's open east side and a little ahead of them, raised. If a pillar or
+        /// wall stands between it and the escort it climbs until the view is clear.
+        /// </summary>
+        private static Vector3 ArrestLens(Vector3 centre, Vector3 current, bool snap)
+        {
+            Vector3 target = centre + new Vector3(3.6f, 2.1f, -2.2f);
+            Vector3 aim = centre + Vector3.up * 1.1f;
+            for (int i = 0; i < 6 && Physics.Linecast(target, aim, 1 << 8, QueryTriggerInteraction.Ignore); i++)
+                target += Vector3.up * 0.5f + Vector3.right * 0.3f;
+            return snap ? target : Vector3.Lerp(current, target, 1f - Mathf.Exp(-3f * Time.deltaTime));
         }
 
         /// <summary>
@@ -522,11 +697,24 @@ namespace ThuyKieu.Gameplay.Chapters
                     mixer.SetInputWeight(0, 1f - weight);
                     mixer.SetInputWeight(1, weight);
                 }
-                // The shot keeps both her face and her hands in frame as they come up.
+                // The shot keeps both her face and her hands in frame as they come up; while she speaks aloud it moves in
+                // under her bowed face so her lips can be seen.
                 if (leftHand != null && rightHand != null)
                 {
                     Vector3 aim = Vector3.Lerp((leftHand.position + rightHand.position) * 0.5f, eyePosition, 0.45f);
-                    view.rotation = Quaternion.Slerp(view.rotation, Quaternion.LookRotation(aim - view.position), 1f - Mathf.Exp(-4f * Time.deltaTime));
+                    float close = 0f;
+                    for (int i = 0; i < lines.Length; i++)
+                        if (lines[i].Item1 == "Kieu")
+                            close = Mathf.Max(close, Mathf.SmoothStep(0f, 1f, Mathf.Min((t - starts[i] + 0.5f) / 0.6f, (starts[i] + spoken[i] + 0.4f - t) / 0.6f)));
+                    if (head != null && close > 0f)
+                    {
+                        Vector3 face = head.position + head.up * 0.06f;
+                        Vector3 near = face - Vector3.up * 0.14f + body.forward * 0.45f + body.right * 0.18f;
+                        view.position = Vector3.Lerp(lens, near, close);
+                        aim = Vector3.Lerp(aim, face, close);
+                    }
+                    else view.position = lens;
+                    view.rotation = Quaternion.Slerp(view.rotation, Quaternion.LookRotation(aim - view.position), 1f - Mathf.Exp(-6f * Time.deltaTime));
                 }
                 for (int i = 0; i < lines.Length; i++)
                     if (t < starts[i] && t + Time.deltaTime >= starts[i])

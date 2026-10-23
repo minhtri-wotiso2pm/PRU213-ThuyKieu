@@ -17,7 +17,7 @@ namespace ThuyKieu.Dialogue.Editor
     {
         public const string ReportPath = "Tools/Ink/InkValidationReport.txt";
         private static readonly HashSet<string> KnownKeys = new HashSet<string>
-        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx", "page", "page_half", "montage", "hands" };
+        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx", "page", "page_half", "montage", "hands", "act" };
         private static readonly HashSet<string> KnownSpeakers = new HashSet<string>
         { "Narrator", "Kieu", "NoiTam", "KieuThat", "TrangSach", "MeKieu", "MaGiamSinh", "TuyTung", "TuBa", "MaKieu", "CoHong", "CoLam", "NguoiCanh",
           "KimTrong", "BaHangNuoc", "ThuLai", "ChuHieuBac", "GiaNhan",
