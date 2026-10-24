@@ -123,8 +123,9 @@ namespace ThuyKieu.Presentation
             }
             var actor = _director.FindActor(speaker);
             if (actor == null) return;
-            // A voice from someone not in the scene: hold on Kiều listening rather than frame an empty spot.
-            if (!actor.isActiveAndEnabled) { CloseUp(kieu, 1.45f); return; }
+            // A voice from someone not in the scene, or calling from beyond a wall: hold on Kiều listening rather than
+            // frame an empty spot or fly the camera out through the room.
+            if (!actor.isActiveAndEnabled || WallBetween(kieu, actor)) { CloseUp(kieu, 1.45f); return; }
             _lastOther = actor;
             // Over the shoulder only at talking distance: across a room the partner shrinks to a speck, so cut in close.
             if (Vector3.Distance(actor.transform.position, kieu.transform.position) < OverShoulderRange) OverShoulder(kieu, actor.HeadPosition, actor);
@@ -140,7 +141,8 @@ namespace ThuyKieu.Presentation
             Vector3 forward = actor.transform.forward;
             // Seated people are framed from the front, across their desk; from the partner's side the lens sits
             // beside the bench and looks along their legs.
-            if (partner != null && !actor.IsSitting && Vector3.Distance(partner.transform.position, actor.transform.position) < 7f)
+            if (partner != null && !actor.IsSitting && Vector3.Distance(partner.transform.position, actor.transform.position) < 7f
+                && !WallBetween(actor, partner))
             {
                 Vector3 toPartner = partner.transform.position - actor.transform.position;
                 toPartner.y = 0;
@@ -198,6 +200,7 @@ namespace ThuyKieu.Presentation
         {
             Restore();
             var others = Bystanders(subjects);
+            var screens = Screens(pivot, subjects);
             Vector3 bestPosition = position, bestLook = look;
             float bestScore = float.MaxValue;
             float desired = Vector3.Distance(pivot, position);
@@ -214,6 +217,7 @@ namespace ThuyKieu.Presentation
                 if (kept < 0.75f) score += (0.75f - kept) * 8f;
                 if (Physics.CheckSphere(placed, 0.1f, _obstruction, QueryTriggerInteraction.Ignore)) score += 20f;
                 score += Blockers(placed, targets, others, null) * 6f;
+                score += Screened(placed, targets, screens) * 10f;
                 if (score < bestScore) { bestScore = score; bestPosition = placed; bestLook = l; }
                 if (score < 0.05f) break;
             }
@@ -248,6 +252,46 @@ namespace ThuyKieu.Presentation
             foreach (var actor in FindObjectsByType<StoryActor>())
                 if (actor.isActiveAndEnabled && System.Array.IndexOf(subjects, actor) < 0) list.Add(actor);
             return list;
+        }
+
+        /// <summary>
+        /// Visible scenery near the shot that has no collider (curtains, hangings, bed drapes): the wall checks cannot
+        /// see it, so a lens placed behind a doorway curtain would film the cloth.
+        /// </summary>
+        private static List<Bounds> Screens(Vector3 pivot, StoryActor[] subjects)
+        {
+            var screens = new List<Bounds>();
+            foreach (var renderer in Object.FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+            {
+                if (!renderer.enabled || renderer is ParticleSystemRenderer || renderer.GetComponentInParent<StoryActor>() != null) continue;
+                if (renderer.GetComponent<Collider>() != null) continue;
+                Bounds bounds = renderer.bounds;
+                // Only tall cloth-like pieces screen a shot; books and bottles on a desk sit below the faces framed.
+                if (bounds.size.y < 0.6f || bounds.size.magnitude > 6f || bounds.SqrDistance(pivot) > 25f) continue;
+                screens.Add(bounds);
+            }
+            return screens;
+        }
+
+        /// <summary>Counts the sight lines from the lens to the targets that pass through one of the screens.</summary>
+        private static int Screened(Vector3 lens, Vector3[] targets, List<Bounds> screens)
+        {
+            int count = 0;
+            foreach (var target in targets)
+            {
+                Vector3 delta = target - lens;
+                float length = delta.magnitude;
+                if (length < 0.3f) continue;
+                var ray = new Ray(lens, delta / length);
+                foreach (var bounds in screens)
+                {
+                    // Stop short of the target, as for bystanders: props held or worn by the subject are in the picture.
+                    if (bounds.Contains(target) || !bounds.IntersectRay(ray, out float hit) || hit > length - 0.3f) continue;
+                    count++;
+                    break;
+                }
+            }
+            return count;
         }
 
         /// <summary>Counts the bystanders standing on the sight lines from the lens to the targets, at the lens or just in front of it.</summary>
@@ -321,6 +365,9 @@ namespace ThuyKieu.Presentation
             foreach (var (renderer, mode) in _hidden) if (renderer != null) renderer.shadowCastingMode = mode;
             _hidden.Clear();
         }
+
+        private bool WallBetween(StoryActor a, StoryActor b) =>
+            Physics.Linecast(a.HeadPosition, b.HeadPosition, _obstruction, QueryTriggerInteraction.Ignore);
 
         private Vector3 Unblock(Vector3 from, Vector3 to)
         {

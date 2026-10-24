@@ -44,8 +44,6 @@ Không. Muốn cứu người nhà, trước hết mình phải biết họ bị
     -> c1_tu
 * {not c1_san} [Quan sát khoảng sân bị quan sai lục soát #explore:c1_san]
     -> c1_san
-* {not c1_ban_tho} [Thắp hương trên bàn thờ #explore:c1_ban_tho]
-    -> c1_ban_tho
 + {c1_me || c1_tu} [Ra mở cổng: có người đang gõ cửa #explore:c1_cong]
     -> c1_ma_den
 
@@ -55,10 +53,19 @@ Không. Muốn cứu người nhà, trước hết mình phải biết họ bị
 ~ c1_biet_moi = true
 ~ c1_manh_moi += 1
 ~ c1_hoi_tien = true
-# speaker:MeKieu
-# emotion:crying
-# camera:MCU_MeKieu
-Mẹ Kiều: Bà mối nói vị giám sinh ấy chịu đưa đủ bốn trăm lạng. Bạc tới tay quan sai trước, con mới phải rời nhà.
+{
+- c1_tu:
+    // Đã lục tủ xong thì tiếng gõ cổng đã vang: Mẹ đứng dậy, vừa nói vội vừa giục ra mở cổng.
+    # speaker:MeKieu
+    # emotion:crying
+    # camera:MCU_MeKieu
+    Mẹ Kiều: (liếc ra cổng) Bà mối nói vị giám sinh ấy chịu đưa đủ bốn trăm lạng, bạc tới tay quan sai trước con mới phải đi... Thôi, ra mở cổng đi con, người ta gõ mãi rồi!
+- else:
+    # speaker:MeKieu
+    # emotion:crying
+    # camera:MCU_MeKieu
+    Mẹ Kiều: Bà mối nói vị giám sinh ấy chịu đưa đủ bốn trăm lạng. Bạc tới tay quan sai trước, con mới phải rời nhà.
+}
 
 # speaker:NoiTam
 # clue:c1_ba_moi
@@ -95,24 +102,6 @@ Từng cuộn tơ đều ghi ngày mua, người bán. "Hàng gian" mà sổ sá
 -> c1_nha
 
 
-=== c1_ban_tho ===
-~ c1_viec += 1
-# speaker:KieuThat
-# camera:OTS_Kieu_Altar
-# gameplay:kieu_voice
-Ngày trước ta cũng đứng đây. Ta xin tổ tiên cho ta đủ can đảm để đi. Ta chưa bao giờ xin cho mình được quay về.
-
-# speaker:NoiTam
-Vậy thì mình sẽ xin thêm một điều. Đi, nhưng phải có ngày quay về.
-
-~ soul(1)
-# fx:none
-# music:sad_strings
-# speaker:KieuThat
-Ngươi lạ thật. Cầu xin mà nghe như đang ra điều kiện.
--> c1_nha
-
-
 === c1_ma_den ===
 ~ c1_ca_hai = c1_me && c1_tu
 # scene:VuongGia_MaDen
@@ -120,11 +109,17 @@ Ngươi lạ thật. Cầu xin mà nghe như đang ra điều kiện.
 # music:tension_low
 # speaker:Narrator
 # camera:Reveal_MaGiamSinh
-Cổng mở. Một người đàn ông áo gấm bước vào, theo sau là tên tùy tùng ôm hòm gỗ.
+{c1_de_cho:Tiếng gõ dồn dập đến mức Mẹ phải kéo tay Kiều ra cổng. }Cổng mở. Một người đàn ông áo gấm bước vào, theo sau là tên tùy tùng ôm hòm gỗ.
 
-# speaker:MaGiamSinh
-# emotion:smug
-Mã Giám Sinh: Kẻ hèn họ Mã, nghe Vương gia gặp nạn nên mạo muội đến. Ta... có thể giúp.
+{c1_de_cho:
+    # speaker:MaGiamSinh
+    # emotion:irritated_hidden
+    Mã Giám Sinh: (rũ nước mưa trên tay áo) Đứng ngoài mưa ngần ấy, ta còn tưởng nhà này không muốn cứu người. Kẻ hèn họ Mã... có thể giúp, nếu Vương gia còn cần.
+- else:
+    # speaker:MaGiamSinh
+    # emotion:smug
+    Mã Giám Sinh: Kẻ hèn họ Mã, nghe Vương gia gặp nạn nên mạo muội đến. Ta... có thể giúp.
+}
 
 ~ nua(ts_ma_mat)
 # speaker:TrangSach

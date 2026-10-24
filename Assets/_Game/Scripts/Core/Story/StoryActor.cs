@@ -40,6 +40,10 @@ namespace ThuyKieu.Core.Story
         private bool _lying;
         private float _lyingHeight;
         private float _currentLift;
+        // Where a seated/locked actor looks during a conversation, and the upper-body yaw currently applied towards it.
+        private Vector3? _glanceTarget;
+        private float _glanceYaw;
+        private const float MaxGlanceYaw = 55f;
 
         public string SpeakerId => _speakerId;
         /// <summary>Recasts a copy of an actor as another speaker (runtime placeholders reuse an existing rig).</summary>
@@ -156,12 +160,17 @@ namespace ThuyKieu.Core.Story
         /// weeping into her hands at the table.</summary>
         public bool StillWhileSeated { get; set; }
 
+        /// <summary>Lines never start a talking clip: the actor keeps its idle, moves its mouth and looks at the listener.</summary>
+        public bool StillWhileTalking { get; set; }
+
+        private bool PlaysTalkClip => _talkingRequested && !StillWhileTalking && !(StillWhileSeated && IsSitting);
+
         public void SetTalking(bool talking, int emotion)
         {
             _talkingRequested = talking;
             _talkingEmotion = talking ? (emotion == 0 ? CalmGesture : emotion) : 0;
             if (_animator == null || !_animator.isActiveAndEnabled) return;
-            if (_hasTalking) _animator.SetBool(Talking, talking && !IsMoving && !(StillWhileSeated && IsSitting));
+            if (_hasTalking) _animator.SetBool(Talking, PlaysTalkClip && !IsMoving);
             if (_hasEmotion) _animator.SetInteger(Emotion, _talkingEmotion);
         }
 
@@ -169,6 +178,7 @@ namespace ThuyKieu.Core.Story
         public void FaceTowards(Vector3? point)
         {
             // Seated people do not swivel towards each speaker: turning about the root slides them off the bench.
+            if (!point.HasValue) _glanceTarget = null;
             if ((_lockFacing || IsSitting) && point.HasValue) return;
             _faceTarget = point;
         }
@@ -176,6 +186,8 @@ namespace ThuyKieu.Core.Story
         /// <summary>Turns to a speaker for a dialogue line; <see cref="EndLineTurn"/> turns back to how the actor stood before.</summary>
         public void TurnForLine(Vector3 point)
         {
+            // Everyone looks at whoever they are talking with; seated or staged people turn only head and shoulders.
+            _glanceTarget = point;
             if (_lockFacing || IsSitting) return;
             if (!_restBeforeLines.HasValue) _restBeforeLines = transform.rotation;
             _faceTarget = point;
@@ -186,6 +198,7 @@ namespace ThuyKieu.Core.Story
         {
             _faceTarget = _restBeforeLines.HasValue ? transform.position + _restBeforeLines.Value * Vector3.forward : (Vector3?)null;
             _restBeforeLines = null;
+            _glanceTarget = null;
         }
 
         /// <summary>Walking speed (m/s) for the animator while a sequence moves the actor by hand; null hands it back to the agent.</summary>
@@ -339,7 +352,7 @@ namespace ThuyKieu.Core.Story
             // A speaker may deliver its line while entering the shot. Locomotion must win during that movement;
             // otherwise the Talking state freezes the legs while the root keeps sliding across the ground.
             if (_hasTalking && _animator != null && _animator.isActiveAndEnabled)
-                _animator.SetBool(Talking, _talkingRequested && speed < 0.1f);
+                _animator.SetBool(Talking, PlaysTalkClip && speed < 0.1f);
             // PlayerMovement owns the Speed parameter on the playable actor. Writing zero
             // here as well made the classroom student's idle/walk states flicker each frame.
             if (_hasSpeed && (_agent != null || _scriptedSpeed.HasValue))
@@ -355,6 +368,39 @@ namespace ThuyKieu.Core.Story
                 _animator.SetLayerWeight(_raiseHandLayer, Mathf.MoveTowards(_animator.GetLayerWeight(_raiseHandLayer), _raiseHandTarget, Time.deltaTime * 3f));
             if (_seatLift != 0f) ApplySeatLift(Mathf.MoveTowards(_currentLift, IsSitting ? _seatLift : 0f, Time.deltaTime * 0.6f));
             AnimateStaticVisual(speed);
+        }
+
+        /// <summary>
+        /// Turns chest, neck and head (on top of the animated pose) towards <see cref="_glanceTarget"/>: a seated classmate
+        /// looks round at the person she talks to, and a standing listener's head follows the speaker.
+        /// </summary>
+        private void LateUpdate()
+        {
+            if (_animator == null || !_animator.isActiveAndEnabled || !_animator.isHuman) return;
+            float targetYaw = 0f;
+            if (_glanceTarget.HasValue)
+            {
+                // Measured from the animated body, not the root: a seated rig's root sits off the bench it is posed on.
+                Vector3 toTarget = _glanceTarget.Value - HeadPosition;
+                Vector3 bodyForward = _animator.bodyRotation * Vector3.forward;
+                toTarget.y = 0f;
+                bodyForward.y = 0f;
+                if (toTarget.sqrMagnitude > 0.01f && bodyForward.sqrMagnitude > 0.01f)
+                    targetYaw = Mathf.Clamp(Vector3.SignedAngle(bodyForward, toTarget, Vector3.up), -MaxGlanceYaw, MaxGlanceYaw);
+            }
+            _glanceYaw = Mathf.MoveTowards(_glanceYaw, targetYaw, 160f * Time.deltaTime);
+            if (Mathf.Abs(_glanceYaw) < 0.01f) return;
+            // Spread over the spine so no single joint bends far enough to look broken.
+            Twist(HumanBodyBones.Spine, 0.15f);
+            Twist(HumanBodyBones.Chest, 0.25f);
+            Twist(HumanBodyBones.Neck, 0.3f);
+            Twist(HumanBodyBones.Head, 0.3f);
+        }
+
+        private void Twist(HumanBodyBones bone, float share)
+        {
+            var t = _animator.GetBoneTransform(bone);
+            if (t != null) t.rotation = Quaternion.AngleAxis(_glanceYaw * share, Vector3.up) * t.rotation;
         }
 
         private void ApplySeatLift(float lift)
