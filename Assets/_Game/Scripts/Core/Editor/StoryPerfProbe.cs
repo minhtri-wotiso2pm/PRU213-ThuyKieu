@@ -42,7 +42,10 @@ namespace ThuyKieu.Core.Editor
         public static string Run()
         {
             var report = new StringBuilder();
-            foreach (string scene in new[] { PrologueSetup.ScenePath, Chapter01StoryUpgrade.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath, Chapter04Setup.ScenePath, Chapter05Setup.ScenePath, Chapter06Setup.ScenePath, Chapter07Setup.ScenePath, EpilogueSetup.ScenePath })
+            // "-perfLau": only the first-person Chapters 3–4.
+            var scenes = System.Environment.GetCommandLineArgs().Contains("-perfLau") ? new[] { LauTuBaSetup.Chapter3Path, LauTuBaSetup.Chapter4Path }
+                : new[] { PrologueSetup.ScenePath, Chapter01StoryUpgrade.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath, Chapter04Setup.ScenePath, LauTuBaSetup.Chapter3Path, LauTuBaSetup.Chapter4Path, Chapter05Setup.ScenePath, Chapter06Setup.ScenePath, Chapter07Setup.ScenePath, EpilogueSetup.ScenePath };
+            foreach (string scene in scenes)
                 Probe(scene, report);
             return report.ToString();
         }
@@ -63,7 +66,7 @@ namespace ThuyKieu.Core.Editor
             var views = new List<(string, Vector3, Quaternion)> { ("main", camera.transform.position, camera.transform.rotation) };
             views.AddRange(UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include)
                 .Where(t => t.name.StartsWith("CAM_Wide") || t.name.StartsWith("WS_") || t.name.StartsWith("LOOK_"))
-                .OrderBy(t => t.name).Take(5).Select(t => (t.name, t.position, t.rotation)));
+                .OrderBy(t => t.name).Take(scenePath.Contains("LauTuBa") ? 14 : 5).Select(t => (t.name, t.position, t.rotation)));
 
             var target = new RenderTexture(1920, 1080, 24, RenderTextureFormat.ARGB32);
             var sync = new Texture2D(1, 1, TextureFormat.RGB24, false);
@@ -71,11 +74,13 @@ namespace ThuyKieu.Core.Editor
                 ? AssetDatabase.LoadAssetAtPath<UniversalRendererData>("Assets/Settings/PC_Renderer.asset")?.rendererFeatures.FirstOrDefault(f => f != null && f.GetType().Name.Contains("Occlusion"))
                 : null;
             var suns = UnityEngine.Object.FindObjectsByType<Light>().Where(l => l.type == LightType.Directional && l.shadows != LightShadows.None).ToArray();
+            var lamps = UnityEngine.Object.FindObjectsByType<Light>().Where(l => l.type != LightType.Directional && l.shadows != LightShadows.None).ToArray();
             var toggles = new (string, Action<bool>)[]
             {
                 ("grass off", on => SetActive(on, "Grass", "Rice")),
                 ("vegetation off", on => SetActive(on, "Vegetation")),
                 ("shadows off", on => { foreach (var sun in suns) sun.shadows = on ? LightShadows.Soft : LightShadows.None; }),
+                ("lamp shadows off", on => { foreach (var lamp in lamps) lamp.shadows = on ? LightShadows.Hard : LightShadows.None; }),
                 ("ssao off", on => { if (ssao != null) ssao.SetActive(on); })
             };
             foreach (var (name, position, rotation) in views)

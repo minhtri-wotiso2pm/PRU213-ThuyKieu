@@ -9,3 +9,6 @@ clay_roof_tiles_02, mossy_rock, japanese_stone_wall.
 
 Skies: evening_road_01_puresky (Ch2 dusk), kloppenheim_02_puresky (Ch2 night),
 kloppenheim_06_puresky (Ch3 afternoon/dusk), kloppenheim_07_puresky (Ch1 rainy night).
+
+ARM maps (AO/Roughness/Metal packed in R/G/B, 1k JPG) added 2026-10-18 from the same Poly Haven sets, CC0:
+dark_wood, planks_brown_10, lacquered_cherry_wood, old_wooden_floor_02, monastery_stone_floor, brick_floor, plastered_wall_02.

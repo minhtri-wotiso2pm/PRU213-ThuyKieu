@@ -44,11 +44,20 @@ namespace ThuyKieu.Player
         [SerializeField] private bool _allowCrouch;
         [SerializeField] private float _crouchSpeed = 1.15f;
 
+        [Header("First person (opt-in per chapter)")]
+        [Tooltip("The body faces where the camera looks and strafes; crouching lowers the capsule and the eyes.")]
+        [SerializeField] private bool _firstPerson;
+        [SerializeField] private float _eyeHeight = 1.56f;
+        [SerializeField] private float _crouchEyeHeight = 0.98f;
+        [SerializeField] private float _crouchCapsuleHeight = 1.08f;
+
         private CharacterController controller;
         private float verticalVelocity;
         private Vector3 _planarVelocity;
         private bool _hasCrouchParameter, _parametersCached;
         private float _walkClipSpeed, _runClipSpeed;
+        private float _standHeight, _eyeCurrent;
+        private readonly Collider[] _ceiling = new Collider[4];
 
         /// <summary>True while sneaking. Stealth systems read this to lower visibility.</summary>
         public bool IsCrouching { get; private set; }
@@ -64,6 +73,11 @@ namespace ThuyKieu.Player
         /// <summary>True while the run input is held and the character is actually moving.</summary>
         public bool IsRunning { get; private set; }
         public bool ControlLocked { get; set; }
+        /// <summary>
+        /// Kept in place by an interaction (leaning over Tú Bà's keys): no walking, while crouch and everything else stay
+        /// the player's. Separate from <see cref="ControlLocked"/>, which the story and menus own.
+        /// </summary>
+        public bool HeldStill { get; set; }
         /// <summary>Inside a hiding place: guards cannot see the player.</summary>
         public bool IsHidden { get; set; }
         /// <summary>Stamina or story beats can forbid sprinting.</summary>
@@ -72,9 +86,16 @@ namespace ThuyKieu.Player
         public Vector3? ScriptedMove { get; set; }
         public float ScriptedSpeed { get; set; } = 5.5f;
 
+        public bool IsFirstPerson => _firstPerson;
+        /// <summary>Height of the eyes above the feet, eased between standing and crouching (first person).</summary>
+        public float EyeHeight => _eyeCurrent;
+        public float WalkSpeed => walkSpeed;
+
         private void Awake()
         {
             controller = GetComponent<CharacterController>();
+            _standHeight = controller.height;
+            _eyeCurrent = _eyeHeight;
             SetAnimator(_animator != null ? _animator : GetComponentInChildren<Animator>());
 
             if (cameraTransform == null && Camera.main != null)
@@ -100,14 +121,21 @@ namespace ThuyKieu.Player
         private void Update()
         {
             CacheAnimatorParameters();
-            Vector3 moveDirection = ScriptedMove.HasValue ? Flat(ScriptedMove.Value) : GetCameraRelativeDirection(ControlLocked ? Vector2.zero : InputReader.Move);
+            Vector3 moveDirection = ScriptedMove.HasValue ? Flat(ScriptedMove.Value) : GetCameraRelativeDirection(ControlLocked || HeldStill ? Vector2.zero : InputReader.Move);
 
-            IsCrouching = _allowCrouch && !ControlLocked && !ScriptedMove.HasValue && (InputReader.IsCrouchHeld || ForceCrouch);
-            bool wantsToRun = ScriptedMove.HasValue ? ScriptedSpeed > walkSpeed : !IsCrouching && CanRun && InputReader.IsRunHeld && moveDirection.sqrMagnitude > 0f;
-            float speed = ScriptedMove.HasValue ? ScriptedSpeed : IsCrouching ? _crouchSpeed : wantsToRun ? runSpeed : walkSpeed * SpeedMultiplier;
+            // A scripted run ignores the crouch key; ForceCrouch (QA, story) still holds her down while it moves her.
+            bool wantsCrouch = _allowCrouch && ((!ScriptedMove.HasValue && InputReader.IsCrouchHeld) || ForceCrouch) && !ControlLocked;
+            // First person: someone crouched under a low beam stays down until there is room to stand.
+            if (_firstPerson && IsCrouching && !wantsCrouch && !RoomToStand()) wantsCrouch = true;
+            // Hidden, the place sets the posture: down behind something low (jars, cloth), upright in a wardrobe so her
+            // eyes are level with the louvres, whatever posture she slipped in with.
+            IsCrouching = _firstPerson && IsHidden ? ForceCrouch : wantsCrouch;
+            bool wantsToRun = ScriptedMove.HasValue ? !IsCrouching && ScriptedSpeed > walkSpeed : !IsCrouching && CanRun && InputReader.IsRunHeld && moveDirection.sqrMagnitude > 0f;
+            float speed = ScriptedMove.HasValue ? (IsCrouching ? Mathf.Min(ScriptedSpeed, _crouchSpeed) : ScriptedSpeed) : IsCrouching ? _crouchSpeed : wantsToRun ? runSpeed : walkSpeed * SpeedMultiplier;
             if (_hasCrouchParameter) _animator.SetBool(CrouchParameter, IsCrouching);
 
-            RotateTowards(moveDirection);
+            if (_firstPerson && !ScriptedMove.HasValue) { FaceCamera(); FitCapsule(); }
+            else RotateTowards(moveDirection);
             ApplyGravity();
 
             _planarVelocity = Vector3.Lerp(_planarVelocity, moveDirection * speed, 1f - Mathf.Exp(-_moveSharpness * Time.deltaTime));
@@ -206,6 +234,38 @@ namespace ThuyKieu.Player
             right.y = 0f;
 
             return (forward.normalized * input.y + right.normalized * input.x).normalized;
+        }
+
+        /// <summary>First person: the body turns with the view, so walking sideways is a strafe.</summary>
+        private void FaceCamera()
+        {
+            if (cameraTransform == null || ControlLocked) return;
+            Vector3 forward = cameraTransform.forward;
+            forward.y = 0f;
+            if (forward.sqrMagnitude > 0.0001f) transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
+        }
+
+        /// <summary>Lowers the capsule while crouched (so low gaps fit) and eases the eyes with it.</summary>
+        private void FitCapsule()
+        {
+            float height = IsCrouching ? _crouchCapsuleHeight : _standHeight;
+            if (!Mathf.Approximately(controller.height, height))
+            {
+                controller.height = height;
+                controller.center = new Vector3(controller.center.x, height * 0.5f, controller.center.z);
+            }
+            float eye = IsCrouching ? _crouchEyeHeight : _eyeHeight;
+            _eyeCurrent = Mathf.Lerp(_eyeCurrent, eye, 1 - Mathf.Exp(-9f * Time.deltaTime));
+        }
+
+        private bool RoomToStand()
+        {
+            float radius = controller.radius * 0.95f;
+            Vector3 bottom = transform.position + Vector3.up * (_crouchCapsuleHeight - radius);
+            Vector3 top = transform.position + Vector3.up * (_standHeight - radius);
+            int hits = Physics.OverlapCapsuleNonAlloc(bottom, top, radius, _ceiling, ~0, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < hits; i++) if (_ceiling[i].transform.root != transform.root) return false;
+            return true;
         }
 
         private void RotateTowards(Vector3 direction)

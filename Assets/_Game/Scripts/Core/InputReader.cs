@@ -19,7 +19,7 @@ namespace ThuyKieu.Core
                 Keyboard keyboard = Keyboard.current;
                 if (keyboard == null)
                 {
-                    return Vector2.zero;
+                    return Vector2.ClampMagnitude(SimulatedMove, 1f);
                 }
 
                 Vector2 move = Vector2.zero;
@@ -28,7 +28,7 @@ namespace ThuyKieu.Core
                 if (keyboard.dKey.isPressed) move.x += 1f;
                 if (keyboard.aKey.isPressed) move.x -= 1f;
 
-                return Vector2.ClampMagnitude(move, 1f);
+                return Vector2.ClampMagnitude(move + SimulatedMove, 1f);
             }
         }
 
@@ -39,7 +39,7 @@ namespace ThuyKieu.Core
             {
                 if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Mouse mouse = Mouse.current;
-                return mouse == null ? Vector2.zero : mouse.delta.ReadValue();
+                return (mouse == null ? Vector2.zero : mouse.delta.ReadValue()) + SimulatedLook;
             }
         }
 
@@ -84,7 +84,7 @@ namespace ThuyKieu.Core
             {
                 if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
-                return keyboard != null && keyboard.eKey.wasPressedThisFrame;
+                return keyboard != null && keyboard.eKey.wasPressedThisFrame || SimulatedInteract && _simulatedSince == Time.frameCount;
             }
         }
 
@@ -95,7 +95,30 @@ namespace ThuyKieu.Core
             {
                 if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
-                return keyboard != null && keyboard.eKey.isPressed;
+                return keyboard != null && keyboard.eKey.isPressed || SimulatedInteract;
+            }
+        }
+
+        /// <summary>QA autopilot only: WASD held by a test (x strafe, y forward). Never set in normal play.</summary>
+        public static Vector2 SimulatedMove { get; set; }
+
+        /// <summary>QA autopilot only: mouse movement (pixels this frame) added by a test. Never set in normal play.</summary>
+        public static Vector2 SimulatedLook { get; set; }
+
+        private static bool _simulatedInteract;
+        private static int _simulatedSince;
+
+        /// <summary>
+        /// QA autopilot only: E held by a test (the hold interactions are then played through the real interaction path).
+        /// Set from a coroutine, it counts as pressed on the next frame and held until cleared. Never set in normal play.
+        /// </summary>
+        public static bool SimulatedInteract
+        {
+            get => _simulatedInteract;
+            set
+            {
+                if (value && !_simulatedInteract) _simulatedSince = Time.frameCount + 1;
+                _simulatedInteract = value;
             }
         }
 
@@ -117,9 +140,14 @@ namespace ThuyKieu.Core
             {
                 if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
-                return keyboard != null && keyboard.qKey.wasPressedThisFrame;
+                return keyboard != null && keyboard.qKey.wasPressedThisFrame || _simulatedThrow == Time.frameCount;
             }
         }
+
+        private static int _simulatedThrow = -1;
+
+        /// <summary>QA autopilot only: Q pressed by a test, on the next frame (the throw then goes through the real input path).</summary>
+        public static void SimulateThrow() { _simulatedThrow = Time.frameCount + 1; }
 
         /// <summary>Any key pressed this frame (quick-time prompts).</summary>
         public static bool KeyPressedThisFrame(Key key)

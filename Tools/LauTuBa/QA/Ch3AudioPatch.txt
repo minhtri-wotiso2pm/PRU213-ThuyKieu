@@ -1,0 +1,17 @@
+Chapter 3 audio patch
+  World/LauTuBa/Rooms/Yard/TreeBed: untagged → Stone
+  World/LauTuBa/Rooms/TuBa/Rug: untagged → Mat (covering)
+  World/LauTuBa/Rooms/Hall/Stage/StageMat: untagged → Mat (covering)
+  World/LauTuBa/Rooms/Kieu/ReedMat: untagged → Mat (covering)
+  World/LauTuBa/Floors/Alley: WetStone → Mud
+  World/LauTuBa/Rooms/Hall/Runner: untagged → Mat (covering)
+  World/LauTuBa/Rooms/Hall/ReceivingRug: untagged → Mat (covering)
+  World/LauTuBa/Rooms/Hall/ReceivingRug: untagged → Mat (covering)
+  StoryAudio bank: Assets/_Game/Audio/Ch4Foley/Ch3FoleyBank.asset (33 groups)
+  StageMat (Mat, covering): sounds as Mat, carries ×1 as before
+  Runner (Mat, covering): sounds as Mat, carries ×1.1 as before
+  ReceivingRug (Mat, covering): sounds as Mat, carries ×1.1 as before
+  Rug (Mat, covering): sounds as Mat, carries ×1 as before
+  ReedMat (Mat, covering): sounds as Mat, carries ×1 as before
+  Alley (Mud): sounds as Mud, carries ×1.5 as before
+  ReceivingRug (Mat, covering): sounds as Mat, carries ×1.1 as before

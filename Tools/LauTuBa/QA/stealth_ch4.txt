@@ -1,0 +1,48 @@
+AUTOPILOT PASS
+[3.3s] NAVMESH built in 39 ms · 388 sources
+[3.3s] C4 Foley recorded set loaded
+[0.0s] SCENE Chapter04_LauTuBaDem
+[1.2s] TAG scene:Dem_Opening
+[1.2s] TAG music:tension_low
+[1.4s] CHOICE 3/5: Cãi lại: "Tôi không nợ bà thứ gì cả."
+[1.4s] TAG sfx:knock
+[1.5s] TAG sfx:latch_drop
+[1.6s] C4 KEYS standing (opening): ok · hook 24 cm out from her hip bone, -7 cm below it · keys hang 5° from straight down · reach 0.71 m above her feet · size 20 cm · breathing False · keys can be taken False · scene running True
+[1.6s] TAG scene:Dem_Night
+[1.6s] TAG gameplay:tutorial_dem
+[6.4s] C4 Tú Bà on her sập: body 12 cm above the mat with the old lift, lift now 0.33 m
+[8.0s] STEALTH ok   lit, standing, on his round · exposure 0.35 · caught after 17.6 s
+[41.6s] STEALTH ok   dark, crouched, 6 m off his round · exposure 0.13 · peak awareness 0.00 over 100 s
+[46.7s] STEALTH ok   wall between them · reached post True · saw False · peak awareness 0.00
+[53.8s] STEALTH ok   hidden before he looked · reached door True · caught False · knows the place False
+[61.0s] STEALTH ok   seen slipping into hiding · awareness when she hid 0.65 · knew the place True · found her True after 4.6 s · 0.1 m from the screen
+[61.0s] STEALTH info yard crossing exposure min 0.12 · avg 0.27 · max 0.48 · 4/18 points under 0.20 · [0.12 0.31 0.22 0.15 0.12 0.30 0.30 0.12 0.30 0.30 0.30 0.30 0.30 0.30 0.32 0.39 0.48 0.30]
+[84.6s] STEALTH info open yard, standing · exposure 0.30 · caught False after 70.0 s · peak awareness 0.00
+[108.2s] STEALTH info open yard, crouched · exposure 0.30 · caught False after 70.0 s · peak awareness 0.00
+[109.9s] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 640×480
+[111.1s] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 640×480
+[117.0s] C4 keys taken through the minigame ok · 22.9 s game time · held 12.0/12 s · catches 0 · breath played on 51067 frames · while not asleep in bed 0 · breath sources on her 1
+[118.5s] TAG gameplay:search_drawer
+[118.8s] TAG sfx:paper
+[119.1s] TAG sfx:lock_open
+[119.4s] TAG gameplay:document_deal
+[119.6s] CHOICE 3/3: Để nguyên chỗ cũ — mụ sẽ không phát hiện sớm.
+[119.6s] CHOICE 1/3: Chỉ lấy vài lạng làm lộ phí.
+[119.6s] TAG sfx:lock_open
+[129.1s] C4 J1 done · mirror seen False
+[145.2s] C4 J2 done · Tú Bà phase 1 · after J2: Awake, breathing False, snore False · breath played on 56298 frames · while not asleep in bed 0 · breath sources on her 1
+[145.7s] TAG scene:Dem_BackDoor
+[145.7s] TAG music:none
+[146.0s] TAG gameplay:kieu_voice
+[146.0s] CHOICE 2/2: "Ngươi đã ở lại. Ta thì không."
+[146.1s] TAG music:resolve
+[146.2s] CHAPTER 4 COMPLETE · lines 33 · choices 4
+[146.2s] FRAMES Chapter04_LauTuBaDem · avg 521 fps · 1% low 234 fps · worst 30 ms · 75010 frames · 640x480 · median 1.9 ms · p99 3.2 ms · under 60 fps 0.0% · load 3.4 s (first frame 3137 ms) · warm-up worst 1285 ms
+   c4_viec = 2
+   c4_canh_giac = 2
+   c4_tien = 1
+   c4_van_tu = 0
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo

@@ -1,0 +1,55 @@
+AUTOPILOT FAIL: PASS · 1 errors
+[3.6s] NAVMESH built in 25 ms · 388 sources
+[3.7s] C4 Foley recorded set loaded
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.7s] TAG scene:Dem_Opening
+[0.7s] TAG music:tension_low
+[0.9s] CHOICE 3/5: Cãi lại: "Tôi không nợ bà thứ gì cả."
+[1.0s] TAG sfx:knock
+[1.1s] TAG sfx:latch_drop
+[1.2s] TAG scene:Dem_Night
+[1.2s] TAG gameplay:tutorial_dem
+[20.0s] CHASE ok   lost round a corner, stays still · chased True · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 · came within 1.3 m of where he last knew · stuck up to 0.0 s · searched none · caught 1 · back on his round no
+[25.1s] CHASE ok   lost round a corner, makes noise there · chased True · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 · came within 1.3 m of where he last knew · stuck up to 0.0 s · searched none · caught 1 · back on his round no
+[60.6s] CHASE ok   lost round a corner, slips away · chased True · Suspicious@0.2 → Investigate@0.4 → Chase@0.6 → Search@6.9 → Return@21.9 → Patrol@35.4 · came within 0.0 m of where he last knew · stuck up to 0.1 s · searched (-11.27, 0.00, -3.05) PathComplete, (-15.07, 0.00, -5.62) PathComplete, (-17.59, 0.00, -0.88) PathComplete · caught 0 · back on his round 0.3 m from it
+[105.1s] CHASE FAIL three sounds, each further away · after each sound he was heading 0.0 / 4.1 / 0.0 m from it · Chase@6.8 · back on his round no
+[105.1s] PROBLEM [ChaseProbe] three sounds, each further away · after each sound he was heading 0.0 / 4.1 / 0.0 m from it · Chase@6.8 · back on his round no
+[150.4s] CHASE ok   door bolted behind her · chased True · he was 1.8 m behind her when it shut · Suspicious@0.1 → Investigate@0.2 → Chase@0.3 → Search@6.0 → Return@22.6 → Patrol@45.3 · stuck up to 0.1 s · searched (-15.52, 0.00, 1.71) PathComplete, (-13.29, 0.00, 0.53) PathComplete, (-13.76, 0.00, 0.90) PathComplete · caught 0 · back on his round 0.3 m from it
+[162.5s] HITCH 159 ms
+[169.2s] CHASE ok   a 150 ms frame as he gives up · Return@11.9 → Patrol@18.8 · back on his round 0.2 m from it
+[178.6s] CHASE ok   paused 2 s while walking to a search spot · searching True · 4.2 m from the spot before the pause, 3.4 m 1.2 s after · Search
+[209.8s] CHASE ok   saw her hide, the way there bolted · knew the place True · Search@9.9 → Return@22.0 · came within 2.0 m of the screen · caught 0 (a catch from outside the bolted room would be wrong)
+[230.3s] CHASE ok   saw her hide, she left before he came · knew the place True · forgot it when she left True · Search@7.3 → Return@17.6 → Patrol@20.5 · caught 0
+[230.9s] CHASE ok   story walk ordered mid-chase · chasing True · after the order: Chase
+[253.5s] CHASE ok   story walk into a locked room · told he arrived False · 3.5 m from the place · Return@22.6 · Return
+[253.5s] CHASE probe done
+[254.4s] TAG gameplay:search_drawer
+[254.8s] TAG sfx:paper
+[255.0s] TAG sfx:lock_open
+[255.4s] TAG gameplay:document_deal
+[255.4s] SEQUENCE document_deal
+[255.6s] CHOICE 2/3: Đốt nó trên ngọn đèn.
+[255.6s] TAG sfx:fire
+[255.6s] TAG gameplay:kieu_voice
+[255.7s] CHOICE 3/3: Không lấy một đồng nào.
+[255.8s] TAG sfx:lock_open
+[264.6s] C4 J1 done · mirror seen False
+[280.7s] C4 J2 done · Tú Bà phase 1
+[281.6s] CHOICE 2/4: Nắm tay chị ấy: "Đi cùng em."
+[287.9s] C4 Lam reached the kitchen
+[287.9s] TAG scene:Dem_BackDoor
+[287.9s] TAG music:none
+[288.2s] TAG gameplay:kieu_voice
+[288.3s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[288.4s] TAG music:resolve
+[288.4s] CHAPTER 4 COMPLETE · lines 43 · choices 5
+[288.4s] FRAMES Chapter04_LauTuBaDem · avg 99 fps · 1% low 48 fps · worst 159 ms · 28458 frames · 1920x1080 · median 9.0 ms · p99 14.5 ms · under 60 fps 0.9% · load 3.7 s (first frame 3483 ms) · warm-up worst 753 ms
+   c4_viec = 2
+   c4_canh_giac = 2
+   c4_tien = 0
+   c4_van_tu = 2
+   c4_so_no = True
+   c4_ru_co_lam = True
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo, c4_co_lam
+ERROR PROBE: [ChaseProbe] three sounds, each further away · after each sound he was heading 0.0 / 4.1 / 0.0 m from it · Chase@6.8 · back on his round no

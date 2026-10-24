@@ -17,7 +17,7 @@ namespace ThuyKieu.Dialogue.Editor
     {
         public const string ReportPath = "Tools/Ink/InkValidationReport.txt";
         private static readonly HashSet<string> KnownKeys = new HashSet<string>
-        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx", "page", "page_half", "montage", "hands" };
+        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx", "page", "page_half", "montage", "hands", "act" };
         private static readonly HashSet<string> KnownSpeakers = new HashSet<string>
         { "Narrator", "Kieu", "NoiTam", "KieuThat", "TrangSach", "MeKieu", "MaGiamSinh", "TuyTung", "TuBa", "MaKieu", "CoHong", "CoLam", "NguoiCanh",
           "KimTrong", "BaHangNuoc", "ThuLai", "ChuHieuBac", "GiaNhan",
@@ -27,13 +27,26 @@ namespace ThuyKieu.Dialogue.Editor
         internal static readonly (string Knot, int Chapter)[] Entries =
         {
             ("prologue", 0), ("chapter_1", 1), ("chapter_2", 2), ("chapter_3", 3), ("chapter_4", 4), ("chapter_5", 5),
-            ("chapter_6", 6), ("chapter_7", 7), ("epilogue", 8)
+            ("chapter_6", 6), ("chapter_7", 7), ("epilogue", 8),
+            // First-person Chapters 3–4 (the main chain since 2026-10); the knots above still drive the older scenes.
+            ("chapter_3_lau", 3), ("chapter_4_dem", 4)
         };
+
+        private static Ink.Runtime.Story _story;
+        private static string _storyJson;
 
         /// <summary>A fresh story positioned at an entry, with random outcomes for the chapters before it.</summary>
         internal static Ink.Runtime.Story Start(string json, string knot, int chapter, System.Random random)
         {
-            var story = new Ink.Runtime.Story(json);
+            // Walks run thousands of times; parsing Main.json once and resetting its state keeps them fast.
+            // Callers finish with the returned story before asking for the next one.
+            if (_story == null || !ReferenceEquals(_storyJson, json))
+            {
+                _story = new Ink.Runtime.Story(json);
+                _storyJson = json;
+            }
+            else _story.ResetState();
+            var story = _story;
             if (knot == "chapter_1") return story;
             RandomisePriorChapters(story, chapter, random);
             story.ChoosePathString(knot);
@@ -41,7 +54,7 @@ namespace ThuyKieu.Dialogue.Editor
         }
 
         /// <summary>The variable summarised per entry in the report.</summary>
-        private static string Tracked(string entry) => entry == "chapter_3" ? "tra_loi_kieu_that" : entry == "chapter_6" ? "c6_ho_so"
+        private static string Tracked(string entry) => entry == "chapter_3" || entry == "chapter_3_lau" ? "tra_loi_kieu_that" : entry == "chapter_6" ? "c6_ho_so"
             : entry == "chapter_7" ? "c7_ket" : entry == "prologue" ? "dong_dieu" : entry == "chapter_5" ? "c5_so_khanh"
             : entry == "epilogue" ? "ket_hon" : entry == "chapter_1" ? "c1_manh_moi" : null;
 
@@ -126,7 +139,10 @@ namespace ThuyKieu.Dialogue.Editor
                                 }
                         if (lastTags.Any(t => t.StartsWith("timer:")) && !choices.Any(c => c.tags != null && c.tags.Contains("timeout")))
                             problems.Add("Timed choice without #timeout at " + story.state.currentPathString);
-                        story.ChooseChoiceIndex(random.Next(choices.Count));
+                        int pick = random.Next(choices.Count);
+                        var picked = choices[pick].tags?.FirstOrDefault(t => t.StartsWith("explore:"));
+                        if (picked != null && picked.EndsWith("_wait")) SimulateWorld(picked.Substring(8), story);
+                        story.ChooseChoiceIndex(pick);
                     }
                     if (story.canContinue || story.currentChoices.Count > 0) problems.Add(entry + " run " + run + " exceeded guard");
                     string tracked = Tracked(entry);
@@ -136,7 +152,7 @@ namespace ThuyKieu.Dialogue.Editor
                         int answer = (int)story.variablesState[tracked];
                         answers[answer] = answers.TryGetValue(answer, out int count) ? count + 1 : 1;
                     }
-                    if (entry == "chapter_4" && !(bool)story.variablesState["c4_khe_uoc_mg"]) problems.Add("chapter_4 ended without the Mã–Tú Bà contract");
+                    if ((entry == "chapter_4" || entry == "chapter_4_dem") && !(bool)story.variablesState["c4_khe_uoc_mg"]) problems.Add(entry + " ended without the Mã–Tú Bà contract");
                     maxLines = Math.Max(maxLines, lines);
                     minLines = Math.Min(minLines, lines);
                 }
@@ -191,6 +207,21 @@ namespace ThuyKieu.Dialogue.Editor
                 else ok++;
             }
             log.AppendLine("prologue → chapter 1 hand-off: " + ok + "/50 runs open Chapter 1 correctly");
+        }
+
+        /// <summary>
+        /// Stands in for what the first-person chapter worlds do between story beats (the "_wait" sentinel is the moment
+        /// the world, not a choice, moves things on): Chapter 4 gets the key ring from the sleeping Tú Bà.
+        /// </summary>
+        internal static void SimulateWorld(string waitId, Ink.Runtime.Story story)
+        {
+            var v = story.variablesState;
+            if (waitId == "c4_wait" && !(bool)v["c4_chia_khoa"])
+            {
+                v["c4_quan_sat"] = true;
+                v["c4_chia_khoa"] = true;
+                v["c4_buoc"] = 2;
+            }
         }
 
         /// <summary>Stands in for the Unity sequences that write story variables.</summary>

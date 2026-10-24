@@ -107,6 +107,8 @@ namespace ThuyKieu.Core.Editor
             Set(worldScript, "_classmates", classmates.Cast<Object>().ToArray());
             Set(worldScript, "_classDoor", room.Door);
             Set(worldScript, "_bookGlow", room.BookGlow);
+            Set(worldScript, "_lookAtHands", LookAtHandsClip());
+            Set(worldScript, "_kneelDown", KneelDownClip());
             Set(worldScript, "_wake", wake);
             Set(worldScript, "_courtyard", courtyard);
             Set(worldScript, "_father", father);
@@ -148,6 +150,10 @@ namespace ThuyKieu.Core.Editor
             Set(arrest, "_id", "arrest");
             Set(arrest, "_guards", new Object[] { officials[0], officials[1] });
             Set(arrest, "_captives", new Object[] { father, brother });
+            Set(arrest, "_draggedWalk", DraggedWalkClip());
+            Set(arrest, "_mourner", mother);
+            Set(arrest, "_mournerFall", KneelDownClip());
+            Set(arrest, "_speed", 2.2f);
             // Two lanes through the gate: the father on the east side, the boy on the west, so the pairs never cross.
             Set(arrest, "_exits", new Object[] { Point("ArrestA", new Vector3(0.9f, 0f, -10.4f), 180f, marks), Point("ArrestB", new Vector3(-0.7f, 0f, -9.6f), 180f, marks) });
             Set(arrest, "_gateways", new Object[] { Point("ArrestGateA", new Vector3(0.7f, 0f, -7f), 180f, marks), Point("ArrestGateB", new Vector3(-0.6f, 0f, -7f), 180f, marks) });
@@ -371,6 +377,59 @@ namespace ThuyKieu.Core.Editor
         /// What the main door frames from the courtyard: a shallow lit bay of the hall with the ancestral altar facing
         /// the door under a lacquered plaque, instead of a black void.
         /// </summary>
+        /// <summary>The ordinary walk the captives are hurried along with (the escort's _draggedWalk).</summary>
+        public static AnimationClip DraggedWalkClip() =>
+            AssetDatabase.LoadAllAssetsAtPath("Assets/_Game/Animations/Shared/Walking.fbx").OfType<AnimationClip>().FirstOrDefault(c => !c.name.StartsWith("__preview"));
+
+        private const string LookAtHandsPath = "Assets/_Game/Animations/ThuyKieu/TK-LookAtHands.fbx";
+
+        /// <summary>
+        /// Kiều studying her new hands, authored in ArtSource/ThuyKieu/ThuyKieu_LookAtHands.blend on the same rig as her
+        /// walk: imported as a one-shot Humanoid clip. The export is the bare skeleton (no "Armature" node above the hips),
+        /// so it builds its own avatar from that skeleton rather than copying the walk model's.
+        /// </summary>
+        public static AnimationClip LookAtHandsClip() => KieuClip(LookAtHandsPath, "TK-LookAtHands");
+
+        /// <summary>Kiều shoved to her knees (TK-KneelDown, authored in the same .blend), held on its last pose.</summary>
+        public static AnimationClip KneelDownClip() => KieuClip("Assets/_Game/Animations/ThuyKieu/TK-KneelDown.fbx", "TK-KneelDown");
+
+        private static AnimationClip KieuClip(string path, string name)
+        {
+            if (AssetImporter.GetAtPath(path) is not ModelImporter importer) return null;
+            if (importer.animationType != ModelImporterAnimationType.Human || importer.avatarSetup != ModelImporterAvatarSetup.CreateFromThisModel
+                || importer.clipAnimations.Length == 0)
+            {
+                importer.animationType = ModelImporterAnimationType.Human;
+                importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+                importer.importAnimation = true;
+                importer.clipAnimations = new ModelImporterClipAnimation[0];
+                importer.SaveAndReimport();
+                var clips = importer.defaultClipAnimations;
+                foreach (var clip in clips)
+                {
+                    clip.name = name;
+                    clip.loopTime = false;
+                    clip.lockRootRotation = clip.lockRootHeightY = clip.lockRootPositionXZ = true;
+                    clip.keepOriginalPositionY = true;
+                }
+                importer.clipAnimations = clips;
+                importer.SaveAndReimport();
+            }
+            return AssetDatabase.LoadAllAssetsAtPath(path).OfType<AnimationClip>().FirstOrDefault(c => !c.name.StartsWith("__preview"));
+        }
+
+        /// <summary>Gives the open prologue scene's world script the hands clip without rebuilding the scene.</summary>
+        [MenuItem("ThuyKieu/Prologue/Assign look-at-hands clip")]
+        public static void AssignLookAtHands()
+        {
+            var world = Object.FindFirstObjectByType<PrologueWorld>(FindObjectsInactive.Include);
+            if (world == null) return;
+            Set(world, "_lookAtHands", LookAtHandsClip());
+            Set(world, "_kneelDown", KneelDownClip());
+            UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(world.gameObject.scene);
+            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(world.gameObject.scene);
+        }
+
         public static void HallAltar(Transform root)
         {
             var dim = Material("PlHallWall", new Color(0.42f, 0.35f, 0.27f));

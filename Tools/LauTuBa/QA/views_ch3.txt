@@ -1,0 +1,104 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter03_LauTuBa
+[0.0s] NAVMESH built in 26 ms · 388 sources
+[2.3s] HITCH 1369 ms
+[2.4s] HITCH 161 ms
+[2.5s] TAG scene:Lau_Arrival
+[2.5s] TAG music:tuba_warm
+[4.6s] HITCH 187 ms
+[10.6s] HITCH 170 ms
+[10.7s] TAG sfx:gate_bar
+[10.9s] TAG scene:Lau_Explore
+[10.9s] TAG gameplay:tutorial_lau
+[11.0s] SEQUENCE tutorial_lau
+[16.4s] HITCH 221 ms
+[16.6s] HITCH 190 ms
+[16.8s] HITCH 163 ms
+[17.0s] HITCH 177 ms
+[17.2s] HITCH 167 ms
+[17.3s] HITCH 168 ms
+[17.6s] HITCH 191 ms
+[17.8s] HITCH 186 ms
+[18.0s] HITCH 161 ms
+[18.2s] HITCH 179 ms
+[18.3s] HITCH 152 ms
+[18.5s] HITCH 176 ms
+[18.7s] HITCH 168 ms
+[18.9s] HITCH 169 ms
+[19.1s] HITCH 165 ms
+[19.3s] HITCH 172 ms
+[19.5s] HITCH 185 ms
+[19.7s] HITCH 173 ms
+[19.9s] HITCH 163 ms
+[20.2s] HITCH 178 ms
+[20.4s] HITCH 193 ms
+[20.7s] HITCH 190 ms
+[20.8s] HITCH 164 ms
+[21.2s] HITCH 170 ms
+[21.4s] HITCH 182 ms
+[21.6s] HITCH 156 ms
+[21.7s] HITCH 177 ms
+[22.9s] EXPOSURE_C3day · floor share by exposure 0–0.2/0.2–0.4/0.4–0.6/0.6–0.8/0.8–1: 50204 / 45594 / 8332 / 1960 / 2735
+[22.9s] HITCH 1105 ms
+[24.7s] CHOICE 3/3: Hỏi: "Mẹ Tú là người thế nào?"
+[24.7s] HITCH 158 ms
+[32.8s] HITCH 196 ms
+[37.5s] HITCH 232 ms
+[37.7s] HITCH 174 ms
+[38.1s] HITCH 199 ms
+[38.2s] HITCH 166 ms
+[38.4s] HITCH 159 ms
+[38.7s] HITCH 157 ms
+[38.8s] HITCH 165 ms
+[39.0s] HITCH 157 ms
+[39.2s] HITCH 207 ms
+[39.6s] HITCH 155 ms
+[39.7s] HITCH 154 ms
+[39.9s] HITCH 177 ms
+[40.1s] HITCH 185 ms
+[40.4s] HITCH 173 ms
+[40.6s] HITCH 178 ms
+[40.7s] HITCH 153 ms
+[40.9s] HITCH 162 ms
+[41.3s] HITCH 175 ms
+[41.5s] HITCH 183 ms
+[41.7s] HITCH 211 ms
+[41.9s] HITCH 173 ms
+[42.3s] HITCH 178 ms
+[42.4s] HITCH 178 ms
+[42.8s] HITCH 187 ms
+[44.6s] EXPOSURE_C3dusk · floor share by exposure 0–0.2/0.2–0.4/0.4–0.6/0.6–0.8/0.8–1: 35949 / 27535 / 17433 / 14246 / 13660
+[44.6s] HITCH 1751 ms
+[44.8s] TAG gameplay:lucbat_ch3
+[44.9s] SEQUENCE lucbat_ch3
+[47.2s] LUCBAT lucbat_ch3 tile ok · tone ok · score 3
+[47.3s] TAG gameplay:kieu_voice
+[49.7s] TAG sfx:lock_rattle
+[50.7s] TAG gameplay:search_drawer
+[51.0s] TAG sfx:lock_rattle
+[51.4s] TAG gameplay:document_contract
+[51.5s] SEQUENCE document_contract
+[57.6s] HITCH 155 ms
+[65.0s] TAG scene:Lau_Overhear
+[65.0s] TAG music:none
+[65.0s] C3 overhear started
+[65.3s] TAG scene:Lau_Locked
+[65.3s] TAG sfx:lock_open
+[66.1s] TAG scene:Lau_End
+[66.1s] TAG music:none
+[66.1s] TAG sfx:latch_drop
+[66.3s] TAG gameplay:panic
+[66.5s] TAG gameplay:kieu_voice
+[68.4s] CHOICE 2/3: "Chưa xong đâu. Ta biết cái bẫy này — ta sẽ tìm đường ra."
+[68.6s] TAG music:resolve
+[70.1s] CHAPTER 3 COMPLETE · lines 81 · choices 2
+[70.1s] FRAMES Chapter03_LauTuBa · avg 333 fps · 1% low 12 fps · worst 1751 ms · 22999 frames · 640x480 · median 2.1 ms · p99 5.6 ms · under 60 fps 0.4% · load 2.9 s (first frame 2793 ms) · warm-up worst 985 ms
+   nghi_ngo = 0
+   manh_moi = 0
+   suy_luan = 0
+   gia_vo = 0
+   c3_viec = 9
+   c3_khe_uoc = True
+   c3_bi_bat = 0
+   tra_loi_kieu_that = 2
+   clues = c3_co_hong, c3_cong_khoa, c3_co_lam, c3_tu_khoa, c3_so_no, c3_van_tu, c3_nghe_len

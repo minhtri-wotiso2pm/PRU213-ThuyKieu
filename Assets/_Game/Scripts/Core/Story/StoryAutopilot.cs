@@ -60,26 +60,40 @@ namespace ThuyKieu.Core.Story
                 return index >= 0 && index + 1 < args.Length && int.TryParse(args[index + 1], out int n) ? n : 0;
             }
         }
-        private float _sceneStart;
+        private float _sceneStart, _warmupWorst, _firstFrame;
+        private int _warmupFrames;
 
         /// <summary>Frame times of this scene, skipping the first two seconds of loading and shader warm-up.</summary>
         private void Update()
         {
             if (_sceneStart <= 0f) _sceneStart = Time.realtimeSinceStartup;
-            if (Time.realtimeSinceStartup - _sceneStart <= 2f) return;
+            if (Time.realtimeSinceStartup - _sceneStart <= 2f)
+            {
+                // The first frame's delta spans the start-up and the scene load: it is reported as such, not as a hitch.
+                if (_warmupFrames++ == 0) _firstFrame = Time.unscaledDeltaTime;
+                else _warmupWorst = Mathf.Max(_warmupWorst, Time.unscaledDeltaTime);
+                return;
+            }
             _frames.Add(Time.unscaledDeltaTime);
             // A single slow frame is logged in order with the other notes, so the line before it names the cause.
             if (Time.unscaledDeltaTime > 0.15f) Note($"HITCH {Time.unscaledDeltaTime * 1000f:F0} ms");
         }
 
-        /// <summary>Average fps, the 1% low (the slowest 1% of frames) and the worst frame.</summary>
+        /// <summary>
+        /// Average fps, the 1% low (the slowest 1% of frames), the worst frame, median and 99th-percentile frame times and
+        /// the share of frames slower than 60 fps, all after the first two seconds; then the scene's load (time since the
+        /// process started when its first frame ran) and the worst frame of those first two seconds, kept apart.
+        /// </summary>
         private string FrameStats()
         {
             if (_frames.Count == 0) return "no frames";
             var sorted = _frames.OrderByDescending(f => f).ToList();
             float average = _frames.Average();
             float low = sorted.Take(Mathf.Max(1, sorted.Count / 100)).Average();
-            return $"avg {1f / average:F0} fps · 1% low {1f / low:F0} fps · worst {sorted[0] * 1000f:F0} ms · {_frames.Count} frames · {Screen.width}x{Screen.height}";
+            float median = sorted[sorted.Count / 2], p99 = sorted[Mathf.Min(sorted.Count - 1, sorted.Count / 100)];
+            float slow = 100f * _frames.Count(f => f > 1f / 60f) / _frames.Count;
+            return $"avg {1f / average:F0} fps · 1% low {1f / low:F0} fps · worst {sorted[0] * 1000f:F0} ms · {_frames.Count} frames · {Screen.width}x{Screen.height}"
+                + $" · median {median * 1000f:F1} ms · p99 {p99 * 1000f:F1} ms · under 60 fps {slow:F1}% · load {_sceneStart:F1} s (first frame {_firstFrame * 1000f:F0} ms) · warm-up worst {_warmupWorst * 1000f:F0} ms";
         }
 
         public static bool Enabled => Args.Contains(Flag);
@@ -160,6 +174,8 @@ namespace ThuyKieu.Core.Story
         private void Start()
         {
             if (!Enabled) { enabled = false; return; }
+            // QA runs are silent (editor playtests and the built game alike): sounds still play, nobody hears them.
+            AudioListener.volume = 0f;
             if (!_hooked)
             {
                 _hooked = true;
@@ -195,7 +211,7 @@ namespace ThuyKieu.Core.Story
             if (capture) { yield return new WaitForSecondsRealtime(0.7f); StoryCapture.Shot(prefix + "00_card"); }
             while (!_director.ChapterComplete)
             {
-                if (Time.realtimeSinceStartup - sceneStart > 420f) { Finish("TIMEOUT in " + SceneManager.GetActiveScene().name); yield break; }
+                if (Time.realtimeSinceStartup - sceneStart - _probeSeconds > 420f) { Finish("TIMEOUT in " + SceneManager.GetActiveScene().name); yield break; }
                 if (_director.CurrentSequence != lastSequence)
                 {
                     lastSequence = _director.CurrentSequence;
@@ -334,6 +350,12 @@ namespace ThuyKieu.Core.Story
                 yield return new WaitForSecondsRealtime(1f);
                 yield break;
             }
+            foreach (var behaviour in FindObjectsByType<MonoBehaviour>())
+                if (behaviour is IAutopilotDriver driver)
+                {
+                    yield return driver.AutopilotStep(thorough);
+                    yield break;
+                }
             var options = _director.ExploreOptions.ToList();
             var targets = FindObjectsByType<ExploreTarget>();
             var observables = FindObjectsByType<ObservableTarget>();
@@ -384,6 +406,11 @@ namespace ThuyKieu.Core.Story
 
         /// <summary>Lets gameplay sequences record events (retries inside a sequence) in the QA report.</summary>
         public static void Note(string text) { if (Enabled) Log.Add($"[{Elapsed()}] {text}"); }
+        /// <summary>A QA probe found something wrong: fails the run like an error, without logging one (the Editor may pause play on errors).</summary>
+        public static void Problem(string text) { if (!Enabled) return; Errors.Add("PROBE: " + text); Note("PROBLEM " + text); }
+        /// <summary>A long QA probe ran inside a scene: its time does not count against the scene's own time limit.</summary>
+        public static void ProbeTook(float seconds) { _probeSeconds += seconds; }
+        private static float _probeSeconds;
 
         private static string Elapsed() => (Time.realtimeSinceStartup - _startTime).ToString("0.0") + "s";
 
