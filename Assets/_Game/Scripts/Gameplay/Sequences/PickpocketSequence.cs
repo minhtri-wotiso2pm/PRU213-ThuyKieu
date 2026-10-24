@@ -35,7 +35,7 @@ namespace ThuyKieu.Gameplay.Sequences
 
             float progress = 0f, stir = 0f, phase = 0f, period = Random.Range(_breath.x, _breath.y);
             bool exhaling = false;
-            bool thorough = director.Autopilot && System.Environment.GetCommandLineArgs().Contains("-autopilotThorough"), forced = false;
+            bool thorough = director.Autopilot && StoryAutopilot.Args.Contains("-autopilotThorough"), forced = false;
             while (progress < 1f)
             {
                 phase += Time.deltaTime / period;

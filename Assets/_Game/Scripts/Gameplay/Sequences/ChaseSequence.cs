@@ -33,7 +33,7 @@ namespace ThuyKieu.Gameplay.Sequences
             var player = director.Player;
             var hud = director.Hud;
             var companion = FindAnyObjectByType<Follower>();
-            bool thorough = director.Autopilot && System.Environment.GetCommandLineArgs().Contains("-autopilotThorough");
+            bool thorough = director.Autopilot && StoryAutopilot.Args.Contains("-autopilotThorough");
             float load = (director.GetInt("c4_tien") == 2 ? 1.35f : 1f) + (companion != null && companion.isActiveAndEnabled ? 0.15f : 0f);
             _stamina.Load = load;
             hud.SetControls("WASD: chạy · Shift: chạy nước rút (tốn sức) · E: xô đổ xe hàng, thúng mủng");

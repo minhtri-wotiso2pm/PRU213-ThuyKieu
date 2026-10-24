@@ -27,7 +27,7 @@ namespace ThuyKieu.Gameplay.Sequences
             var player = director.Player;
             var hud = director.Hud;
             var companion = FindAnyObjectByType<Follower>();
-            bool thorough = director.Autopilot && System.Environment.GetCommandLineArgs().Contains("-autopilotThorough");
+            bool thorough = director.Autopilot && StoryAutopilot.Args.Contains("-autopilotThorough");
             hud.SetObjective(_objective);
             player.AllowCrouch = true;
             if (director.Audio != null) director.Audio.PlayMusic("stealth");

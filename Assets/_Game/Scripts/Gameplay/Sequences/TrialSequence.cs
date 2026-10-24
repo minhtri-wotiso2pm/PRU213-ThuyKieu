@@ -69,7 +69,7 @@ namespace ThuyKieu.Gameplay.Sequences
             _trust = _round == 1 ? StartTrust : Mathf.Max(RecoverTrust, director.GetInt("c7_long_tin") / 100f);
             // Định Mệnh ≥ 85: the magistrate has taken Tú Bà's gift. Seeing the bribe at the gate cancels it.
             if (_round == 1 && director.GetInt("dinh_menh") >= 85 && !director.GetBool("c7_biet_hoi_lo")) _trust -= BribedCost;
-            bool thorough = director.Autopilot && System.Environment.GetCommandLineArgs().Contains("-autopilotThorough");
+            bool thorough = director.Autopilot && StoryAutopilot.Args.Contains("-autopilotThorough");
             bool forcedLoss = false;
 
             var statements = Build();

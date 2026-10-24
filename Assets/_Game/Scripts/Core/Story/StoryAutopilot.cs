@@ -27,6 +27,22 @@ namespace ThuyKieu.Core.Story
         private static bool _hooked;
         private static float _startTime;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetSession()
+        {
+            Application.logMessageReceived -= CaptureError;
+            Log.Clear();
+            Errors.Clear();
+            _hooked = false;
+            _startTime = 0f;
+        }
+
+        private static void CaptureError(string message, string stack, LogType type)
+        {
+            if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
+                Errors.Add(type + ": " + message + " @ " + stack.Split('\n').FirstOrDefault());
+        }
+
         [SerializeField] private StoryDirector _director;
         private readonly List<float> _frames = new List<float>();
         private int _explores;
@@ -148,11 +164,7 @@ namespace ThuyKieu.Core.Story
             {
                 _hooked = true;
                 _startTime = Time.realtimeSinceStartup;
-                Application.logMessageReceived += (message, stack, type) =>
-                {
-                    if (type == LogType.Error || type == LogType.Exception || type == LogType.Assert)
-                        Errors.Add(type + ": " + message + " @ " + stack.Split('\n').FirstOrDefault());
-                };
+                Application.logMessageReceived += CaptureError;
                 var args = Args;
                 int seedIndex = Array.IndexOf(args, "-autopilotSeed");
                 UnityEngine.Random.InitState(seedIndex >= 0 && seedIndex + 1 < args.Length ? int.Parse(args[seedIndex + 1]) : 213);
@@ -328,8 +340,8 @@ namespace ThuyKieu.Core.Story
             var ready = options.Where(o => targets.Any(t => t.ExploreId == o.Id && t.IsRevealed) || observables.Any(t => t.ExploreId == o.Id)).ToList();
             if (thorough)
             {
-                // Leave the hub-ending option until everything else has been seen.
-                bool pending = options.Any(o => !HubEnders.Contains(o.Id));
+                // Optional objects may expire or remain hidden; they must not block the hub exit forever.
+                bool pending = ready.Any(o => !HubEnders.Contains(o.Id));
                 if (pending) ready = ready.Where(o => !HubEnders.Contains(o.Id)).ToList();
             }
             if (ready.Count == 0)

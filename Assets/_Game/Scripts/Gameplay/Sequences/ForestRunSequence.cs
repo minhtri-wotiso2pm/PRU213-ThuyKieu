@@ -44,7 +44,7 @@ namespace ThuyKieu.Gameplay.Sequences
             var hud = director.Hud;
             var companion = FindAnyObjectByType<Follower>();
             bool withCompanion = companion != null && companion.isActiveAndEnabled && director.GetBool("c4_ru_co_lam");
-            bool thorough = director.Autopilot && System.Environment.GetCommandLineArgs().Contains("-autopilotThorough");
+            bool thorough = director.Autopilot && StoryAutopilot.Args.Contains("-autopilotThorough");
             Measure();
             var beats = new List<Beat>
             {
