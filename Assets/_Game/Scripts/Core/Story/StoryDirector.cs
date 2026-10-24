@@ -431,8 +431,15 @@ namespace ThuyKieu.Core.Story
         {
             // The modern student speaks through Kiều's body (the player) in the classroom scenes.
             if (speakerId == "HocSinh") speakerId = "Kieu";
-            foreach (var actor in _actors) if (actor != null && actor.SpeakerId == speakerId) return actor;
-            return null;
+            StoryActor nearest = null;
+            float distance = float.PositiveInfinity;
+            foreach (var actor in _actors)
+            {
+                if (actor == null || actor.SpeakerId != speakerId || !actor.gameObject.activeInHierarchy) continue;
+                float candidate = Player != null ? (actor.transform.position - Player.transform.position).sqrMagnitude : 0f;
+                if (nearest == null || candidate < distance) { nearest = actor; distance = candidate; }
+            }
+            return nearest;
         }
 
         public void AddClue(string id)

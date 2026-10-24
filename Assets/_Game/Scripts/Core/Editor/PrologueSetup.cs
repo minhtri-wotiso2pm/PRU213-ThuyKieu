@@ -152,6 +152,8 @@ namespace ThuyKieu.Core.Editor
             Set(arrest, "_captives", new Object[] { father, brother });
             Set(arrest, "_draggedWalk", DraggedWalkClip());
             Set(arrest, "_mourner", mother);
+            Set(arrest, "_mournerFall", KneelDownClip());
+            Set(arrest, "_speed", 2.2f);
             // Two lanes through the gate: the father on the east side, the boy on the west, so the pairs never cross.
             Set(arrest, "_exits", new Object[] { Point("ArrestA", new Vector3(0.9f, 0f, -10.4f), 180f, marks), Point("ArrestB", new Vector3(-0.7f, 0f, -9.6f), 180f, marks) });
             Set(arrest, "_gateways", new Object[] { Point("ArrestGateA", new Vector3(0.7f, 0f, -7f), 180f, marks), Point("ArrestGateB", new Vector3(-0.6f, 0f, -7f), 180f, marks) });

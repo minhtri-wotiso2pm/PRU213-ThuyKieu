@@ -4,15 +4,18 @@ using ThuyKieu.Core.Story;
 using ThuyKieu.Gameplay.Chapters;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 
 namespace ThuyKieu.Gameplay.Sequences
 {
     /// <summary>
     /// Guards seize their captives and march them off as one visible escort: the two captives stay in the middle and a
     /// guard grips each outside arm. The captives do not go quietly: the first balks and looks back at the house until
-    /// he is yanked on, the second wrenches from side to side. Whoever is left behind (the mother) runs after them,
-    /// reaching for her husband, until a guard shoves her off near the gate and she sinks there weeping. Whoever stands
-    /// in the lane (the player) is pushed aside.
+    /// he is yanked on, the second wrenches from side to side. Whoever is left behind (the mother) runs after them, and
+    /// while the father balks she catches up and clutches the sleeve of the guard holding him; the escort waits on that
+    /// struggle until the guard tears free and shoves her down, and only then is the father yanked on. (If she cannot
+    /// reach them in time she is shoved off near the gate instead.) Whoever stands in the lane (the player) is pushed aside.
     /// </summary>
     public class EscortSequence : StorySequence
     {
@@ -22,14 +25,19 @@ namespace ThuyKieu.Gameplay.Sequences
         [SerializeField] private Transform[] _exits;
         [Tooltip("The opening each pair passes through (the gate), one per pair so the lanes stay apart.")]
         [SerializeField] private Transform[] _gateways;
-        [SerializeField] private float _speed = 1.3f;
+        [SerializeField] private float _speed = 2.2f;
         [Tooltip("Walk the captives use while marched along: their own (an old man's shuffle) cannot keep the guards' pace.")]
         [SerializeField] private AnimationClip _draggedWalk;
         [Tooltip("Family member left behind, who runs after the escort (optional).")]
         [SerializeField] private StoryActor _mourner;
+        [Tooltip("One-shot fall used when the pursuing family member is shoved near the gate.")]
+        [SerializeField] private AnimationClip _mournerFall;
 
         /// <summary>The family member who runs after the escort; the chapter can name her at runtime.</summary>
         public StoryActor Mourner { get => _mourner; set => _mourner = value; }
+
+        /// <summary>The father has stopped and turned back to his house: the moment the family can still reach him.</summary>
+        public event System.Action Balked;
         [SerializeField] private string _sfx = "stumble";
         [SerializeField] private float _shake = 0.15f;
         [SerializeField] private LayerMask _ground = 1 << 8;
@@ -37,6 +45,7 @@ namespace ThuyKieu.Gameplay.Sequences
         private const float CaptiveSpacing = 0.42f;
         private const float GuardSpacing = 1.05f;
         private const float GuardStepBack = -0.12f;
+        private PlayableGraph _mournerFallGraph;
 
         public override IEnumerator Run(StoryDirector director)
         {
@@ -65,7 +74,7 @@ namespace ThuyKieu.Gameplay.Sequences
                 FormationPoint(start, facing, GuardSpacing, GuardStepBack) };
             Quaternion[] approachFacing = { Facing(guardFrom[0], guardTo[0]), Facing(guardFrom[1], guardTo[1]) };
             float approachDuration = fast ? 0f : Mathf.Max(Vector3.Distance(guardFrom[0], guardTo[0]),
-                Vector3.Distance(guardFrom[1], guardTo[1])) / 2f;
+                Vector3.Distance(guardFrom[1], guardTo[1])) / 3.6f;
             for (int i = 0; i < 2; i++) { Hold(_guards[i], true); _guards[i].SetScriptedSpeed(2f); }
             for (float t = 0f; t < approachDuration; t += Time.deltaTime)
             {
@@ -115,15 +124,25 @@ namespace ThuyKieu.Gameplay.Sequences
             for (int i = 0; i < formation.Length; i++) cadence[i] = new Cadence(formation[i]);
             var grips = new Grip[2];
             for (int i = 0; i < 2; i++) grips[i] = new Grip(_guards[i], _captives[i], i == 0 ? -1f : 1f);
-            var mourner = fast || _mourner == null || !_mourner.isActiveAndEnabled ? null : new Chaser(_mourner, _captives[0]);
+            var mourner = fast || _mourner == null || !_mourner.isActiveAndEnabled
+                ? null
+                : new Chaser(this, _mourner, _captives[0], _mournerFall);
 
             float walked = 0f, clock = 0f;
             float length = Length(lane);
             Vector3 home = start;
-            bool yanked = false, thrashed = false, shoved = false;
+            bool yanked = false, thrashed = false, shoved = false, balked = false;
+            Coroutine struggle = null;
+            float waitedForMourner = 0f;
             while (walked < length)
             {
-                clock += Time.deltaTime;
+                // While the mother clings to the guard's sleeve (or is a few steps from it) the balk is held: the father
+                // keeps looking back, and the yank only comes once she has been thrown off.
+                bool clinging = struggle != null && !mourner.Down;
+                bool arriving = mourner != null && !shoved && _balkStart >= 0f && _yankStart < 0f && waitedForMourner < 2f
+                    && Flat(_mourner.transform.position - _guards[0].transform.position).magnitude < 4f;
+                if (clinging || (arriving && clock - _balkStart > BalkDuration * 0.8f)) waitedForMourner += Time.deltaTime;
+                else clock += Time.deltaTime;
                 float progress = walked / length;
                 // The pace: steady, stopped dead while the father balks, a jerk forward when he is yanked, a crawl
                 // while the boy fights them.
@@ -131,7 +150,11 @@ namespace ThuyKieu.Gameplay.Sequences
                 float balk = fast ? 0f : Window(progress, clock, ref _balkStart, 0.2f, BalkDuration);
                 float yank = fast ? 0f : Window(progress, clock, ref _yankStart, 0.2f, BalkDuration, YankDuration);
                 float thrash = fast ? 0f : Window(progress, clock, ref _thrashStart, 0.5f, ThrashDuration);
-                if (balk > 0f) pace = 0f;
+                if (balk > 0f)
+                {
+                    pace = 0f;
+                    if (!balked) { balked = true; Balked?.Invoke(); }
+                }
                 else if (yank > 0f) pace = _speed * 2.1f;
                 else if (thrash > 0f) pace = _speed * 0.3f;
                 if (yank > 0f && !yanked)
@@ -166,6 +189,10 @@ namespace ThuyKieu.Gameplay.Sequences
                     if (formation[i] == _captives[1] || formation[i] == _guards[1]) point += side * wrench;
                     if (formation[i] == _captives[1]) turn = twist * facing;
                     if (formation[i] == _captives[0]) turn = lookBack * facing;
+                    // A guard turned round to the mother keeps his own facing, then swings back to the march, not snaps.
+                    if (mourner != null && formation[i] == mourner.TurnedGuard) turn = formation[i].transform.rotation;
+                    else if (formation[i] == _guards[0] || formation[i] == _guards[1])
+                        turn = Quaternion.Slerp(formation[i].transform.rotation, turn, 1f - Mathf.Exp(-8f * Time.deltaTime));
                     Set(formation[i], point, turn);
                     bool still = pace < 0.05f;
                     formation[i].SetScriptedSpeed(still ? 0f : WalkBlendSpeed);
@@ -180,12 +207,20 @@ namespace ThuyKieu.Gameplay.Sequences
 
                 if (mourner != null)
                 {
-                    if (!shoved && progress > 0.72f)
+                    // While he balks she runs for the guard holding him, behind and outside his arm.
+                    bool forGuard = balk > 0f;
+                    Vector3 sleeve = _guards[0].transform.position - facing * Vector3.forward * 0.55f - side * 0.3f;
+                    bool reached = forGuard && Flat(_mourner.transform.position - _guards[0].transform.position).magnitude < 0.95f;
+                    if (!shoved && (reached || progress > 0.64f))
                     {
                         shoved = true;
-                        StartCoroutine(mourner.Shoved(director, -(facing * Vector3.forward), _guards[0]));
+                        StoryActor blocker = reached || Vector3.SqrMagnitude(_guards[0].transform.position - _mourner.transform.position)
+                            <= Vector3.SqrMagnitude(_guards[1].transform.position - _mourner.transform.position)
+                            ? _guards[0] : _guards[1];
+                        struggle = StartCoroutine(mourner.Shoved(director, -(facing * Vector3.forward), blocker));
                     }
-                    if (!shoved) mourner.Follow(at - facing * Vector3.forward * 1.5f + side * 0.35f, _captives[0]);
+                    if (!shoved) mourner.Follow(forGuard ? sleeve : at - facing * Vector3.forward * 1.5f + side * 0.35f,
+                        forGuard ? _guards[0] : _captives[0]);
                 }
                 if (walked < length) yield return null;
             }
@@ -271,13 +306,23 @@ namespace ThuyKieu.Gameplay.Sequences
         /// <summary>The one left behind: runs after the escort reaching for her husband, until she is shoved away.</summary>
         private sealed class Chaser
         {
+            private readonly EscortSequence _owner;
             private readonly StoryActor _actor;
             private readonly HandReachPose _reach;
+            private readonly AnimationClip _fall;
             private Vector3 _last;
 
-            public Chaser(StoryActor actor, StoryActor reachFor)
+            /// <summary>True once the guard has torn free and she has fallen.</summary>
+            public bool Down { get; private set; }
+
+            /// <summary>The guard who has turned round to throw her off: the formation leaves his facing to him meanwhile.</summary>
+            public StoryActor TurnedGuard { get; private set; }
+
+            public Chaser(EscortSequence owner, StoryActor actor, StoryActor reachFor, AnimationClip fall)
             {
+                _owner = owner;
                 _actor = actor;
+                _fall = fall;
                 Hold(actor, true);
                 _actor.ResetToLocomotion();
                 _last = actor.transform.position;
@@ -294,11 +339,12 @@ namespace ThuyKieu.Gameplay.Sequences
                 Vector3 at = _actor.transform.position;
                 Vector3 to = Flat(behind - at);
                 float run = Mathf.Min(to.magnitude * 3f, 3.4f);
-                Vector3 next = at + (to.sqrMagnitude > 0.0001f ? to.normalized : Vector3.zero) * run * Time.deltaTime;
+                Vector3 next = at + Around(at, (to.sqrMagnitude > 0.0001f ? to.normalized : Vector3.zero) * run * Time.deltaTime, behind);
                 Vector3 look = Flat(reachFor.transform.position - next);
                 Quaternion facing = look.sqrMagnitude > 0.001f ? Quaternion.LookRotation(look) : _actor.transform.rotation;
-                if (Physics.Raycast(next + Vector3.up * 1.2f, Vector3.down, out RaycastHit hit, 3f, 1 << 8, QueryTriggerInteraction.Ignore))
-                    next.y = hit.point.y;
+                if (Physics.Raycast(next + Vector3.up * 1.2f, Vector3.down, out RaycastHit hit, 3f, 1 << 8, QueryTriggerInteraction.Ignore)
+                    && hit.point.y <= at.y + 0.12f)
+                    next.y = hit.point.y; // Accept steps down to the yard, never a tabletop above her feet.
                 _actor.transform.SetPositionAndRotation(next, facing);
                 float speed = Flat(next - _last).magnitude / Mathf.Max(Time.deltaTime, 0.001f);
                 _last = next;
@@ -312,28 +358,191 @@ namespace ThuyKieu.Gameplay.Sequences
                 _reach.Weight = Mathf.MoveTowards(_reach.Weight, near, Time.deltaTime * 2.5f);
             }
 
+            /// <summary>
+            /// Her step this frame, steered round furniture: anything standing at body height across her way (the veranda
+            /// table) turns the step along its side, round whichever end brings her nearer the escort she is chasing.
+            /// Floors, low steps and people do not stop her.
+            /// </summary>
+            private Vector3 Around(Vector3 at, Vector3 step, Vector3 target)
+            {
+                if (step.sqrMagnitude < 0.000001f) return step;
+                Vector3 bottom = at + Vector3.up * 0.35f, top = at + Vector3.up * 1.3f;
+                float distance = step.magnitude + 0.2f;
+                foreach (var hit in Physics.CapsuleCastAll(bottom, top, 0.22f, step.normalized, distance, ~0, QueryTriggerInteraction.Ignore))
+                {
+                    if (hit.normal.y > 0.6f || hit.collider.GetComponentInParent<StoryActor>() != null) continue;
+                    if (hit.distance <= 0f && hit.point == Vector3.zero) continue; // already overlapping: let her walk out
+                    // Slide along the obstacle towards whichever of its ends is nearer the escort, not round the back.
+                    Vector3 along = Vector3.Cross(Vector3.up, Flat(hit.normal).normalized);
+                    Bounds block = hit.collider.bounds;
+                    Vector3 endA = block.center + along * block.extents.magnitude, endB = block.center - along * block.extents.magnitude;
+                    if (Flat(endB - target).sqrMagnitude < Flat(endA - target).sqrMagnitude) along = -along;
+                    return along * step.magnitude;
+                }
+                return step;
+            }
+
             /// <summary>A guard turns and shoves her back; she staggers and stays there weeping.</summary>
             public IEnumerator Shoved(StoryDirector director, Vector3 away, StoryActor guard)
             {
-                if (director.Audio != null) director.Audio.PlaySfx("stumble");
-                if (director.Fx != null) director.Fx.Shake(0.2f, 0.35f);
-                Vector3 from = _actor.transform.position;
-                Vector3 to = from + Flat(away).normalized * 1.1f;
-                Quaternion facing = _actor.transform.rotation;
-                _actor.SetScriptedSpeed(0f);
-                for (float t = 0f; t < 0.4f; t += Time.deltaTime)
+                var guardAnimator = guard.GetComponentInChildren<Animator>();
+                // She takes hold of whichever of his forearms is nearer her, halfway between elbow and wrist.
+                bool leftArm = true;
+                Transform elbow = null, wrist = null;
+                if (guardAnimator != null && guardAnimator.isHuman)
                 {
-                    float k = 1f - (1f - t / 0.4f) * (1f - t / 0.4f);
-                    _actor.transform.SetPositionAndRotation(Vector3.Lerp(from, to, k), facing);
-                    if (_reach != null) { _reach.Lean = Mathf.Lerp(10f, -14f, k); _reach.Weight = 1f - k; }
+                    Transform leftElbow = guardAnimator.GetBoneTransform(HumanBodyBones.LeftLowerArm);
+                    Transform rightElbow = guardAnimator.GetBoneTransform(HumanBodyBones.RightLowerArm);
+                    leftArm = rightElbow == null || (leftElbow != null && (leftElbow.position - _actor.transform.position).sqrMagnitude
+                        <= (rightElbow.position - _actor.transform.position).sqrMagnitude);
+                    elbow = leftArm ? leftElbow : rightElbow;
+                    wrist = guardAnimator.GetBoneTransform(leftArm ? HumanBodyBones.LeftHand : HumanBodyBones.RightHand);
+                }
+                Vector3 Sleeve() => elbow != null && wrist != null ? Vector3.Lerp(elbow.position, wrist.position, 0.5f)
+                    : guard.transform.position + Vector3.up * 1.05f;
+                Vector3 grab = Sleeve();
+                var mineAnimator = _actor.GetComponentInChildren<Animator>();
+                Transform shoulder = mineAnimator != null && mineAnimator.isHuman ? mineAnimator.GetBoneTransform(HumanBodyBones.RightUpperArm) : null;
+
+                // She catches him instead of stopping for no reason: she steps right up to him, one hand closes on the
+                // guard's sleeve and her body keeps leaning after the departing escort until he tears his arm free.
+                // She clings long enough to be seen: the escort holds still for it.
+                for (float t = 0f; t < 1.1f; t += Time.deltaTime)
+                {
+                    grab = Sleeve();
+                    Quaternion grabFacing = Facing(_actor.transform.position, grab);
+                    _actor.transform.rotation = Quaternion.Slerp(_actor.transform.rotation, grabFacing,
+                        1f - Mathf.Exp(-12f * Time.deltaTime));
+                    // Her arm is only so long: close in until her shoulder is a forearm's reach from his sleeve.
+                    if (shoulder != null)
+                    {
+                        Vector3 gap = Flat(grab - shoulder.position);
+                        float spare = gap.magnitude - 0.42f;
+                        if (spare > 0.01f)
+                            _actor.transform.position += gap.normalized * Mathf.Min(spare, Time.deltaTime * 2.5f);
+                    }
+                    if (_reach != null)
+                    {
+                        _reach.SetTargets(null, grab, grab + Vector3.up * 0.12f);
+                        _reach.Lean = 13f;
+                        _reach.Weight = Mathf.MoveTowards(_reach.Weight, 1f, Time.deltaTime * 8f);
+                    }
                     yield return null;
                 }
+
+                // He feels the drag on his arm, turns round to her (his other hand still on her husband), glares, and
+                // flings his arm up and out of her grip.
+                var guardReach = guard.gameObject.AddComponent<HandReachPose>();
+                guardReach.Initialize(guardAnimator);
+                TurnedGuard = guard;
+                Quaternion guardFrom = guard.transform.rotation;
+                Quaternion guardTo = Quaternion.Slerp(guardFrom, Facing(guard.transform.position, _actor.transform.position), 0.75f);
+                Vector3 herFace = _actor.HeadPosition;
+                for (float t = 0f; t < 0.95f; t += Time.deltaTime)
+                {
+                    guard.transform.rotation = Quaternion.Slerp(guardFrom, guardTo, Mathf.SmoothStep(0f, 1f, t / 0.35f));
+                    guardReach.SetTargets(null, null, herFace);
+                    guardReach.Weight = Mathf.Min(1f, t / 0.25f);
+                    if (t >= 0.35f && t - Time.deltaTime < 0.35f) director.Hud.ShowBark("QuanSai", "Buông ra!", 1.6f);
+                    grab = Sleeve();
+                    if (_reach != null) _reach.SetTargets(null, grab, grab + Vector3.up * 0.12f);
+                    yield return null;
+                }
+                Vector3 flingFrom = Sleeve();
+                Vector3 outward = Flat(_actor.transform.position - guard.transform.position).normalized;
+                Vector3 flingTo = flingFrom + outward * 0.25f + Vector3.up * 0.35f;
+                for (float t = 0f; t < 0.16f; t += Time.deltaTime)
+                {
+                    float k = Mathf.SmoothStep(0f, 1f, t / 0.16f);
+                    Vector3 fling = Vector3.Lerp(flingFrom, flingTo, k);
+                    // The arm she held is the one torn out of her hand.
+                    if (leftArm) guardReach.SetTargets(fling, null, herFace); else guardReach.SetTargets(null, fling, herFace);
+                    // Her hand follows for a moment before it is torn loose.
+                    if (_reach != null)
+                    {
+                        _reach.SetTargets(null, Vector3.Lerp(flingFrom, fling, 0.5f), null);
+                        _reach.Lean = Mathf.Lerp(13f, 20f, k);
+                    }
+                    yield return null;
+                }
+                if (director.Audio != null) director.Audio.PlaySfx("stumble");
+                if (director.Fx != null) director.Fx.Shake(0.2f, 0.35f);
+                Down = true;
+                Vector3 from = _actor.transform.position;
+                Vector3 to = from + Flat(away).normalized * 0.45f;
+                Quaternion facing = _actor.transform.rotation;
+                _actor.SetScriptedSpeed(0f);
+                if (_fall != null)
+                {
+                    var animator = _actor.GetComponentInChildren<Animator>();
+                    if (animator != null)
+                    {
+                        _owner.ReleaseMournerPose();
+                        _owner._mournerFallGraph = PlayableGraph.Create("MournerFall");
+                        _owner._mournerFallGraph.SetTimeUpdateMode(DirectorUpdateMode.GameTime);
+                        var clip = AnimationClipPlayable.Create(_owner._mournerFallGraph, _fall);
+                        clip.SetDuration(_fall.length);
+                        AnimationPlayableOutput.Create(_owner._mournerFallGraph, "MournerFall", animator).SetSourcePlayable(clip);
+                        _owner._mournerFallGraph.Play();
+                        float duration = Mathf.Min(0.62f, _fall.length - 0.05f);
+                        for (float t = 0f; t < duration; t += Time.deltaTime)
+                        {
+                            float k = Mathf.SmoothStep(0f, 1f, t / duration);
+                            _actor.transform.SetPositionAndRotation(Vector3.Lerp(from, to, k), facing);
+                            if (_reach != null) { _reach.Lean = Mathf.Lerp(20f, -8f, k); _reach.Weight = 1f - k; }
+                            guardReach.Weight = 1f - k;
+                            yield return null;
+                        }
+                        _actor.transform.SetPositionAndRotation(to, facing);
+                        clip.SetTime(duration);
+                        clip.Pause();
+                    }
+                }
                 if (_reach != null) Object.Destroy(_reach);
-                _actor.SetTalking(true, StoryDirector.Gesture("crying"));
-                Hold(_actor, false);
-                _actor.SetScriptedSpeed(null);
+                Object.Destroy(guardReach);
+                TurnedGuard = null;
+                _owner.StartCoroutine(_owner.Grieve(_actor));
             }
         }
+
+        private HandReachPose _mournerGrief;
+
+        /// <summary>
+        /// Down on her knees she does not stay upright (that read as a woman awaiting the sword): she folds forward over
+        /// her knees, one hand on the ground, the other over her face, her shoulders catching with each sob. Laid out
+        /// from her own body every frame, so it holds wherever she is put (she is moved for the rain).
+        /// </summary>
+        private IEnumerator Grieve(StoryActor actor)
+        {
+            var animator = actor.GetComponentInChildren<Animator>();
+            if (animator == null || !animator.isHuman) yield break;
+            Transform head = animator.GetBoneTransform(HumanBodyBones.Head);
+            if (_mournerGrief != null) Destroy(_mournerGrief);
+            _mournerGrief = actor.gameObject.AddComponent<HandReachPose>();
+            _mournerGrief.Initialize(animator);
+            _mournerGrief.LeftCurl = 10f;
+            _mournerGrief.RightCurl = 14f;
+            for (float t = 0f; _mournerFallGraph.IsValid() && _mournerGrief != null; t += Time.deltaTime)
+            {
+                Transform body = actor.transform;
+                float sob = Mathf.Max(0f, Mathf.Sin(t * 4.2f)) * (0.5f + 0.5f * Mathf.Max(0f, Mathf.Sin(t * 0.6f)));
+                Vector3 ground = body.position + body.forward * 0.42f - body.right * 0.2f + Vector3.up * 0.05f;
+                Vector3 face = head.position - Vector3.up * 0.12f + body.forward * 0.08f + body.right * 0.03f;
+                _mournerGrief.SetHandAim(body.forward, Vector3.down, (Vector3.up - body.right * 0.3f).normalized, -body.forward);
+                _mournerGrief.SetTargets(ground, face, body.position + body.forward * 0.9f);
+                _mournerGrief.Lean = 34f + sob * 5f;
+                _mournerGrief.Weight = Mathf.Min(1f, t / 0.5f);
+                yield return null;
+            }
+        }
+
+        private void ReleaseMournerPose()
+        {
+            if (_mournerGrief != null) Destroy(_mournerGrief);
+            if (_mournerFallGraph.IsValid()) _mournerFallGraph.Destroy();
+        }
+
+        private void OnDisable() => ReleaseMournerPose();
 
         private const float WalkBlendSpeed = 1.6f;
 
