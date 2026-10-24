@@ -19,6 +19,8 @@ namespace ThuyKieu.Presentation
         [SerializeField, Range(0, 1)] private float _ambienceVolume = 0.35f;
         [SerializeField, Range(0, 1)] private float _sfxVolume = 0.8f;
         [SerializeField] private Override[] _overrides;
+        [Tooltip("Recorded Foley for this scene (several takes per id); its ids win over the shared bank.")]
+        [SerializeField] private FoleyBank _foley;
 
         private AudioSource _musicA, _musicB, _ambience, _sfx, _steps;
         private AudioSource _activeMusic;
@@ -50,11 +52,23 @@ namespace ThuyKieu.Presentation
             return source;
         }
 
-        private AudioClip Get(string kind, string id)
+        private AudioClip Get(string kind, string id) => Get(kind, id, out _);
+
+        /// <summary>The clip for an id; <paramref name="gain"/> is the scene Foley group's level when the clip comes from it.</summary>
+        private AudioClip Get(string kind, string id, out float gain)
         {
+            gain = 1f;
             if (_overrides != null) foreach (var entry in _overrides) if (entry.Id == id && entry.Clip != null) return entry.Clip;
+            if (kind == AudioBank.Sfx && _foley != null)
+            {
+                var take = _foley.Pick(id, out float level);
+                if (take != null) { gain = level; return take; }
+            }
             return AudioBank.Get(kind, id);
         }
+
+        /// <summary>Whether this scene has recorded takes for an effect id (callers may ask for a finer id first).</summary>
+        public bool HasFoley(string id) => _foley != null && _foley.Has(id);
 
         /// <summary>The music id last asked for, so a passing moment can hand the score back afterwards.</summary>
         public string CurrentMusic => _musicId;
@@ -81,14 +95,81 @@ namespace ThuyKieu.Presentation
 
         public void PlaySfx(string id, float volume = 1f)
         {
-            var clip = Get(AudioBank.Sfx, id);
-            if (clip != null) _sfx.PlayOneShot(clip, volume * _sfxVolume * GameSettings.Effects);
+            var clip = Get(AudioBank.Sfx, id, out float gain);
+            if (clip != null) _sfx.PlayOneShot(clip, volume * gain * _sfxVolume * GameSettings.Effects);
         }
+
+        private readonly System.Collections.Generic.List<AudioSource> _spatial = new System.Collections.Generic.List<AudioSource>();
+
+        /// <summary>
+        /// An effect heard from a place in the world (a guard's step behind a wall, a door down the corridor): panned and
+        /// fading with distance, so the player can tell where danger is by ear.
+        /// </summary>
+        public AudioSource PlayAt(string id, Vector3 position, float volume = 1f, float maxDistance = 18f, float pitch = 1f)
+        {
+            var clip = Get(AudioBank.Sfx, id, out float gain);
+            if (clip == null) return null;
+            volume *= gain;
+            AudioSource source = null;
+            foreach (var candidate in _spatial) if (!candidate.isPlaying) { source = candidate; break; }
+            if (source == null)
+            {
+                if (_spatial.Count >= 24) source = _spatial[0];
+                else
+                {
+                    source = Source("Spatial", false);
+                    Spatialise(source);
+                    _spatial.Add(source);
+                }
+            }
+            source.transform.position = position;
+            source.maxDistance = maxDistance;
+            source.minDistance = 1f;
+            source.pitch = pitch;
+            source.clip = clip;
+            source.volume = Mathf.Clamp01(volume * _sfxVolume * GameSettings.Effects);
+            source.Play();
+            return source;
+        }
+
+        private static void Spatialise(AudioSource source)
+        {
+            source.spatialBlend = 1f;
+            source.rolloffMode = AudioRolloffMode.Custom;
+            source.dopplerLevel = 0f;
+            source.spread = 40f;
+            // Soft near, gentle fall-off: footsteps across the yard should still be readable.
+            source.SetCustomCurve(AudioSourceCurveType.CustomRolloff, new AnimationCurve(
+                new Keyframe(0f, 1f), new Keyframe(0.15f, 0.85f), new Keyframe(0.5f, 0.32f), new Keyframe(1f, 0f)));
+        }
+
+        /// <summary>
+        /// A spatial source owned by the caller under <paramref name="parent"/> (a sleeper's breath, which must stop the
+        /// moment she wakes rather than ring on in the shared pool), with the same fall-off as <see cref="PlayAt"/>.
+        /// </summary>
+        public AudioSource OwnSource(Transform parent, string name, float maxDistance)
+        {
+            var go = new GameObject(name);
+            go.transform.SetParent(parent, false);
+            var source = go.AddComponent<AudioSource>();
+            source.playOnAwake = false;
+            source.loop = false;
+            Spatialise(source);
+            source.minDistance = 1f;
+            source.maxDistance = maxDistance;
+            return source;
+        }
+
+        /// <summary>The effect clip for an id (scene Foley first) and its group level, for callers with their own source.</summary>
+        public AudioClip Effect(string id, out float gain) => Get(AudioBank.Sfx, id, out gain);
+
+        /// <summary>The effects level (scene mix × player setting) that <see cref="PlayAt"/> applies.</summary>
+        public float EffectsLevel => _sfxVolume * GameSettings.Effects;
 
         /// <summary>Lowers music (e.g. while eavesdropping) without stopping it.</summary>
         public void Duck(float amount) { _duck = Mathf.Clamp01(amount); }
 
-        /// <summary>Lowers the ambience bed (e.g. while the world holds its breath) without stopping it.</summary>
+        /// <summary>Lowers the ambience bed (the rain going quiet before something happens). 1 = normal.</summary>
         public void DuckAmbience(float amount) { _ambienceDuck = Mathf.Clamp01(amount); }
 
         private void Update()
@@ -104,7 +185,8 @@ namespace ThuyKieu.Presentation
 
         private void Footsteps()
         {
-            if (_player == null || _player.ControlLocked || _player.CurrentSpeed < 0.1f) { _stepDistance = 0f; return; }
+            // First-person chapters play their own steps, by surface, with the noise they make.
+            if (_player == null || _player.IsFirstPerson || _player.ControlLocked || _player.CurrentSpeed < 0.1f) { _stepDistance = 0f; return; }
             _stepDistance += _player.CurrentSpeed * Time.deltaTime;
             float stride = _player.IsRunning ? 1.5f : _player.IsCrouching ? 0.75f : 0.95f;
             if (_stepDistance < stride) return;

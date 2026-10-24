@@ -1,0 +1,25 @@
+== Ch3 Assets/_Game/Scenes/Chapter03_LauTuBa.unity
+  StoryAudio StoryAudio: Foley bank Assets/_Game/Audio/Ch4Foley/Ch3FoleyBank.asset (step_wood, step_wood.crouch, step_wood.walk, step_wood.run, step_stone, step_stone.crouch, step_stone.walk, step_stone.run, step_wet, step_wet.crouch, step_wet.walk, step_wet.run, step_mud, step_mud.crouch, step_mud.walk, step_mud.run, step_earth, step_earth.crouch, step_earth.walk, step_earth.run, step_mat, step_mat.crouch, step_mat.walk, step_mat.run, door_creak_soft, door_fast, door_slam, slide_slam, slide_fast, latch_drop, bolt_fast, lock_open, key_turn) · player for old steps True
+  FirstPersonFootsteps on ThuyKieu: _audio=StoryAudio _crouchRadius=1.5 _walkRadius=4 _runRadius=9 _crouchStride=0.55 _walkStride=0.8 _runStride=1.35 _floor=256
+  ActorFootsteps: 2
+  SurfaceTag Wood: 10 · HongRoom, Store, Corridor, Office, LamRoom, VerandaSouth, KieuRoom, TuBaRoom, VerandaWest, VerandaEast
+  SurfaceTag Stone: 13 · Step, GateApron, Hall, TreeBed
+  SurfaceTag WetStone: 1 · Courtyard
+  SurfaceTag Earth: 1 · Kitchen
+  SurfaceTag Mat: 1 · GuestRoom
+  SurfaceTag Mat (covering): 6 · ReceivingRug (carries ×1.1), StageMat (carries ×1), ReedMat (carries ×1), Runner (carries ×1.1), Rug (carries ×1)
+  SurfaceTag Mud: 1 · Alley (carries ×1.5)
+  HouseDoor: 11
+== Ch4 Assets/_Game/Scenes/Chapter04_LauTuBaDem.unity
+  StoryAudio StoryAudio: Foley bank Assets/_Game/Audio/Ch4Foley/Ch4FoleyBank.asset (step_wood, step_wood.crouch, step_wood.walk, step_wood.run, step_stone, step_stone.crouch, step_stone.walk, step_stone.run, step_wet, step_wet.crouch, step_wet.walk, step_wet.run, step_mud, step_mud.crouch, step_mud.walk, step_mud.run, step_earth, step_earth.crouch, step_earth.walk, step_earth.run, step_mat, step_mat.crouch, step_mat.walk, step_mat.run, door_creak_soft, door_fast, door_slam, slide_slam, slide_fast, latch_drop, bolt_fast, lock_open, key_turn, snore_deep, snore_out) · player for old steps True
+  FirstPersonFootsteps on ThuyKieu: _audio=StoryAudio _crouchRadius=1.5 _walkRadius=4 _runRadius=9 _crouchStride=0.55 _walkStride=0.8 _runStride=1.35 _floor=256
+  ActorFootsteps: 3
+  SurfaceTag Wood: 10 · Store, TuBaRoom, Corridor, VerandaSouth, KieuRoom, HongRoom, VerandaEast, Office, VerandaWest, LamRoom
+  SurfaceTag Stone: 13 · Step, GateApron, Hall, TreeBed
+  SurfaceTag WetStone: 1 · Courtyard
+  SurfaceTag Earth: 1 · Kitchen
+  SurfaceTag Mat (covering): 6 · ReceivingRug, Rug, ReedMat, StageMat, Runner
+  SurfaceTag Mat: 1 · GuestRoom
+  SurfaceTag Mud: 1 · Alley
+  HouseDoor: 11
+== Door settings that differ (Ch3 | Ch4)

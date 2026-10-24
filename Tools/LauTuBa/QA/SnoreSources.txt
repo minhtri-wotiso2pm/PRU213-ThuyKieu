@@ -1,0 +1,145 @@
+Snore sources: measured, not listened to.
+Timeline: one character per 100 ms, level above the file's quiet floor in 3 dB steps (. = floor, 9 = 27 dB or more).
+
+Palatal_snoring_1.ogg · 1 ch · 8000 Hz · 118.3 s · floor -39.2 dB · loudest 50 ms -8.1 dB
+     0.0 s  .15677776661...1.11..................11.6777888751....11..1...............1.667887788873............
+    10.0 s  ..................67777899988731....1..11.................1..5788888888741..........................
+    20.0 s  ..167778899999611...1.11............1..1567889998863...11111...............1..678889998873....1111..
+    30.0 s  .............11..67889999999721..111..1..................6778999999862...111111..................678
+    40.0 s  999998841....11...................6667899998761.....1.......................168899999841..111.......
+    50.0 s  ................68899999873....111.................6678999899851....1.1.................167789989998
+    60.0 s  52...1.1.....................1566788988852....11.1.....................67799999973....1.............
+    70.0 s  .......68988898973..........................678988998961......1.....................677888899841....
+    80.0 s  ..................1...788999999898862...11.1...................188999987741...1....................6
+    90.0 s  88889977884....1.....................788989999973..1...1...................48999999988821...11......
+   100.0 s  ..............279999999888721..1.111..................7899988778711........................899988887
+   110.0 s  7731......1................8999998888751...................46799999988873...1..1...
+  event 0.25–1.05 s · 0.80 s · peak +24 dB · then quiet 2.95 s · low share 0.76
+  event 4.00–4.85 s · 0.85 s · peak +26 dB · then quiet 2.75 s · low share 0.69
+  event 7.60–8.70 s · 1.10 s · peak +27 dB · then quiet 3.15 s · low share 0.68
+  event 11.85–13.00 s · 1.15 s · peak +28 dB · then quiet 3.15 s · low share 0.68
+  event 16.15–17.20 s · 1.05 s · peak +27 dB · then quiet 3.10 s · low share 0.68
+  event 20.30–21.45 s · 1.15 s · peak +30 dB · then quiet 2.60 s · low share 0.69
+  event 24.05–25.10 s · 1.05 s · peak +29 dB · then quiet 2.75 s · low share 0.68
+  event 27.85–28.90 s · 1.05 s · peak +29 dB · then quiet 2.80 s · low share 0.69
+  event 31.70–32.85 s · 1.15 s · peak +30 dB · then quiet 2.85 s · low share 0.68
+  event 35.70–36.85 s · 1.15 s · peak +31 dB · then quiet 2.90 s · low share 0.68
+  event 39.75–40.75 s · 1.00 s · peak +30 dB · then quiet 2.65 s · low share 0.68
+  event 43.40–44.55 s · 1.15 s · peak +28 dB · then quiet 3.15 s · low share 0.69
+  event 47.70–48.60 s · 0.90 s · peak +30 dB · then quiet 3.00 s · low share 0.68
+  event 51.60–52.60 s · 1.00 s · peak +28 dB · then quiet 2.55 s · low share 0.67
+  event 55.15–56.25 s · 1.10 s · peak +29 dB · then quiet 2.70 s · low share 0.67
+  event 58.95–60.05 s · 1.10 s · peak +30 dB · then quiet 3.00 s · low share 0.68
+  event 63.05–64.05 s · 1.00 s · peak +29 dB · then quiet 3.05 s · low share 0.67
+  event 67.10–68.10 s · 1.00 s · peak +29 dB · then quiet 2.60 s · low share 0.67
+  event 70.70–71.70 s · 1.00 s · peak +28 dB · then quiet 2.75 s · low share 0.67
+  event 74.45–75.45 s · 1.00 s · peak +28 dB · then quiet 2.95 s · low share 0.67
+  event 78.40–79.45 s · 1.05 s · peak +28 dB · then quiet 2.80 s · low share 0.67
+  event 82.25–83.55 s · 1.30 s · peak +30 dB · then quiet 2.85 s · low share 0.67
+  event 86.40–87.35 s · 0.95 s · peak +29 dB · then quiet 2.55 s · low share 0.66
+  event 89.90–91.00 s · 1.10 s · peak +29 dB · then quiet 2.75 s · low share 0.67
+  event 93.75–94.80 s · 1.05 s · peak +29 dB · then quiet 2.80 s · low share 0.66
+  event 97.60–98.70 s · 1.10 s · peak +29 dB · then quiet 2.80 s · low share 0.67
+  event 101.50–102.70 s · 1.20 s · peak +30 dB · then quiet 2.70 s · low share 0.66
+  event 105.40–106.50 s · 1.10 s · peak +30 dB · then quiet 2.60 s · low share 0.67
+  event 109.10–110.20 s · 1.10 s · peak +28 dB · then quiet 2.55 s · low share 0.67
+  event 112.75–113.85 s · 1.10 s · peak +31 dB · then quiet 2.15 s · low share 0.69
+  event 116.00–117.20 s · 1.20 s · peak +31 dB · then quiet 1.10 s · low share 0.68
+
+Palatal_snoring_2.ogg · 1 ch · 8000 Hz · 56.2 s · floor -38.3 dB · loudest 50 ms -12.1 dB
+     0.0 s  ...............566555553..............................655555553..................................556
+    10.0 s  5665662..............................667666666651...................1.1....6888888861..11...........
+    20.0 s  .........78887776641.........1............67776444464...................11..2788778664..1111..1.....
+    30.0 s  .........1....88888887511111.....1.........111111.17778776211121.1.1.1.......11..1....1.167788877665
+    40.0 s  11111111..1..1........11..6788887662..11111..............11..77887777661.1111................11111..
+    50.0 s  1677887311111111............1...11...7778888741.1111..........
+  event 1.55–2.30 s · 0.75 s · peak +20 dB · then quiet 3.15 s · low share 0.67
+  event 5.45–6.20 s · 0.75 s · peak +19 dB · then quiet 3.50 s · low share 0.62
+  event 9.70–10.60 s · 0.90 s · peak +20 dB · then quiet 3.10 s · low share 0.62
+  event 13.70–14.80 s · 1.10 s · peak +21 dB · then quiet 2.75 s · low share 0.62
+  event 17.55–18.40 s · 0.85 s · peak +26 dB · then quiet 2.50 s · low share 0.65
+  event 20.90–21.85 s · 0.95 s · peak +25 dB · then quiet 2.35 s · low share 0.68
+  event 24.20–25.25 s · 1.05 s · peak +24 dB · then quiet 2.45 s · low share 0.63
+  event 27.70–28.55 s · 0.85 s · peak +26 dB · then quiet 2.85 s · low share 0.62
+  event 31.40–32.30 s · 0.90 s · peak +25 dB · then quiet 2.80 s · low share 0.64
+  event 35.10–35.80 s · 0.70 s · peak +24 dB · then quiet 3.15 s · low share 0.65
+  event 38.95–39.95 s · 1.00 s · peak +26 dB · then quiet 2.70 s · low share 0.64
+  event 42.65–43.50 s · 0.85 s · peak +26 dB · then quiet 2.60 s · low share 0.63
+  event 46.10–47.10 s · 1.00 s · peak +26 dB · then quiet 3.00 s · low share 0.63
+  event 50.10–50.70 s · 0.60 s · peak +25 dB · then quiet 3.00 s · low share 0.68
+  event 53.70–54.55 s · 0.85 s · peak +25 dB · then quiet 1.65 s · low share 0.68
+
+Snore_man_50_years_160_kg.ogg · 2 ch · 22050 Hz · 28.0 s · floor -47.6 dB · loudest 50 ms -13.6 dB
+     0.0 s  33244577777777898767532.312486389..67877888888887663..12343.41.578888888888877642...1222213667788788
+    10.0 s  88888887755211212252.2...7788888887888752...22332.3.25778787788888622.57766665441....11222.25......5
+    20.0 s  668888888753....1354.3..7889989889988764..16855896.1432111.........1142...445575
+  event 0.50–2.05 s · 1.55 s · peak +28 dB · then quiet 0.80 s · low share 0.15
+  event 2.85–3.25 s · 0.40 s · peak +34 dB · then quiet 0.30 s · low share 0.07
+  event 3.55–5.10 s · 1.55 s · peak +25 dB · then quiet 1.25 s · low share 0.15
+  event 6.35–7.90 s · 1.55 s · peak +27 dB · then quiet 1.25 s · low share 0.20
+  event 9.15–11.05 s · 1.90 s · peak +26 dB · then quiet 0.75 s · low share 0.19
+  event 12.50–14.00 s · 1.50 s · peak +26 dB · then quiet 1.35 s · low share 0.18
+  event 15.35–16.65 s · 1.30 s · peak +25 dB · then quiet 0.40 s · low share 0.21
+  event 17.05–17.75 s · 0.70 s · peak +24 dB · then quiet 2.15 s · low share 0.11
+  event 19.90–21.10 s · 1.20 s · peak +27 dB · then quiet 1.30 s · low share 0.20
+  event 22.40–23.90 s · 1.50 s · peak +32 dB · then quiet 0.45 s · low share 0.15
+  event 24.35–24.95 s · 0.60 s · peak +30 dB · then quiet 2.65 s · low share 0.01
+  event 27.60–27.95 s · 0.35 s · peak +21 dB · then quiet 0.05 s · low share 0.16
+
+Tongue_base_snoring.ogg · 1 ch · 8000 Hz · 150.4 s · floor -38.3 dB · loudest 50 ms -6.5 dB
+     0.0 s  ..266778899898998631.111112111..........37778888998763...1.1111...........56688899899989852112111111
+    10.0 s  11...........2666788999999997411222111111..............6778899999898641.1.111111.............5788999
+    20.0 s  9887752...11111.1.............26788899999841.1.11.............1677789999988751.1222111111........2.3
+    30.0 s  3488889988721112222211..........25778899999862.1122211111............366888999999973..111111........
+    40.0 s  .......557888999987751..111111....................6678899999888763.....1111.............667889999999
+    50.0 s  8731..1112221211..........4678989988888763........................5678899998887641.....1............
+    60.0 s  ...36888898888877531...1................67789999998888851..1221111111.........688999999887641...11..
+    70.0 s  ..............1677788999999999862..11211111.1.........6778899999999741..11111111.............7778999
+    80.0 s  999988863......................6778899999998751.....11.........16668899998887641....................
+    90.0 s  ..36779999999998641....1122111.............5689899999998741.........................2677899999999976
+   100.0 s  1.1222211111.1.........1587889999999851.1111222211...1........1466689889987773..11..................
+   110.0 s  .1567777889878752..111111................467889999886653....1111..............3678999999988641......
+   120.0 s  ..............3777889899998763......................488898988898753...11.111...............136789899
+   130.0 s  99987853....11121111.............67788988899876221112111............255479999899888841..111.........
+   140.0 s  ........676788799999888621.11111111............14566899998988861.112222211..........177779898988764.
+   150.0 s  .111
+  event 0.35–1.80 s · 1.45 s · peak +29 dB · then quiet 2.30 s · low share 0.58
+  event 4.10–5.30 s · 1.20 s · peak +27 dB · then quiet 2.15 s · low share 0.54
+  event 7.45–8.95 s · 1.50 s · peak +30 dB · then quiet 2.45 s · low share 0.56
+  event 11.40–12.90 s · 1.50 s · peak +31 dB · then quiet 2.60 s · low share 0.62
+  event 15.50–16.90 s · 1.40 s · peak +30 dB · then quiet 2.45 s · low share 0.62
+  event 19.35–20.55 s · 1.20 s · peak +28 dB · then quiet 2.55 s · low share 0.55
+  event 23.10–24.25 s · 1.15 s · peak +30 dB · then quiet 2.10 s · low share 0.62
+  event 26.35–27.65 s · 1.30 s · peak +28 dB · then quiet 2.55 s · low share 0.61
+  event 30.20–31.05 s · 0.85 s · peak +30 dB · then quiet 2.30 s · low share 0.64
+  event 33.35–34.45 s · 1.10 s · peak +28 dB · then quiet 2.55 s · low share 0.59
+  event 37.00–38.30 s · 1.30 s · peak +29 dB · then quiet 2.45 s · low share 0.58
+  event 40.75–42.05 s · 1.30 s · peak +29 dB · then quiet 3.00 s · low share 0.55
+  event 45.05–46.50 s · 1.45 s · peak +28 dB · then quiet 2.35 s · low share 0.56
+  event 48.85–50.20 s · 1.35 s · peak +30 dB · then quiet 2.50 s · low share 0.61
+  event 52.70–54.10 s · 1.40 s · peak +28 dB · then quiet 2.50 s · low share 0.55
+  event 56.60–58.00 s · 1.40 s · peak +29 dB · then quiet 2.40 s · low share 0.56
+  event 60.40–61.75 s · 1.35 s · peak +28 dB · then quiet 2.25 s · low share 0.49
+  event 64.00–65.55 s · 1.55 s · peak +30 dB · then quiet 2.30 s · low share 0.55
+  event 67.85–69.10 s · 1.25 s · peak +29 dB · then quiet 2.45 s · low share 0.54
+  event 71.55–73.15 s · 1.60 s · peak +29 dB · then quiet 2.30 s · low share 0.57
+  event 75.45–76.85 s · 1.40 s · peak +30 dB · then quiet 2.50 s · low share 0.63
+  event 79.35–80.80 s · 1.45 s · peak +32 dB · then quiet 2.35 s · low share 0.60
+  event 83.15–84.55 s · 1.40 s · peak +32 dB · then quiet 1.85 s · low share 0.65
+  event 86.40–87.80 s · 1.40 s · peak +30 dB · then quiet 2.50 s · low share 0.58
+  event 90.30–91.70 s · 1.40 s · peak +30 dB · then quiet 2.65 s · low share 0.55
+  event 94.35–95.70 s · 1.35 s · peak +29 dB · then quiet 2.80 s · low share 0.54
+  event 98.50–99.95 s · 1.45 s · peak +32 dB · then quiet 2.50 s · low share 0.64
+  event 102.45–103.75 s · 1.30 s · peak +30 dB · then quiet 2.65 s · low share 0.69
+  event 106.40–107.65 s · 1.25 s · peak +28 dB · then quiet 2.60 s · low share 0.57
+  event 110.25–111.55 s · 1.30 s · peak +29 dB · then quiet 2.65 s · low share 0.59
+  event 114.20–115.45 s · 1.25 s · peak +28 dB · then quiet 2.45 s · low share 0.57
+  event 117.90–119.20 s · 1.30 s · peak +32 dB · then quiet 2.30 s · low share 0.61
+  event 121.50–122.90 s · 1.40 s · peak +31 dB · then quiet 2.40 s · low share 0.64
+  event 125.30–126.60 s · 1.30 s · peak +29 dB · then quiet 2.70 s · low share 0.61
+  event 129.30–130.70 s · 1.40 s · peak +31 dB · then quiet 2.60 s · low share 0.59
+  event 133.30–134.65 s · 1.35 s · peak +28 dB · then quiet 2.30 s · low share 0.64
+  event 136.95–138.40 s · 1.45 s · peak +29 dB · then quiet 2.40 s · low share 0.57
+  event 140.80–142.40 s · 1.60 s · peak +30 dB · then quiet 2.50 s · low share 0.58
+  event 144.90–146.25 s · 1.35 s · peak +31 dB · then quiet 2.30 s · low share 0.67
+  event 148.55–149.85 s · 1.30 s · peak +29 dB · then quiet 0.55 s · low share 0.62

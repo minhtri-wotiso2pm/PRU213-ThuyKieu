@@ -1,0 +1,150 @@
+== Chapter03_LauTuBa
+   tris LauTuBa                  2,183,268  renderers 3703
+   tris NarrowNavMesh                    0  renderers 0
+   tris Weather                          0  renderers 4
+   tris ProbeYard                        0  renderers 0
+   tris ProbeCorridor                    0  renderers 0
+   tris ProbeRear                        0  renderers 0
+   tris ProbeWest                        0  renderers 0
+   tris ProbeEast                        0  renderers 0
+   tris ProbeHall                        0  renderers 0
+   tris LOOK_01_Hero                     0  renderers 0
+   tris LOOK_02_KieuRoom                 0  renderers 0
+   tris LOOK_03_KieuWindow               0  renderers 0
+   tris LOOK_04_Corridor                 0  renderers 0
+   tris LOOK_05_StoreSlats               0  renderers 0
+   tris LOOK_06_TuBaRoom                 0  renderers 0
+   tris LOOK_07_Archive                  0  renderers 0
+   tris LOOK_08_Office                   0  renderers 0
+   tris LOOK_09_Kitchen                  0  renderers 0
+   tris LOOK_10_Courtyard                0  renderers 0
+   tris LOOK_11_Hall                     0  renderers 0
+   tris LOOK_12_Alley                    0  renderers 0
+   tris LOOK_13_LamRoom                  0  renderers 0
+   tris LOOK_14_WestVeranda              0  renderers 0
+   tris LOOK_15_HallToYard               0  renderers 0
+   tris LOOK_16_HongRoom                 0  renderers 0
+   tris LOOK_17_TuBaBed                  0  renderers 0
+   tris LOOK_18_Chair                    0  renderers 0
+   tris LOOK_19_Table                    0  renderers 0
+   tris LOOK_20_Sap                      0  renderers 0
+   tris LOOK_21_Railing                  0  renderers 0
+   tris LOOK_22_Door                     0  renderers 0
+   tris LOOK_23_Pillar                   0  renderers 0
+   tris LOOK_24_Desk                     0  renderers 0
+   tris LOOK_25_HallGroup                0  renderers 0
+   tris LOOK_26_YardToHall               0  renderers 0
+   tris LOOK_27_AcrossYard               0  renderers 0
+   tris LOOK_28_SapClear                 0  renderers 0
+   tris LOOK_29_EaveCorner               0  renderers 0
+   tris LOOK_30_Puddle                   0  renderers 0
+   tris CurtainSpot                      0  renderers 0
+   tris GateSpot                         0  renderers 0
+   tris BoxSpot                          0  renderers 0
+   tris DrawerSpot                       0  renderers 0
+   tris CabinetSpot                      0  renderers 0
+   tris GuardRouteDay                    0  renderers 0
+   tris RestrictedZones                  0  renderers 0
+   tris ArrivalTuBa                      0  renderers 0
+   tris ArrivalMa                        0  renderers 0
+   tris TuBaInOffice                     0  renderers 0
+   tris MaInOffice                       0  renderers 0
+   tris TuBaRoomSpot                     0  renderers 0
+   tris KieuRoomSpawn                    0  renderers 0
+   tris OfficeSpawn                      0  renderers 0
+   tris TuBaRoomSpawn                    0  renderers 0
+   tris KieuRoomVolume                   0  renderers 0
+   tris OfficeVolume                     0  renderers 0
+   tris TuBaRoomVolume                   0  renderers 0
+   active point/spot lights 28
+   main                          15.90 ms | grass off  12.69 | vegetation off  13.33 | shadows off  14.03 | lamp shadows off  10.01 | ssao off  10.71
+   LOOK_01_Hero                   9.35 ms | grass off   9.49 | vegetation off   9.33 | shadows off   7.57 | lamp shadows off   9.41 | ssao off   7.44
+   LOOK_02_KieuRoom               6.53 ms | grass off   6.55 | vegetation off   6.55 | shadows off   5.20 | lamp shadows off   6.89 | ssao off   5.40
+   LOOK_03_KieuWindow             5.23 ms | grass off   5.36 | vegetation off   5.32 | shadows off   4.09 | lamp shadows off   5.20 | ssao off   3.80
+   LOOK_04_Corridor               8.43 ms | grass off   8.97 | vegetation off   8.54 | shadows off   6.79 | lamp shadows off   8.39 | ssao off   6.67
+   LOOK_05_StoreSlats             6.93 ms | grass off   6.99 | vegetation off   6.89 | shadows off   5.59 | lamp shadows off   6.98 | ssao off   5.27
+   LOOK_06_TuBaRoom               7.97 ms | grass off   8.17 | vegetation off   7.92 | shadows off   5.14 | lamp shadows off   8.06 | ssao off   6.80
+   LOOK_07_Archive                5.25 ms | grass off   5.31 | vegetation off   5.53 | shadows off   4.72 | lamp shadows off   5.60 | ssao off   4.08
+   LOOK_08_Office                 6.69 ms | grass off   6.45 | vegetation off   6.64 | shadows off   5.44 | lamp shadows off   6.36 | ssao off   5.01
+   LOOK_09_Kitchen                6.93 ms | grass off   7.12 | vegetation off   7.06 | shadows off   4.63 | lamp shadows off   6.98 | ssao off   5.93
+   LOOK_10_Courtyard             10.39 ms | grass off  10.18 | vegetation off  10.01 | shadows off   7.56 | lamp shadows off  10.52 | ssao off   8.09
+   LOOK_11_Hall                   6.19 ms | grass off   6.20 | vegetation off   6.18 | shadows off   5.28 | lamp shadows off   6.28 | ssao off   4.84
+   LOOK_12_Alley                  8.22 ms | grass off   8.10 | vegetation off   8.50 | shadows off   5.89 | lamp shadows off   8.27 | ssao off   6.58
+   LOOK_13_LamRoom                6.07 ms | grass off   6.32 | vegetation off   6.00 | shadows off   4.95 | lamp shadows off   6.29 | ssao off   5.29
+   LOOK_14_WestVeranda            9.96 ms | grass off   9.86 | vegetation off   9.79 | shadows off   7.22 | lamp shadows off   9.79 | ssao off   8.03
+== Chapter04_LauTuBaDem
+   tris LauTuBa                  2,183,268  renderers 3703
+   tris NarrowNavMesh                    0  renderers 0
+   tris Weather                          0  renderers 8
+   tris ProbeYard                        0  renderers 0
+   tris ProbeCorridor                    0  renderers 0
+   tris ProbeRear                        0  renderers 0
+   tris ProbeWest                        0  renderers 0
+   tris ProbeEast                        0  renderers 0
+   tris ProbeHall                        0  renderers 0
+   tris LOOK_01_Hero                     0  renderers 0
+   tris LOOK_02_KieuRoom                 0  renderers 0
+   tris LOOK_03_KieuWindow               0  renderers 0
+   tris LOOK_04_Corridor                 0  renderers 0
+   tris LOOK_05_StoreSlats               0  renderers 0
+   tris LOOK_06_TuBaRoom                 0  renderers 0
+   tris LOOK_07_Archive                  0  renderers 0
+   tris LOOK_08_Office                   0  renderers 0
+   tris LOOK_09_Kitchen                  0  renderers 0
+   tris LOOK_10_Courtyard                0  renderers 0
+   tris LOOK_11_Hall                     0  renderers 0
+   tris LOOK_12_Alley                    0  renderers 0
+   tris LOOK_13_LamRoom                  0  renderers 0
+   tris LOOK_14_WestVeranda              0  renderers 0
+   tris LOOK_15_HallToYard               0  renderers 0
+   tris LOOK_16_HongRoom                 0  renderers 0
+   tris LOOK_17_TuBaBed                  0  renderers 0
+   tris LOOK_18_Chair                    0  renderers 0
+   tris LOOK_19_Table                    0  renderers 0
+   tris LOOK_20_Sap                      0  renderers 0
+   tris LOOK_21_Railing                  0  renderers 0
+   tris LOOK_22_Door                     0  renderers 0
+   tris LOOK_23_Pillar                   0  renderers 0
+   tris LOOK_24_Desk                     0  renderers 0
+   tris LOOK_25_HallGroup                0  renderers 0
+   tris LOOK_26_YardToHall               0  renderers 0
+   tris LOOK_27_AcrossYard               0  renderers 0
+   tris LOOK_28_SapClear                 0  renderers 0
+   tris LOOK_29_EaveCorner               0  renderers 0
+   tris LOOK_30_Puddle                   0  renderers 0
+   tris MirrorFigure                49,786  renderers 1
+   tris KeyTheft                         0  renderers 0
+   tris GuardRoutes                      0  renderers 0
+   tris NightZones                       0  renderers 0
+   tris LamNode0                         0  renderers 0
+   tris LamNode1                         0  renderers 0
+   tris LamNode2                         0  renderers 0
+   tris LamNode3                         0  renderers 0
+   tris CabinetSpot                      0  renderers 0
+   tris DrawerSpot                       0  renderers 0
+   tris SpawnRoom                        0  renderers 0
+   tris SpawnStore                       0  renderers 0
+   tris SpawnArchive                     0  renderers 0
+   tris KitchenWait                      0  renderers 0
+   tris LamRoom                          0  renderers 0
+   tris J2Zone                           0  renderers 0
+   tris TuBaRoomVolume                   0  renderers 0
+   tris StoreVolume                      0  renderers 0
+   tris GuestShadow                      2  renderers 1
+   tris TuBaDoorShadow                   2  renderers 1
+   active point/spot lights 44
+   main                          12.66 ms | grass off  12.73 | vegetation off  12.58 | shadows off  10.44 | lamp shadows off  10.04 | ssao off  14.67
+   LOOK_01_Hero                  12.25 ms | grass off  12.28 | vegetation off  12.42 | shadows off  15.48 | lamp shadows off  10.28 | ssao off  10.00
+   LOOK_02_KieuRoom               6.42 ms | grass off   6.30 | vegetation off   6.29 | shadows off   5.71 | lamp shadows off   6.14 | ssao off   5.30
+   LOOK_03_KieuWindow             4.85 ms | grass off   4.93 | vegetation off   4.91 | shadows off   4.31 | lamp shadows off   4.64 | ssao off   3.23
+   LOOK_04_Corridor              10.78 ms | grass off  10.60 | vegetation off  10.79 | shadows off   8.55 | lamp shadows off   9.33 | ssao off   8.89
+   LOOK_05_StoreSlats             9.06 ms | grass off   8.85 | vegetation off   8.72 | shadows off   6.16 | lamp shadows off   8.37 | ssao off   7.32
+   LOOK_06_TuBaRoom               5.88 ms | grass off   6.00 | vegetation off   5.80 | shadows off   5.11 | lamp shadows off   5.94 | ssao off   4.55
+   LOOK_07_Archive                5.61 ms | grass off   5.84 | vegetation off   5.75 | shadows off   4.62 | lamp shadows off   5.43 | ssao off   4.15
+   LOOK_08_Office                 6.38 ms | grass off   6.85 | vegetation off   6.69 | shadows off   5.78 | lamp shadows off   6.51 | ssao off   5.36
+   LOOK_09_Kitchen                5.97 ms | grass off   5.95 | vegetation off   5.66 | shadows off   4.79 | lamp shadows off   5.64 | ssao off   4.39
+   LOOK_10_Courtyard             10.86 ms | grass off  11.01 | vegetation off  11.20 | shadows off   9.41 | lamp shadows off   8.90 | ssao off   8.98
+   LOOK_11_Hall                   7.19 ms | grass off   7.45 | vegetation off   7.79 | shadows off   6.40 | lamp shadows off   6.93 | ssao off   6.35
+   LOOK_12_Alley                  8.67 ms | grass off   8.50 | vegetation off   8.69 | shadows off   7.15 | lamp shadows off   7.07 | ssao off   6.77
+   LOOK_13_LamRoom                6.21 ms | grass off   6.49 | vegetation off   6.47 | shadows off   5.31 | lamp shadows off   5.95 | ssao off   4.95
+   LOOK_14_WestVeranda            9.90 ms | grass off   9.88 | vegetation off  10.00 | shadows off   8.53 | lamp shadows off   8.77 | ssao off   8.53

@@ -429,4 +429,4 @@ Cổng thành Lâm Tri. Phía trong, đèn lồng đỏ treo kín hiên một ng
     Kiều: Kiều ngày trước bước vào đây mà không biết gì. Còn ta biết, và ta sẽ giả vờ như không biết, cho đến khi đủ sức lật ngược ván cờ này.
 }
 
--> chapter_3
+-> chapter_3_lau

@@ -9682,7 +9682,7 @@ MonoBehaviour:
   _chapterNumber: 2
   _chapterTitle: "Tr\xEAn \u0111\u01B0\u1EDDng theo M\xE3 Gi\xE1m Sinh"
   _entryKnot: chapter_2
-  _nextScene: Chapter03_TuBaHouse
+  _nextScene: Chapter03_LauTuBa
   _dialogue: {fileID: 193957201}
   _player: {fileID: 381886786}
   _interaction: {fileID: 381886791}

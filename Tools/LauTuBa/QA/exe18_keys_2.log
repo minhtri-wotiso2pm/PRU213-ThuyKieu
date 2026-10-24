@@ -1,0 +1,108 @@
+Mono path[0] = 'D:/PRU213/ThuyKieu_Share-20261009T182626Z-1-001/ThuyKieu_Share/Builds/Windows/ThuyKieu_Data/Managed'
+Mono config path = 'D:/PRU213/ThuyKieu_Share-20261009T182626Z-1-001/ThuyKieu_Share/Builds/Windows/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+Initialize engine version: 6000.6.0f1 (f7f8ed4d1e24)
+[EntityIdStore] init: VM path (explicit commit), pageSize=4096, blockCount=1048576, entitiesPerBlock=256, slots reserved=4294967296 bytes
+[Subsystems] Discovering subsystems at path D:/PRU213/ThuyKieu_Share-20261009T182626Z-1-001/ThuyKieu_Share/Builds/Windows/ThuyKieu_Data/UnitySubsystems
+GfxDevice: creating device client; kGfxThreadingModeClientWorkerJobs
+Direct3D:
+    Version:  Direct3D 11.0 [level 11.1]
+    Renderer: NVIDIA GeForce RTX 3050 Laptop GPU (ID=0x25a2)
+    Vendor:   NVIDIA
+    VRAM:     3964 MB
+    Driver:   32.0.15.6607
+Begin MonoManager ReloadAssembly
+- Finished resetting the current domain, in  0.010 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+<RI> Initializing input.
+Using Windows.Gaming.Input
+UnloadTime: 0.746000 ms
+Unloading 11 Unused Serialized files (Serialized files now loaded: 0)
+UnloadTime: 1.225400 ms
+Unloading 3 unused Assets to reduce memory usage. Loaded Objects now: 22640.
+Total: 3.041900 ms (FindLiveObjects: 0.810000 ms CreateObjectMapping: 0.190300 ms MarkObjects: 1.773500 ms  DeleteObjects: 0.022300 ms)
+
+Curl error 35: Recv failure: Connection was reset
+Shader 'Hidden/Universal Render Pipeline/GaussianDepthOfField' is not supported or has been stripped from the build (in 'DepthOfFieldGaussianPostProcessPass'). PostProcessing render passes will not execute.
+Shader 'Hidden/Universal Render Pipeline/GaussianDepthOfField' is not supported or has been stripped from the build (in 'DepthOfFieldGaussianPostProcessPass'). PostProcessing render passes will not execute.
+Shader 'Hidden/Universal Render Pipeline/BokehDepthOfField' is not supported or has been stripped from the build (in 'DepthOfFieldBokehPostProcessPass'). PostProcessing render passes will not execute.
+Shader 'Hidden/Universal Render Pipeline/PaniniProjection' is not supported or has been stripped from the build (in 'PaniniProjectionPostProcessPass'). PostProcessing render passes will not execute.
+GPU Resident Drawer created.
+Reduced additional punctual light shadows resolution by 4 to make 36 shadow maps fit in the 2048x2048 shadow atlas. To avoid this, increase shadow atlas size, decrease big shadow resolutions, or reduce the number of shadow maps active in the same frame
+[Probe] KEYS ok   opening: no breath while she is up · breath played on 0 frames · while not asleep in bed 0 · breath sources on her 0
+[Probe] KEYS ok   standing (opening): ring at her hip, no breath, no theft · ok · hook 24 cm out from her hip bone, -8 cm below it · keys hang 7° from straight down · reach 0.72 m above her feet · size 20 cm · breathing False · keys can be taken False · scene running True
+[Probe] KEYS ok   in bed: breathing starts on an in-breath · breathing True · sound True (snore_deep) · first breath 0.00 s after she lay down
+[Probe] KEYS ok   lying: ring on the mat beside her hip · lowest point 1.8 cm above the mat · keys 34 cm out from her middle line · toward the room 0.43
+[Probe] KEYS ok   lying: the hand's target is on the keys · trigger 0.0 cm from the keys' middle
+[Probe] KEYS ok   crouched beside the sập, eyes on the keys: they are the target · target KeyTheft · 0.65 m from them · eyes 1.01 m above the floor
+[Probe] KEYS ok   standing beside the sập, eyes on the keys: they are the target · target KeyTheft
+[Probe] KEYS ok   paused: the breath clock holds, its sound waits · phase left 0.913 → 0.913 s after 1 s paused · sound still queued True
+[Probe] KEYS ok   stirring: the snore stops at once · sound False · Stirring
+[Probe] KEYS ok   settled again: breath restarts on an in-breath · Asleep · snore_deep
+[Probe] KEYS ok   roused: no breath · sound False · catch False
+[Probe] KEYS ok   E held at something else through her in-breath · target none · catches 0 · held 0.00 s · leaning in False
+[Probe] KEYS ok   out of reach (3 m), E held through her in-breath · target none · catches 0
+[Probe] KEYS ok   E carried over onto the keys: nothing opens · leaning in False
+[Probe] KEYS ok   E in her in-breath opens the close view, not a grab · ready after 0.51 s · catches 0 · hand on False · Kiều held still True
+[Probe] KEYS ok   close view: keys in front, her chest and face in the picture, nothing cut through, lens narrowed · keys at (0.45, 0.45) 0.48 m · chest (0.48, 0.63) 0.80 m · face (0.59, 0.69) 0.91 m · lens 60.0° (hers 72.0°) · inside nothing · camera 0.48 m from her eyes
+[Probe] KEYS ok   the E that opened it, still down: no hold until let go and pressed again · gained 0.00 s
+[Probe] KEYS ok   mouse in the close view does not turn the head · turned 0.00°
+[Probe] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 1920×1080
+[Probe] KEYS ok   one out-breath, drawing the right way, let go before the in-breath · gained 2.03 s (out-breath 2.6 s) · kept through the in-breath 2.03 s · still leaning in True
+[Probe] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 1920×1080
+[Probe] KEYS ok   holding without drawing: nothing · gained 0.00 s
+[Probe] KEYS ok   drawing the wrong way: nothing · gained 0.00 s · last pull None
+[Probe] KEYS ok   a jerk: nothing (too fast) · gained 0.01 s · last pull None
+[Probe] KEYS ok   let go and take hold again in one out-breath: both parts count · gained 2.00 s
+[Probe] KEYS ok   progress shows on the keys: the stage moved on · stage 2/3 at 4.04 s
+[Probe] KEYS ok   pause menu and back: still in close, work kept · menu found True · leaning in True · held 4.04 → 4.04 s
+[Probe] KEYS ok   backing out: the eyes and lens back, Kiều free, work kept · leaning in False · Kiều locked False · lens 72.0° (hers 72.0°) · close weight 0.00 · held 4.04 s
+[Probe] KEYS ok   leaning in again · ready True · held 4.04 s
+[Probe] KEYS ok   controls taken mid-hold: out of the close view, no catch, no gain · held 4.53 → 4.53 s · leaning in False · catches 0
+[Probe] KEYS ok   no failure so far · checkpoint restores 0
+[Probe] KEYS ok   her catch: ring at her hip as she grabs · hook 24 cm out from her hip bone, -7 cm below it · keys hang 6° from straight down · reach 0.73 m above her feet · size 19 cm
+[Probe] KEYS ok   held still from her out-breath into her in-breath: her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[Probe] KEYS ok   held still from her out-breath into her in-breath: nothing gained on that frame, taken back after · held 5.10 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[Probe] KEYS ok   held still from her out-breath into her in-breath: after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 71.9° (hers 72.0°) · camera on True · controls free True · pinned False
+[Probe] KEYS ok   pressed during her in-breath: her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[Probe] KEYS ok   pressed during her in-breath: nothing gained on that frame, taken back after · held 2.03 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[Probe] KEYS ok   pressed during her in-breath: after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 71.9° (hers 72.0°) · camera on True · controls free True · pinned False
+[Probe] KEYS ok   pressed while she stirs (no snore): her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[Probe] KEYS ok   pressed while she stirs (no snore): nothing gained on that frame, taken back after · held 2.03 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[Probe] KEYS ok   pressed while she stirs (no snore): after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 71.9° (hers 72.0°) · camera on True · controls free True · pinned False
+[Probe] KEYS ok   held across the turn at ~8 FPS: her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[Probe] KEYS ok   held across the turn at ~8 FPS: nothing gained on that frame, taken back after · held 2.56 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[Probe] KEYS ok   held across the turn at ~8 FPS: after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 71.9° (hers 72.0°) · camera on True · controls free True · pinned False
+[Probe] KEYS ok   one 0.3 s frame across the turn: her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[Probe] KEYS ok   one 0.3 s frame across the turn: nothing gained on that frame, taken back after · held 2.59 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[Probe] KEYS ok   one 0.3 s frame across the turn: after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 71.9° (hers 72.0°) · camera on True · controls free True · pinned False
+[Probe] KEYS ok   almost done, held into her in-breath: her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[Probe] KEYS ok   almost done, held into her in-breath: nothing gained on that frame, taken back after · held 11.30 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[Probe] KEYS ok   almost done, held into her in-breath: after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 71.9° (hers 72.0°) · camera on True · controls free True · pinned False
+[Probe] KEYS ok   caught half way into the close view: her catch takes the camera, then all back · leaning in 0.42 when she woke · catch played True · it took the camera True · afterwards: leaning in False · close weight 0.00 · lens 72.0° (hers 72.0°) · camera on True · controls free True · pinned False
+[Probe] KEYS ok   ~8 FPS, one out-breath drawn: gain = her out-breath time while drawing right · gained 1.98 s · out-breath under a right pull 1.98 s
+[Probe] KEYS ok   12 s of drawing on her out-breaths frees the ring, once · taken 1× · keys in hand 1 · keys shown False · stage 2 · catches 0
+[Probe] KEYS ok   time: counted work vs. time taken · setting 12.0 s · counted 12.00 s of work (E down 12.09 s) over 6 out-breaths · 23.9 s in all, leaning in and waiting included (aim 20–30 s)
+[Probe] KEYS ok   done: back to her eyes, the hook still on her · leaning in False · Kiều locked False · hook shown True · keys shown False
+[Probe] KEYS ok   done: her own lens back · lens 72.0° (hers 72.0°)
+[Probe] KEYS ok   keys taken: E at the hook through her in-breath · catches 0 · leaning in False
+[Probe] KEYS ok   checkpoint after the keys: still taken, the hook on her, she sleeps on · keys True · keys shown False · hook shown True · stage 2 · breathing True
+[Probe] KEYS ok   breath watch after all of it · breath played on 18945 frames · while not asleep in bed 0 · breath sources on her 1
+[Probe] KEYS probe done
+[Autopilot] Report written to D:/PRU213/ThuyKieu_Share-20261009T182626Z-1-001/ThuyKieu_Share/ThuyKieuGame_With_Unity/Tools/LauTuBa/QA/exe18_keys_2.txt
+Curl error 42: Callback aborted
+GPU Resident Drawer disposed.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+CodeReloadManager destroyed

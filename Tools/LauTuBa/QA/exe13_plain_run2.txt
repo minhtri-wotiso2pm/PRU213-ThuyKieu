@@ -1,0 +1,35 @@
+AUTOPILOT PASS
+[3.5s] NAVMESH built in 29 ms · 388 sources
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.8s] TAG scene:Dem_Opening
+[0.8s] TAG music:tension_low
+[1.0s] CHOICE 5/5: Im lặng nhìn qua song cửa.
+[1.1s] TAG sfx:latch_drop
+[1.2s] TAG scene:Dem_Night
+[1.2s] TAG gameplay:tutorial_dem
+[5.6s] TAG gameplay:search_drawer
+[5.9s] TAG sfx:paper
+[6.2s] TAG sfx:lock_open
+[6.6s] TAG gameplay:document_deal
+[6.8s] CHOICE 3/3: Để nguyên chỗ cũ — mụ sẽ không phát hiện sớm.
+[6.8s] CHOICE 3/3: Không lấy một đồng nào.
+[6.9s] TAG sfx:lock_open
+[16.6s] C4 J1 done · mirror seen False
+[32.7s] C4 J2 done · Tú Bà phase 1
+[33.7s] CHOICE 2/4: Nắm tay chị ấy: "Đi cùng em."
+[39.9s] C4 Lam reached the kitchen
+[39.9s] TAG scene:Dem_BackDoor
+[39.9s] TAG music:none
+[40.3s] TAG gameplay:kieu_voice
+[40.3s] CHOICE 2/2: "Ngươi đã ở lại. Ta thì không."
+[40.4s] TAG music:resolve
+[40.5s] CHAPTER 4 COMPLETE · lines 39 · choices 5
+[40.5s] FRAMES Chapter04_LauTuBaDem · avg 129 fps · 1% low 65 fps · worst 35 ms · 4955 frames · 1920x1080 · median 6.9 ms · p99 13.9 ms · under 60 fps 0.1% · load 3.6 s (first frame 3376 ms) · warm-up worst 776 ms
+   c4_viec = 2
+   c4_canh_giac = 1
+   c4_tien = 0
+   c4_van_tu = 0
+   c4_so_no = True
+   c4_ru_co_lam = True
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo, c4_co_lam

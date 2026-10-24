@@ -1,0 +1,13 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: ClerkStory
+  m_Controller: {fileID: 9100000, guid: 3f8807b6b4a8b7048a08e07d5509efce, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -203655887218126122, guid: cdb6912780ce0724c9b63e0a397797fb, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 253ce132c2c7b2140a2842b707196a49, type: 3}

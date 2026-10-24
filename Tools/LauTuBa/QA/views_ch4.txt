@@ -1,0 +1,66 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.1s] NAVMESH built in 33 ms · 388 sources
+[2.3s] HITCH 1425 ms
+[2.5s] TAG scene:Dem_Opening
+[2.5s] TAG music:tension_low
+[4.6s] HITCH 278 ms
+[6.8s] HITCH 334 ms
+[8.7s] CHOICE 2/5: Cúi đầu: "Dạ... con xin nghe lời mẹ."
+[8.7s] HITCH 204 ms
+[8.9s] TAG sfx:latch_drop
+[11.1s] HITCH 314 ms
+[11.3s] TAG scene:Dem_Night
+[11.3s] TAG gameplay:tutorial_dem
+[11.4s] SEQUENCE tutorial_dem
+[14.7s] HITCH 278 ms
+[15.2s] HITCH 226 ms
+[15.6s] HITCH 157 ms
+[16.3s] HITCH 155 ms
+[16.6s] HITCH 188 ms
+[17.0s] HITCH 238 ms
+[17.2s] HITCH 160 ms
+[17.5s] HITCH 231 ms
+[17.7s] HITCH 238 ms
+[17.9s] HITCH 165 ms
+[18.7s] HITCH 165 ms
+[18.9s] HITCH 153 ms
+[19.1s] HITCH 169 ms
+[19.2s] HITCH 157 ms
+[19.6s] HITCH 170 ms
+[19.8s] HITCH 188 ms
+[20.1s] HITCH 183 ms
+[21.4s] EXPOSURE_C4night · floor share by exposure 0–0.2/0.2–0.4/0.4–0.6/0.6–0.8/0.8–1: 37580 / 29764 / 16454 / 13107 / 11920
+[21.4s] HITCH 1279 ms
+[23.5s] HITCH 305 ms
+[24.7s] HITCH 159 ms
+[27.6s] HITCH 223 ms
+[28.5s] TAG gameplay:search_drawer
+[28.9s] TAG sfx:paper
+[29.9s] HITCH 229 ms
+[31.4s] TAG sfx:lock_open
+[31.7s] TAG gameplay:document_deal
+[31.8s] SEQUENCE document_deal
+[32.9s] HITCH 190 ms
+[35.3s] CHOICE 1/3: Cất văn tự vào áo — thêm một bằng chứng.
+[37.2s] CHOICE 1/3: Chỉ lấy vài lạng làm lộ phí.
+[37.2s] TAG sfx:lock_open
+[60.1s] C4 J1 done · mirror seen True
+[66.3s] HITCH 280 ms
+[107.4s] C4 J2 done · Tú Bà phase 1
+[107.9s] TAG scene:Dem_BackDoor
+[107.9s] TAG music:none
+[108.2s] TAG gameplay:kieu_voice
+[108.2s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[110.5s] HITCH 339 ms
+[110.5s] TAG music:resolve
+[111.9s] CHAPTER 4 COMPLETE · lines 32 · choices 4
+[111.9s] FRAMES Chapter04_LauTuBaDem · avg 407 fps · 1% low 28 fps · worst 1425 ms · 45107 frames · 640x480 · median 1.7 ms · p99 10.0 ms · under 60 fps 0.1% · load 2.9 s (first frame 2749 ms) · warm-up worst 980 ms
+   c4_viec = 2
+   c4_canh_giac = 0
+   c4_tien = 1
+   c4_van_tu = 1
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo
