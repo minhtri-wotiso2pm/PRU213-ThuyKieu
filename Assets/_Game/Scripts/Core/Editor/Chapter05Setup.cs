@@ -127,6 +127,7 @@ namespace ThuyKieu.Core.Editor
             Set(chase, "_id", "chase_alley");
             Set(chase, "_start", Point("ChaseStart", new Vector3(20.5f, 0.05f, 4f), 90f, world));
             Set(chase, "_pursuers", pursuers.ToArray());
+            Set(chase, "_dog", dog.GetComponent<DogPursuer>());
             Set(chase, "_pursuerStarts", pursuerStarts.ToArray());
             Set(chase, "_obstacles", obstacles.ToArray());
             Set(chase, "_finish", finish);
@@ -141,6 +142,7 @@ namespace ThuyKieu.Core.Editor
             Set(forest, "_id", "chase_forest");
             Set(forest, "_rail", rail.ToArray());
             Set(forest, "_pursuers", pursuers.ToArray());
+            Set(forest, "_dog", dog.GetComponent<DogPursuer>());
             Set(forest, "_camera", chaseCam);
             Chapter03Setup.Fx(sequences, "kieu_voice", "spirit", "memory", "none", 2f, 0f, 1);
 
@@ -231,6 +233,7 @@ namespace ThuyKieu.Core.Editor
             Set(dog, "_player", s.Player);
             Set(dog, "_audio", s.Audio);
             Set(dog, "_head", head.transform);
+            Chapter05DogSetup.ConfigureDog(dog);
 
             // The guard on his round with a lantern.
             var guard = CharacterActor("NguoiCanh", "NguoiCanh", "LinhCanh", 1.76f, new Vector3(4f, 0, -4f), 90f);
