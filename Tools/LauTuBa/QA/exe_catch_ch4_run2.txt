@@ -1,0 +1,55 @@
+AUTOPILOT PASS
+[3.6s] NAVMESH built in 29 ms · 388 sources
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.8s] TAG scene:Dem_Opening
+[0.8s] TAG music:tension_low
+[1.0s] CHOICE 5/5: Im lặng nhìn qua song cửa.
+[1.1s] TAG sfx:latch_drop
+[1.3s] TAG scene:Dem_Night
+[1.3s] TAG gameplay:tutorial_dem
+[3.9s] CATCH Front by NguoiCanh · shoved · worst frame 54 ms · clip A_front_standing (0 frames)
+[4.0s] FAIL → checkpoint restored
+[6.5s] CATCH Front by NguoiCanh · shoved · worst frame 16 ms · clip A_front_crouched (0 frames)
+[6.5s] FAIL → checkpoint restored
+[8.9s] CATCH Rear by NguoiCanh · shoved · worst frame 15 ms · clip B_rear (0 frames)
+[9.0s] FAIL → checkpoint restored
+[11.5s] CATCH Rear by NguoiCanh · shoved · worst frame 18 ms · clip B_rear_crouched (0 frames)
+[11.5s] FAIL → checkpoint restored
+[14.0s] CATCH Front by NguoiCanh · shoved · worst frame 18 ms · clip A_front_wall (0 frames)
+[14.1s] FAIL → checkpoint restored
+[16.5s] CATCH Front by NguoiCanh · shoved · worst frame 35 ms · clip A_two_guards (0 frames)
+[16.5s] FAIL → checkpoint restored
+[16.7s] CATCH two guards · catch scenes played 1 (one expected)
+[17.8s] CATCH not staged: NguoiCanh 8.7 m away (plain failure)
+[17.9s] FAIL → checkpoint restored
+[25.3s] CATCH C_screen · TIMEOUT (knew the place False)
+[29.5s] CATCH FromHiding by NguoiCanh · shoved · worst frame 14 ms · clip C_wardrobe (0 frames)
+[29.6s] FAIL → checkpoint restored
+[29.7s] CATCH probe done · 7 catch scenes
+[31.2s] TAG gameplay:search_drawer
+[31.5s] TAG sfx:paper
+[31.8s] TAG sfx:lock_open
+[32.1s] TAG gameplay:document_deal
+[32.2s] SEQUENCE document_deal
+[32.3s] CHOICE 2/3: Đốt nó trên ngọn đèn.
+[32.3s] TAG sfx:fire
+[32.4s] TAG gameplay:kieu_voice
+[32.5s] CHOICE 1/3: Chỉ lấy vài lạng làm lộ phí.
+[32.5s] TAG sfx:lock_open
+[40.6s] C4 J1 done · mirror seen False
+[56.7s] C4 J2 done · Tú Bà phase 1
+[57.3s] TAG scene:Dem_BackDoor
+[57.3s] TAG music:none
+[57.6s] TAG gameplay:kieu_voice
+[57.6s] CHOICE 2/2: "Ngươi đã ở lại. Ta thì không."
+[57.7s] TAG music:resolve
+[57.7s] CHAPTER 4 COMPLETE · lines 35 · choices 4
+[57.7s] FRAMES Chapter04_LauTuBaDem · avg 109 fps · 1% low 52 fps · worst 54 ms · 6065 frames · 1920x1080 · median 7.0 ms · p99 14.9 ms · under 60 fps 0.6% · load 3.7 s (first frame 3453 ms) · warm-up worst 847 ms
+   c4_viec = 2
+   c4_canh_giac = 1
+   c4_tien = 1
+   c4_van_tu = 2
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo

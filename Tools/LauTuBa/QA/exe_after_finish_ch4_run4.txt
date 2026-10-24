@@ -1,0 +1,38 @@
+AUTOPILOT PASS
+[3.5s] NAVMESH built in 36 ms · 388 sources
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.7s] TAG scene:Dem_Opening
+[0.7s] TAG music:tension_low
+[0.9s] CHOICE 2/5: Cúi đầu: "Dạ... con xin nghe lời mẹ."
+[1.0s] TAG sfx:latch_drop
+[1.2s] TAG scene:Dem_Night
+[1.2s] TAG gameplay:tutorial_dem
+[2.9s] TAG gameplay:search_drawer
+[3.2s] TAG sfx:paper
+[3.5s] TAG sfx:lock_open
+[3.9s] TAG gameplay:document_deal
+[3.9s] SEQUENCE document_deal
+[4.0s] CHOICE 2/3: Đốt nó trên ngọn đèn.
+[4.0s] TAG sfx:fire
+[4.1s] TAG gameplay:kieu_voice
+[4.2s] CHOICE 3/3: Không lấy một đồng nào.
+[4.2s] TAG sfx:lock_open
+[12.6s] C4 J1 done · mirror seen False
+[28.7s] C4 J2 done · Tú Bà phase 1
+[29.6s] CHOICE 2/4: Nắm tay chị ấy: "Đi cùng em."
+[35.9s] C4 Lam reached the kitchen
+[35.9s] TAG scene:Dem_BackDoor
+[35.9s] TAG music:none
+[36.3s] TAG gameplay:kieu_voice
+[36.3s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[36.4s] TAG music:resolve
+[36.4s] CHAPTER 4 COMPLETE · lines 42 · choices 5
+[36.4s] FRAMES Chapter04_LauTuBaDem · avg 132 fps · 1% low 57 fps · worst 112 ms · 4545 frames · 1920x1080 · median 6.9 ms · p99 14.0 ms · under 60 fps 0.2% · load 3.6 s (first frame 3365 ms) · warm-up worst 758 ms
+   c4_viec = 2
+   c4_canh_giac = 0
+   c4_tien = 0
+   c4_van_tu = 2
+   c4_so_no = True
+   c4_ru_co_lam = True
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo, c4_co_lam

@@ -1,0 +1,40 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter03_LauTuBa
+[2.6s] TAG scene:Lau_Arrival
+[2.6s] TAG music:tuba_warm
+[10.7s] TAG sfx:gate_bar
+[10.9s] TAG scene:Lau_Explore
+[10.9s] TAG gameplay:tutorial_lau
+[11.0s] SEQUENCE tutorial_lau
+[22.0s] CHOICE 1/3: Hỏi: "Chị ở đây lâu chưa?"
+[26.0s] TAG gameplay:search_drawer
+[26.1s] HITCH 194 ms
+[26.4s] TAG gameplay:document_contract
+[26.6s] SEQUENCE document_contract
+[28.7s] TAG gameplay:lucbat_ch3
+[28.9s] SEQUENCE lucbat_ch3
+[31.1s] LUCBAT lucbat_ch3 tile wrong · tone off · score 0
+[31.6s] TAG sfx:lock_rattle
+[42.2s] TAG scene:Lau_Overhear
+[42.2s] TAG music:none
+[42.2s] C3 overhear started
+[42.6s] TAG scene:Lau_Locked
+[42.6s] TAG sfx:lock_open
+[43.4s] TAG scene:Lau_End
+[43.4s] TAG music:none
+[43.4s] TAG sfx:latch_drop
+[43.6s] TAG gameplay:panic
+[43.9s] TAG gameplay:kieu_voice
+[47.6s] CHOICE 1/4: "...Không dễ chút nào. Ta đã sai khi phán xét ngươi."
+[47.8s] TAG music:resolve
+[49.3s] CHAPTER 3 COMPLETE · lines 69 · choices 2
+[49.3s] FRAMES Chapter03_LauTuBa · avg 135 fps · 1% low 20 fps · worst 194 ms · 6349 frames · 1920x1080
+   nghi_ngo = 0
+   manh_moi = 0
+   suy_luan = 0
+   gia_vo = 0
+   c3_viec = 7
+   c3_khe_uoc = True
+   c3_bi_bat = 0
+   tra_loi_kieu_that = 1
+   clues = c3_cong_khoa, c3_co_hong, c3_so_no, c3_van_tu, c3_co_lam, c3_nghe_len

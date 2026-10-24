@@ -84,12 +84,18 @@ namespace ThuyKieu.Core.Editor
         {
             var samples = new float[clip.samples * clip.channels];
             clip.GetData(samples, 0);
+            WriteWav(path, samples, clip.frequency, clip.channels);
+        }
+
+        /// <summary>16-bit PCM WAV of interleaved samples (Foley one-shots, A/B files).</summary>
+        public static void WriteWav(string path, float[] samples, int frequency, int channels = 1)
+        {
             using (var writer = new BinaryWriter(File.Create(path)))
             {
                 int bytes = samples.Length * 2;
                 writer.Write(Encoding.ASCII.GetBytes("RIFF")); writer.Write(36 + bytes); writer.Write(Encoding.ASCII.GetBytes("WAVE"));
-                writer.Write(Encoding.ASCII.GetBytes("fmt ")); writer.Write(16); writer.Write((short)1); writer.Write((short)clip.channels);
-                writer.Write(clip.frequency); writer.Write(clip.frequency * clip.channels * 2); writer.Write((short)(clip.channels * 2)); writer.Write((short)16);
+                writer.Write(Encoding.ASCII.GetBytes("fmt ")); writer.Write(16); writer.Write((short)1); writer.Write((short)channels);
+                writer.Write(frequency); writer.Write(frequency * channels * 2); writer.Write((short)(channels * 2)); writer.Write((short)16);
                 writer.Write(Encoding.ASCII.GetBytes("data")); writer.Write(bytes);
                 foreach (float sample in samples) writer.Write((short)Mathf.RoundToInt(Mathf.Clamp(sample, -1f, 1f) * 32767f));
             }

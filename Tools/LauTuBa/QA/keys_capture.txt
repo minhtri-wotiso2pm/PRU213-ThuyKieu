@@ -1,0 +1,136 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.1s] NAVMESH built in 45 ms · 388 sources
+[0.1s] C4 Foley recorded set loaded
+[2.9s] HITCH 1842 ms
+[2.9s] TAG scene:Dem_Opening
+[2.9s] TAG music:tension_low
+[3.1s] HITCH 188 ms
+[4.0s] C4 KEYS standing (opening): ok · hook 24 cm out from her hip bone, -7 cm below it · keys hang 6° from straight down · reach 0.71 m above her feet · size 20 cm · breathing False · keys can be taken False · scene running True
+[5.0s] HITCH 289 ms
+[7.2s] HITCH 254 ms
+[9.2s] CHOICE 1/5: Lật trang "Thoắt trông nàng đã biết tình...": cúi đúng kiểu mụ muốn thấy, rồi hỏi khéo về nợ
+[9.2s] HITCH 342 ms
+[11.5s] HITCH 343 ms
+[11.5s] TAG sfx:latch_drop
+[11.8s] TAG scene:Dem_Night
+[11.8s] TAG gameplay:tutorial_dem
+[11.9s] SEQUENCE tutorial_dem
+[15.3s] HITCH 302 ms
+[17.5s] HITCH 222 ms
+[18.9s] HITCH 383 ms
+[26.3s] C4 Tú Bà on her sập: body 12 cm above the mat with the old lift, lift now 0.33 m
+[27.4s] HITCH 332 ms
+[27.8s] KEYS ok   opening: no breath while she is up · breath played on 670 frames · while not asleep in bed 0 · breath sources on her 1
+[27.8s] KEYS ok   standing (opening): ring at her hip, no breath, no theft · ok · hook 24 cm out from her hip bone, -7 cm below it · keys hang 6° from straight down · reach 0.71 m above her feet · size 20 cm · breathing False · keys can be taken False · scene running True
+[28.3s] KEYS ok   in bed: breathing starts on an in-breath · breathing True · sound True (snore_deep) · first breath 0.00 s after she lay down
+[28.3s] KEYS ok   lying: ring on the mat beside her hip · lowest point 1.7 cm above the mat · keys 34 cm out from her middle line · toward the room 0.43
+[28.3s] KEYS ok   lying: the hand's target is on the keys · trigger 0.0 cm from the keys' middle
+[29.0s] KEYS ok   crouched beside the sập, eyes on the keys: they are the target · target KeyTheft · 0.65 m from them · eyes 1.01 m above the floor
+[29.7s] KEYS ok   standing beside the sập, eyes on the keys: they are the target · target KeyTheft
+[30.6s] HITCH 164 ms
+[31.6s] HITCH 281 ms
+[32.2s] HITCH 179 ms
+[33.9s] KEYS ok   paused: the breath clock holds, its sound waits · phase left 0.149 → 0.149 s after 1 s paused · sound still queued True
+[34.0s] KEYS ok   stirring: the snore stops at once · sound False · Stirring
+[37.5s] KEYS ok   settled again: breath restarts on an in-breath · Asleep · snore_deep
+[37.5s] KEYS ok   roused: no breath · sound False · catch False
+[42.8s] KEYS ok   E held at something else through her in-breath · target none · catches 0 · held 0.00 s · leaning in False
+[46.9s] KEYS ok   out of reach (3 m), E held through her in-breath · target none · catches 0
+[49.6s] KEYS ok   E carried over onto the keys: nothing opens · leaning in False
+[50.8s] KEYS ok   E in her in-breath opens the close view, not a grab · ready after 0.50 s · catches 0 · hand on False · Kiều held still True
+[50.8s] KEYS ok   close view: keys in front, her chest and face in the picture, nothing cut through, lens narrowed · keys at (0.43, 0.41) 0.48 m · chest (0.48, 0.60) 0.80 m · face (0.62, 0.67) 0.91 m · lens 60.0° (hers 72.0°) · inside nothing · camera 0.48 m from her eyes
+[50.9s] HITCH 162 ms
+[51.9s] KEYS ok   the E that opened it, still down: no hold until let go and pressed again · gained 0.00 s
+[51.9s] KEYS ok   mouse in the close view does not turn the head · turned 0.00°
+[54.6s] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 640×480
+[58.2s] KEYS ok   one out-breath, drawing the right way, let go before the in-breath · gained 2.03 s (out-breath 2.6 s) · kept through the in-breath 2.03 s · still leaning in True
+[58.4s] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 640×480
+[60.5s] KEYS ok   holding without drawing: nothing · gained 0.00 s
+[64.1s] KEYS ok   drawing the wrong way: nothing · gained 0.00 s · last pull None
+[68.0s] KEYS ok   a jerk: nothing (too fast) · gained 0.02 s · last pull None
+[71.6s] KEYS ok   let go and take hold again in one out-breath: both parts count · gained 2.01 s
+[71.6s] KEYS ok   progress shows on the keys: the stage moved on · stage 2/3 at 4.06 s
+[71.8s] HITCH 176 ms
+[72.4s] KEYS ok   pause menu and back: still in close, work kept · menu found True · leaning in True · held 4.06 → 4.06 s
+[74.0s] KEYS ok   backing out: the eyes and lens back, Kiều free, work kept · leaning in False · Kiều locked False · lens 72.0° (hers 72.0°) · close weight 0.00 · held 4.06 s
+[75.2s] KEYS ok   leaning in again · ready True · held 4.06 s
+[77.4s] KEYS ok   controls taken mid-hold: out of the close view, no catch, no gain · held 4.55 → 4.55 s · leaning in False · catches 0
+[77.4s] KEYS ok   no failure so far · checkpoint restores 0
+[82.0s] KEYS ok   her catch: ring at her hip as she grabs · hook 24 cm out from her hip bone, -7 cm below it · keys hang 6° from straight down · reach 0.73 m above her feet · size 19 cm
+[82.5s] CATCH Front by TuBa · shoved · worst frame 141 ms
+[84.1s] FAIL → checkpoint restored
+[85.6s] KEYS ok   held still from her out-breath into her in-breath: her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[85.6s] KEYS ok   held still from her out-breath into her in-breath: nothing gained on that frame, taken back after · held 5.11 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[85.6s] KEYS ok   held still from her out-breath into her in-breath: after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 72.0° (hers 72.0°) · camera on True · controls free True · pinned False
+[93.8s] CATCH Front by TuBa · shoved · worst frame 8 ms
+[95.4s] FAIL → checkpoint restored
+[96.9s] KEYS ok   pressed during her in-breath: her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[96.9s] KEYS ok   pressed during her in-breath: nothing gained on that frame, taken back after · held 2.03 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[96.9s] KEYS ok   pressed during her in-breath: after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 72.0° (hers 72.0°) · camera on True · controls free True · pinned False
+[104.7s] CATCH Front by TuBa · shoved · worst frame 9 ms
+[106.3s] FAIL → checkpoint restored
+[107.8s] KEYS ok   pressed while she stirs (no snore): her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[107.8s] KEYS ok   pressed while she stirs (no snore): nothing gained on that frame, taken back after · held 2.03 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[107.8s] KEYS ok   pressed while she stirs (no snore): after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 72.0° (hers 72.0°) · camera on True · controls free True · pinned False
+[120.2s] CATCH Front by TuBa · shoved · worst frame 124 ms
+[121.8s] FAIL → checkpoint restored
+[123.3s] KEYS ok   held across the turn at ~8 FPS: her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[123.3s] KEYS ok   held across the turn at ~8 FPS: nothing gained on that frame, taken back after · held 2.54 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[123.3s] KEYS ok   held across the turn at ~8 FPS: after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 72.0° (hers 72.0°) · camera on True · controls free True · pinned False
+[133.9s] HITCH 305 ms
+[135.6s] CATCH Front by TuBa · shoved · worst frame 305 ms
+[137.2s] FAIL → checkpoint restored
+[138.7s] KEYS ok   one 0.3 s frame across the turn: her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[138.7s] KEYS ok   one 0.3 s frame across the turn: nothing gained on that frame, taken back after · held 2.59 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[138.7s] KEYS ok   one 0.3 s frame across the turn: after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 72.0° (hers 72.0°) · camera on True · controls free True · pinned False
+[170.1s] CATCH Front by TuBa · shoved · worst frame 3 ms
+[171.7s] FAIL → checkpoint restored
+[173.2s] KEYS ok   almost done, held into her in-breath: her catch, once, straight from the close view · catch True (Front) · camera handed to the catch True · scenes 1 · counted as caught 1 · failures 1 · keys taken False
+[173.2s] KEYS ok   almost done, held into her in-breath: nothing gained on that frame, taken back after · held 11.30 s at the catch (gained on that frame 0.000 s) · after the checkpoint 0.00 s · she sleeps True, lying True, keys shown True
+[173.2s] KEYS ok   almost done, held into her in-breath: after the checkpoint, her eyes, lens and controls back · leaning in False · close weight 0.00 · lens 72.0° (hers 72.0°) · camera on True · controls free True · pinned False
+[175.8s] CATCH Front by TuBa · shoved · worst frame 5 ms
+[177.4s] FAIL → checkpoint restored
+[178.9s] KEYS ok   caught half way into the close view: her catch takes the camera, then all back · leaning in 0.41 when she woke · catch played True · it took the camera True · afterwards: leaning in False · close weight 0.00 · lens 72.0° (hers 72.0°) · camera on True · controls free True · pinned False
+[185.0s] KEYS ok   ~8 FPS, one out-breath drawn: gain = her out-breath time while drawing right · gained 2.00 s · out-breath under a right pull 2.00 s
+[192.9s] HITCH 166 ms
+[201.0s] HITCH 154 ms
+[208.5s] KEYS ok   12 s of drawing on her out-breaths frees the ring, once · taken 1× · keys in hand 1 · keys shown False · stage 2 · catches 0
+[208.5s] KEYS ok   time: counted work vs. time taken · setting 12.0 s · counted 12.00 s of work (E down 12.10 s) over 6 out-breaths · 23.5 s in all, leaning in and waiting included (aim 20–30 s)
+[208.5s] KEYS ok   done: back to her eyes, the hook still on her · leaning in False · Kiều locked False · hook shown True · keys shown False
+[210.1s] KEYS ok   done: her own lens back · lens 72.0° (hers 72.0°)
+[213.7s] KEYS ok   keys taken: E at the hook through her in-breath · catches 0 · leaning in False
+[215.3s] FAIL → checkpoint restored
+[215.3s] KEYS ok   checkpoint after the keys: still taken, the hook on her, she sleeps on · keys True · keys shown False · hook shown True · stage 2 · breathing True
+[215.3s] KEYS ok   breath watch after all of it · breath played on 74383 frames · while not asleep in bed 0 · breath sources on her 1
+[215.3s] KEYS probe done
+[216.8s] TAG gameplay:search_drawer
+[217.2s] TAG sfx:paper
+[218.2s] HITCH 206 ms
+[219.0s] HITCH 191 ms
+[219.8s] TAG sfx:lock_open
+[220.1s] TAG gameplay:document_deal
+[220.2s] SEQUENCE document_deal
+[221.3s] HITCH 189 ms
+[223.7s] CHOICE 1/3: Cất văn tự vào áo — thêm một bằng chứng.
+[225.6s] CHOICE 1/3: Chỉ lấy vài lạng làm lộ phí.
+[225.6s] TAG sfx:lock_open
+[256.8s] C4 J1 done · mirror seen True
+[263.0s] HITCH 327 ms
+[304.0s] C4 J2 done · Tú Bà phase 1 · after J2: Awake, breathing False, snore False · breath played on 81912 frames · while not asleep in bed 0 · breath sources on her 1
+[304.5s] TAG scene:Dem_BackDoor
+[304.5s] TAG music:none
+[304.8s] TAG gameplay:kieu_voice
+[304.9s] CHOICE 2/2: "Ngươi đã ở lại. Ta thì không."
+[307.2s] HITCH 350 ms
+[307.2s] TAG music:resolve
+[308.6s] CHAPTER 4 COMPLETE · lines 34 · choices 4
+[308.6s] FRAMES Chapter04_LauTuBaDem · avg 463 fps · 1% low 56 fps · worst 1842 ms · 142275 frames · 640x480 · median 1.8 ms · p99 8.2 ms · under 60 fps 0.1% · load 2.9 s (first frame 2659 ms) · warm-up worst 1105 ms
+   c4_viec = 2
+   c4_canh_giac = 0
+   c4_tien = 1
+   c4_van_tu = 1
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo

@@ -1,0 +1,36 @@
+AUTOPILOT PASS
+[3.6s] NAVMESH built in 29 ms · 388 sources
+[0.0s] SCENE Chapter03_LauTuBa
+[1.0s] TAG scene:Lau_Arrival
+[1.0s] TAG music:tuba_warm
+[1.3s] TAG sfx:gate_bar
+[1.4s] TAG scene:Lau_Explore
+[1.4s] TAG gameplay:tutorial_lau
+[3.9s] CATCH Front by NguoiCanh · dragged · worst frame 28 ms · clip A_ch3_drag (0 frames)
+[4.0s] FAIL → checkpoint restored
+[4.3s] TAG sfx:lock_rattle
+[5.1s] TAG gameplay:document_contract
+[9.1s] TAG scene:Lau_Overhear
+[9.1s] TAG music:none
+[9.1s] C3 overhear started
+[9.3s] TAG scene:Lau_Locked
+[9.3s] TAG sfx:lock_open
+[10.0s] TAG scene:Lau_End
+[10.0s] TAG music:none
+[10.0s] TAG sfx:latch_drop
+[10.2s] TAG gameplay:panic
+[10.2s] SEQUENCE panic
+[10.3s] TAG gameplay:kieu_voice
+[10.3s] CHOICE 4/4: Im lặng.
+[10.5s] TAG music:resolve
+[10.6s] CHAPTER 3 COMPLETE · lines 58 · choices 1
+[10.6s] FRAMES Chapter03_LauTuBa · avg 100 fps · 1% low 40 fps · worst 49 ms · 855 frames · 1920x1080 · median 6.9 ms · p99 20.8 ms · under 60 fps 3.4% · load 3.7 s (first frame 3482 ms) · warm-up worst 888 ms
+   nghi_ngo = 0
+   manh_moi = 0
+   suy_luan = 0
+   gia_vo = 0
+   c3_viec = 5
+   c3_khe_uoc = True
+   c3_bi_bat = 0
+   tra_loi_kieu_that = 3
+   clues = c3_tu_khoa, c3_cong_khoa, c3_van_tu, c3_nghe_len

@@ -1,0 +1,41 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter03_LauTuBa
+[0.6s] TAG scene:Lau_Arrival
+[0.6s] TAG music:tuba_warm
+[0.9s] TAG sfx:gate_bar
+[1.0s] TAG scene:Lau_Explore
+[1.0s] TAG gameplay:tutorial_lau
+[1.2s] TAG sfx:lock_rattle
+[2.0s] CHOICE 3/3: Hỏi: "Mẹ Tú là người thế nào?"
+[2.4s] TAG gameplay:search_drawer
+[2.7s] TAG sfx:lock_rattle
+[3.4s] TAG gameplay:lucbat_ch3
+[3.4s] SEQUENCE lucbat_ch3
+[4.0s] LUCBAT lucbat_ch3 tile ok · tone ok · score 3
+[4.1s] TAG gameplay:kieu_voice
+[4.4s] TAG gameplay:document_contract
+[4.5s] SEQUENCE document_contract
+[8.5s] TAG scene:Lau_Overhear
+[8.5s] TAG music:none
+[8.5s] C3 overhear started
+[8.7s] TAG scene:Lau_Locked
+[8.7s] TAG sfx:lock_open
+[9.4s] TAG scene:Lau_End
+[9.4s] TAG music:none
+[9.4s] TAG sfx:latch_drop
+[9.6s] TAG gameplay:panic
+[9.6s] SEQUENCE panic
+[9.7s] TAG gameplay:kieu_voice
+[9.7s] CHOICE 3/4: Lật trang "Duyên hội ngộ, đức cù lao...": "Ngươi chọn chữ Hiếu. Không phải vì ngươi ngốc."
+[9.9s] TAG music:resolve
+[10.0s] CHAPTER 3 COMPLETE · lines 81 · choices 2
+[10.0s] FRAMES Chapter03_LauTuBa · avg 101 fps · 1% low 43 fps · worst 35 ms · 803 frames · 1920x1080 · median 6.9 ms · p99 20.8 ms · under 60 fps 1.1% · load 3.4 s · warm-up worst 3220 ms
+   nghi_ngo = 0
+   manh_moi = 0
+   suy_luan = 0
+   gia_vo = 0
+   c3_viec = 9
+   c3_khe_uoc = True
+   c3_bi_bat = 0
+   tra_loi_kieu_that = 1
+   clues = c3_cong_khoa, c3_tu_khoa, c3_co_hong, c3_so_no, c3_co_lam, c3_van_tu, c3_nghe_len

@@ -78,6 +78,10 @@ namespace ThuyKieu.Presentation
                 // The magistrate's yard: a crowd murmuring behind the gate.
                 case "yamen": return Mix(id, 40f, Murmur(40f, 0.1f, 18, 70), Breeze(40f, 0.06f, 71), Birds(40f, 0.03f, 8f, 72));
                 case "yamen_hall": return Mix(id, 40f, RoomTone(40f, 0.06f, 73), Murmur(40f, 0.04f, 10, 74));
+                // Tú Bà's house, first person. After the rain (Ch3): eaves dripping, sparrows, a wind chime.
+                case "after_rain": return Mix(id, 40f, RoomTone(40f, 0.04f, 75), Drips(40f, 0.11f, 76), Birds(40f, 0.045f, 7f, 77), Chimes(40f, 0.04f, 78), Breeze(40f, 0.06f, 79));
+                // Night (Ch4): heavy rain on the tiles, gutters, far thunder, the guests' music and laughter through walls.
+                case "rain_house": return Mix(id, 40f, Rain(40f, 0.42f, 80), Drips(40f, 0.13f, 81), Thunder(40f, 0.28f, 82), Distant(40f, 0.03f, 83), Murmur(40f, 0.018f, 3, 84));
                 default: return null;
             }
         }
@@ -123,6 +127,42 @@ namespace ThuyKieu.Presentation
                 case "wrong": data = Bend(196f, 146.83f, 0.6f, 0.55f); break;
                 // A few plucked notes of the hồ cầm, the opening of a sad "Bạc mệnh" phrase in a minor pentatonic.
                 case "dan": data = Notes(new[] { 293.66f, 349.23f, 392f, 349.23f, 293.66f, 261.63f, 220f }, 0.42f, 3.4f, 0.42f); break;
+                // Tú Bà's house in first person: floors, doors, locks and the sounds that mean danger.
+                case "step_wet": data = Add(Scale(Thud(0.2f, random), 0.8f), Noise(0.16f, 0.45f, 0.85f, random)); break;
+                case "step_earth": data = Scale(Thud(0.16f, random), 0.7f); break;
+                case "step_mat": data = Scale(Thud(0.12f, random), 0.45f); break;
+                // Second takes (a different seed, a little shorter or longer) so steps on one floor do not repeat exactly.
+                case "step_wet_2": data = Add(Scale(Thud(0.18f, random), 0.75f), Noise(0.2f, 0.5f, 0.9f, random)); break;
+                case "step_earth_2": data = Add(Scale(Thud(0.17f, random), 0.65f), Noise(0.08f, 0.08f, 0.55f, random)); break;
+                case "step_mat_2": data = Add(Scale(Thud(0.11f, random), 0.4f), Noise(0.12f, 0.05f, 0.6f, random)); break;
+                // Mud in the alley: a soft heel, then the dull suck of the foot coming out.
+                case "step_mud": data = Add(Scale(Thud(0.16f, random), 0.6f), Delay(Noise(0.22f, 0.32f, 0.16f, random), 0.06f)); break;
+                case "step_mud_2": data = Add(Scale(Thud(0.15f, random), 0.55f), Delay(Noise(0.26f, 0.3f, 0.13f, random), 0.08f)); break;
+                case "coins": data = Jingle(0.5f, 5, 0.35f, random); break;
+                case "keys_soft": data = Jingle(0.35f, 3, 0.22f, random); break;
+                case "bracelet": data = Add(Jingle(0.4f, 2, 0.4f, random), Delay(Jingle(0.3f, 1, 0.25f, random), 0.35f)); break;
+                case "door_creak_soft": data = Scale(Creak(0.7f), 0.55f); break;
+                case "door_fast": data = Add(Creak(0.35f), Delay(Thud(0.3f, random), 0.25f)); break;
+                case "door_slam": data = Add(Scale(Thud(0.55f, random), 1.7f), Clicks(0.45f, 4, 0.45f, random)); break;
+                case "slide_soft": data = Scale(Noise(0.7f, 0.3f, 0.12f, random), 0.8f); break;
+                case "slide_fast": data = Add(Noise(0.35f, 0.55f, 0.25f, random), Delay(Thud(0.3f, random), 0.3f)); break;
+                case "slide_slam": data = Add(Add(Noise(0.22f, 0.8f, 0.3f, random), Delay(Scale(Thud(0.6f, random), 1.9f), 0.18f)), Delay(Clicks(0.4f, 5, 0.5f, random), 0.2f)); break;
+                case "key_turn": data = Add(Clicks(0.5f, 3, 0.45f, random), Scale(Noise(0.5f, 0.15f, 0.5f, random), 0.6f)); break;
+                case "bolt_slow": data = Add(Scale(Noise(0.9f, 0.32f, 0.1f, random), 0.9f), Clicks(0.9f, 2, 0.15f, random)); break;
+                case "bolt_fast": data = Add(Noise(0.25f, 0.75f, 0.2f, random), Delay(Scale(Thud(0.35f, random), 1.4f), 0.2f)); break;
+                case "latch_lift": data = Add(Clicks(0.4f, 2, 0.3f, random), Scale(Noise(0.4f, 0.12f, 0.4f, random), 0.6f)); break;
+                case "latch_drop": data = Add(Scale(Thud(0.3f, random), 1.3f), Clicks(0.3f, 2, 0.8f, random)); break;
+                case "gate_bar": data = Add(Noise(0.9f, 0.5f, 0.07f, random), Delay(Scale(Thud(0.7f, random), 1.8f), 0.8f)); break;
+                case "blow": data = Breath(0.5f, 0.35f, 0.55f, random); break;
+                case "chair_creak": data = Scale(Creak(0.9f), 0.7f); break;
+                case "mumble": data = Mumble(1.4f, random); break;
+                case "snore_deep": data = Snore(1.5f, random); break;
+                case "snore_out": data = Breath(1.4f, 0.22f, 0.08f, random); break;
+                case "breath_in": data = Swell(0.45f, random); break;
+                // J1: a đàn nguyệt string snapping — a bright pluck, a fall in pitch, a crack.
+                case "string_snap": data = Add(Add(Notes(new[] { 1318.5f }, 0f, 0.5f, 0.9f), Bend(1250f, 260f, 0.3f, 0.55f)), Noise(0.08f, 0.9f, 0.9f, random)); break;
+                // J2: a low hit under the slam, felt more than heard.
+                case "sting_low": data = Add(Scale(Drum(1.4f), 0.9f), Bend(98f, 49f, 1.6f, 0.7f)); break;
                 // One hồ cầm string at hò (C4); free play retunes it per string with the source pitch.
                 case "dan_note": data = Notes(new[] { 261.63f }, 0f, 2.6f, 0.5f); break;
                 // A thumb pressed into cinnabar and onto paper: a soft thud and the rasp of the sheet.
@@ -733,7 +773,113 @@ namespace ThuyKieu.Presentation
             return data;
         }
 
+        /// <summary>Water dripping from eaves into puddles and jars: irregular plinks, a gutter trickling now and then.</summary>
+        private static float[] Drips(float seconds, float gain, int seed)
+        {
+            var random = new System.Random(seed);
+            int length = (int)(seconds * Rate);
+            var data = new float[length];
+            for (float time = 0.1f; time < seconds - 0.2f; time += 0.12f + (float)random.NextDouble() * 0.7f)
+            {
+                int start = (int)(time * Rate);
+                float frequency = 700f + (float)random.NextDouble() * 1500f;
+                float level = gain * (0.3f + (float)random.NextDouble() * 0.7f);
+                float phase = 0f;
+                for (int i = 0; i < Rate * 0.08f && start + i < length; i++)
+                {
+                    float k = i / (Rate * 0.08f);
+                    phase += 2 * Mathf.PI * frequency * (1f + 0.4f * Mathf.Exp(-k * 12f)) / Rate;
+                    data[start + i] += level * Mathf.Sin(phase) * Mathf.Exp(-k * 7f);
+                }
+            }
+            float low = 0f;
+            for (float time = 3f; time < seconds - 5f; time += 9f + (float)random.NextDouble() * 6f)
+            {
+                int start = (int)(time * Rate), count = (int)(3f * Rate);
+                for (int i = 0; i < count && start + i < length; i++)
+                {
+                    float k = i / (float)count;
+                    low += 0.25f * ((float)(random.NextDouble() * 2 - 1) - low);
+                    data[start + i] += low * gain * 0.6f * Mathf.Sin(Mathf.PI * k) * (0.6f + 0.4f * Mathf.Sin(k * 90f));
+                }
+            }
+            return data;
+        }
+
+        /// <summary>Small metal pieces knocking together (keys, coins, bangles): bright inharmonic partials.</summary>
+        private static float[] Jingle(float seconds, int strikes, float gain, System.Random random)
+        {
+            var data = new float[(int)(seconds * Rate) + Rate / 2];
+            for (int s = 0; s < strikes; s++)
+            {
+                int start = (int)((s / (float)strikes) * seconds * 0.8f * Rate + random.Next(Rate / 40));
+                float frequency = 2400f + (float)random.NextDouble() * 1800f;
+                for (int i = 0; i < Rate * 0.25f && start + i < data.Length; i++)
+                {
+                    float t = i / (float)Rate;
+                    float v = Mathf.Sin(2 * Mathf.PI * frequency * t) + 0.5f * Mathf.Sin(2 * Mathf.PI * frequency * 2.71f * t) + 0.25f * Mathf.Sin(2 * Mathf.PI * frequency * 4.13f * t);
+                    data[start + i] += gain * v * Mathf.Exp(-t * 26f) * Mathf.Min(1f, i / 8f);
+                }
+            }
+            return data;
+        }
+
+        /// <summary>A breath or a puff: noise rising fast and fading, coloured by <paramref name="brightness"/>.</summary>
+        private static float[] Breath(float seconds, float gain, float brightness, System.Random random)
+        {
+            var data = new float[(int)(seconds * Rate)];
+            float filtered = 0f;
+            for (int i = 0; i < data.Length; i++)
+            {
+                float k = i / (float)data.Length;
+                filtered += brightness * ((float)(random.NextDouble() * 2 - 1) - filtered);
+                data[i] = filtered * gain * Mathf.Min(1f, k * 8f) * (1f - k);
+            }
+            return data;
+        }
+
+        /// <summary>A sleeper's snore on the in-breath: throat rattle (pulsed low noise) swelling and cut off.</summary>
+        private static float[] Snore(float seconds, System.Random random)
+        {
+            var data = new float[(int)(seconds * Rate)];
+            float a = 0f, b = 0f;
+            for (int i = 0; i < data.Length; i++)
+            {
+                float t = i / (float)Rate, k = i / (float)data.Length;
+                a += 0.08f * ((float)(random.NextDouble() * 2 - 1) - a);
+                b += 0.08f * (a - b);
+                float rattle = 0.45f + 0.55f * Mathf.Max(0f, Mathf.Sin(2 * Mathf.PI * 31f * t));
+                float voice = Mathf.Sin(2 * Mathf.PI * 92f * t) * 0.25f;
+                float envelope = Mathf.Pow(Mathf.Sin(Mathf.PI * Mathf.Min(1f, k * 1.15f)), 1.5f);
+                data[i] = (b * 9f + voice) * rattle * envelope * 0.6f;
+            }
+            return data;
+        }
+
+        /// <summary>Someone half asleep mumbling: a low voice with syllable-rate formant noise.</summary>
+        private static float[] Mumble(float seconds, System.Random random)
+        {
+            var data = new float[(int)(seconds * Rate)];
+            float low = 0f, lower = 0f;
+            for (int i = 0; i < data.Length; i++)
+            {
+                float t = i / (float)Rate, k = i / (float)data.Length;
+                low += 0.18f * ((float)(random.NextDouble() * 2 - 1) - low);
+                lower += 0.03f * (low - lower);
+                float syllables = Mathf.Max(0f, Mathf.Sin(t * 4.3f * Mathf.PI)) * (0.6f + 0.4f * Mathf.Sin(t * 1.7f));
+                float pitch = 150f - 25f * k;
+                data[i] = ((low - lower) * 0.9f + 0.3f * Mathf.Sin(2 * Mathf.PI * pitch * t)) * syllables * Mathf.Sin(Mathf.PI * k) * 0.7f;
+            }
+            return data;
+        }
+
         // ------------------------------------------------------------------ helpers
+
+        private static float[] Scale(float[] data, float gain)
+        {
+            for (int i = 0; i < data.Length; i++) data[i] *= gain;
+            return data;
+        }
 
         private static float[] Add(float[] a, float[] b)
         {
