@@ -136,7 +136,8 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             if (key == "camera" && value == "OTS_Kieu_Cabinet") Begin(OpenCabinet());
             if (key == "camera" && value == "OTS_Kieu_Altar") Begin(LightIncense());
-            if (key == "camera" && value == "MCU_MeKieu" && _scene == "VuongGia_DemMua") Begin(SitWithMother());
+            // Once the knocking has begun her mother is on her feet urging her to the gate: they talk standing, in haste.
+            if (key == "camera" && value == "MCU_MeKieu" && _scene == "VuongGia_DemMua" && !_knocked) Begin(SitWithMother());
             if (key == "camera" && value == "Hug_MeKieu") Begin(Embrace());
             if (key == "gameplay" && value == "document_khe") Begin(InspectContract());
             if (key == "gameplay" && value == Fingerprint) Begin(PressFingerprint());
@@ -160,17 +161,19 @@ namespace ThuyKieu.Gameplay.Chapters
         }
 
         /// <summary>
-        /// The longer the gate stays shut the harder they knock: the mother begs her to answer, the servant calls in
-        /// and Mã Giám Sinh's patience runs out, each wait costing a little of his trust. After that a knock now and then.
+        /// The longer the gate stays shut the harder they knock: every few seconds the mother begs her to answer, the
+        /// servant calls in and Mã Giám Sinh's patience runs out, the last two each costing a little of his trust. Then he
+        /// threatens to take his silver elsewhere, and if she still leaves him in the rain her mother drags her to the
+        /// gate herself: the story moves on without whatever she had not finished, and he comes in sour (c1_de_cho).
         /// Only time spent free in the house counts, so reading and talking are never punished.
         /// </summary>
         private void UpdateKnocking()
         {
             _knockWait += Time.deltaTime;
-            float due = _knockStage < 3 ? 20f * (_knockStage + 1) : 60f + 15f * (_knockStage - 2);
+            float due = _knockStage < 4 ? 8f * (_knockStage + 1) : 32f + 10f * (_knockStage - 3);
             if (_knockWait < due) return;
             var audio = _director.Audio;
-            if (audio != null) audio.PlaySfx("knock", Mathf.Min(1f, 0.8f + 0.1f * _knockStage));
+            if (audio != null) audio.PlaySfx("knock", Mathf.Min(1f, 0.8f + 0.07f * _knockStage));
             _barkCooldown = 0f;
             switch (_knockStage)
             {
@@ -182,9 +185,21 @@ namespace ThuyKieu.Gameplay.Chapters
                     _director.SetInt("c1_nghi_ngo", Mathf.Min(100, _director.GetInt("c1_nghi_ngo") + 5));
                     break;
                 case 2:
+                    Bark("MeKieu", "Kiều! Nhanh lên con, đừng để người ta đứng ngoài mưa nữa!");
+                    break;
+                case 3:
                     Bark("MaGiamSinh", "Vương gia để khách đứng ngoài mưa thế này sao? Ta không có cả đêm đâu.");
                     _director.SetInt("c1_nghi_ngo", Mathf.Min(100, _director.GetInt("c1_nghi_ngo") + 5));
                     if (_director.Fx != null) _director.Fx.Shake(0.12f, 0.3f);
+                    break;
+                case 4:
+                    Bark("MaGiamSinh", "Không mở thì thôi, ta đi tìm nhà khác. Bốn trăm lạng, thiếu gì người nhận!");
+                    if (_director.Fx != null) _director.Fx.Shake(0.18f, 0.35f);
+                    break;
+                case 5:
+                    _director.SetBool("c1_de_cho", true);
+                    _director.SetInt("c1_nghi_ngo", Mathf.Min(100, _director.GetInt("c1_nghi_ngo") + 10));
+                    _director.ChooseExplore("c1_cong");
                     break;
             }
             _knockStage++;
@@ -640,11 +655,22 @@ namespace ThuyKieu.Gameplay.Chapters
             _kieu.Sit(true);
             yield return new WaitForSeconds(_director.Autopilot ? 0f : 0.35f);
             while (!_director.InExplore && _scene == "VuongGia_DemMua") yield return null;
-            // She stands up where she sat: the stool is clear of the table. Moving her before the stand-up played slid
-            // her off the stool still seated. The Sit To Stand clip carries her hips 35 cm forward and snaps them back
-            // when it ends, so the root counters that drift and she rises straight up (the long skirt hides her feet).
+            yield return StandFromSeat();
+            _action = null;
+        }
+
+        /// <summary>
+        /// She stands up where she sat: the seat is clear of the table. Moving her before the stand-up played slid her off
+        /// the seat still seated. The Sit To Stand clip carries her hips 35 cm forward and snaps them back when it ends,
+        /// so the root counters that drift and she rises straight up (the long skirt hides her feet).
+        /// </summary>
+        private IEnumerator StandFromSeat()
+        {
             Transform hips = _kieu.GetComponentInChildren<Animator>().GetBoneTransform(HumanBodyBones.Hips);
             Vector3 anchor = hips.position;
+            // Teleport switches her collider back on; a caller that sat her inside the bench keeps it off until she is clear.
+            var body = _director.Player.GetComponent<CharacterController>();
+            bool collides = body == null || body.enabled;
             _kieu.Sit(false);
             float settle = 0.4f;
             for (float t = 0f; (_kieu.IsSitting || settle > 0f) && t < 3f; t += Time.deltaTime)
@@ -652,10 +678,12 @@ namespace ThuyKieu.Gameplay.Chapters
                 if (!_kieu.IsSitting) settle -= Time.deltaTime;
                 Vector3 drift = Vector3.ProjectOnPlane(hips.position - anchor, Vector3.up);
                 if (drift.sqrMagnitude > 0.0001f)
+                {
                     _director.Player.Teleport(_director.Player.transform.position - drift, _director.Player.transform.rotation);
+                    if (body != null) body.enabled = collides;
+                }
                 yield return null;
             }
-            _action = null;
         }
 
         private static readonly Vector3 EmbraceSpot = new Vector3(-0.7f, 0f, -4.4f);
@@ -882,44 +910,55 @@ namespace ThuyKieu.Gameplay.Chapters
         }
 
         /// <summary>
-        /// The fingerprint: a close shot on the contract, Kiều's hand hovering over the cinnabar mark. Holding the
-        /// button lowers her thumb (FingerprintSequence); the hand trembles, worse when she signs in haste, and the
-        /// red print stays on the paper once it is down.
+        /// The fingerprint, on the contract where it lies on the table. Kiều is too slight to reach the table top standing
+        /// (her shoulder is barely half a metre above it), so she sits on the bench along the table, level with the paper,
+        /// and presses her thumb at her end of the sheet beside the mark already printed there. Holding the button lowers
+        /// it (FingerprintSequence); the hand trembles, worse when she signs in haste, and the red print stays on the
+        /// paper. Then she gets up and steps back from the bench.
         /// </summary>
         private IEnumerator PressFingerprint()
         {
             for (float t = 0f; _director.CurrentSequence != Fingerprint && t < 30f; t += Time.deltaTime) yield return null;
             if (_director.CurrentSequence != Fingerprint) yield break;
             if (!_contract.activeSelf) _contract.SetActive(true);
-            // She steps up to the end of the table away from Mã Giám Sinh (the camera cuts to the paper, so the step is
-            // not seen) and presses beside the mark already printed at that end of the sheet; the cinnabar box sits on
-            // the table just past the paper.
+            if (!TableSeats(out Vector3 bench, out Quaternion benchFacing, out _, out _)) yield break;
             var sheet = _contract.transform.Find("Tờ khế")?.GetComponent<Renderer>() ?? _contract.GetComponentInChildren<Renderer>();
             Bounds paper = sheet.bounds;
-            Vector3 towardKieu = Vector3.ProjectOnPlane(paper.center - _ma.transform.position, Vector3.up).normalized;
-            Vector3 across = Vector3.Cross(Vector3.up, towardKieu);
-            Vector3 stand = paper.center + towardKieu * (paper.extents.x + 0.14f);
-            stand.y = _director.Player.transform.position.y;
-            _director.Player.Teleport(stand, Quaternion.LookRotation(-towardKieu));
-            Vector3 spot = new Vector3(paper.center.x, paper.max.y + 0.002f, paper.center.z) + towardKieu * (paper.extents.x - 0.15f) - across * 0.03f;
-            var pad = InkPad(paper.center + towardKieu * (paper.extents.x - 0.06f) + across * (paper.extents.z + 0.07f));
+            Vector3 forward = benchFacing * Vector3.forward;
+            Vector3 across = Vector3.Cross(Vector3.up, forward);
+            // On the bench, level with the paper.
+            Vector3 seat = bench + across * Vector3.Dot(paper.center - bench, across);
+            seat.y = _director.Player.transform.position.y;
 
             var camera = _director.CameraController;
             bool cameraLocked = camera.ControlLocked;
-            var shot = new GameObject("FingerprintShot").transform;
-            // From across the paper, looking back at her hand coming down: her own sleeve never fills the frame.
-            Vector3 eye = spot + Vector3.up * 0.5f - towardKieu * 0.32f - across * 0.3f;
-            shot.SetPositionAndRotation(eye, Quaternion.LookRotation(spot + towardKieu * 0.05f - eye));
             camera.ControlLocked = true;
+            // Her end of the sheet, a hand in from the edge, beside the printed mark.
+            float reach = Mathf.Abs(Vector3.Dot(paper.extents, new Vector3(Mathf.Abs(forward.x), 0f, Mathf.Abs(forward.z))));
+            Vector3 spot = new Vector3(paper.center.x, paper.max.y + 0.002f, paper.center.z) - forward * (reach - 0.15f);
+            var shot = new GameObject("FingerprintShot").transform;
+            // From across the table: her hand coming down onto the paper and her bowed face behind it.
+            Vector3 eye = spot + Vector3.up * 0.5f + forward * 0.75f + across * 0.3f;
+            shot.SetPositionAndRotation(eye, Quaternion.LookRotation(spot + Vector3.up * 0.15f - forward * 0.15f - eye));
             camera.CutTo(shot);
+
+            // The bench is solid: with her collider on she would be pushed off it the moment she sat.
+            var body = _director.Player.GetComponent<CharacterController>();
+            _director.Player.Teleport(seat, benchFacing);
+            if (body != null) body.enabled = false;
+            _kieu.Sit(true);
+            yield return new WaitForSeconds(_director.Autopilot ? 0f : 1.1f);
 
             bool haste = !_director.GetBool("doc_ky_khe");
             var pose = AddPose(_kieu);
-            pose.Lean = 30f;
-            // Palm down, fingers reaching forward and down onto the paper.
-            Vector3 fingers = (Vector3.down * 0.8f - towardKieu).normalized;
-            pose.SetHandAim(null, null, fingers, Vector3.down);
-            pose.RightCurl = 28f;
+            pose.Lean = 14f;
+            // A relaxed hand pressing a thumb: fingers out ahead and only a little down, the palm turned partly in towards
+            // her. Aiming the hand fully (fingers straight down) bent the wrist back at a broken angle, so the aim is
+            // only part-applied and the rest of the wrist's set is left to the animation.
+            Vector3 fingers = (forward + Vector3.down * 0.45f).normalized;
+            pose.SetHandAim(null, null, fingers, (Vector3.down - across * 0.45f).normalized);
+            pose.HandAim = 0.65f;
+            pose.RightCurl = 18f;
             bool halfway = false;
             for (float t = 0f; _director.CurrentSequence == Fingerprint && !_fingerprint.Done; t += Time.deltaTime)
             {
@@ -928,7 +967,7 @@ namespace ThuyKieu.Gameplay.Chapters
                 float shake = (haste ? 0.009f : 0.005f) * (0.4f + p);
                 Vector3 jitter = new Vector3(Mathf.PerlinNoise(t * 9f, 0.1f) - 0.5f, Mathf.PerlinNoise(0.3f, t * 8f) - 0.5f,
                     Mathf.PerlinNoise(t * 7f, 0.7f) - 0.5f) * 2f * shake;
-                Vector3 wrist = spot - fingers * 0.11f + Vector3.up * (0.16f * (1f - p)) + jitter;
+                Vector3 wrist = spot - fingers * 0.1f + Vector3.up * (0.14f * (1f - p)) + jitter;
                 pose.SetTargets(null, wrist, spot);
                 pose.Weight = Mathf.MoveTowards(pose.Weight, 1f, Time.deltaTime * 2.5f);
                 if (!halfway && p >= 0.5f)
@@ -951,18 +990,11 @@ namespace ThuyKieu.Gameplay.Chapters
             camera.SetDialogueCue(null);
             camera.ControlLocked = cameraLocked;
             Destroy(shot.gameObject);
-            if (pad != null) pad.SetParent(_contract.transform, true);
+            yield return StandFromSeat();
+            // Standing, she steps back off the bench before her collider returns.
+            _director.Player.Teleport(seat - forward * 0.45f, benchFacing);
+            if (body != null) body.enabled = true;
             _action = null;
-        }
-
-        /// <summary>A lacquered cinnabar box beside the contract, its red paste showing.</summary>
-        private Transform InkPad(Vector3 at)
-        {
-            var pad = new GameObject("HopSon").transform;
-            pad.position = new Vector3(at.x, TableTop(at), at.z);
-            Piece(pad, PrimitiveType.Cylinder, new Vector3(0f, 0.008f, 0f), Vector3.zero, new Vector3(0.065f, 0.008f, 0.065f), Lit(new Color(0.18f, 0.06f, 0.04f), 0.7f));
-            Piece(pad, PrimitiveType.Cylinder, new Vector3(0f, 0.0165f, 0f), Vector3.zero, new Vector3(0.05f, 0.001f, 0.05f), Lit(new Color(0.72f, 0.1f, 0.08f), 0.4f));
-            return pad;
         }
 
         /// <summary>The red print left on the contract, a little smudged, riding with the paper from now on.</summary>
@@ -1717,6 +1749,7 @@ namespace ThuyKieu.Gameplay.Chapters
             yield return (bool)v["doc_ky_khe"] ? "Tờ khế: bạn đã đọc kỹ từng chữ trước khi điểm chỉ." : "Tờ khế: bạn đã ký vội để cứu cha.";
             if ((bool)v["c1_bac_truoc"]) yield return "Lời bà mối: tờ khế ghi rõ bạc giao trước. Cha và em được thả trước khi bạn lên đường.";
             if ((bool)v["c1_ma_lo"]) yield return "Bản khai: Mã Giám Sinh lỡ lời nhắc tới \"bên Lâm Tri\".";
+            if ((bool)v["c1_de_cho"]) yield return "Để khách gõ cổng quá lâu: Mẹ phải kéo bạn ra mở, Mã vào nhà với bụng đầy nghi ngại.";
             yield return (bool)v["c1_ca_hai"] ? "Đủ cả hai manh mối trước khi mở cổng: Mã bớt đề phòng khi lên đường."
                 : "Mở cổng khi mới biết một nửa: Mã để ý bạn hơn trên đường đi.";
             if ((bool)v["c1_thoa"]) yield return "Bí mật: chiếc thoa vàng của Kim Trọng nằm trong tay áo bạn.";

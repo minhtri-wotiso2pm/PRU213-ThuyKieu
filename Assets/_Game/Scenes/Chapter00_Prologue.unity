@@ -77492,6 +77492,7 @@ MonoBehaviour:
   _classDoor: {fileID: 437022521}
   _bookGlow: {fileID: 615061453}
   _lookAtHands: {fileID: -623603649343465320, guid: 1e6ff3c3d266f42c8acf9404082e0c9f, type: 3}
+  _kneelDown: {fileID: -623603649343465320, guid: be395cb7f73b349128be2c824c6b39c8, type: 3}
   _wake: {fileID: 1058076003}
   _courtyard: {fileID: 1906966338}
   _father: {fileID: 11749531}
@@ -110275,7 +110276,10 @@ MonoBehaviour:
   _gateways:
   - {fileID: 1741658230}
   - {fileID: 747665710}
-  _speed: 1.5
+  _speed: 2.2
+  _draggedWalk: {fileID: -203655887218126122, guid: 298e91a4ac22c2f4bba66c00877c28d6, type: 3}
+  _mourner: {fileID: 1993019271}
+  _mournerFall: {fileID: -623603649343465320, guid: be395cb7f73b349128be2c824c6b39c8, type: 3}
   _sfx: stumble
   _shake: 0.15
   _ground:
