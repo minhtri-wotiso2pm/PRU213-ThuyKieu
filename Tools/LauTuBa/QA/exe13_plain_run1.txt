@@ -1,0 +1,35 @@
+AUTOPILOT PASS
+[3.6s] NAVMESH built in 33 ms · 388 sources
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.8s] TAG scene:Dem_Opening
+[0.8s] TAG music:tension_low
+[1.0s] CHOICE 2/5: Cúi đầu: "Dạ... con xin nghe lời mẹ."
+[1.1s] TAG sfx:latch_drop
+[1.3s] TAG scene:Dem_Night
+[1.3s] TAG gameplay:tutorial_dem
+[3.5s] TAG gameplay:search_drawer
+[3.9s] TAG sfx:paper
+[4.1s] TAG sfx:lock_open
+[4.5s] TAG gameplay:document_deal
+[4.5s] SEQUENCE document_deal
+[4.7s] CHOICE 1/3: Cất văn tự vào áo — thêm một bằng chứng.
+[4.7s] CHOICE 2/3: Lấy cả túi bạc — tiền bán mình thì phải thuộc về mình.
+[4.8s] TAG sfx:lock_open
+[13.1s] C4 J1 done · mirror seen False
+[29.3s] C4 J2 done · Tú Bà phase 1
+[30.2s] CHOICE 4/4: Im lặng quay đi.
+[30.5s] TAG scene:Dem_BackDoor
+[30.5s] TAG music:none
+[30.8s] TAG gameplay:kieu_voice
+[30.9s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[30.9s] TAG music:resolve
+[31.0s] CHAPTER 4 COMPLETE · lines 40 · choices 5
+[31.0s] FRAMES Chapter04_LauTuBaDem · avg 130 fps · 1% low 64 fps · worst 35 ms · 3767 frames · 1920x1080 · median 6.9 ms · p99 13.9 ms · under 60 fps 0.2% · load 3.6 s (first frame 3416 ms) · warm-up worst 806 ms
+   c4_viec = 2
+   c4_canh_giac = 0
+   c4_tien = 2
+   c4_van_tu = 1
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo, c4_bac_dau, c4_co_lam

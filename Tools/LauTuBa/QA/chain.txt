@@ -1,0 +1,219 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter03_LauTuBa
+[0.0s] NAVMESH built in 23 ms · 388 sources
+[0.8s] TAG scene:Lau_Arrival
+[0.8s] TAG music:tuba_warm
+[1.0s] TAG sfx:gate_bar
+[1.1s] TAG scene:Lau_Explore
+[1.1s] TAG gameplay:tutorial_lau
+[1.7s] TAG gameplay:lucbat_ch3
+[1.8s] SEQUENCE lucbat_ch3
+[2.3s] LUCBAT lucbat_ch3 tile ok · tone off · score 1
+[2.7s] TAG gameplay:document_contract
+[6.7s] TAG scene:Lau_Overhear
+[6.7s] TAG music:none
+[6.7s] C3 overhear started
+[6.8s] TAG scene:Lau_Locked
+[6.8s] TAG sfx:lock_open
+[7.2s] CHOICE 3/3: Hỏi: "Mẹ Tú là người thế nào?"
+[7.9s] TAG scene:Lau_End
+[7.9s] TAG music:none
+[7.9s] TAG sfx:latch_drop
+[8.0s] TAG gameplay:panic
+[8.1s] TAG gameplay:kieu_voice
+[8.1s] CHOICE 3/3: Im lặng.
+[8.2s] TAG music:resolve
+[8.3s] CHAPTER 3 COMPLETE · lines 61 · choices 2
+[8.3s] FRAMES Chapter03_LauTuBa · avg 796 fps · 1% low 165 fps · worst 58 ms · 4962 frames · 640x480 · median 1.2 ms · p99 2.6 ms · under 60 fps 0.0% · load 2.4 s (first frame 2283 ms) · warm-up worst 771 ms
+   nghi_ngo = 0
+   manh_moi = 0
+   suy_luan = 0
+   gia_vo = 0
+   c3_viec = 5
+   c3_khe_uoc = True
+   c3_bi_bat = 0
+   tra_loi_kieu_that = 3
+   clues = c3_cong_khoa, c3_co_lam, c3_van_tu, c3_nghe_len, c3_co_hong
+[9.2s] NAVMESH built in 22 ms · 388 sources
+[9.2s] C4 Foley recorded set loaded
+[9.2s] SCENE Chapter04_LauTuBaDem
+[9.3s] TAG scene:Dem_Opening
+[9.3s] TAG music:tension_low
+[9.4s] CHOICE 4/5: Hỏi khéo: "Thưa mẹ, con nợ mẹ bao nhiêu ạ?"
+[9.4s] TAG sfx:latch_drop
+[9.6s] TAG scene:Dem_Night
+[9.6s] TAG gameplay:tutorial_dem
+[9.7s] C4 KEYS standing (opening): ok · hook 24 cm out from her hip bone, -8 cm below it · keys hang 6° from straight down · reach 0.72 m above her feet · size 20 cm · breathing False · keys can be taken False · scene running False
+[14.4s] C4 Tú Bà on her sập: body 12 cm above the mat with the old lift, lift now 0.33 m
+[14.8s] KEYS info press: target KeyTheft · locked False · held True · hand on True · available True · exploring True · paused False · progress shown 0.00 · Tú Bà 0.00 m from the sập's foot, agent on False · Kiều 0.79 m from the keys · eyes (-0.96, 1.36, 15.35) → (-0.78, -0.63, -0.03) · ray hits ThuyKieu 0.01, KeyTheft (trigger) 0.55, Collider 0.90, TuBaRoom 1.60
+[16.1s] KEYS info press: target KeyTheft · locked False · held True · hand on True · available True · exploring True · paused False · progress shown 0.17 · Tú Bà 0.00 m from the sập's foot, agent on False · Kiều 0.79 m from the keys · eyes (-0.96, 1.36, 15.35) → (-0.78, -0.63, -0.03) · ray hits ThuyKieu 0.01, KeyTheft (trigger) 0.55, Collider 0.90, TuBaRoom 1.60
+[17.4s] KEYS info press: target KeyTheft · locked False · held True · hand on True · available True · exploring True · paused False · progress shown 0.34 · Tú Bà 0.00 m from the sập's foot, agent on False · Kiều 0.79 m from the keys · eyes (-0.96, 1.36, 15.35) → (-0.78, -0.63, -0.03) · ray hits ThuyKieu 0.01, KeyTheft (trigger) 0.56, Collider 0.90, TuBaRoom 1.60
+[21.8s] C4 keys taken through the minigame ok · 21.7 s game time · held 12.0/12 s · catches 0 · breath played on 5264 frames · while not asleep in bed 0 · breath sources on her 1
+[22.3s] TAG gameplay:search_drawer
+[22.7s] TAG sfx:paper
+[23.0s] TAG sfx:lock_open
+[23.3s] TAG gameplay:document_deal
+[23.4s] CHOICE 1/3: Cất văn tự vào áo — thêm một bằng chứng.
+[23.5s] CHOICE 1/3: Chỉ lấy vài lạng làm lộ phí.
+[23.5s] TAG sfx:lock_open
+[37.6s] C4 J1 done · mirror seen False
+[53.7s] C4 J2 done · Tú Bà phase 1 · after J2: Awake, breathing False, snore False · breath played on 16440 frames · while not asleep in bed 0 · breath sources on her 1
+[54.2s] TAG scene:Dem_BackDoor
+[54.2s] TAG music:none
+[54.5s] TAG gameplay:kieu_voice
+[54.5s] CHOICE 2/2: "Ngươi đã ở lại. Ta thì không."
+[54.6s] TAG music:resolve
+[54.6s] CHAPTER 4 COMPLETE · lines 34 · choices 4
+[54.6s] FRAMES Chapter04_LauTuBaDem · avg 822 fps · 1% low 363 fps · worst 20 ms · 35673 frames · 640x480 · median 1.2 ms · p99 1.9 ms · under 60 fps 0.0% · load 11.5 s (first frame 4 ms) · warm-up worst 593 ms
+   c4_viec = 2
+   c4_canh_giac = 1
+   c4_tien = 1
+   c4_van_tu = 1
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c3_cong_khoa, c3_co_lam, c3_van_tu, c3_nghe_len, c3_co_hong, c4_trang_no, c4_giao_keo
+[58.0s] SCENE Chapter05_Escape
+[58.1s] TAG scene:Escape_Night
+[58.1s] TAG music:stealth
+[58.2s] TAG gameplay:tutorial_escape
+[58.2s] TAG gameplay:sneak_out
+[58.2s] SEQUENCE sneak_out
+[60.2s] TAG scene:Escape_Alarm
+[60.2s] TAG sfx:gong
+[60.3s] TAG music:chase
+[60.3s] TAG gameplay:chase_alley
+[60.4s] SEQUENCE chase_alley
+[61.8s] chase_alley nearest pursuer 4.4 m
+[61.8s] TAG music:chase
+[61.8s] TAG gameplay:chase_forest
+[61.9s] SEQUENCE chase_forest
+[66.5s] TAG scene:Escape_Rain
+[66.5s] TAG music:none
+[66.6s] TAG music:resolve
+[66.6s] TAG gameplay:kieu_voice
+[66.8s] CHAPTER 5 COMPLETE · lines 29 · choices 0
+[66.8s] FRAMES Chapter05_Escape · avg 821 fps · 1% low 243 fps · worst 13 ms · 5559 frames · 640x480 · median 1.2 ms · p99 1.9 ms · under 60 fps 0.0% · load 60.4 s (first frame 2864 ms) · warm-up worst 274 ms
+   c5_lang_le = 3
+   c5_duong = 1
+   c5_xo_do = 3
+   c5_qte = 3
+   c5_co_lam_thoat = False
+   c5_bi_bat = 0
+   clues = c3_cong_khoa, c3_co_lam, c3_van_tu, c3_nghe_len, c3_co_hong, c4_trang_no, c4_giao_keo
+[69.5s] SCENE Chapter06_KimTrong
+[69.6s] TAG scene:Temple_Dawn
+[69.6s] TAG music:temple
+[69.8s] CHOICE 3/4: Không nói gì, chỉ đưa tờ khế ước ra.
+[69.8s] TAG gameplay:document_deal_kt
+[69.9s] CHOICE 1/2: An ủi: "Không phải lỗi của chàng."
+[70.0s] TAG scene:KimTrong_Study
+[70.0s] TAG music:study
+[70.0s] TAG gameplay:doi_chieu
+[70.1s] SEQUENCE doi_chieu
+[70.2s] TAG scene:LamTri_Street
+[70.2s] TAG music:street
+[70.2s] TAG gameplay:tutorial_street
+[70.3s] EXPLORE c6_hieu_bac
+[70.4s] CHOICE 1/2: Đặt vài lạng bạc lên quầy.
+[70.6s] EXPLORE c6_ba_nuoc
+[70.8s] CHOICE 2/2: Nhờ Kim Trọng nói giúp.
+[70.9s] CHOICE 1/1: Đưa khế ước Mã–Tú Bà.
+[71.1s] EXPLORE c6_dossier
+[71.2s] TAG scene:KimTrong_Night
+[71.2s] TAG music:study
+[71.2s] TAG gameplay:ho_so
+[71.3s] TAG gameplay:lucbat_ch6
+[71.3s] SEQUENCE lucbat_ch6
+[71.8s] LUCBAT lucbat_ch6 tile ok · tone ok · score 3
+[72.0s] TAG gameplay:kieu_voice
+[72.0s] TAG sfx:knock
+[72.1s] TAG music:resolve
+[72.2s] CHAPTER 6 COMPLETE · lines 51 · choices 5
+[72.2s] FRAMES Chapter06_KimTrong · avg 815 fps · 1% low 155 fps · worst 9 ms · 542 frames · 640x480 · median 1.1 ms · p99 5.3 ms · under 60 fps 0.0% · load 71.9 s (first frame 2154 ms) · warm-up worst 250 ms
+   kt_tin_tuong = 4
+   kt_biet_xuyen_khong = False
+   c6_doi_chieu = 2
+   ev_nhan_chung = 0
+   ev_giay_no = True
+   ev_tien = True
+   c6_ho_so = 3
+   clues = c3_cong_khoa, c3_co_lam, c3_van_tu, c3_nghe_len, c3_co_hong, c4_trang_no, c4_giao_keo, c6_so_hieu_bac
+[73.7s] SCENE Chapter07_HuyenDuong
+[73.8s] TAG scene:HuyenDuong_Cong
+[73.8s] TAG music:resolve
+[73.9s] TAG gameplay:tutorial_gate
+[74.0s] EXPLORE c7_quan_sat
+[74.3s] EXPLORE c7_kim_trong
+[74.6s] EXPLORE c7_trong
+[74.7s] TAG sfx:drum
+[74.8s] TAG scene:HuyenDuong_CongDuong
+[74.8s] TAG music:trial
+[74.8s] TAG gameplay:tutorial_trial
+[74.9s] TAG gameplay:trial_1
+[74.9s] SEQUENCE trial_1
+[75.1s] TRIAL r1 proved statement 3 with so_bac
+[75.5s] TRIAL r1 wrong evidence on statement 4
+[75.7s] TRIAL r1 proved statement 1 with khe_hon
+[76.1s] TRIAL r1 proved statement 4 with giao_keo (key)
+[76.3s] TRIAL r1 done · score 3 · trust 85
+[76.4s] TAG gameplay:trial_2
+[76.4s] SEQUENCE trial_2
+[76.6s] TRIAL r2 wrong evidence on statement 3
+[76.9s] TRIAL r2 proved statement 4 with van_tu
+[77.3s] TRIAL r2 proved statement 3 with giao_keo (key)
+[77.5s] TRIAL r2 done · score 2 · trust 95
+[77.5s] TAG gameplay:trial_3
+[77.6s] SEQUENCE trial_3
+[77.8s] TRIAL r3 proved statement 1 with giao_keo (key)
+[78.0s] TRIAL r3 done · score 1 · trust 100
+[78.0s] TAG gameplay:lucbat_ch7
+[78.1s] SEQUENCE lucbat_ch7
+[78.6s] LUCBAT lucbat_ch7 tile ok · tone off · score 1
+[78.7s] TAG music:resolve
+[78.7s] TAG sfx:gavel
+[79.0s] TAG sfx:fire
+[79.0s] TAG scene:HuyenDuong_DoanTu
+[79.0s] TAG music:family
+[79.1s] CHOICE 2/2: "Không phải mình con đâu, cha ạ. Có rất nhiều người đã giúp."
+[79.2s] TAG music:spirit
+[79.2s] TAG scene:HuyenDuong_AnhSang
+[79.3s] TAG gameplay:kieu_voice
+[79.4s] CHOICE 2/2: Lắc đầu.
+[79.5s] TAG music:none
+[79.6s] TAG sfx:memory
+[79.6s] TAG gameplay:light
+[79.6s] CHAPTER 7 COMPLETE · lines 73 · choices 2
+[79.6s] FRAMES Chapter07_HuyenDuong · avg 755 fps · 1% low 116 fps · worst 15 ms · 2980 frames · 640x480 · median 1.2 ms · p99 5.7 ms · under 60 fps 0.0% · load 76.0 s (first frame 1079 ms) · warm-up worst 142 ms
+   c7_viec = 2
+   c7_nhan_chung_vung = False
+   c7_ke_hoach_kt = True
+   c7_biet_hoi_lo = True
+   c7_lui = 0
+   c7_r1 = 3
+   c7_r2 = 2
+   c7_r3 = 1
+   c7_diem = 6
+   c7_long_tin = 100
+   c7_thua_vong = 0
+   c7_ket = 3
+   clues = c3_cong_khoa, c3_co_lam, c3_van_tu, c3_nghe_len, c3_co_hong, c4_trang_no, c4_giao_keo, c6_so_hieu_bac, c7_hoi_lo, c7_kim_trong
+[81.1s] SCENE Chapter08_Epilogue
+[81.2s] TAG scene:LopHoc_HoangHon
+[81.2s] TAG music:epilogue
+[81.2s] TAG gameplay:wake_class
+[81.3s] TAG gameplay:tutorial_epilogue
+[81.4s] EXPLORE ep_window
+[81.7s] EXPLORE ep_book
+[81.8s] TAG gameplay:open_book
+[82.0s] CHOICE 3/3: Mỉm cười, không nói gì.
+[82.1s] TAG music:spirit
+[82.1s] TAG gameplay:ending
+[82.1s] SEQUENCE ending
+[82.2s] ENDING tone 3 · verdict 115 · soul 2 · fate 0 · bond 0 · trial 6 · dossier 3
+[82.2s] CHAPTER 8 COMPLETE · lines 24 · choices 1
+[82.2s] FRAMES Chapter08_Epilogue · no frames
+   c7_ket = 3
+   pl_che_kieu = 0
+   c7_diem = 6
+   clues = c3_cong_khoa, c3_co_lam, c3_van_tu, c3_nghe_len, c3_co_hong, c4_trang_no, c4_giao_keo, c6_so_hieu_bac, c7_hoi_lo, c7_kim_trong

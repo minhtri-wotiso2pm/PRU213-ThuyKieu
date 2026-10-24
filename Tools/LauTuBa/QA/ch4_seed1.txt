@@ -1,0 +1,34 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter04_LauTuBaDem
+[1.7s] TAG scene:Dem_Opening
+[1.7s] TAG music:tension_low
+[1.9s] CHOICE 5/5: Im lặng nhìn qua song cửa.
+[1.9s] TAG sfx:latch_drop
+[2.1s] TAG scene:Dem_Night
+[2.1s] TAG gameplay:tutorial_dem
+[4.3s] TAG gameplay:search_drawer
+[4.6s] TAG sfx:paper
+[4.9s] TAG sfx:lock_open
+[5.2s] TAG gameplay:document_deal
+[5.4s] CHOICE 3/3: Để nguyên chỗ cũ — mụ sẽ không phát hiện sớm.
+[5.4s] CHOICE 3/3: Không lấy một đồng nào.
+[5.4s] TAG sfx:lock_open
+[14.5s] C4 J1 done · mirror seen False
+[30.6s] C4 J2 done · Tú Bà phase 1
+[31.5s] CHOICE 1/3: Nắm tay chị ấy: "Đi cùng em."
+[47.3s] C4 Lam reached the kitchen
+[47.3s] TAG scene:Dem_BackDoor
+[47.3s] TAG music:none
+[47.6s] TAG gameplay:kieu_voice
+[47.7s] CHOICE 2/2: "Ngươi đã ở lại. Ta thì không."
+[47.8s] TAG music:resolve
+[47.8s] CHAPTER 4 COMPLETE · lines 41 · choices 5
+[47.8s] FRAMES Chapter04_LauTuBaDem · avg 529 fps · 1% low 217 fps · worst 27 ms · 23951 frames · 640x480
+   c4_viec = 2
+   c4_canh_giac = 1
+   c4_tien = 0
+   c4_van_tu = 0
+   c4_so_no = True
+   c4_ru_co_lam = True
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo, c4_co_lam

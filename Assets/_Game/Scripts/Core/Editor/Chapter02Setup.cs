@@ -29,7 +29,7 @@ namespace ThuyKieu.Core.Editor
         {
             var scene = NewScene(ScenePath);
             StoryAnimationSetup.Controller();
-            var s = CreateSystems(2, "Trên đường theo Mã Giám Sinh", "chapter_2", "Chapter03_TuBaHouse",
+            var s = CreateSystems(2, "Trên đường theo Mã Giám Sinh", "chapter_2", LauTuBaSetup.Chapter3Scene,
                 new Vector3(RoadX(2), 0.05f, 2), 0f, "road");
             var world = new GameObject("World").transform;
             var nav = NavMesh(world);

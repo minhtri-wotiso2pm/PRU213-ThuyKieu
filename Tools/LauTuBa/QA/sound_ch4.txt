@@ -1,0 +1,82 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.1s] NAVMESH built in 33 ms · 388 sources
+[0.1s] C4 Foley recorded set loaded
+[1.1s] TAG scene:Dem_Opening
+[1.1s] TAG music:tension_low
+[1.3s] CHOICE 3/5: Cãi lại: "Tôi không nợ bà thứ gì cả."
+[1.3s] TAG sfx:knock
+[1.4s] TAG sfx:latch_drop
+[1.5s] TAG scene:Dem_Night
+[1.5s] TAG gameplay:tutorial_dem
+[28.1s] SOUND ok   floor wood · west veranda · Crouch: 12 steps in 7.1 s (1.7/s) on Wood · step_wood.crouch vol 0.08 · carries 1.5 m, after rain/music 1.5 m · Walk: 8 steps in 4.4 s (1.8/s) on Wood · step_wood.walk vol 0.17 · carries 4.0 m, after rain/music 4.0 m · Run: 4 steps in 1.2 s (3.2/s) on Wood · step_wood.run vol 0.34 · carries 9.0 m, after rain/music 9.0 m
+[37.0s] SOUND ok   floor stone · hall bricks · Crouch: 8 steps in 5.0 s (1.6/s) on Stone · step_stone.crouch vol 0.09 · carries 1.7 m, after rain/music 1.7 m · Walk: 5 steps in 3.1 s (1.6/s) on Stone · step_stone.walk vol 0.18 · carries 4.4 m, after rain/music 4.4 m · Run: 3 steps in 0.9 s (3.5/s) on Stone · step_stone.run vol 0.38 · carries 9.9 m, after rain/music 9.9 m
+[46.0s] SOUND ok   floor wet stone · yard (rain) · Crouch: 8 steps in 5.0 s (1.6/s) on WetStone · step_wet.crouch vol 0.11 · carries 2.3 m, after rain/music 1.8 m · Walk: 5 steps in 3.1 s (1.6/s) on WetStone · step_wet.walk vol 0.24 · carries 6.0 m, after rain/music 4.8 m · Run: 3 steps in 0.9 s (3.4/s) on WetStone · step_wet.run vol 0.49 · carries 13.5 m, after rain/music 10.8 m
+[54.9s] SOUND ok   floor mud · alley · Crouch: 8 steps in 5.0 s (1.6/s) on Mud · step_mud.crouch vol 0.08 · carries 1.4 m, after rain/music 1.4 m · Walk: 5 steps in 3.1 s (1.6/s) on Mud · step_mud.walk vol 0.15 · carries 3.6 m, after rain/music 3.6 m · Run: 3 steps in 0.9 s (3.4/s) on Mud · step_mud.run vol 0.30 · carries 8.1 m, after rain/music 8.1 m
+[62.5s] SOUND ok   floor earth · kitchen · Crouch: 7 steps in 4.3 s (1.6/s) on Earth · step_earth.crouch vol 0.08 · carries 1.2 m, after rain/music 1.2 m · Walk: 4 steps in 2.6 s (1.5/s) on Earth · step_earth.walk vol 0.14 · carries 3.2 m, after rain/music 3.2 m · Run: 2 steps in 0.7 s (2.7/s) on Earth · step_earth.run vol 0.28 · carries 7.2 m, after rain/music 7.2 m
+[73.4s] SOUND ok   floor mat · hall runner · Crouch: 10 steps in 6.1 s (1.7/s) on Mat · step_mat.crouch vol 0.08 · carries 0.9 m, after rain/music 0.9 m · Walk: 7 steps in 3.7 s (1.9/s) on Mat · step_mat.walk vol 0.11 · carries 2.4 m, after rain/music 2.4 m · Run: 4 steps in 1.1 s (3.8/s) on Mat · step_mat.run vol 0.21 · carries 5.4 m, after rain/music 5.4 m
+[80.4s] SOUND ok   floor mat · guests' room (music) · Crouch: 6 steps in 4.0 s (1.5/s) on Mat · step_mat.crouch vol 0.08 · carries 0.9 m, after rain/music 0.5 m · Walk: 4 steps in 2.4 s (1.6/s) on Mat · step_mat.walk vol 0.11 · carries 2.4 m, after rain/music 1.4 m · Run: 2 steps in 0.7 s (2.9/s) on Mat · step_mat.run vol 0.22 · carries 5.4 m, after rain/music 3.2 m
+[80.4s] SOUND ok   mats are quieter than boards · Crouch mat 0.9 / wood 1.5 m · Walk mat 2.4 / wood 4.0 m · Run mat 5.4 / wood 9.0 m
+[83.0s] SOUND ok   veranda → steps → yard · Wood → Stone → WetStone (3 steps)
+[86.7s] SOUND ok   hall bricks → runner → bricks · Stone → Mat → Stone (7 steps)
+[95.8s] SOUND ok   no false steps · standing 3 s: 0 · pushing into a wall 3 s: 0 · 6 teleports of 21 m: 0 · controls locked: 0
+[103.9s] SOUND info guard hears crouch 3.5 m: 9 sounds up to 1.5 m · heard 0 · reaction Patrol · going to -
+[109.9s] SOUND info guard hears walk 3.5 m: 6 sounds up to 4.0 m · heard 6 · from 0.5 m · reaction Chase · going to -
+[113.4s] SOUND info guard hears run 3.5 m: 3 sounds up to 9.0 m · heard 3 · from 0.7 m · reaction Investigate · going to 0.7 m from the sound
+[119.3s] SOUND info guard hears walk 6 m: 6 sounds up to 4.0 m · heard 0 · reaction Patrol · going to -
+[122.8s] SOUND info guard hears run 6 m: 3 sounds up to 9.0 m · heard 3 · from 1.1 m · reaction Investigate · going to 0.7 m from the sound
+[122.8s] SOUND ok   gaits at 3.5 m · crouch heard 0 (Patrol) · walk heard 6 (Chase) · run heard 3 (Investigate)
+[122.8s] SOUND ok   gaits at 6 m · walk heard 0 · run heard 3 (Investigate)
+[127.4s] SOUND info guard hears door eased, same side 4.3 m: 3 sounds up to 1.5 m · heard 0 · reaction Patrol · going to -
+[130.5s] SOUND info guard hears door flung, same side 4.3 m: 1 sounds up to 8.0 m · heard 1 · from 0.4 m · reaction Investigate · going to 0.0 m from the sound
+[130.5s] SOUND ok   door eased vs flung · eased: heard 0 · flung: heard 1 → Investigate · door at (-11.98, 0.35, -3.60)
+[133.6s] SOUND info guard hears door flung, wall between: 1 sounds up to 8.0 m · heard 0 · reaction Patrol · going to -
+[133.6s] SOUND info wall between: 6.2 m, wall in the way True · a flung door (8 m) carries 4.8 m through a wall
+[140.2s] SOUND ok   noise then gone · went to check 0.0 m from the noise · got within 0.0 m of it · never aimed nearer than 8.5 m to where she went · back on his round after 6 s
+[147.3s] SOUND ok   two guards, one bead · reactions Investigate / Investigate · came within 0.0 / 0.2 m · back to their posts after 6 / 7 s
+[158.7s] SOUND ok   asleep, crouching next door · Asleep · disturbance 0.00 · 4.4 m from her
+[159.3s] SOUND ok   asleep, Kiều's door flung far away · Asleep · 14.8 m
+[159.6s] C4 Tú Bà calls the guard to (0.70, 0.35, 11.15) · guard Investigate → (0.70, 0.35, 11.15)
+[173.6s] SOUND ok   her door flung: roused, no failure · Roused · guard Investigate, sent 0.0 m from the door · asleep again after 14 s · failures 0
+[173.6s] SOUND info rug spot 3.0 m from her head, on a covering True (Mat)
+[175.7s] SOUND info stirring, walking on her rug about 3 m away · Stirring (a walking step on the rug carries 2.4 m)
+[177.4s] C4 Tú Bà calls the guard to (1.02, 0.37, 16.68) · guard Investigate → (1.02, 0.37, 16.68)
+[177.7s] SOUND info running on her rug: 2 steps, carrying 5.4 m, 3.1 m from her ear · she last heard a sound from 1.1 m away from the rug spot
+[191.6s] SOUND ok   stirring, running on her rug about 3 m away · Roused · still free True · then Asleep
+[191.6s] C4 Tú Bà calls the guard to (0.70, 0.35, 11.15) · guard Investigate → (0.70, 0.35, 11.15)
+[193.4s] CATCH Front by TuBa · shoved · worst frame 16 ms
+[193.4s] FAIL → checkpoint restored
+[193.4s] SOUND ok   roused, Kiều at the bedside · catch played True (Front) · after the checkpoint: lying True, Asleep, her eyes off True
+[195.1s] CATCH Front by TuBa · shoved · worst frame 2 ms
+[195.2s] FAIL → checkpoint restored
+[195.2s] SOUND ok   hand at her belt while she stirs · catch played True
+[198.2s] SOUND ok   after the checkpoint · sounds heard 0 · Tú Bà Asleep, disturbance 0.00 · guard Patrol
+[524.7s] SOUND info yard crossings (lines z = 0, -4.2, 5.5; every stop of the round) · Crouch: seen 4/30 · heard 0/30 · came to check 2/30 · chased 1/30 (from stops 2,0) · Walk: seen 10/30 · heard 9/30 · came to check 9/30 · chased 4/30 (from stops 2,3,9,0,1,4,6,7) · Run: seen 12/30 · heard 22/30 · came to check 22/30 · chased 3/30 (from stops 0,2,3,4,5,6,7,8,9,1)
+[530.1s] SOUND ok   key ring taken on her out-breaths · took 5 s · stage 2 · Tú Bà Asleep
+[530.1s] SOUND probe done
+[530.1s] TAG gameplay:search_drawer
+[530.5s] TAG sfx:paper
+[530.7s] TAG sfx:lock_open
+[531.1s] TAG gameplay:document_deal
+[531.2s] CHOICE 3/3: Để nguyên chỗ cũ — mụ sẽ không phát hiện sớm.
+[531.3s] CHOICE 2/3: Lấy cả túi bạc — tiền bán mình thì phải thuộc về mình.
+[531.3s] TAG sfx:lock_open
+[544.0s] C4 J1 done · mirror seen False
+[560.1s] C4 J2 done · Tú Bà phase 1
+[561.0s] CHOICE 1/4: Lật trang "Hoa trôi bèo dạt đã đành...": "Câu ấy là của người đã buông tay. Mình thì chưa."
+[567.2s] C4 Lam reached the kitchen
+[567.2s] TAG scene:Dem_BackDoor
+[567.2s] TAG music:none
+[567.5s] TAG gameplay:kieu_voice
+[567.6s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[567.6s] TAG music:resolve
+[567.7s] CHAPTER 4 COMPLETE · lines 43 · choices 5
+[567.7s] FRAMES Chapter04_LauTuBaDem · avg 706 fps · 1% low 276 fps · worst 23 ms · 399214 frames · 640x480 · median 1.3 ms · p99 2.8 ms · under 60 fps 0.0% · load 3.3 s (first frame 3142 ms) · warm-up worst 1126 ms
+   c4_viec = 2
+   c4_canh_giac = 2
+   c4_tien = 2
+   c4_van_tu = 0
+   c4_so_no = True
+   c4_ru_co_lam = True
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo, c4_bac_dau, c4_co_lam
