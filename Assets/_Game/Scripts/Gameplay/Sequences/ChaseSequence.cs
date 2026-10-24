@@ -144,7 +144,7 @@ namespace ThuyKieu.Gameplay.Sequences
             float distance = Flat(position, target);
             float speed = (distance > 14f ? 6.2f : distance < 5f ? 4.3f : 4.8f) * _pursuitSpeedMultiplier;
             foreach (var obstacle in _obstacles)
-                if (obstacle.Toppled && Flat(obstacle.transform.position, position) < obstacle.SlowRadius) speed *= 0.35f;
+                if (obstacle.Toppled && Flat(obstacle.SlowCenter, position) < obstacle.SlowRadius) speed *= 0.35f;
             if (_crowd != null && _crowd.bounds.Contains(position + Vector3.up * 0.5f)) speed *= 0.8f;
             return speed;
         }

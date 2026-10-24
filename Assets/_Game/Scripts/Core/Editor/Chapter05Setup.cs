@@ -478,6 +478,7 @@ namespace ThuyKieu.Core.Editor
             Set(obstacle, "_visual", visual);
             Set(obstacle, "_fall", fall);
             Set(obstacle, "_label", label);
+            Chapter05ObstacleSetup.Configure(obstacle);
             return obstacle;
         }
 
