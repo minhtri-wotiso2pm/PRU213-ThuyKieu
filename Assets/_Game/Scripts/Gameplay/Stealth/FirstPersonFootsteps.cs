@@ -49,6 +49,10 @@ namespace ThuyKieu.Gameplay.Stealth
         public float RunExtra { get; set; }
         public Surface Underfoot { get; private set; } = Surface.Wood;
         public event Action<StepEvent> Stepped;
+        /// <summary>How far through the current stride she is (0 at a footfall, 1 at the next), for motion kept in step.</summary>
+        public float StridePhase => Mathf.Clamp01(_travelled / Mathf.Max(0.01f, Stride()));
+        /// <summary>Footfalls so far (odd and even: left and right foot).</summary>
+        public int StepCount { get; private set; }
 
         private void Awake()
         {
@@ -119,6 +123,7 @@ namespace ThuyKieu.Gameplay.Stealth
 
         private void Step()
         {
+            StepCount++;
             var gait = Current;
             Underfoot = FloorAt(transform.position, out bool tagged, out float carry);
             float radius = GaitRadius(gait) * carry;

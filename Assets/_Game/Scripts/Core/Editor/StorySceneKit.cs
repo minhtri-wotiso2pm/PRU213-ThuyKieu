@@ -50,10 +50,14 @@ namespace ThuyKieu.Core.Editor
 
         // ------------------------------------------------------------------ scene
 
-        public static UnityEngine.SceneManagement.Scene NewScene(string path)
+        /// <param name="remake">
+        /// Build the scene again from scratch to be saved over its own file (same .meta, so the same GUID and place in the
+        /// build list): only for a full story rebuild of a chapter whose setup owns the whole scene.
+        /// </param>
+        public static UnityEngine.SceneManagement.Scene NewScene(string path, bool remake = false)
         {
             if (Application.isPlaying) throw new InvalidOperationException("Stop Play Mode before scene setup.");
-            if (File.Exists(path)) throw new InvalidOperationException(path + " exists; use targeted edits instead of replacing it.");
+            if (File.Exists(path) && !remake) throw new InvalidOperationException(path + " exists; use targeted edits instead of replacing it.");
             InkStoryCompiler.Compile();
             PrepareFont();
             Directory.CreateDirectory(MaterialFolder);
@@ -715,6 +719,10 @@ namespace ThuyKieu.Core.Editor
                 case string[] lines:
                     field.arraySize = lines.Length;
                     for (int i = 0; i < lines.Length; i++) field.GetArrayElementAtIndex(i).stringValue = lines[i];
+                    break;
+                case float[] numbers:
+                    field.arraySize = numbers.Length;
+                    for (int i = 0; i < numbers.Length; i++) field.GetArrayElementAtIndex(i).floatValue = numbers[i];
                     break;
                 default: throw new InvalidOperationException("Unsupported value for " + property);
             }

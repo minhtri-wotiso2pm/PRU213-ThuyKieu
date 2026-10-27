@@ -17,7 +17,7 @@ namespace ThuyKieu.Dialogue.Editor
     {
         public const string ReportPath = "Tools/Ink/InkValidationReport.txt";
         private static readonly HashSet<string> KnownKeys = new HashSet<string>
-        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx", "page", "page_half", "montage", "hands" };
+        { "chapter", "scene", "music", "sfx", "speaker", "emotion", "camera", "objective", "clue", "gameplay", "timer", "fx", "page", "page_half", "montage", "run", "hands" };
         private static readonly HashSet<string> KnownSpeakers = new HashSet<string>
         { "Narrator", "Kieu", "NoiTam", "KieuThat", "TrangSach", "MeKieu", "MaGiamSinh", "TuyTung", "TuBa", "MaKieu", "CoHong", "CoLam", "NguoiCanh",
           "KimTrong", "BaHangNuoc", "ThuLai", "ChuHieuBac", "GiaNhan",
@@ -220,13 +220,7 @@ namespace ThuyKieu.Dialogue.Editor
             switch (tag)
             {
                 case "gameplay:deduction_c2": v["suy_luan"] = random.Next(1, 4); break;
-                case "gameplay:sneak_out": v["c5_lang_le"] = random.Next(0, 4); break;
-                case "gameplay:chase_alley": v["c5_duong"] = random.Next(1, 3); v["c5_xo_do"] = random.Next(0, 5); break;
-                case "gameplay:chase_forest":
-                    int qte = random.Next(0, 4);
-                    v["c5_qte"] = qte;
-                    v["c5_co_lam_thoat"] = (bool)v["c4_ru_co_lam"] && qte >= 2;
-                    break;
+                case "run:chase_forest": SimulateForest(story, random); break;
                 case "gameplay:doi_chieu": v["c6_doi_chieu"] = random.Next(0, 4); break;
                 case "gameplay:trial_1": case "gameplay:trial_2": case "gameplay:trial_3":
                     bool lost = random.Next(5) == 0;
@@ -240,6 +234,20 @@ namespace ThuyKieu.Dialogue.Editor
                     v["lb_" + tag.Substring("gameplay:lucbat_".Length)] = random.Next(0, 4);
                     break;
             }
+        }
+
+        /// <summary>
+        /// The bamboo chase (BambooChaseSequence): it only ends once Kiều is over the bridge, so she always escapes; Cô Lam,
+        /// when she came along, runs ahead of her and is across first. What varies is how it went.
+        /// </summary>
+        private static void SimulateForest(Ink.Runtime.Story story, System.Random random)
+        {
+            var v = story.variablesState;
+            v["c5_bi_bat"] = (int)v["c5_bi_bat"] + random.Next(0, 3);
+            v["c5_vap"] = random.Next(0, 6);
+            v["c5_loi"] = random.Next(1, 3);
+            v["c5_giay"] = random.Next(120, 200);
+            v["c5_co_lam_thoat"] = (bool)v["c4_ru_co_lam"];
         }
 
         /// <summary>Card ids the story may grant (each is an int story variable 0–3).</summary>
@@ -296,12 +304,7 @@ namespace ThuyKieu.Dialogue.Editor
                 v["ev_tien"] = (int)v["c4_tien"] == 2;
                 v["ev_giay_no"] = v["c4_so_no"] = random.Next(2) == 0;
             }
-            if (chapter > 5)
-            {
-                int qte = random.Next(0, 4);
-                v["c5_qte"] = qte;
-                v["c5_co_lam_thoat"] = (bool)v["c4_ru_co_lam"] && qte >= 2;
-            }
+            if (chapter > 5) SimulateForest(story, random);
             if (chapter > 6)
             {
                 v["tra_loi_kieu_that"] = random.Next(1, 4);
@@ -330,7 +333,7 @@ namespace ThuyKieu.Dialogue.Editor
             string value = colon < 0 ? string.Empty : tag.Substring(colon + 1).Trim();
             if (!KnownKeys.Contains(key)) problems.Add("Unknown tag " + tag);
             if (key == "speaker" && !KnownSpeakers.Contains(value)) problems.Add("Unknown speaker " + value);
-            if (key == "gameplay") gameplay.Add(value);
+            if (key == "gameplay" || key == "run") gameplay.Add(value);
             if ((key == "music" && value != "none") || key == "sfx")
                 if (ThuyKieu.Presentation.AudioBank.Get(key == "music" ? ThuyKieu.Presentation.AudioBank.Music : ThuyKieu.Presentation.AudioBank.Sfx, value) == null)
                     problems.Add("No audio for " + tag);

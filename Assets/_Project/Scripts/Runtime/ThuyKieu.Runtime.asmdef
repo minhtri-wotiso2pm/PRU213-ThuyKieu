@@ -14,7 +14,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "THUYKIEU_LEGACY_PROJECT"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }

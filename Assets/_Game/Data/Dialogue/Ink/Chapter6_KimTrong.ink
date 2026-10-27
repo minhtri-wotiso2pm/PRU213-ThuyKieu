@@ -13,7 +13,7 @@
 # music:temple
 # speaker:Narrator
 # camera:Wide_TempleYard
-Sáng. Mưa đã tạnh. Kiều tỉnh dậy dưới mái hiên chùa Bạch Vân, trên người đắp một tấm chăn sờn. Tiếng mõ gõ đều trong chính điện.
+Sáng. Sương đêm đã tan. Kiều tỉnh dậy dưới mái hiên chùa Bạch Vân, trên người đắp một tấm chăn sờn. Tiếng mõ gõ đều trong chính điện.
 
 {c4_ru_co_lam && c5_co_lam_thoat:
     # speaker:Narrator
@@ -81,7 +81,7 @@ Chàng đang nhìn mình như nhìn một người vừa từ cõi chết trở 
     Kiều: Chàng có tin không... nếu ta nói người đứng trước mặt chàng không hẳn là Kiều mà chàng từng quen? Ta đến từ một nơi rất xa. Ta đã đọc trước câu chuyện này.
     # speaker:KimTrong
     # emotion:caught_off_guard
-    Kim Trọng: Nàng... sốt rồi. Mưa cả đêm, nàng...
+    Kim Trọng: Nàng... sốt rồi. Chạy suốt đêm trong sương lạnh, nàng...
     # speaker:Kieu
     # emotion:firm
     Kiều: Ta không sốt. Nhưng chuyện đó để sau. Xin chàng đọc cái này trước.

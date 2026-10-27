@@ -24,6 +24,14 @@ namespace ThuyKieu.Environment
         private Bounds _footprint;
 
         public Surface Surface => _surface;
+
+        /// <summary>Tags a floor made at runtime (the Chapter 5 forest ground is built when the scene loads).</summary>
+        public static SurfaceTag Add(GameObject floor, Surface surface)
+        {
+            var tag = floor.AddComponent<SurfaceTag>();
+            tag._surface = surface;
+            return tag;
+        }
         /// <summary>How much further a step here carries than on boards (this floor's own <see cref="Loudness"/> unless set).</summary>
         public float Carry => _carry >= 0f ? _carry : Loudness(_surface);
 

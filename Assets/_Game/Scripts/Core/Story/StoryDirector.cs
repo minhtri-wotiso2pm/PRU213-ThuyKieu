@@ -17,6 +17,12 @@ namespace ThuyKieu.Core.Story
     public interface IChapterSummary { IEnumerable<string> SummaryLines(Ink.Runtime.Story story); }
 
     /// <summary>
+    /// How a chapter that hands straight over to the next one (<c>_seamlessNext</c>) leaves the frame: played while the next
+    /// scene loads behind it, ending on black or close to it.
+    /// </summary>
+    public interface IChapterExit { IEnumerator Exit(StoryDirector director); }
+
+    /// <summary>
     /// Generic chapter flow for Ink-driven chapters (2 onwards):
     /// dialogue → explore (world resolves #explore choices) → blocking sequences → chapter complete.
     /// Presentation tags are routed to camera, actors, HUD, audio and screen effects.
@@ -41,6 +47,11 @@ namespace ThuyKieu.Core.Story
         [SerializeField] private string _chapterTitle = "Trên đường theo Mã Giám Sinh";
         [SerializeField] private string _entryKnot = "chapter_2";
         [SerializeField] private string _nextScene = "Chapter03_TuBaHouse";
+        [Tooltip("Open on the chapter's title card. Off for a chapter that opens in the middle of the action (Chapter 5).")]
+        [SerializeField] private bool _openWithCard = true;
+        [Tooltip("Go straight on into the next chapter: no summary screen, the next scene loads behind this one's exit " +
+                 "(IChapterExit). Progress and the story are saved exactly as with the summary.")]
+        [SerializeField] private bool _seamlessNext;
 
         [Header("Systems")]
         [SerializeField] private DialogueManager _dialogue;
@@ -72,6 +83,10 @@ namespace ThuyKieu.Core.Story
         public int ChapterNumber => _chapterNumber;
         public string NextScene => _nextScene;
         public string ChapterTitle => _chapterTitle;
+        /// <summary>This chapter loads the next one itself when it ends (see <c>_seamlessNext</c>).</summary>
+        public bool HandsOverSeamlessly => _seamlessNext;
+        /// <summary>Real time when the last seamless hand-over began (the previous chapter's exit), or −1.</summary>
+        public static float HandoverStartedAt { get; private set; } = -1f;
         public bool InExplore { get; private set; }
         public bool IsBusy => _busy;
         public bool DialogueActive => _dialogue != null && _dialogue.IsDialogueActive;
@@ -152,7 +167,8 @@ namespace ThuyKieu.Core.Story
 
             SetFreeControl(false);
             yield return null; // Let views subscribe to the dialogue events first.
-            if (_hud != null) yield return _hud.ChapterCard(_chapterNumber, _chapterTitle);
+            if (_hud != null && _openWithCard) yield return _hud.ChapterCard(_chapterNumber, _chapterTitle);
+            else if (_hud != null) _hud.SetChapterLabel(ChapterCatalog.Label(_chapterNumber) + " · " + _chapterTitle);
             if (resume != null) yield return Resume(resume);
             Continue();
         }
@@ -207,17 +223,19 @@ namespace ThuyKieu.Core.Story
         }
 
         /// <summary>
-        /// "# montage:&lt;id&gt;" plays its stills before the line appears. The line's world tags (scene, music, sfx, fx)
-        /// are routed first so the stills show the staging they start; the line itself follows without routing them again.
+        /// "# montage:&lt;id&gt;" plays its stills before the line appears, and "# run:&lt;id&gt;" plays a gameplay sequence
+        /// before it (a chapter that opens on the action). The line's world tags (scene, music, sfx, fx) are routed first
+        /// so the sequence plays in the staging they set; the line itself follows without routing them again.
         /// </summary>
         private bool PauseBeforeLine(string[] tags)
         {
             foreach (string raw in tags)
             {
                 string tag = raw.Trim();
-                if (!tag.StartsWith("montage:")) continue;
-                string id = MontageSequence.Prefix + tag.Substring(8).Trim();
-                if (!_sequences.ContainsKey(id)) { Debug.LogWarning("[Story] No montage registered for " + tag, this); return false; }
+                bool montage = tag.StartsWith("montage:");
+                if (!montage && !tag.StartsWith("run:")) continue;
+                string id = montage ? MontageSequence.Prefix + tag.Substring(8).Trim() : tag.Substring(4).Trim();
+                if (!_sequences.ContainsKey(id)) { Debug.LogWarning("[Story] No sequence registered for " + tag, this); return false; }
                 _pendingSequence = id;
                 _preRouted = tags;
                 foreach (string world in tags)
@@ -331,6 +349,7 @@ namespace ThuyKieu.Core.Story
                 InkStatePersistence.Instance.Clues.Clear();
                 InkStatePersistence.Instance.Clues.AddRange(_clues);
             }
+            if (_seamlessNext) { yield return HandOver(); yield break; }
             var summary = GetComponent<IChapterSummary>();
             var lines = summary != null ? summary.SummaryLines(Story).ToList() : new List<string>();
             if (_audio != null) _audio.PlaySfx("chapter_complete");
@@ -343,6 +362,25 @@ namespace ThuyKieu.Core.Story
             if (_hud != null) yield return _hud.Fade(1f, 0.8f);
             if (Application.CanStreamedLevelBeLoaded(_nextScene)) SceneManager.LoadScene(_nextScene);
             else Debug.LogWarning("[Story] Next scene not in build settings: " + _nextScene, this);
+        }
+
+        /// <summary>
+        /// Straight on into the next chapter: it loads in the background while this one's exit plays (IChapterExit), and
+        /// takes over once the frame is black. A single QA run of this chapter stops here, as at a summary screen.
+        /// </summary>
+        private IEnumerator HandOver()
+        {
+            if (Autopilot && !StoryAutopilot.Args.Contains("-autopilotChain")) yield break;
+            if (!Application.CanStreamedLevelBeLoaded(_nextScene)) { Debug.LogWarning("[Story] Next scene not in build settings: " + _nextScene, this); yield break; }
+            HandoverStartedAt = Time.realtimeSinceStartup;
+            if (_camera != null) _camera.SetCursorLocked(true); // still her eyes: no cursor across the cut
+            var loading = SceneManager.LoadSceneAsync(_nextScene);
+            loading.allowSceneActivation = false;
+            var exit = GetComponent<IChapterExit>();
+            if (exit != null) yield return exit.Exit(this);
+            if (_hud != null && _hud.FadeAlpha < 0.99f) yield return _hud.Fade(1f, 0.25f);
+            StoryAutopilot.Note($"HANDOVER {_nextScene}: exit {Time.realtimeSinceStartup - HandoverStartedAt:F2} s · preloaded {loading.progress / 0.9f:P0}");
+            loading.allowSceneActivation = true;
         }
 
         /// <summary>

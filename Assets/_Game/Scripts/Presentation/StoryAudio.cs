@@ -96,7 +96,9 @@ namespace ThuyKieu.Presentation
         public void PlaySfx(string id, float volume = 1f)
         {
             var clip = Get(AudioBank.Sfx, id, out float gain);
-            if (clip != null) _sfx.PlayOneShot(clip, volume * gain * _sfxVolume * GameSettings.Effects);
+            if (clip == null) return;
+            _sfx.PlayOneShot(clip, volume * gain * _sfxVolume * GameSettings.Effects);
+            EffectPlayed?.Invoke(id);
         }
 
         private readonly System.Collections.Generic.List<AudioSource> _spatial = new System.Collections.Generic.List<AudioSource>();
@@ -129,8 +131,12 @@ namespace ThuyKieu.Presentation
             source.clip = clip;
             source.volume = Mathf.Clamp01(volume * _sfxVolume * GameSettings.Effects);
             source.Play();
+            EffectPlayed?.Invoke(id);
             return source;
         }
+
+        /// <summary>QA: the id of every effect that started (one-shots and placed ones), in any chapter.</summary>
+        public static event Action<string> EffectPlayed;
 
         private static void Spatialise(AudioSource source)
         {

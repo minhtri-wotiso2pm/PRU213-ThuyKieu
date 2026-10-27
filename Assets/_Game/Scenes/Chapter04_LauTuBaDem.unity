@@ -92567,6 +92567,8 @@ MonoBehaviour:
   _staticVisual: {fileID: 0}
   _headHeight: 1.472
   _turnSpeed: 240
+  _lockFacing: 0
+  _seatLift: 0
 --- !u!195 &476289489
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -116548,6 +116550,8 @@ MonoBehaviour:
   _staticVisual: {fileID: 0}
   _headHeight: 1.6192
   _turnSpeed: 240
+  _lockFacing: 0
+  _seatLift: 0
 --- !u!195 &606756803
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -125955,6 +125959,8 @@ MonoBehaviour:
   _chapterTitle: "Kh\xF4ng c\xF2n \u0111\u01B0\u1EDDng lui"
   _entryKnot: chapter_4_dem
   _nextScene: Chapter05_Escape
+  _openWithCard: 1
+  _seamlessNext: 1
   _dialogue: {fileID: 650791300}
   _player: {fileID: 1654125361}
   _interaction: {fileID: 1654125367}
@@ -156273,6 +156279,8 @@ MonoBehaviour:
   _staticVisual: {fileID: 0}
   _headHeight: 1.4536
   _turnSpeed: 240
+  _lockFacing: 0
+  _seatLift: 0
 --- !u!136 &811818537
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -168897,6 +168905,8 @@ MonoBehaviour:
   _staticVisual: {fileID: 0}
   _headHeight: 1.6008
   _turnSpeed: 240
+  _lockFacing: 0
+  _seatLift: 0
 --- !u!195 &889984163
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -174778,6 +174788,8 @@ MonoBehaviour:
   _staticVisual: {fileID: 0}
   _headHeight: 1.5088
   _turnSpeed: 240
+  _lockFacing: 0
+  _seatLift: 0
 --- !u!195 &920347488
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -221751,6 +221763,8 @@ MonoBehaviour:
   _staticVisual: {fileID: 0}
   _headHeight: 1.6008
   _turnSpeed: 240
+  _lockFacing: 0
+  _seatLift: 0
 --- !u!195 &1167998586
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -223963,6 +223977,8 @@ MonoBehaviour:
   _staticVisual: {fileID: 0}
   _headHeight: 1.6008
   _turnSpeed: 240
+  _lockFacing: 0
+  _seatLift: 0
 --- !u!195 &1180827816
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -317926,6 +317942,8 @@ MonoBehaviour:
   _staticVisual: {fileID: 0}
   _headHeight: 1.5
   _turnSpeed: 240
+  _lockFacing: 0
+  _seatLift: 0
 --- !u!114 &1654125367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -317940,6 +317958,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ThuyKieu.Interaction.PlayerInteraction
   interactionDistance: 2.3
   interactionRadius: 0.4
+  minimumFacingDot: 0.1
   interactionLayers:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -386456,6 +386475,8 @@ MonoBehaviour:
   _staticVisual: {fileID: 0}
   _headHeight: 1.4904001
   _turnSpeed: 240
+  _lockFacing: 0
+  _seatLift: 0
 --- !u!114 &2045516429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -391909,6 +391930,9 @@ MonoBehaviour:
   fallbackTargetTag: Player
   fallbackTargetChildName: CameraTarget
   distance: 3.4
+  minDistance: 1.15
+  maxDistance: 3.2
+  zoomStep: 0.35
   targetOffset: {x: 0, y: 0, z: 0}
   _shoulder: 0.42
   _fov: 72

@@ -23,7 +23,7 @@ namespace ThuyKieu.Dialogue.Editor
         private static readonly Regex GlanceLines = new Regex("_glanceLines\",\\s*new\\[\\]\\s*\\{([^}]*)\\}");
         private static readonly Regex Quoted = new Regex("\"((?:[^\"\\\\]|\\\\.)*)\"");
         private static readonly string[] Glancers = { "TuBa", "MaGiamSinh", "TuyTung" };
-        // Shout lists picked at random at runtime (ChaseSequence.Shouts → the pursuing servants).
+        // Shout lists picked at random at runtime (ChasePursuer.Shouts → the pursuing servants).
         private static readonly Regex ShoutList = new Regex(@"Shouts\s*=\s*\{([^}]*)\}");
 
         [MenuItem("ThuyKieu/Dialogue/Export voice manifest")]

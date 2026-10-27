@@ -457,7 +457,7 @@ namespace ThuyKieu.Gameplay.Sequences
             if (d.GetBool("nc_ba_nuoc") && retreated != 2) list.Add(new Evidence { Id = "ba_nuoc", Title = "Nhân chứng: bà hàng nước", Body = "Nghe Mã và tùy tùng nói chuyện \"giao hàng\" cho Tú Bà sau vách quán." });
             if (d.GetBool("nc_thu_lai") && retreated != 3) list.Add(new Evidence { Id = "thu_lai", Title = "Nhân chứng: thư lại", Body = "Sổ hôn thú của huyện: Mã \"cưới vợ\" bốn lần một năm; bằng giám sinh là bằng mua." });
             if (d.GetBool("nc_co_lam") && retreated != 1) list.Add(new Evidence { Id = "co_lam", Title = "Nhân chứng: chị Lam", Body = "Ba năm ở lầu Tú Bà, một món nợ không bao giờ trả hết." });
-            if (d.GetInt("kt_tin_tuong") >= 3) list.Add(new Evidence { Id = "kim_trong", Title = "Lời Kim Trọng", Body = "Gặp Kiều ở cổng chùa Bạch Vân trong mưa, đêm nàng trốn khỏi lầu." });
+            if (d.GetInt("kt_tin_tuong") >= 3) list.Add(new Evidence { Id = "kim_trong", Title = "Lời Kim Trọng", Body = "Gặp Kiều ở cổng chùa Bạch Vân, đêm nàng trốn khỏi lầu." });
             return list;
         }
 
