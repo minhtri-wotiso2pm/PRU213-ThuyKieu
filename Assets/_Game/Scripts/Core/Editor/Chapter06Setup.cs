@@ -68,7 +68,7 @@ namespace ThuyKieu.Core.Editor
             var messenger = RiggedActor("GiaNhan", "GiaNhan", "Assets/_Game/Art/Characters/MaGiamSinh/Models/MaGiamSinh_Rigged.fbx",
                 "Assets/_Game/Art/Characters/MaGiamSinh/Tectures", 1.7f, new Vector3(-9f, 0, 12.4f), 180f, new Color(0.55f, 0.55f, 0.55f), shared);
             var searcher = CharacterActor("NguoiCuaTuBa", "NguoiCanh", "LinhCanh", 1.78f, new Vector3(-24f, 0, 18f), 90f);
-            Crowd(world, shared);
+            Crowd(world, director);
 
             Explore(baNuoc.gameObject, director, "c6_ba_nuoc", "Nói chuyện với bà hàng nước", Vector3.one * 1.9f);
             Explore(thuLai.gameObject, director, "c6_thu_lai", "Gặp thư lại huyện đường", Vector3.one * 1.9f);
@@ -485,18 +485,9 @@ namespace ThuyKieu.Core.Editor
             StoryArtKit.Rope(new Vector3(-21.5f, 2.3f, 21.6f), new Vector3(-18.5f, 2.3f, 21.6f), 0.1f, root);
         }
 
-        private static void Crowd(Transform world, RuntimeAnimatorController shared)
+        private static void Crowd(Transform world, StoryDirector director)
         {
-            string[] models = { "ThuyKieu/Models/ThuyKieu_Rigged.fbx", "MeThuyKieu/Models/MeThuyKieu_Rigged.fbx", "MaGiamSinh/Models/MaGiamSinh_Rigged.fbx" };
-            string[] textures = { "ThuyKieu/Tectures", "MeThuyKieu/Tectures", "MaGiamSinh/Tectures" };
-            Color[] tints = { new Color(0.85f, 0.75f, 0.6f), new Color(0.55f, 0.68f, 0.62f), new Color(0.72f, 0.58f, 0.62f), new Color(0.62f, 0.62f, 0.78f) };
-            var spots = new[] { new Vector3(-26f, 0, 15.2f), new Vector3(-14f, 0, 21f), new Vector3(-2f, 0, 15.3f), new Vector3(7f, 0, 21.1f), new Vector3(21f, 0, 15.2f), new Vector3(26f, 0, 21f), new Vector3(-29f, 0, 20.8f) };
-            for (int i = 0; i < spots.Length; i++)
-            {
-                int m = i % 3;
-                RiggedActor("NguoiDan" + i, "NguoiDan", "Assets/_Game/Art/Characters/" + models[m], "Assets/_Game/Art/Characters/" + textures[m],
-                    1.58f + (m == 2 ? 0.16f : 0f), spots[i], spots[i].z < 18f ? 0f : 180f, tints[i % tints.Length], shared);
-            }
+            Chapter06CrowdSetup.Create(world, director);
         }
 
     }
