@@ -41,7 +41,8 @@ namespace ThuyKieu.Interaction
         public static IInteractable Pinned { get; set; }
 
         private IHoldInteractable _holding;
-        private readonly RaycastHit[] _rayHits = new RaycastHit[12];
+        private RaycastHit[] _rayHits = new RaycastHit[16];
+        private Collider[] _nearby = new Collider[32];
 
         private void Awake()
         {
@@ -77,7 +78,7 @@ namespace ThuyKieu.Interaction
         private IInteractable AimedInteractable()
         {
             Vector3 origin = detectionOrigin.position + Vector3.up * detectionHeight;
-            int count = Physics.RaycastNonAlloc(origin, detectionOrigin.forward, _rayHits, interactionDistance, interactionLayers, QueryTriggerInteraction.Collide);
+            int count = Raycast(origin, detectionOrigin.forward, interactionDistance, interactionLayers, QueryTriggerInteraction.Collide);
             System.Array.Sort(_rayHits, 0, count, HitDistance.Instance);
             for (int i = 0; i < count; i++)
             {
@@ -108,8 +109,12 @@ namespace ThuyKieu.Interaction
             float bestDistance = float.MaxValue;
             // Wide enough to catch a target whose stand point is in reach while its body is a little farther away.
             float searchRadius = Mathf.Max(interactionDistance, ExploreTarget.StandPointRange) + 1.5f;
-            foreach (Collider collider in Physics.OverlapSphere(transform.position, searchRadius, interactionLayers, triggerInteraction))
+            int count;
+            while ((count = Physics.OverlapSphereNonAlloc(transform.position, searchRadius, _nearby, interactionLayers, triggerInteraction)) == _nearby.Length)
+                System.Array.Resize(ref _nearby, _nearby.Length * 2);
+            for (int i = 0; i < count; i++)
             {
+                Collider collider = _nearby[i];
                 var availability = collider.GetComponentInParent<IInteractionAvailability>();
                 var candidate = collider.GetComponentInParent<IInteractable>();
                 if (candidate == null || (availability != null && !availability.IsAvailable)) continue;
@@ -155,8 +160,10 @@ namespace ThuyKieu.Interaction
             Vector3 delta = standPoint + Vector3.up * 0.5f - from;
             float distance = delta.magnitude;
             if (distance < 0.05f) return true;
-            foreach (RaycastHit hit in Physics.RaycastAll(from, delta / distance, distance, ~0, QueryTriggerInteraction.Ignore))
+            int count = Raycast(from, delta / distance, distance, ~0, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
             {
+                RaycastHit hit = _rayHits[i];
                 if (hit.collider.transform.IsChildOf(transform) || hit.collider == target) continue;
                 return false;
             }
@@ -177,12 +184,13 @@ namespace ThuyKieu.Interaction
             float distance = delta.magnitude;
             if (distance < 0.05f) return true;
 
-            RaycastHit[] hits = Physics.RaycastAll(origin, delta / distance, distance + 0.05f,
+            int count = Raycast(origin, delta / distance, distance + 0.05f,
                 interactionLayers, triggerInteraction);
             float targetDistance = float.MaxValue;
             float blockerDistance = float.MaxValue;
-            foreach (RaycastHit hit in hits)
+            for (int i = 0; i < count; i++)
             {
+                RaycastHit hit = _rayHits[i];
                 if (hit.collider.transform.IsChildOf(transform)) continue;
                 var hitTarget = hit.collider.GetComponentInParent<IInteractable>();
                 if (ReferenceEquals(hitTarget, target)) targetDistance = Mathf.Min(targetDistance, hit.distance);
@@ -190,6 +198,16 @@ namespace ThuyKieu.Interaction
             }
             // Trigger volumes are valid targets but never blockers. A solid wall closer than the target rejects it.
             return targetDistance < float.MaxValue && targetDistance <= blockerDistance + 0.02f;
+        }
+
+        // Grow on saturation so a busy scene cannot silently drop a nearby target or an occluding wall.
+        // After warming up, the physics queries reuse their buffers instead of allocating every frame.
+        private int Raycast(Vector3 origin, Vector3 direction, float distance, int layers, QueryTriggerInteraction triggers)
+        {
+            int count;
+            while ((count = Physics.RaycastNonAlloc(origin, direction, _rayHits, distance, layers, triggers)) == _rayHits.Length)
+                System.Array.Resize(ref _rayHits, _rayHits.Length * 2);
+            return count;
         }
 
         private void OnDrawGizmosSelected()

@@ -202,7 +202,7 @@ namespace ThuyKieu.Gameplay.Chapters
             UpdateChase();
             if (!_chasing) UpdateEscort();
             UpdateSuspicion();
-            if (!_restCalled && _director.IsExploreAvailable("c2_eavesdrop"))
+            if (!_restCalled && _director.IsExploreAvailable("c2_eavesdrop") && (_paperDropped || !_director.IsExploreAvailable("c2_paper")))
             {
                 _restCalled = true;
                 Bark("MaGiamSinh", "Trời sắp tối rồi. Ghé quán nước phía trước nghỉ chân đã.");
@@ -260,9 +260,9 @@ namespace ThuyKieu.Gameplay.Chapters
                     _waypoint++;
                     if (_waypoint == _paperDropWaypoint && !_paperDropped) StartCoroutine(DropPaper());
                 }
-                else if (!_ma.IsMoving) _ma.MoveTo(target, EscortSpeed);
+                else if (!_ma.IsMoving) _ma.MoveTo(target, _director.IsExploreAvailable("c2_eavesdrop") && (_paperDropped || !_director.IsExploreAvailable("c2_paper")) ? 2.35f : EscortSpeed);
 
-                if ((_glanceTimer -= Time.deltaTime) <= 0f)
+                if (!(_director.IsExploreAvailable("c2_eavesdrop") && (_paperDropped || !_director.IsExploreAvailable("c2_paper"))) && (_glanceTimer -= Time.deltaTime) <= 0f)
                 {
                     _glanceTimer = Random.Range(9f, 14f);
                     _glanceHold = 1.8f;
@@ -311,7 +311,7 @@ namespace ThuyKieu.Gameplay.Chapters
             if (!_chasing)
             {
                 // At the end of the road he waits at the tea house: walking up to it is not running away.
-                bool resting = _waypoint >= _path.Length - 1 || (_bench != null && Flat(player - _bench.position) < 9f);
+                bool resting = _waypoint >= _path.Length - 1 || (_bench != null && Flat(player - _bench.position) < 18f) || (_director.IsExploreAvailable("c2_eavesdrop") && _bench != null && player.z >= _ma.transform.position.z - 4f && player.z <= _bench.position.z + 8f);
                 if (distance < StrayDistance || resting)
                 {
                     _strayTimer = 0f;

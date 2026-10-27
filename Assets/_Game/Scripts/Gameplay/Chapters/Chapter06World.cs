@@ -52,6 +52,7 @@ namespace ThuyKieu.Gameplay.Chapters
             _director.Player.AllowCrouch = false;
             _director.Hud.SetControls("WASD: đi · E: nói chuyện / tương tác / nép · Chuột phải: quan sát · J: sổ tay · Đừng chạy, đừng lại gần người của Tú Bà");
             _kimFollower.Following = false;
+            _kimFollower.SideOffset = 1.25f;
             _messenger.gameObject.SetActive(false);
             _searcher.Patrolling = false;
             _studyLamp.SetActive(false);

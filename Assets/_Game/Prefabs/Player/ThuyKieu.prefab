@@ -114,8 +114,13 @@ MonoBehaviour:
   _animator: {fileID: 1015173182213587605}
   _animationSmoothTime: 0.13
   _normalizeAnimatorSpeed: 1
+  _maxStepRate: 2.2
   _allowCrouch: 0
   _crouchSpeed: 1.15
+  _firstPerson: 0
+  _eyeHeight: 1.56
+  _crouchEyeHeight: 0.98
+  _crouchCapsuleHeight: 1.08
 --- !u!1001 &6880386462195957508
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -190,7 +195,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5738099386740791124, guid: 022b714fcf156ca4889f7e45cfd99561, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.9
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5738099386740791124, guid: 022b714fcf156ca4889f7e45cfd99561, type: 3}
       propertyPath: m_LocalScale.z
@@ -210,7 +215,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -2593687625098271875, guid: 022b714fcf156ca4889f7e45cfd99561, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.9
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -2593687625098271875, guid: 022b714fcf156ca4889f7e45cfd99561, type: 3}
       propertyPath: m_LocalScale.z
@@ -337,8 +342,21 @@ MonoBehaviour:
   _armThickness: 0.8
   _sleeveWidth: 0.85
   _sleeveFlareDegrees: 15
+  _sleeveSwayDegrees: 10
+  _sleeveFollowSpeed: 4.5
+  _sleeveDamping: 0.42
+  _sleeveGravity: 1
+  _sleeveFreeAngle: 8
   _elbowTuckDegrees: 0
-  _legLength: 0.9
+  _sleeveFlex: 42
+  _sleeveFlexFollow: 4
+  _legAlign: 1
+  _runLeanDegrees: 6
+  _runArmSwingDegrees: 18
+  _runElbowBendDegrees: 30
+  _holdSkirt: 1
+  _skirtGrip: {x: -0.15, y: -0.14, z: 0.14}
+  _skirtLift: 60
 --- !u!4 &6410507339117746415 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 022b714fcf156ca4889f7e45cfd99561, type: 3}

@@ -98,7 +98,7 @@ namespace ThuyKieu.Presentation
         {
             CurrentMood = string.IsNullOrEmpty(mood) ? "none" : mood;
             _target = MoodFor(CurrentMood);
-            if (CurrentMood == "memory" || CurrentMood == "spirit") Flash(0.85f);
+            if (CurrentMood == "memory") Flash(0.55f); else if (CurrentMood == "spirit") Flash(0.32f);
             else if (CurrentMood == "page") Flash(0.45f);
         }
 
@@ -120,13 +120,13 @@ namespace ThuyKieu.Presentation
             var m = new Mood { Vignette = _baseVignette, Saturation = _baseSaturation, Bloom = _baseBloom, Filter = _baseFilter, Contrast = _baseContrast, Exposure = _baseExposure };
             switch (mood)
             {
-                case "memory": m.Saturation = -70; m.Filter = new Color(1f, 0.86f, 0.62f); m.Vignette = 0.45f; m.Chroma = 0.55f; m.Bloom = 2.2f; m.Grain = 0.35f; break;
+                case "memory": m.Saturation = -70; m.Filter = new Color(1f, 0.86f, 0.62f); m.Vignette = 0.45f; m.Chroma = 0.55f; m.Bloom = 1.35f; m.Grain = 0.35f; break;
                 case "imagine": m.Saturation = -85; m.Filter = new Color(0.72f, 0.82f, 1f); m.Vignette = 0.5f; m.Grain = 0.7f; m.Distortion = -0.15f; break;
                 case "panic": m.Saturation = -35; m.Vignette = 0.5f; m.Chroma = 1f; m.Distortion = -0.25f; m.Contrast = _baseContrast + 17f; m.Grain = 0.4f; break;
-                case "spirit": m.Saturation = -55; m.Filter = new Color(1f, 0.88f, 0.55f); m.Vignette = 0.42f; m.Bloom = 3f; m.Exposure = _baseExposure - 0.25f; m.Chroma = 0.3f; break;
+                case "spirit": m.Saturation = -45; m.Filter = new Color(1f, 0.9f, 0.68f); m.Vignette = 0.38f; m.Bloom = 1.15f; m.Exposure = _baseExposure - 0.3f; m.Chroma = 0.25f; break;
                 case "tension": m.Vignette = 0.38f; m.Saturation = -10; m.Contrast = _baseContrast + 6f; break;
                 // Warm lamplight of an old page: full colour, no grain or distortion (the story world, not a haunting).
-                case "page": m.Filter = new Color(1f, 0.93f, 0.8f); m.Vignette = 0.3f; m.Bloom = 1.6f; m.Exposure = _baseExposure + 0.08f; break;
+                case "page": m.Filter = new Color(1f, 0.93f, 0.8f); m.Vignette = 0.3f; m.Bloom = 1.05f; m.Exposure = _baseExposure + 0.04f; break;
             }
             return m;
         }

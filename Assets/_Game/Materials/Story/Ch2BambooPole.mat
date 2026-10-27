@@ -31,9 +31,15 @@ Material:
         m_Texture: {fileID: 2800000, guid: 6ec277b5895005245a91da27e9a472b0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _BumpScale: 1
+    - _ClearCoatMask: 0.6
+    - _ClearCoatSmoothness: 0.5
     - _Cutoff: 0.5
     - _Metallic: 0
     - _OcclusionStrength: 0

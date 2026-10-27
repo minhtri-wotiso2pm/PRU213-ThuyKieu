@@ -4097,6 +4097,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7852695815326471032, guid: 1ca4fff55c4318743bbe30bf8f2b4df4, type: 3}
+      propertyPath: _skirtLift
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 7852695815326471032, guid: 1ca4fff55c4318743bbe30bf8f2b4df4, type: 3}
+      propertyPath: _runLeanDegrees
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8553348120041189516, guid: 1ca4fff55c4318743bbe30bf8f2b4df4, type: 3}
       propertyPath: cameraTransform
       value: 
@@ -4183,6 +4191,7 @@ MonoBehaviour:
   triggerInteraction: 2
   detectionOrigin: {fileID: 0}
   detectionHeight: 1
+  _lookOnly: 0
 --- !u!1 &86304167
 GameObject:
   m_ObjectHideFlags: 0
@@ -38094,6 +38103,7 @@ MonoBehaviour:
   _ambienceVolume: 0.35
   _sfxVolume: 0.8
   _overrides: []
+  _foley: {fileID: 0}
 --- !u!4 &788310620
 Transform:
   m_ObjectHideFlags: 0
@@ -97809,9 +97819,12 @@ MonoBehaviour:
   maxPitch: 55
   invertY: 0
   lockCursorOnStart: 1
+  _firstPerson: 0
+  _body: {fileID: 0}
   _collisionMask:
     serializedVersion: 2
     m_Bits: 256
+  _closeBlendSeconds: 0.5
 --- !u!4 &1916678645
 Transform:
   m_ObjectHideFlags: 0

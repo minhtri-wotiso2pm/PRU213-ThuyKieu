@@ -337,8 +337,12 @@ namespace ThuyKieu.Gameplay.Sequences
             VoicePlayer.PlayBark(line.Speaker, line.Text);
             if (_director.Autopilot) { yield return new WaitForSecondsRealtime(0.05f); if (actor != null) actor.SetTalking(false, 0); yield break; }
             float wait = Mathf.Clamp(line.Text.Length * 0.045f, 1.4f, 7f);
-            for (float t = 0; t < wait; t += Time.unscaledDeltaTime)
+            double started = ThuyKieu.Core.GamePause.UnpausedTime;
+            while (true)
             {
+                if (PauseMenuView.IsPaused) { yield return null; continue; }
+                float t = (float)(ThuyKieu.Core.GamePause.UnpausedTime - started);
+                if (t >= wait) break;
                 if (t > minimum && Skip()) break;
                 yield return null;
             }

@@ -68,7 +68,8 @@ namespace ThuyKieu.UI
         {
             var hud = Rect(parent, "HUD", Vector2.zero, Vector2.one);
             // Header grows with the number of open options (StoryHUD sets its height), children use pixel offsets.
-            var header = Panel(hud, "Header", new Vector2(0.018f, 1f), new Vector2(0.4f, 1f), new Color(0, 0, 0, 0.42f), 14);
+            // Width stops at 0.36 so it never runs under the objective meter (0.38–0.62).
+            var header = Panel(hud, "Header", new Vector2(0.018f, 1f), new Vector2(0.36f, 1f), new Color(0, 0, 0, 0.42f), 14);
             header.pivot = new Vector2(0.5f, 1f);
             header.offsetMin = new Vector2(0, -27 - 130);
             header.offsetMax = new Vector2(0, -27);
@@ -323,7 +324,7 @@ namespace ThuyKieu.UI
             var cardBody = Text(card, "Body", "", 15, new Vector2(0.05f, 0.04f), new Vector2(0.95f, 0.6f), new Color(0.18f, 0.11f, 0.06f));
             cardBody.alignment = TextAlignmentOptions.TopLeft;
             card.gameObject.SetActive(false);
-            Text(right, "Back", "Backspace / chuột phải: cất hồ sơ", 18, new Vector2(0.55f, 0.005f), new Vector2(0.96f, 0.04f), new Color(1, 1, 1, 0.5f)).alignment = TextAlignmentOptions.Right;
+            Text(right, "Back", "Backspace / chuột phải: cất hồ sơ", 18, new Vector2(0.55f, 0.002f), new Vector2(0.96f, 0.055f), new Color(1, 1, 1, 0.5f)).alignment = TextAlignmentOptions.Right;
 
             var bottom = Panel(trial, "Line", new Vector2(0.025f, 0.025f), new Vector2(0.975f, 0.145f), Ink, 22);
             Text(bottom, "Name", "", 22, new Vector2(0.02f, 0.6f), new Vector2(0.4f, 0.95f), Gold).fontStyle = FontStyles.Bold;
@@ -357,9 +358,16 @@ namespace ThuyKieu.UI
             recap.gameObject.SetActive(false);
         }
 
-        public const string ControlsHelp = "<color=#E8C27A>WASD</color>  di chuyển\n<color=#E8C27A>Shift</color>  chạy\n<color=#E8C27A>Ctrl / C</color>  khom người, rón rén\n" +
-            "<color=#E8C27A>Chuột</color>  xoay camera\n<color=#E8C27A>Chuột phải</color>  quan sát\n<color=#E8C27A>E</color>  tương tác · trốn\n<color=#E8C27A>Q</color>  ném sỏi đánh lạc hướng\n<color=#E8C27A>Space / Click</color>  tiếp lời thoại\n" +
-            "<color=#E8C27A>1–4</color>  chọn câu trả lời\n<color=#E8C27A>J</color>  sổ tay manh mối\n<color=#E8C27A>B</color>  Trang Sách (câu thơ biết trước · Định Mệnh)\n<color=#E8C27A>T</color>  lật trang Tiên tri khi đối chất\n<color=#E8C27A>Esc</color>  tạm dừng\n<color=#E8C27A>`</color>  bảng lệnh (thử nghiệm)";
+        public const string ControlsHelp =
+            "Di chuyển: <color=#E8C27A>WASD</color> · Chạy: <color=#E8C27A>Shift</color>\n" +
+            "Khom người: <color=#E8C27A>Ctrl / C</color>\n" +
+            "Xoay camera: <color=#E8C27A>Chuột</color>\n" +
+            "Quan sát: <color=#E8C27A>Giữ chuột phải</color>\n" +
+            "Tương tác: <color=#E8C27A>E</color>\n" +
+            "Tiếp thoại: <color=#E8C27A>Space / Click</color>\n" +
+            "Chọn trả lời: <color=#E8C27A>1–4</color>\n" +
+            "Sổ tay: <color=#E8C27A>J</color> · Trang Sách: <color=#E8C27A>B</color>\n" +
+            "Tạm dừng: <color=#E8C27A>Esc</color>";
 
         private static void BuildPause(Transform parent)
         {

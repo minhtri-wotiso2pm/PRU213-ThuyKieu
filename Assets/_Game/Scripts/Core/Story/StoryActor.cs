@@ -25,6 +25,9 @@ namespace ThuyKieu.Core.Story
         private static readonly int Emotion = Animator.StringToHash("DialogueEmotion");
         private NavMeshAgent _agent;
         private Vector3? _faceTarget;
+        // Chest bone caches the animated body direction for glancing; reading Animator.bodyRotation
+        // outside the IK pass warns every frame.
+        private Transform _chestBone;
         // Facing held before dialogue lines turned the actor; cleared when the actor is placed or walks somewhere new.
         private Quaternion? _restBeforeLines;
         private float? _scriptedSpeed;
@@ -138,6 +141,7 @@ namespace ThuyKieu.Core.Story
         {
             ApplySeatLift(0f);
             _animator = animator;
+            _chestBone = null;
             _hasEmotion = _hasTalking = _hasSpeed = false;
             _raiseHandLayer = -1;
             if (_animator == null || _animator.runtimeAnimatorController == null) return;
@@ -381,14 +385,23 @@ namespace ThuyKieu.Core.Story
             if (_glanceTarget.HasValue)
             {
                 // Measured from the animated body, not the root: a seated rig's root sits off the bench it is posed on.
+                if (_chestBone == null && _animator.isHuman) _chestBone = _animator.GetBoneTransform(HumanBodyBones.Chest);
                 Vector3 toTarget = _glanceTarget.Value - HeadPosition;
-                Vector3 bodyForward = _animator.bodyRotation * Vector3.forward;
+                Vector3 bodyForward = _chestBone != null ? _chestBone.forward : transform.forward;
                 toTarget.y = 0f;
                 bodyForward.y = 0f;
                 if (toTarget.sqrMagnitude > 0.01f && bodyForward.sqrMagnitude > 0.01f)
                     targetYaw = Mathf.Clamp(Vector3.SignedAngle(bodyForward, toTarget, Vector3.up), -MaxGlanceYaw, MaxGlanceYaw);
             }
             _glanceYaw = Mathf.MoveTowards(_glanceYaw, targetYaw, 160f * Time.deltaTime);
+            // A slow chest rise keeps a still actor alive: background extras with a frozen idle clip
+            // would otherwise read as statues (the vendors of Chapter 6, the watcher in Chapter 4).
+            if (!_lying && (_agent == null || _agent.velocity.sqrMagnitude < 0.04f))
+            {
+                if (_chestBone == null) _chestBone = _animator.GetBoneTransform(HumanBodyBones.Chest);
+                if (_chestBone != null)
+                    _chestBone.rotation = Quaternion.AngleAxis(Mathf.Sin(Time.time * 1.5f + _phase) * 0.8f, _chestBone.right) * _chestBone.rotation;
+            }
             if (Mathf.Abs(_glanceYaw) < 0.01f) return;
             // Spread over the spine so no single joint bends far enough to look broken.
             Twist(HumanBodyBones.Spine, 0.15f);
