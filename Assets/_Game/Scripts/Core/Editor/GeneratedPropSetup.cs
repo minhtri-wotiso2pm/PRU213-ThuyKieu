@@ -40,6 +40,171 @@ namespace ThuyKieu.Core.Editor
             AssetDatabase.SaveAssets();
         }
 
+        [MenuItem("ThuyKieu/Tools/Set up generated props (Truyện Kiều book, room art)")]
+        public static void SetupStoryProps()
+        {
+            Setup("baitruyen", Fit.Length, 0.42f);
+            Setup("kieuform", Fit.Height, 0.16f);
+            Setup("tranhphongkieu", Fit.Height, 1.3f);
+            Setup("caudoi", Fit.Height, 1.5f);
+            Setup("cauchuc", Fit.Length, 1f);
+            BuildOpenBook();
+            BuildCoupletPanels();
+            AssetDatabase.SaveAssets();
+        }
+
+        /// <summary>
+        /// The câu đối export carries both boards in one mesh, but a couplet hangs one board either side of a doorway.
+        /// Splits a mid mesh LOD of it (the full mesh is 1.5 M triangles) into CauDoi_Trai and CauDoi_Phai, the boards on
+        /// the left and right as seen from in front, each pivoted at its centre and facing -Z like the stand-in boards.
+        /// </summary>
+        public static void BuildCoupletPanels()
+        {
+            const int Lod = 4;
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(ModelFolder + "/caudoi.fbx");
+            var source = model.GetComponentInChildren<MeshFilter>().sharedMesh;
+            var material = AssetDatabase.LoadAssetAtPath<Material>(MaterialFolder + "/M_caudoi.mat");
+            // Into the model's own space with its import scale applied (the asset root sits at the origin).
+            Matrix4x4 toModel = model.GetComponentInChildren<MeshFilter>().transform.localToWorldMatrix;
+
+            Vector3[] vertices = source.vertices;
+            Vector3[] normals = source.normals;
+            Vector2[] uvs = source.uv;
+            var range = source.GetLod(0, Mathf.Min(Lod, source.lodCount - 1));
+            int[] indices;
+            using (var data = Mesh.AcquireReadOnlyMeshData(source))
+                indices = data[0].indexFormat == UnityEngine.Rendering.IndexFormat.UInt32
+                    ? data[0].GetIndexData<int>().GetSubArray((int)range.indexStart, (int)range.indexCount).ToArray()
+                    : data[0].GetIndexData<ushort>().GetSubArray((int)range.indexStart, (int)range.indexCount).ToArray().Select(i => (int)i).ToArray();
+
+            // In the export the boards face +Z, so the board on the viewer's left lies on +X.
+            float middle = source.bounds.center.x;
+            foreach (var (name, onLeft) in new[] { ("CauDoi_Trai", true), ("CauDoi_Phai", false) })
+            {
+                Mesh panel = Panel(vertices, normals, uvs, indices, toModel, x => (x > middle) == onLeft, name);
+                string meshPath = ModelFolder + "/" + name + ".asset";
+                AssetDatabase.DeleteAsset(meshPath);
+                AssetDatabase.CreateAsset(panel, meshPath);
+                SavePanel(panel, material);
+            }
+        }
+
+        /// <summary>One board: the triangles on one side, re-indexed, turned to face -Z and centred on its own middle.</summary>
+        private static Mesh Panel(Vector3[] vertices, Vector3[] normals, Vector2[] uvs, int[] indices, Matrix4x4 toModel,
+            Func<float, bool> side, string name)
+        {
+            var remap = new System.Collections.Generic.Dictionary<int, int>();
+            var outVertices = new System.Collections.Generic.List<Vector3>();
+            var outNormals = new System.Collections.Generic.List<Vector3>();
+            var outUvs = new System.Collections.Generic.List<Vector2>();
+            var outIndices = new System.Collections.Generic.List<int>();
+            var turn = Quaternion.Euler(0f, 180f, 0f);
+            for (int t = 0; t < indices.Length; t += 3)
+            {
+                float x = (vertices[indices[t]].x + vertices[indices[t + 1]].x + vertices[indices[t + 2]].x) / 3f;
+                if (!side(x)) continue;
+                for (int k = 0; k < 3; k++)
+                {
+                    int index = indices[t + k];
+                    if (!remap.TryGetValue(index, out int mapped))
+                    {
+                        mapped = outVertices.Count;
+                        remap[index] = mapped;
+                        outVertices.Add(turn * toModel.MultiplyPoint3x4(vertices[index]));
+                        outNormals.Add(turn * toModel.MultiplyVector(normals[index]).normalized);
+                        outUvs.Add(uvs[index]);
+                    }
+                    outIndices.Add(mapped);
+                }
+            }
+            // The export stands the two boards in a shallow V; square this one up to the wall. Its width is the direction
+            // of greatest spread across the floor plane (the leading eigenvector of the x/z covariance).
+            var bounds = GeometryUtility.CalculateBounds(outVertices.ToArray(), Matrix4x4.identity);
+            float xx = 0f, xz = 0f, zz = 0f;
+            foreach (var v in outVertices)
+            {
+                float dx = v.x - bounds.center.x, dz = v.z - bounds.center.z;
+                xx += dx * dx; xz += dx * dz; zz += dz * dz;
+            }
+            float widthAngle = 0.5f * Mathf.Atan2(2f * xz, xx - zz) * Mathf.Rad2Deg;
+            var square = Quaternion.Euler(0f, widthAngle, 0f);
+            for (int i = 0; i < outVertices.Count; i++)
+            {
+                outVertices[i] = square * (outVertices[i] - bounds.center);
+                outNormals[i] = square * outNormals[i];
+            }
+            var mesh = new Mesh { name = name, indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
+            mesh.SetVertices(outVertices);
+            mesh.SetNormals(outNormals);
+            mesh.SetUVs(0, outUvs);
+            mesh.SetTriangles(outIndices, 0);
+            mesh.RecalculateBounds();
+            mesh.RecalculateTangents();
+            return mesh;
+        }
+
+        /// <summary>A board prefab sized like the stand-in couplets: 1.6 m tall, no wider than 0.42 m.</summary>
+        private static void SavePanel(Mesh mesh, Material material)
+        {
+            var root = new GameObject(mesh.name);
+            try
+            {
+                root.AddComponent<MeshFilter>().sharedMesh = mesh;
+                root.AddComponent<MeshRenderer>().sharedMaterial = material;
+                Vector3 size = mesh.bounds.size;
+                root.transform.localScale = Vector3.one * Mathf.Min(1.6f / size.y, 0.42f / size.x);
+                root.layer = StorySceneKit.EnvironmentLayer;
+                PrefabUtility.SaveAsPrefabAsset(root, PrefabFolder + "/" + mesh.name + ".prefab");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
+        /// <summary>
+        /// The classroom copy of Truyện Kiều: the open textbook laid on its back, with the illustration of Kiều holding her
+        /// đàn nguyệt pressed flat onto the blank left page under the title, as in the printed edition.
+        /// </summary>
+        public static GameObject BuildOpenBook()
+        {
+            var root = new GameObject("SachTruyenKieu");
+            try
+            {
+                var book = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(ModelFolder + "/baitruyen.fbx"));
+                book.transform.SetParent(root.transform, false);
+                // The export stands open towards +Z with the spine at the back; the illustration goes in its own frame,
+                // centred in the blank part of the left page, turned with that page and squashed to a print.
+                var art = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(ModelFolder + "/kieuform.fbx"));
+                art.transform.SetParent(book.transform, false);
+                const float artHeight = 0.37f;
+                float artScale = artHeight / BoundsOf(art).size.y;
+                art.transform.localScale = new Vector3(artScale, artScale, artScale * 0.04f);
+                // Measured on the export: the title page (+X) leans 27° towards the spine and its surface passes through
+                // (0.25, *, 0.12); the print sits about 8 mm proud of it so the curved paper never covers it.
+                art.transform.localRotation = Quaternion.Euler(0f, -27f, 0f);
+                art.transform.localPosition = new Vector3(0.248f, 0.1f, 0.127f);
+                // Lay it on the desk, pages up, the top of the text away from the reader.
+                book.transform.localRotation = Quaternion.Euler(-90f, 180f, 0f);
+                book.transform.localScale *= 0.42f / Mathf.Max(BoundsOf(book).size.x, BoundsOf(book).size.z);
+                // The export is open only part way, its pages standing in a steep V; flatten that (its local Z is now
+                // up) so it lies open on the desk the way a book left mid-lesson does.
+                book.transform.localScale = Vector3.Scale(book.transform.localScale, new Vector3(1f, 1f, 0.5f));
+                Bounds bounds = BoundsOf(book);
+                book.transform.localPosition -= new Vector3(bounds.center.x, bounds.min.y, bounds.center.z);
+                bounds = BoundsOf(book);
+                var collider = root.AddComponent<BoxCollider>();
+                collider.center = bounds.center;
+                collider.size = bounds.size;
+                root.layer = StorySceneKit.EnvironmentLayer;
+                return PrefabUtility.SaveAsPrefabAsset(root, PrefabFolder + "/SachTruyenKieu.prefab");
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(root);
+            }
+        }
+
         /// <param name="size">Real height, or real length of the longest horizontal side, in metres.</param>
         public static GameObject Setup(string name, Fit fit, float size)
         {

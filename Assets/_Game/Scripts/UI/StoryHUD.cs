@@ -32,6 +32,13 @@ namespace ThuyKieu.UI
         private Action _onContinue;
         private float _completeShownAt;
 
+        // Compact HUD (first-person chapters): the objective is shown once, where it fades out after a while; control
+        // hints only after they change; subtitles get a soft shadow so they read over a bright scene.
+        [SerializeField] private bool _compact;
+        private float _headerTimer, _controlsTimer;
+        private CanvasGroup _headerGroup, _controlsGroup;
+        private const float HeaderSeconds = 9f, ControlsSeconds = 14f;
+
         /// <summary>QA autopilot shortens cards and waits.</summary>
         public bool FastMode { get; set; }
 
@@ -100,6 +107,7 @@ namespace ThuyKieu.UI
             _qte.SetActive(false);
             _bark.text = string.Empty;
             _fade.alpha = 1f;
+            if (_compact) SetupCompact();
             _fade.blocksRaycasts = false;
         }
 
@@ -108,14 +116,19 @@ namespace ThuyKieu.UI
         // ------------------------------------------------------------------ persistent HUD
 
         public void SetChapterLabel(string text) => _chapterLabel.text = text;
-        public void SetControls(string text) => _controls.text = text;
+        public void SetControls(string text)
+        {
+            _controls.text = text;
+            _controlsTimer = ControlsSeconds;
+        }
 
         public string Objective => _objective.text;
 
         public void SetObjective(string text, bool announce = true)
         {
             _objective.text = text;
-            if (announce) ShowToast("MỤC TIÊU", text);
+            _headerTimer = HeaderSeconds;
+            if (announce && !_compact) ShowToast("MỤC TIÊU", text);
         }
 
         public void SetExploreOptions(IList<string> options)
@@ -213,6 +226,7 @@ namespace ThuyKieu.UI
             _barkRoot.SetActive(!_dialogueMode && !overlay);
             _toastGroup.alpha = overlay ? 0f : 1f; // documents and boards cover the screen; toasts wait underneath
             _controls.gameObject.SetActive(!_dialogueMode);
+            if (_compact) UpdateCompact();
 
             if (_meter.activeSelf != _meterRequested) _meter.SetActive(_meterRequested);
             _meterRequested = false;
@@ -231,9 +245,40 @@ namespace ThuyKieu.UI
             if (showPrompt) _promptText.text = "<color=#E8C27A>[E]</color>  " + ((target as IInteractableDisplayName)?.DisplayName ?? "Tương tác");
         }
 
+        private void SetupCompact()
+        {
+            _headerGroup = _header.GetComponent<CanvasGroup>();
+            if (_headerGroup == null) _headerGroup = _header.AddComponent<CanvasGroup>();
+            _controlsGroup = _controls.GetComponent<CanvasGroup>();
+            if (_controlsGroup == null) _controlsGroup = _controls.gameObject.AddComponent<CanvasGroup>();
+            var subtitle = _bark.fontMaterial;
+            subtitle.EnableKeyword(ShaderUtilities.Keyword_Underlay);
+            subtitle.SetColor(ShaderUtilities.ID_UnderlayColor, new Color(0f, 0f, 0f, 0.85f));
+            subtitle.SetFloat(ShaderUtilities.ID_UnderlayDilate, 0.4f);
+            subtitle.SetFloat(ShaderUtilities.ID_UnderlaySoftness, 0.6f);
+            _headerTimer = HeaderSeconds;
+            _controlsTimer = ControlsSeconds;
+        }
+
+        /// <summary>Compact mode: fade the objective and the control hints out once they have been read.</summary>
+        private void UpdateCompact()
+        {
+            float step = Time.unscaledDeltaTime;
+            if (_headerTimer > 0f) _headerTimer -= step;
+            if (_controlsTimer > 0f) _controlsTimer -= step;
+            _headerGroup.alpha = Mathf.MoveTowards(_headerGroup.alpha, _headerTimer > 0f ? 1f : 0f, step * 1.2f);
+            _controlsGroup.alpha = Mathf.MoveTowards(_controlsGroup.alpha, _controlsTimer > 0f ? 1f : 0f, step * 1.2f);
+        }
+
+        /// <summary>Compact mode: bring the objective back for a moment (after a checkpoint, on request).</summary>
+        public void RemindObjective() => _headerTimer = HeaderSeconds;
+
         // ------------------------------------------------------------------ cards
 
         /// <summary>Colour of the full-screen fade (black by default; white for the light at the end of the story).</summary>
+        /// <summary>Sets the black-out directly, frame by frame, for scenes that time their own fade (even in fast QA runs).</summary>
+        public float FadeAlpha { get => _fade.alpha; set => _fade.alpha = value; }
+
         public void SetFadeColor(Color color)
         {
             var image = _fade.GetComponent<Image>();
@@ -288,10 +333,15 @@ namespace ThuyKieu.UI
         {
             _failHeadline.text = headline;
             _failDetail.text = detail;
+            // A catch scene ends on black: the cards come above the fade while the failure reads, then go back.
+            var cards = _fail.transform.parent;
+            int order = cards.GetSiblingIndex();
+            cards.SetAsLastSibling();
             _fail.SetActive(true);
             yield return new WaitForSecondsRealtime(FastMode ? Mathf.Max(0.05f, ThuyKieu.Core.Story.StoryCapture.Hold) : hold);
             yield return Fade(1f, 0.5f);
             _fail.SetActive(false);
+            cards.SetSiblingIndex(order);
         }
 
         public void ShowChapterComplete(int number, string title, IList<string> lines, Action onContinue)

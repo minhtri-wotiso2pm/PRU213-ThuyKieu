@@ -1,0 +1,38 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter03_LauTuBa
+[0.7s] TAG scene:Lau_Arrival
+[0.7s] TAG music:tuba_warm
+[1.0s] TAG sfx:gate_bar
+[1.0s] TAG scene:Lau_Explore
+[1.0s] TAG gameplay:tutorial_lau
+[1.3s] TAG sfx:lock_rattle
+[2.1s] TAG gameplay:lucbat_ch3
+[2.1s] SEQUENCE lucbat_ch3
+[2.7s] LUCBAT lucbat_ch3 tile ok · tone ok · score 3
+[3.4s] CHOICE 2/3: Hỏi: "Ở đây có được ra phố không?"
+[3.8s] TAG sfx:lock_rattle
+[4.0s] TAG gameplay:search_drawer
+[4.3s] TAG gameplay:document_contract
+[8.4s] TAG scene:Lau_Overhear
+[8.4s] TAG music:none
+[8.4s] C3 overhear started
+[8.6s] TAG scene:Lau_Locked
+[8.6s] TAG sfx:lock_open
+[9.2s] TAG scene:Lau_End
+[9.3s] TAG music:none
+[9.3s] TAG sfx:latch_drop
+[9.4s] TAG gameplay:panic
+[9.5s] TAG gameplay:kieu_voice
+[9.5s] CHOICE 3/4: Lật trang "Duyên hội ngộ, đức cù lao...": "Ngươi chọn chữ Hiếu. Không phải vì ngươi ngốc."
+[9.6s] TAG music:resolve
+[9.7s] CHAPTER 3 COMPLETE · lines 78 · choices 2
+[9.7s] FRAMES Chapter03_LauTuBa · avg 141 fps · 1% low 65 fps · worst 28 ms · 1080 frames · 1920x1080
+   nghi_ngo = 0
+   manh_moi = 0
+   suy_luan = 0
+   gia_vo = 0
+   c3_viec = 9
+   c3_khe_uoc = True
+   c3_bi_bat = 0
+   tra_loi_kieu_that = 1
+   clues = c3_cong_khoa, c3_co_lam, c3_tu_khoa, c3_co_hong, c3_so_no, c3_van_tu, c3_nghe_len

@@ -41,6 +41,7 @@ VAR c1_hoi_tien = false   // đã biết lời hứa của bà mối: bạc ph�
 VAR c1_bac_dau = false    // đã thấy dấu Phúc Ký trên nén bạc
 VAR c1_bac_truoc = false  // nhờ lời bà mối (hỏi Mẹ): tờ khế ghi rõ bạc giao trước, cha và em được thả trước khi Kiều đi
 VAR c1_ma_lo = false      // nhờ bản khai (lục tủ): đối chất khiến Mã buột miệng nhắc Lâm Tri
+VAR c1_de_cho = false     // Unity ghi: để khách gõ cổng quá lâu, Mẹ phải kéo Kiều ra mở (việc còn dở bị bỏ, Mã vào nhà bực bội)
 VAR c1_ca_hai = false     // ra mở cổng khi đã có cả hai manh mối: Mã bớt đề phòng khi lên đường (nghi_ngo Ch2 thấp hơn)
 VAR c1_tam_biet = false   // đã từ biệt Mẹ Kiều
 VAR c1_thoa = false       // bí mật: nhặt chiếc thoa vàng Kim Trọng trả lại, rơi dưới chân tủ (Unity ghi, chỉ dùng trong Chương 1)
@@ -72,6 +73,8 @@ VAR c3_so_no = false      // đã thấy sổ nợ son phấn
 VAR c3_biet_chia_khoa = false
 VAR c3_bi_bat = 0         // số lần bị người canh bắt gặp (Unity ghi)
 VAR tra_loi_kieu_that = 0 // 1 nhận sai · 2 không bỏ cuộc · 3 im lặng
+VAR c3l_phong = false     // Ch3 góc nhìn thứ nhất: đã xem phòng mình (song sắt, thẻ nợ, then ngoài)
+VAR c3l_tu = false        // Ch3 góc nhìn thứ nhất: đã nhìn tủ khoá đồng
 
 // --- Chương 4 ---
 VAR c4_viec = 0           // số việc đã làm trong đêm
@@ -87,6 +90,7 @@ VAR c4_cua_sau = false    // đã tìm ra cửa sau
 VAR c4_gap_co_lam = false
 VAR c4_ru_co_lam = false  // rủ cô gái áo lam cùng trốn
 VAR c4_bi_bat = 0         // số lần bị bắt gặp (Unity ghi)
+VAR c4_buoc = 0           // Ch4 góc nhìn thứ nhất (Unity ghi): 0 trong phòng · 1 đã ra · 2 có chìa · 3 có giao kèo · 4 xong J1 · 5 xong J2
 
 // --- Chương 5 ---
 VAR c5_lang_le = 0        // 0–3: lẻn ra êm đến đâu (Unity ghi)
@@ -160,6 +164,8 @@ INCLUDE Chapter1_GiaBien.ink
 INCLUDE Chapter2_TrenDuongTheoMaGiamSinh.ink
 INCLUDE Chapter3_TuBa.ink
 INCLUDE Chapter4_KhongConDuongLui.ink
+INCLUDE Chapter3_LauTuBa.ink
+INCLUDE Chapter4_DemLauTuBa.ink
 INCLUDE Chapter5_DaoThoat.ink
 INCLUDE Chapter6_KimTrong.ink
 // Mở đầu: lớp học rút gọn và nhịp làm quen thân xác Kiều trước khi khám phòng.

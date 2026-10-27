@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using ThuyKieu.Core.Story;
@@ -20,7 +20,7 @@ namespace ThuyKieu.Core.Editor
         // those chapters exist, so a rebuild removes them.
         private static readonly string[] Generated =
         {
-            PrologueSetup.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath, Chapter04Setup.ScenePath, Chapter05Setup.ScenePath,
+            PrologueSetup.ScenePath, Chapter02Setup.ScenePath, Chapter03Setup.ScenePath, Chapter04Setup.ScenePath, LauTuBaSetup.Chapter3Path, LauTuBaSetup.Chapter4Path, Chapter05Setup.ScenePath,
             Chapter06Setup.ScenePath, Chapter07Setup.ScenePath, EpilogueSetup.ScenePath,
             "Assets/_Game/Scenes/Chapter07_Placeholder.unity", "Assets/_Game/Scenes/Chapter04_Placeholder.unity",
             StorySceneKit.UIPrefabPath, StoryAnimationSetup.ControllerPath, StoryAnimationSetup.KieuOverridePath, StoryAnimationSetup.CharacterFolder, StorySceneKit.MaterialFolder
@@ -46,6 +46,9 @@ namespace ThuyKieu.Core.Editor
             Chapter02Setup.Create();
             Chapter03Setup.Create();
             Chapter04Setup.Create();
+            // First-person Chapters 3–4 (the ones the chapter chain plays); the two above remain for reference.
+            LauTuBaSetup.CreateChapter3();
+            LauTuBaSetup.CreateChapter4();
             Chapter05Setup.Create();
             Chapter06Setup.Create();
             Chapter07Setup.Create();
@@ -97,6 +100,9 @@ namespace ThuyKieu.Core.Editor
             EditorSceneManager.OpenScene(scene);
             SessionState.SetBool(PlaytestKey, true);
             SessionState.SetFloat(PlaytestKey + ".start", (float)EditorApplication.timeSinceStartup);
+            // Long QA runs (the Chapter 4 sound probe) may ask for more than the default 15 minutes.
+            int limit = Array.IndexOf(args, "-playtestSeconds");
+            SessionState.SetInt(PlaytestKey + ".limit", limit >= 0 && limit + 1 < args.Length && int.TryParse(args[limit + 1], out int seconds) ? seconds : 900);
             EditorApplication.update += WatchPlaytest;
             EditorApplication.EnterPlaymode();
         }
@@ -106,7 +112,7 @@ namespace ThuyKieu.Core.Editor
             string report = StoryAutopilot.ReportPath;
             double elapsed = EditorApplication.timeSinceStartup - SessionState.GetFloat(PlaytestKey + ".start", 0f);
             bool done = File.Exists(report);
-            if (!done && elapsed < 900) return;
+            if (!done && elapsed < SessionState.GetInt(PlaytestKey + ".limit", 900)) return;
             EditorApplication.update -= WatchPlaytest;
             SessionState.SetBool(PlaytestKey, false);
             bool pass = done && File.ReadLines(report).FirstOrDefault()?.StartsWith("AUTOPILOT PASS") == true;

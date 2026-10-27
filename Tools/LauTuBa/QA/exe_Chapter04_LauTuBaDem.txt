@@ -1,0 +1,41 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter04_LauTuBaDem
+[2.4s] TAG scene:Dem_Opening
+[2.4s] TAG music:tension_low
+[4.4s] HITCH 153 ms
+[6.5s] HITCH 160 ms
+[8.3s] CHOICE 3/5: Cãi lại: "Tôi không nợ bà thứ gì cả."
+[8.3s] TAG sfx:knock
+[8.5s] TAG sfx:latch_drop
+[10.6s] HITCH 153 ms
+[10.7s] TAG scene:Dem_Night
+[10.7s] TAG gameplay:tutorial_dem
+[10.8s] SEQUENCE tutorial_dem
+[14.1s] HITCH 174 ms
+[17.4s] HITCH 187 ms
+[21.6s] HITCH 167 ms
+[23.5s] TAG gameplay:search_drawer
+[23.9s] TAG sfx:paper
+[26.3s] TAG sfx:lock_open
+[26.7s] TAG gameplay:document_deal
+[26.8s] SEQUENCE document_deal
+[30.3s] CHOICE 1/3: Cất văn tự vào áo — thêm một bằng chứng.
+[32.1s] CHOICE 2/3: Lấy cả túi bạc — tiền bán mình thì phải thuộc về mình.
+[32.3s] TAG sfx:lock_open
+[54.3s] C4 J1 done · mirror seen True
+[101.6s] C4 J2 done · Tú Bà phase 1
+[102.1s] TAG scene:Dem_BackDoor
+[102.1s] TAG music:none
+[102.4s] TAG gameplay:kieu_voice
+[102.5s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[104.6s] TAG music:resolve
+[106.0s] CHAPTER 4 COMPLETE · lines 35 · choices 4
+[106.0s] FRAMES Chapter04_LauTuBaDem · avg 139 fps · 1% low 33 fps · worst 187 ms · 14409 frames · 1920x1080
+   c4_viec = 2
+   c4_canh_giac = 2
+   c4_tien = 2
+   c4_van_tu = 1
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo, c4_bac_dau

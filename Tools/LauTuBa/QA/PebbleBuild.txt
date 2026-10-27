@@ -1,0 +1,15 @@
+Pebble contacts (measured, not listened to): output · from · onset s · length s · gain dB · peak dBFS · first 40 ms RMS dBFS
+pebble_hard_01.wav · pebble/Stone-dropping-6843.wav · 0.051 · 0.111 · -2.9 · -3.1 · -18.0
+pebble_hard_02.wav · pebble/Stone-dropping-6843.wav · 0.251 · 0.081 · 0.4 · -1.0 · -21.8
+pebble_hard_03.wav · pebble/Stone-dropping-6843.wav · 0.334 · 0.143 · 6.2 · -1.0 · -21.9
+pebble_hard_04.wav · pebble/sfx100v2_stones_01.ogg · 0.020 · 0.075 · 0.5 · -1.0 · -20.2
+pebble_hard_05.wav · pebble/sfx100v2_stones_02.ogg · 0.024 · 0.042 · 0.7 · -1.1 · -18.0
+pebble_hard_06.wav · pebble/sfx100v2_stones_03.ogg · 0.003 · 0.089 · -0.4 · -1.0 · -21.2
+pebble_hard_07.wav · pebble/bfh1_rock_falling_04.ogg · 0.012 · 0.115 · -0.1 · -1.0 · -20.0
+pebble_hard_08.wav · pebble/bfh1_rock_falling_08.ogg · 0.003 · 0.080 · 1.0 · -1.0 · -20.9
+pebble_hard_09.wav · pebble/bfh1_rock_hit_01.ogg · 0.001 · 0.109 · 1.0 · -1.0 · -20.1
+pebble_wood_01.wav · pebble/bfh1_wood_hit_03.ogg · 0.007 · 0.058 · -3.6 · -5.8 · -20.0
+pebble_wood_02.wav · pebble/sfx100v2_wood_hit_03.ogg · 0.017 · 0.038 · -6.0 · -6.2 · -20.0
+pebble_soft_01.wav · kenney_impact/impactSoft_medium_000.ogg · 0.001 · 0.101 · -20.3 · -21.2 · -30.0
+pebble_soft_02.wav · kenney_impact/impactSoft_medium_002.ogg · 0.001 · 0.101 · -21.0 · -22.0 · -30.0
+pebble_soft_03.wav · kenney_impact/impactSoft_medium_003.ogg · 0.001 · 0.101 · -21.1 · -22.0 · -30.0

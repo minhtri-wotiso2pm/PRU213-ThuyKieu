@@ -30,7 +30,8 @@ namespace ThuyKieu.Interaction
         /// </summary>
         public bool HasStandPoint => _standPoint != null;
         public Vector3 InteractionPosition => _standPoint != null ? _standPoint.position : transform.position;
-        public const float StandPointRange = 1.25f;
+        public const float StandPointRange = 2.2f;
+        public const float StandPointNearRange = 1.25f;
 
         private void Awake() { _revealed = !_startHidden; }
 

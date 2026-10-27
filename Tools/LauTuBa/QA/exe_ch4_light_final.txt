@@ -1,0 +1,34 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.9s] TAG scene:Dem_Opening
+[0.9s] TAG music:tension_low
+[1.1s] CHOICE 1/5: Lật trang "Thoắt trông nàng đã biết tình...": cúi đúng kiểu mụ muốn thấy, rồi hỏi khéo về nợ
+[1.2s] TAG sfx:latch_drop
+[1.4s] TAG scene:Dem_Night
+[1.4s] TAG gameplay:tutorial_dem
+[3.1s] TAG gameplay:search_drawer
+[3.5s] TAG sfx:paper
+[3.8s] TAG sfx:lock_open
+[4.1s] TAG gameplay:document_deal
+[4.3s] CHOICE 2/3: Đốt nó trên ngọn đèn.
+[4.3s] TAG sfx:fire
+[4.3s] TAG gameplay:kieu_voice
+[4.4s] CHOICE 1/3: Chỉ lấy vài lạng làm lộ phí.
+[4.4s] TAG sfx:lock_open
+[12.8s] C4 J1 done · mirror seen False
+[28.9s] C4 J2 done · Tú Bà phase 1
+[29.4s] TAG scene:Dem_BackDoor
+[29.4s] TAG music:none
+[29.7s] TAG gameplay:kieu_voice
+[29.8s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[29.9s] TAG music:resolve
+[29.9s] CHAPTER 4 COMPLETE · lines 37 · choices 4
+[29.9s] FRAMES Chapter04_LauTuBaDem · avg 143 fps · 1% low 81 fps · worst 28 ms · 3985 frames · 1920x1080
+   c4_viec = 2
+   c4_canh_giac = 0
+   c4_tien = 1
+   c4_van_tu = 2
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo

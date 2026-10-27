@@ -11,6 +11,8 @@ namespace ThuyKieu.Player
     /// Framing (distance, shoulder offset, FOV, height) blends towards the active <see cref="CameraZone"/>.
     /// Collisions pull the camera in quickly and let it ease back out; <see cref="CameraFadeable"/> walls are
     /// hidden instead of pushing the camera into the player's back.
+    /// Chapters that opt into <c>_firstPerson</c> get Kiều's own eyes instead: no orbit, the view rides at the body's
+    /// eye height, dialogue turns the head towards the speaker, and hiding places can narrow how far she can look.
     /// Lives on the camera, not on the player, so movement and camera stay independent.
     /// </summary>
     public class ThirdPersonCameraController : MonoBehaviour
@@ -46,6 +48,32 @@ namespace ThuyKieu.Player
         [Header("Cursor")]
         [SerializeField] private bool lockCursorOnStart = true;
 
+        [Header("First person (opt-in per chapter)")]
+        [SerializeField] private bool _firstPerson;
+        [SerializeField] private PlayerMovement _body;
+
+        public bool IsFirstPerson => _firstPerson && _body != null;
+        /// <summary>First person, while control is locked: the head turns towards this point (the person speaking).</summary>
+        public Vector3? LookTarget { get; set; }
+        private bool _limitLook;
+        private float _limitCentre, _limitRange;
+
+        /// <summary>First person: keeps the view within <paramref name="halfRange"/> degrees of a heading (peeking out of a hiding place).</summary>
+        public void LimitLook(float centreYaw, float halfRange) { _limitLook = true; _limitCentre = centreYaw; _limitRange = halfRange; yaw = centreYaw; }
+        public void ClearLookLimit() { _limitLook = false; }
+        public float Yaw => yaw;
+        public float Pitch => pitch;
+
+        /// <summary>First person: turns the eyes to a point at once (checkpoints, QA stills).</summary>
+        public void LookAtNow(Vector3 point)
+        {
+            if (!IsFirstPerson) return;
+            var euler = Quaternion.LookRotation(point - EyePosition()).eulerAngles;
+            yaw = euler.y;
+            pitch = Mathf.Clamp(NormalizeAngle(euler.x), minPitch, maxPitch);
+            transform.SetPositionAndRotation(EyePosition(), Quaternion.Euler(pitch, yaw, 0f));
+        }
+
         private float yaw;
         private float pitch;
         private bool ignoreNextLookDelta;
@@ -79,13 +107,60 @@ namespace ThuyKieu.Player
         // Closer than this the lens is inside the character's head: the body is drawn as shadow only.
         private const float HideBodyDistance = 0.45f;
 
+        // ---------------------------------------------------------------- close view (first person)
+
+        private Transform _closeView, _closeLast;
+        private float _closeFov, _closeWeight;
+        [Tooltip("First person: seconds to lean into a close view and back out of it.")]
+        [SerializeField] private float _closeBlendSeconds = 0.5f;
+
+        /// <summary>
+        /// First person: lean in to a close shot (taking the keys from Tú Bà's belt). The eyes blend to <paramref name="view"/>
+        /// and the lens to <paramref name="fov"/>; the mouse no longer turns the head while it is set (the shot owns it).
+        /// </summary>
+        public void SetCloseView(Transform view, float fov)
+        {
+            _closeView = view;
+            _closeLast = view;
+            _closeFov = fov;
+        }
+
+        /// <summary>
+        /// Back to her own eyes, turned towards <paramref name="lookAt"/> (where the close shot was), blending out unless
+        /// <paramref name="instant"/> (a catch scene takes the camera over from where it is).
+        /// </summary>
+        public void ClearCloseView(Vector3 lookAt, bool instant)
+        {
+            _closeView = null;
+            if (_body != null)
+            {
+                var euler = Quaternion.LookRotation(lookAt - EyePosition()).eulerAngles;
+                yaw = euler.y;
+                pitch = Mathf.Clamp(NormalizeAngle(euler.x), minPitch, maxPitch);
+            }
+            if (instant) _closeWeight = 0f;
+        }
+
+        /// <summary>0 at her eyes, 1 fully in the close view.</summary>
+        public float CloseWeight => _closeWeight;
+        public bool InCloseView => _closeView != null;
+
         /// <summary>Places the orbit camera behind the target at the given yaw without smoothing (after teleports).</summary>
         public void SnapBehindTarget(float yawDegrees, float pitchDegrees = 14f)
         {
+            _closeView = null;
+            _closeWeight = 0f;
             yaw = yawDegrees;
             pitch = Mathf.Clamp(pitchDegrees, minPitch, maxPitch);
             followVelocity = Vector3.zero;
             _collisionDistance = -1f;
+            if (IsFirstPerson)
+            {
+                // Eyes look ahead after a teleport; the orbit's downward tilt would stare at the floor.
+                pitch = 0f;
+                transform.SetPositionAndRotation(EyePosition(), Quaternion.Euler(pitch, yaw, 0f));
+                return;
+            }
             if (target == null) return;
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
             transform.SetPositionAndRotation(Pivot(rotation) - rotation * Vector3.forward * _currentDistance, rotation);
@@ -114,12 +189,59 @@ namespace ThuyKieu.Player
             {
                 SetCursorLocked(true);
             }
+            // Her own body stays out of the picture but still casts its shadow on the floor.
+            if (IsFirstPerson)
+                foreach (var renderer in _body.GetComponentsInChildren<Renderer>(true))
+                    renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
         }
 
         private void OnDisable() { RestoreFaded(); HideBody(false); }
 
+        private Vector3 EyePosition() => _body.transform.position + Vector3.up * _body.EyeHeight;
+
+        private void FirstPersonView()
+        {
+            bool close = _closeView != null;
+            _closeWeight = Mathf.MoveTowards(_closeWeight, close ? 1f : 0f, Time.deltaTime / Mathf.Max(0.01f, _closeBlendSeconds));
+            if (!ControlLocked) HandleCursorToggle();
+            if (!close && _closeWeight <= 0f && !ControlLocked && Cursor.lockState == CursorLockMode.Locked)
+            {
+                Vector2 look = InputReader.Look * mouseSensitivity * GameSettings.MouseSensitivity;
+                yaw += look.x;
+                pitch += invertY != GameSettings.InvertY ? look.y : -look.y;
+            }
+            else if (ControlLocked && LookTarget.HasValue)
+            {
+                // Turn the head towards whoever speaks, as a person would; never snap.
+                Vector3 to = LookTarget.Value - EyePosition();
+                if (to.sqrMagnitude > 0.01f)
+                {
+                    var wanted = Quaternion.LookRotation(to).eulerAngles;
+                    float k = 1 - Mathf.Exp(-3.5f * Time.deltaTime);
+                    yaw = Mathf.LerpAngle(yaw, wanted.y, k);
+                    pitch = Mathf.LerpAngle(pitch, NormalizeAngle(wanted.x), k);
+                }
+            }
+            pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+            if (_limitLook) yaw = _limitCentre + Mathf.Clamp(Mathf.DeltaAngle(_limitCentre, yaw), -_limitRange, _limitRange);
+            float ownFov = ObserveFov > 0f ? ObserveFov : _fov > 0f ? _fov : _baseFov;
+            if (_closeWeight > 0f && _closeLast != null)
+            {
+                // Leaning in (or back out): from her eyes to the close shot, never through what lies between.
+                float w = Mathf.SmoothStep(0f, 1f, _closeWeight);
+                Vector3 eye = EyePosition();
+                Vector3 shot = ResolveObstruction(eye, _closeLast.position);
+                transform.SetPositionAndRotation(Vector3.Lerp(eye, shot, w), Quaternion.Slerp(Quaternion.Euler(pitch, yaw, 0f), _closeLast.rotation, w));
+                if (_camera != null) _camera.fieldOfView = Mathf.Lerp(ownFov, _closeFov, w);
+                return;
+            }
+            transform.SetPositionAndRotation(EyePosition(), Quaternion.Euler(pitch, yaw, 0f));
+            BlendFov(ownFov, ObserveFov > 0f ? 8f : 3f);
+        }
+
         private void LateUpdate()
         {
+            if (IsFirstPerson && !(ControlLocked && _dialogueCue != null)) { _lastCue = null; FirstPersonView(); return; }
             if (ControlLocked && _dialogueCue != null)
             {
                 RestoreFaded();

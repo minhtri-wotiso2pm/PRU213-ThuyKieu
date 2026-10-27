@@ -1,0 +1,55 @@
+AUTOPILOT PASS
+[4.0s] NAVMESH built in 24 ms · 388 sources
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.8s] TAG scene:Dem_Opening
+[0.8s] TAG music:tension_low
+[1.0s] CHOICE 2/5: Cúi đầu: "Dạ... con xin nghe lời mẹ."
+[1.1s] TAG sfx:latch_drop
+[1.3s] TAG scene:Dem_Night
+[1.3s] TAG gameplay:tutorial_dem
+[3.9s] CATCH Front by NguoiCanh · shoved · worst frame 14 ms · clip A_front_standing (0 frames)
+[3.9s] FAIL → checkpoint restored
+[6.4s] CATCH Front by NguoiCanh · shoved · worst frame 35 ms · clip A_front_crouched (0 frames)
+[6.5s] FAIL → checkpoint restored
+[8.9s] CATCH Rear by NguoiCanh · shoved · worst frame 14 ms · clip B_rear (0 frames)
+[8.9s] FAIL → checkpoint restored
+[11.4s] CATCH Rear by NguoiCanh · shoved · worst frame 14 ms · clip B_rear_crouched (0 frames)
+[11.5s] FAIL → checkpoint restored
+[13.9s] CATCH Front by NguoiCanh · shoved · worst frame 14 ms · clip A_front_wall (0 frames)
+[14.0s] FAIL → checkpoint restored
+[16.4s] CATCH Front by NguoiCanh · shoved · worst frame 14 ms · clip A_two_guards (0 frames)
+[16.4s] FAIL → checkpoint restored
+[16.5s] CATCH two guards · catch scenes played 1 (one expected)
+[17.7s] CATCH not staged: NguoiCanh 8.7 m away (plain failure)
+[17.8s] FAIL → checkpoint restored
+[25.1s] CATCH C_screen · TIMEOUT (knew the place False)
+[29.4s] CATCH FromHiding by NguoiCanh · shoved · worst frame 15 ms · clip C_wardrobe (0 frames)
+[29.5s] FAIL → checkpoint restored
+[29.6s] CATCH probe done · 7 catch scenes
+[31.0s] TAG gameplay:search_drawer
+[31.4s] TAG sfx:paper
+[31.7s] TAG sfx:lock_open
+[32.0s] TAG gameplay:document_deal
+[32.1s] SEQUENCE document_deal
+[32.2s] CHOICE 3/3: Để nguyên chỗ cũ — mụ sẽ không phát hiện sớm.
+[32.3s] CHOICE 2/3: Lấy cả túi bạc — tiền bán mình thì phải thuộc về mình.
+[32.4s] TAG sfx:lock_open
+[40.4s] C4 J1 done · mirror seen False
+[56.5s] C4 J2 done · Tú Bà phase 1
+[57.4s] CHOICE 2/4: Nắm tay chị ấy: "Đi cùng em."
+[63.7s] C4 Lam reached the kitchen
+[63.7s] TAG scene:Dem_BackDoor
+[63.7s] TAG music:none
+[64.0s] TAG gameplay:kieu_voice
+[64.1s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[64.2s] TAG music:resolve
+[64.2s] CHAPTER 4 COMPLETE · lines 41 · choices 5
+[64.2s] FRAMES Chapter04_LauTuBaDem · avg 116 fps · 1% low 56 fps · worst 100 ms · 7209 frames · 1920x1080 · median 7.0 ms · p99 14.2 ms · under 60 fps 0.3% · load 4.0 s (first frame 3771 ms) · warm-up worst 898 ms
+   c4_viec = 2
+   c4_canh_giac = 0
+   c4_tien = 2
+   c4_van_tu = 0
+   c4_so_no = True
+   c4_ru_co_lam = True
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo, c4_bac_dau, c4_co_lam
