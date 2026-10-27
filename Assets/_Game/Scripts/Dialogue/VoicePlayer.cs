@@ -121,16 +121,17 @@ namespace ThuyKieu.Dialogue
 
         private float Level(string speakerId)
         {
-            if (_dry.isPlaying && _lineSpeaker == speakerId) return Loudness(_dry);
-            if (_barkDry.isPlaying && _barkSpeaker == speakerId) return Loudness(_barkDry);
+            float level = 0f;
+            if (_dry.isPlaying && _lineSpeaker == speakerId) level = Loudness(_dry);
+            if (_barkDry.isPlaying && _barkSpeaker == speakerId) level = Mathf.Max(level, Loudness(_barkDry));
             if (_silentSpeaker == speakerId && Time.unscaledTime < _silentEnd)
             {
                 // Roughly six syllables a second, each opening by a different amount.
                 float t = (Time.unscaledTime - _silentStart) * 6.2f;
                 float syllable = Mathf.Abs(Mathf.Sin(t * Mathf.PI));
-                return syllable * Mathf.Lerp(0.45f, 1f, Mathf.PerlinNoise(Mathf.Floor(t) * 0.37f, 0.5f));
+                level = Mathf.Max(level, syllable * Mathf.Lerp(0.45f, 1f, Mathf.PerlinNoise(Mathf.Floor(t) * 0.37f, 0.5f)));
             }
-            return 0f;
+            return level;
         }
 
         private float Loudness(AudioSource source)
@@ -145,7 +146,13 @@ namespace ThuyKieu.Dialogue
         /// <summary>A spoken line without a voice clip still moves the speaker's mouth for about as long as it reads.</summary>
         private void Mumble(string speakerId, string text, bool bark)
         {
-            if (!Core.GameSettings.VoiceOn || string.IsNullOrWhiteSpace(text)) return;
+            if (string.IsNullOrWhiteSpace(text)) return;
+            // Lip movement describes an out-loud line even when voice audio is disabled or no recording exists.
+            // Inner/spirit speakers have no matching in-world actor, so this only opens the intended speaker's mouth.
+            _silentSpeaker = speakerId;
+            _silentStart = Time.unscaledTime;
+            _silentEnd = _silentStart + Mathf.Clamp(VoiceLine.Normalize(text).Length * 0.055f, 0.6f, 6f);
+            if (!Core.GameSettings.VoiceOn) return;
             var style = SpeakerCatalog.Get(speakerId).Style;
             // Keep unrecorded conversations audible, but quieter than authored barks so the placeholder cadence does
             // not compete with reading. Clips are cached and bounded by ProceduralAudio.
@@ -154,9 +161,6 @@ namespace ThuyKieu.Dialogue
             source.clip = Presentation.ProceduralAudio.Voice(speakerId, text, style == SpeakerStyle.Spirit, bark ? 6f : 1.8f);
             source.volume = (bark ? 0.5f : 0.22f) * Core.GameSettings.Voice;
             source.Play();
-            _silentSpeaker = speakerId;
-            _silentStart = Time.unscaledTime;
-            _silentEnd = _silentStart + Mathf.Clamp(VoiceLine.Normalize(text).Length * 0.055f, 0.6f, 6f);
         }
 
         /// <summary>True while a dialogue line is still being spoken (auto-advance waits for it).</summary>

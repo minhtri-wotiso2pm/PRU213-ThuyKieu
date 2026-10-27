@@ -12,7 +12,8 @@ namespace ThuyKieu.Core.Story
     /// </summary>
     public class ActorMouth : MonoBehaviour
     {
-        private const float MaxOpening = 0.45f; // height of the open mouth as a fraction of its width
+        private const float MaxOpening = 0.2f; // Keep the opening lip-shaped; a tall oval reads as a floating black dot.
+        private const float WidthScale = 1.4f;
         private const float OpenSpeed = 22f, CloseSpeed = 14f;
 
         private static Mesh _mesh;
@@ -69,7 +70,7 @@ namespace ThuyKieu.Core.Story
             {
                 bool show = _open > 0.04f && face.enabled && face.gameObject.activeInHierarchy;
                 renderer.enabled = show;
-                if (show) mouth.localScale = new Vector3(width * Mathf.Lerp(0.85f, 1f, _open), width * MaxOpening * _open, width);
+                if (show) mouth.localScale = new Vector3(width * WidthScale, width * (0.055f + MaxOpening * _open), width);
             }
         }
 

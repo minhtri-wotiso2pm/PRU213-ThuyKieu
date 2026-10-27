@@ -308,9 +308,11 @@ Quan sai: Thằng bán tơ khai đã gửi tơ lụa ăn cắp ở nhà ngươi.
     ~ pl_hanh_dong = 1
     # speaker:Kieu
     # emotion:determined
+    # act:lao_ra
     Kiều: Khoan đã! Cha tôi không có tội!
     # speaker:QuanSai
     # emotion:angry
+    # act:xo_nga
     Quan sai: Đàn bà con gái biết gì mà xen vào! Tránh ra!
     # speaker:NoiTam
     Đầu gối rát buốt trên nền gạch. Cái đau này là thật.
@@ -319,6 +321,7 @@ Quan sai: Thằng bán tơ khai đã gửi tơ lụa ăn cắp ở nhà ngươi.
     ~ tinh_tao += 1
     # speaker:Kieu
     # emotion:calm_probe
+    # act:buoc_toi
     Kiều: Xin cho xem đơn. Ai làm chứng cho lời buộc tội ấy?
     # speaker:QuanSai
     # emotion:mocking

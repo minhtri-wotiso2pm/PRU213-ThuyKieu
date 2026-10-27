@@ -469,8 +469,15 @@ namespace ThuyKieu.Core.Story
         {
             // The modern student speaks through Kiều's body (the player) in the classroom scenes.
             if (speakerId == "HocSinh") speakerId = "Kieu";
-            foreach (var actor in _actors) if (actor != null && actor.SpeakerId == speakerId) return actor;
-            return null;
+            StoryActor nearest = null;
+            float distance = float.PositiveInfinity;
+            foreach (var actor in _actors)
+            {
+                if (actor == null || actor.SpeakerId != speakerId || !actor.gameObject.activeInHierarchy) continue;
+                float candidate = Player != null ? (actor.transform.position - Player.transform.position).sqrMagnitude : 0f;
+                if (nearest == null || candidate < distance) { nearest = actor; distance = candidate; }
+            }
+            return nearest;
         }
 
         public void AddClue(string id)
@@ -521,10 +528,10 @@ namespace ThuyKieu.Core.Story
                 if (actor == speakerActor)
                 {
                     if (partner != null && actor != partner && Vector3.Distance(actor.transform.position, partner.transform.position) < ConversationRange)
-                        actor.TurnForLine(partner.transform.position);
+                        actor.TurnForLine(partner.HeadPosition);
                 }
                 else if (speakerActor != null && Vector3.Distance(actor.transform.position, speakerActor.transform.position) < ConversationRange)
-                    actor.TurnForLine(speakerActor.transform.position);
+                    actor.TurnForLine(speakerActor.HeadPosition);
             }
             if (speakerActor != null) _lastSpeakerActor = speakerActor;
         }
@@ -546,7 +553,8 @@ namespace ThuyKieu.Core.Story
             TagReceived?.Invoke(key, value);
         }
 
-        private const float ConversationRange = 6f;
+        // Covers a classroom diagonal: the teacher's spot to the student's desk is just over 6 m.
+        private const float ConversationRange = 7.5f;
 
         private void ResetActorTalking()
         {
