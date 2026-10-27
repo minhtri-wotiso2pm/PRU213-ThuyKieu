@@ -149,6 +149,25 @@ namespace ThuyKieu.Core
         /// <summary>QA autopilot only: Q pressed by a test, on the next frame (the throw then goes through the real input path).</summary>
         public static void SimulateThrow() { _simulatedThrow = Time.frameCount + 1; }
 
+        /// <summary>Space pressed this frame: jump (only where a chapter enables jumping).</summary>
+        public static bool JumpPressedThisFrame
+        {
+            get
+            {
+                if (GamePause.IsPaused) return default; // menus own the keyboard while paused
+                Keyboard keyboard = Keyboard.current;
+                return keyboard != null && keyboard.spaceKey.wasPressedThisFrame || _simulatedJump == Time.frameCount;
+            }
+        }
+
+        private static int _simulatedJump = -1;
+
+        /// <summary>QA autopilot only: Space pressed by a test, on the next frame (the jump then goes through the real input path).</summary>
+        public static void SimulateJump() { _simulatedJump = Time.frameCount + 1; }
+
+        /// <summary>QA autopilot only: Ctrl held by a test. Never set in normal play.</summary>
+        public static bool SimulatedCrouch { get; set; }
+
         /// <summary>Any key pressed this frame (quick-time prompts).</summary>
         public static bool KeyPressedThisFrame(Key key)
         {
@@ -163,7 +182,7 @@ namespace ThuyKieu.Core
             {
                 if (GamePause.IsPaused) return default; // menus own the keyboard while paused
                 Keyboard keyboard = Keyboard.current;
-                return keyboard != null && (keyboard.leftCtrlKey.isPressed || keyboard.cKey.isPressed);
+                return keyboard != null && (keyboard.leftCtrlKey.isPressed || keyboard.cKey.isPressed) || SimulatedCrouch;
             }
         }
 

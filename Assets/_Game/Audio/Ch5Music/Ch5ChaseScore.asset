@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a43452a193df8294a8e6a5b58e258b61, type: 3}
+  m_Name: Ch5ChaseScore
+  m_EditorClassIdentifier: Assembly-CSharp::ThuyKieu.Gameplay.Chase.ChaseScore
+  Levels:
+  - {fileID: 8300000, guid: 18c9d9ed7eac97944b101dbb51ee3ffa, type: 3}
+  - {fileID: 8300000, guid: 8a59ecfa1403a394893b22fc7c6e4c61, type: 3}
+  - {fileID: 8300000, guid: 0256a4ee065943a4488bbc9e81631952, type: 3}
+  Gains:
+  - 1.1877949
+  - 0.7921126
+  - 0.55947006
+  Bpm: 125.00634
+  BeatsPerBar: 4
+  Credit: "'Juggernaut' by Scott Buckley - released under CC-BY 4.0. www.scottbuckley.com.au\nCut into three 8-bar loops (bars 2\u20139, 20\u201327, 101\u2013108), each crossfaded over one beat at its loop point."

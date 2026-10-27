@@ -14,22 +14,41 @@ namespace ThuyKieu.Core.Editor
 {
     /// <summary>
     /// Builds Chapter05_Escape: the back yard behind Tú Bà's house (guard with a lantern, chained dog, laundry lines),
-    /// the back alley that forks into a dark shortcut and a lantern-lit night market, the bamboo forest
-    /// run and the temple gate in the rain.
+    /// the back alley, the lantern-lit night market and the lanes Kiều runs through (set dressing since the escape is told
+    /// there and played in the forest), then the bamboo chase from the clearing to the temple gate (<see cref="Chapter05Forest"/>).
     /// Layout (metres): yard x 0–18 · alley z 2.5–5.5 to x 80 · market lane x 40–44 north to the market street
-    /// z 21–29 · lane x 80–84 back south · clearing x 80–92 · forest rail x 88–148 · temple gate x 156.
+    /// z 21–29 · lane x 80–84 back south · clearing x 80–92 · bamboo chase from x 93 eastwards.
     /// </summary>
     public static class Chapter05Setup
     {
         public const string SceneName = "Chapter05_Escape";
         public const string ScenePath = "Assets/_Game/Scenes/" + SceneName + ".unity";
 
-        private static Material _plaster, _wood, _tiles, _ridge, _ground, _stone, _red, _cloth;
+        private static Material _plaster, _wood, _tiles, _ridge, _ground, _stone, _cloth;
 
         [MenuItem("ThuyKieu/Chapter 5/Create playable scene")]
-        public static void Create()
+        public static void Create() => Make(false);
+
+        /// <summary>
+        /// Chapter 5 in the full story rebuild (<see cref="StoryBuild.Rebuild"/>), which regenerates the shared UI, animator
+        /// and materials the scene points at: the scene is made again from scratch and saved over its own file, so its GUID
+        /// and place in the build list stay; then the guard rigs go back on and Chapter 4 hands over into it. A project with
+        /// no Chapter 5 yet simply gets it created. (For the forest alone, use <see cref="Chapter05Forest.Apply"/>.)
+        /// </summary>
+        public static void Remake()
         {
-            var scene = NewScene(ScenePath);
+            string guid = AssetDatabase.AssetPathToGUID(ScenePath);
+            Make(System.IO.File.Exists(ScenePath));
+            Chapter05PursuerSetup.Apply();
+            Chapter05Forest.LinkChapter4();
+            string now = AssetDatabase.AssetPathToGUID(ScenePath);
+            if (!string.IsNullOrEmpty(guid) && guid != now) throw new System.InvalidOperationException($"Chapter 5's GUID changed in the rebuild ({guid} → {now})");
+            Debug.Log("[Chapter05Setup] Chapter 5 remade in place · GUID " + now);
+        }
+
+        private static void Make(bool remake)
+        {
+            var scene = NewScene(ScenePath, remake);
             var start = new Vector3(1.3f, 0.05f, 0f);
             var s = CreateSystems(5, "Đào thoát", "chapter_5", Chapter06Setup.SceneName, start, 90f, "night");
             var moon = NightLook(s.Fx, s.CameraComponent, "Ch5SkyNight", 60f, new Vector3(34, 120, 0));
@@ -44,39 +63,30 @@ namespace ThuyKieu.Core.Editor
             _ridge = Material("Ch5Ridge", new Color(0.12f, 0.07f, 0.06f));
             _ground = Surface("Ch5Ground", "brown_mud_dry", new Color(0.72f, 0.64f, 0.56f), 3f, 0.12f, 1f, 0.45f);
             _stone = Surface("Ch5Stone", "japanese_stone_wall", new Color(0.7f, 0.7f, 0.68f), 1.6f, 0.15f, 1f, 0.4f, 0.5f);
-            _red = Surface("Ch5Lacquer", "lacquered_cherry_wood", new Color(0.9f, 0.35f, 0.3f), 1.2f, 0.5f, 0.8f, 0.2f);
             _cloth = Material("Ch5Cloth", new Color(0.62f, 0.66f, 0.72f));
 
             Block("TownGround", new Vector3(46f, -0.1f, 14f), new Vector3(92f, 0.2f, 44f), _ground, world);
-            var yard = BackYard(world, director, s, out var guard, out var vision, out var cone, out var dog, out var gateZone, out var gateLeaf, out var gateBlocker, out var tuBa);
+            BackYard(world, director, s, out var guard, out var vision, out var cone, out var dog, out var gateZone, out var gateLeaf, out var gateBlocker, out var tuBa);
             Town(world, s, out var obstacles, out var finish, out var shortcut, out var market, out var crowd);
-            Forest(world, out var rail, out var rainSpot);
 
             // ------------------------------------------------------------ characters
             var coLam = CharacterActor("CoLam", "CoLam", "LauXanh1", 1.6f, start - new Vector3(0.9f, 0, 0.6f), 90f);
             var follower = coLam.gameObject.AddComponent<Follower>();
             Set(follower, "_player", s.Player);
             var pursuers = new List<StoryActor>();
-            var pursuerStarts = new List<Object>();
             for (int i = 0; i < 3; i++)
             {
                 var pursuer = CharacterActor("GiaNhan" + i, "GiaNhan", "LinhCanh",
                     1.72f + i * 0.03f, new Vector3(11.5f + i, 0, 2.5f + i * 1.6f), 90f);
                 StoryPropKit.Torch(pursuer.transform, new Vector3(0.32f, 1.2f, 0.22f));
                 pursuers.Add(pursuer);
-                pursuerStarts.Add(Point("PursuerStart" + i, new Vector3(13f + i * 0.8f, 0, 3.2f + i * 0.9f), 90f, world));
             }
 
             // ------------------------------------------------------------ cameras
             Look("CAM_Wide_BackYard", new Vector3(2.4f, 2.7f, -6.2f), new Vector3(9f, 1f, 1.5f), world);
-            Look("CAM_Wide_BambooEdge", new Vector3(80f, 2.6f, -0.5f), new Vector3(94f, 1.8f, 6f), world);
-            Look("CAM_Hero_Kieu_Rain", rainSpot.position + new Vector3(2.1f, 1.45f, -0.9f), rainSpot.position + Vector3.up * 1.4f, world);
-            Look("CAM_Wide_TempleGate", new Vector3(147.5f, 1.7f, 6.2f), new Vector3(158f, 2.3f, 7f), world);
-            var chaseCam = Point("ForestChaseCamera", rail[0].position, 90f, world);
             // Review viewpoints for StoryLookCapture (not used in play).
             Look("LOOK_Alley", new Vector3(30f, 1.8f, 4f), new Vector3(42f, 1.4f, 4f), world);
             Look("LOOK_Market", new Vector3(50f, 2.4f, 25f), new Vector3(62f, 1f, 25f), world);
-            Look("LOOK_Forest", new Vector3(110f, 1.6f, 7.5f), new Vector3(122f, 1.2f, 6f), world);
             Look("LOOK_YardClose", new Vector3(3f, 1.7f, -3.5f), new Vector3(8f, 1f, 1f), world);
 
             var zones = new GameObject("CameraZones").transform;
@@ -86,7 +96,6 @@ namespace ThuyKieu.Core.Editor
             StoryArtKit.Zone("EastLane", new Vector3(82f, 1.5f, 17f), new Vector3(4f, 4f, 16f), 3f, 0.3f, 60f, 0.1f, zones);
 
             // ------------------------------------------------------------ light & atmosphere
-            var rain = Rain("Rain", s.CameraComponent.transform);
 
             var stamina = s.Player.gameObject.AddComponent<Stamina>();
             Set(stamina, "_player", s.Player);
@@ -99,51 +108,20 @@ namespace ThuyKieu.Core.Editor
             Set(worldScript, "_tuBa", tuBa);
             Set(worldScript, "_companion", follower);
             Set(worldScript, "_pursuers", pursuers.ToArray());
-            Set(worldScript, "_soKhanh", Chapter05PursuerSetup.CreateSoKhanh(worldScript.transform));
+            var soKhanh = Chapter05PursuerSetup.CreateSoKhanh(worldScript.transform);
+            Set(worldScript, "_soKhanh", soKhanh);
             Set(worldScript, "_gateBlocker", gateBlocker);
-            Set(worldScript, "_rain", rain);
-            Set(worldScript, "_rainSpot", rainSpot);
             Set(worldScript, "_moon", moon);
             Set(worldScript, "_stamina", stamina);
 
             // ------------------------------------------------------------ sequences
             var sequences = new GameObject("Sequences").transform;
             sequences.SetParent(s.Root.transform, false);
-            var tutorial = Child<TutorialSequence>(sequences, "tutorial_escape");
-            Set(tutorial, "_id", "tutorial_escape");
-            Set(tutorial, "_body", "<color=#E8C27A>Sân sau:</color> người canh cầm đèn lồng đi tuần, con chó xích cạnh cửa ngõ.\n\n" +
-                "• Đi trong bóng tối, sau dây phơi quần áo; <color=#E8C27A>khom người (Ctrl)</color> khi đi gần con chó — đi thẳng lưng hay chạy là nó sủa.\n" +
-                "• Ở cửa ngõ, <color=#E8C27A>giữ E</color> để đẩy cửa. Thả tay trước khi vạch \"tiếng bản lề\" đầy, không thì cửa kêu.\n" +
-                "• <color=#E8C27A>E</color> để nấp sau đống rơm, đống củi, chuồng gà.");
-            Set(tutorial, "_controlsHint", "WASD: đi · Ctrl: khom · E (giữ): đẩy cửa · E: nấp · J: sổ tay");
-            var sneak = Child<SneakOutSequence>(sequences, "sneak_out");
-            Set(sneak, "_id", "sneak_out");
-            Set(sneak, "_start", Point("SneakStart", start, 90f, yard));
-            Set(sneak, "_guard", guard);
-            Set(sneak, "_dog", dog);
-            Set(sneak, "_gateZone", gateZone);
-            Set(sneak, "_gateLeaf", gateLeaf);
-            var chase = Child<ChaseSequence>(sequences, "chase_alley");
-            Set(chase, "_id", "chase_alley");
-            Set(chase, "_start", Point("ChaseStart", new Vector3(20.5f, 0.05f, 4f), 90f, world));
-            Set(chase, "_pursuers", pursuers.ToArray());
-            Set(chase, "_dog", dog.GetComponent<DogPursuer>());
-            Set(chase, "_pursuerStarts", pursuerStarts.ToArray());
-            Set(chase, "_obstacles", obstacles.ToArray());
-            Set(chase, "_finish", finish);
-            Set(chase, "_shortcut", shortcut);
-            Set(chase, "_market", market);
-            Set(chase, "_crowd", crowd);
-            Set(chase, "_stamina", stamina);
-            var route = new List<Object>();
-            for (float x = 22f; x <= 82f; x += 4f) route.Add(Point("AutoRoute", new Vector3(x, 0.05f, 4f), 90f, world));
-            Set(chase, "_autopilotRoute", route.ToArray());
-            var forest = Child<ForestRunSequence>(sequences, "chase_forest");
-            Set(forest, "_id", "chase_forest");
-            Set(forest, "_rail", rail.ToArray());
-            Set(forest, "_pursuers", pursuers.ToArray());
-            Set(forest, "_dog", dog.GetComponent<DogPursuer>());
-            Set(forest, "_camera", chaseCam);
+            Chapter05Forest.Build(new Chapter05Forest.Refs
+            {
+                World = world, Sequences = sequences, Director = director, Player = s.Player, Interaction = s.Interaction, Camera = s.Camera,
+                Audio = s.Audio, Fx = s.Fx, Hud = s.Hud, Chapter = worldScript, Pursuers = pursuers.ToArray(), Companion = follower, TownNav = nav, SoKhanh = soKhanh
+            });
             Chapter03Setup.Fx(sequences, "kieu_voice", "spirit", "memory", "none", 2f, 0f, 1);
 
             Save(scene, ScenePath);
@@ -233,7 +211,6 @@ namespace ThuyKieu.Core.Editor
             Set(dog, "_player", s.Player);
             Set(dog, "_audio", s.Audio);
             Set(dog, "_head", head.transform);
-            Chapter05DogSetup.ConfigureDog(dog);
 
             // The guard on his round with a lantern.
             var guard = CharacterActor("NguoiCanh", "NguoiCanh", "LinhCanh", 1.76f, new Vector3(4f, 0, -4f), 90f);
@@ -478,7 +455,6 @@ namespace ThuyKieu.Core.Editor
             Set(obstacle, "_visual", visual);
             Set(obstacle, "_fall", fall);
             Set(obstacle, "_label", label);
-            Chapter05ObstacleSetup.Configure(obstacle);
             return obstacle;
         }
 
@@ -494,118 +470,6 @@ namespace ThuyKieu.Core.Editor
             return box;
         }
 
-        // ------------------------------------------------------------------ forest & temple
-
-        private static void Forest(Transform world, out List<Transform> rail, out Transform rainSpot)
-        {
-            var root = new GameObject("BambooForest").transform;
-            root.SetParent(world, false);
-            Block("ForestGround", new Vector3(128f, -0.1f, 6f), new Vector3(76f, 0.2f, 40f), Surface("Ch5ForestFloor", "brown_mud_02", new Color(0.5f, 0.48f, 0.4f), 2.6f, 0.15f, 1.2f, 0.5f), root);
-            var points = new[] { new Vector3(88f, 0.05f, 6f), new Vector3(98f, 0.05f, 5f), new Vector3(108f, 0.05f, 7.5f), new Vector3(118f, 0.05f, 6f),
-                new Vector3(128f, 0.05f, 4.5f), new Vector3(138f, 0.05f, 6f), new Vector3(147f, 0.05f, 7f) };
-            rail = new List<Transform>();
-            for (int i = 0; i < points.Length; i++)
-            {
-                Vector3 next = i + 1 < points.Length ? points[i + 1] : points[i] + Vector3.right;
-                float yaw = Quaternion.LookRotation(next - points[i]).eulerAngles.y;
-                rail.Add(Point("Rail" + i, points[i], yaw, root));
-            }
-            var path = Surface("Ch5ForestPath", "grass_path_2", new Color(0.7f, 0.66f, 0.55f), 2f, 0.15f, 1f, 0.4f);
-            for (int i = 1; i < points.Length; i++)
-            {
-                Vector3 mid = (points[i - 1] + points[i]) * 0.5f;
-                float length = Vector3.Distance(points[i - 1], points[i]);
-                Block("ForestPath", new Vector3(mid.x, 0.01f, mid.z), new Vector3(2.6f, 0.02f, length + 1f), path, root, false,
-                    Quaternion.LookRotation(points[i] - points[i - 1]).eulerAngles.y);
-            }
-
-            // Bamboo: a dense, uneven grove close to the path thinning into a dark wall of culms behind
-            // (the models are heavy: coarse LODs, and shadows only from the clumps right by the path).
-            var random = new System.Random(77);
-            for (float x = 89f; x < 153f; x += 1.55f)
-                foreach (int side in new[] { -1, 1 })
-                {
-                    float offset = 2.4f + Mathf.Pow((float)random.NextDouble(), 1.6f) * 9f;
-                    Bamboo(root, new Vector3(x + (float)random.NextDouble() * 1.2f, 0, RailZ(points, x) + side * offset), random, offset > 4.5f);
-                    if (x % 3.1f < 1.55f)
-                        Bamboo(root, new Vector3(x + (float)random.NextDouble() * 2f, 0, RailZ(points, x) + side * (11f + (float)random.NextDouble() * 9f)), random, true, 3f);
-                }
-            Grass("ForestUndergrowth", root, new Rect(88f, -14f, 66f, 40f), 6500, p =>
-            {
-                float d = Mathf.Abs(p.y - RailZ(points, p.x));
-                return d > 1.45f && d < 12f;
-            }, 707, 0.55f, new Color(0.3f, 0.42f, 0.22f), new Color(0.42f, 0.48f, 0.26f), "Ch5Undergrowth");
-            // Fallen culms beside the path; mist lying low between the clumps.
-            var culm = Surface("Ch5Culm", "leafy_grass", new Color(0.62f, 0.62f, 0.4f), 0.5f, 0.2f, 0.8f, 0.3f);
-            for (int i = 0; i < 26; i++)
-            {
-                float x = 90f + (float)random.NextDouble() * 60f;
-                int side = random.NextDouble() < 0.5 ? -1 : 1;
-                Vector3 a = new Vector3(x, 0.06f, RailZ(points, x) + side * (1.8f + (float)random.NextDouble() * 5f));
-                Vector3 b = a + Quaternion.Euler(0, (float)random.NextDouble() * 360f, 0) * Vector3.forward * (1.5f + (float)random.NextDouble() * 2.5f);
-                Fallen(root, a, b, 0.04f, culm);
-            }
-            Leaves("BambooLeaves", new Vector3(120f, 6f, 6f), new Vector3(60f, 2f, 20f), root, new Color(0.45f, 0.55f, 0.25f), 40);
-            Dust("ForestMist", new Vector3(120f, 0.5f, 6f), new Vector3(64f, 0.8f, 16f), root, new Color(0.7f, 0.76f, 0.88f, 0.14f), 180);
-            Fireflies("ForestFireflies", new Vector3(120f, 1.2f, 6f), new Vector3(60f, 1.4f, 14f), root, 50);
-
-            // Where the quick-time prompts fire, the obstacle is really there (a little ahead of the prompt).
-            float total = 0f;
-            for (int i = 1; i < points.Length; i++) total += Vector3.Distance(points[i - 1], points[i]);
-            Vector3 Along(float distance)
-            {
-                for (int i = 1; i < points.Length; i++)
-                {
-                    float segment = Vector3.Distance(points[i - 1], points[i]);
-                    if (distance <= segment) return Vector3.Lerp(points[i - 1], points[i], distance / segment);
-                    distance -= segment;
-                }
-                return points[points.Length - 1];
-            }
-            Vector3 jump = Along(0.16f * total + 3f), left = Along(0.34f * total + 3f), right = Along(0.58f * total + 3f), climb = Along(0.8f * total + 3f);
-            Fallen(root, jump + new Vector3(0, 0.14f, -2.2f), jump + new Vector3(0.4f, 0.12f, 2.2f), 0.09f, culm);
-            Rock(jump + new Vector3(0.3f, -0.05f, 1.9f), new Vector3(0.7f, 0.4f, 0.6f), 30f, root, 3);
-            Fallen(root, left + new Vector3(0, 0.1f, -3.2f), left + new Vector3(0.2f, 1.75f, 0.5f), 0.07f, culm);   // leans in from the right: duck left
-            Fallen(root, right + new Vector3(0, 0.1f, 3.2f), right + new Vector3(0.2f, 1.75f, -0.5f), 0.07f, culm); // from the left: dodge right
-            var earth = Surface("Ch5Bank", "brown_mud_02", new Color(0.45f, 0.4f, 0.32f), 2f, 0.15f, 1.2f, 0.4f);
-            foreach (int side in new[] { -1, 1 })
-                Sphere("Bank", climb + new Vector3(1.5f, -0.6f, side * 2.6f), new Vector3(5f, 2.2f, 3.2f), earth, root);
-            var rootWood = Surface("Ch5Root", "dark_wood", new Color(0.5f, 0.42f, 0.34f), 1f, 0.2f);
-            for (int i = 0; i < 4; i++)
-                Fallen(root, climb + new Vector3(i * 0.55f, 0.05f + i * 0.04f, -1.6f), climb + new Vector3(i * 0.55f + 0.2f, 0.05f + i * 0.04f, 1.6f), 0.05f, rootWood);
-
-            // Temple gate at the end of the path, where Kiều collapses in the rain.
-            var temple = new GameObject("TempleGate").transform;
-            temple.SetParent(root, false);
-            Block("TempleSteps", new Vector3(157f, 0.15f, 7f), new Vector3(3f, 0.3f, 5f), _stone, temple);
-            Block("TempleSteps2", new Vector3(158f, 0.45f, 7f), new Vector3(2f, 0.3f, 5f), _stone, temple);
-            foreach (float z in new[] { 5.2f, 8.8f }) Pillar("TemplePillar", new Vector3(159f, 0.6f, z), 0.2f, 3.4f, _red, _stone, temple);
-            Roof("TempleGateRoof", new Vector3(159f, 4.4f, 7f), 2.4f, 5.6f, 26f, _tiles, _ridge, temple, false);
-            Block("TempleWallL", new Vector3(159f, 1.6f, 2.2f), new Vector3(0.5f, 3.2f, 5.6f), _plaster, temple);
-            Block("TempleWallR", new Vector3(159f, 1.6f, 11.8f), new Vector3(0.5f, 3.2f, 5.6f), _plaster, temple);
-            Lantern("TempleLantern", new Vector3(158.2f, 3.2f, 7f), new Color(1f, 0.6f, 0.3f), temple, 8f, 1.8f);
-            foreach (float z in new[] { 2.2f, 11.8f })
-            {
-                Block("TempleWallCap", new Vector3(159f, 3.28f, z), new Vector3(0.9f, 0.16f, 5.9f), _tiles, temple, false);
-                Block("TempleWallFooting", new Vector3(159f, 0.25f, z), new Vector3(0.6f, 0.5f, 5.7f), _stone, temple, false);
-            }
-            foreach (float z in new[] { 4.1f, 9.9f }) StoryPropKit.StoneLantern(new Vector3(156.2f, 0f, z), 90f, temple, 4.5f, 1.1f);
-            Block("TempleSign", new Vector3(158.85f, 3.75f, 7f), new Vector3(0.06f, 0.45f, 1.6f), Material("CoupletRed", new Color(0.45f, 0.05f, 0.04f), 0.55f), temple, false);
-            rainSpot = Point("RainSpot", new Vector3(150f, 0.05f, 7f), 90f, root);
-        }
-
-        private static void Bamboo(Transform root, Vector3 position, System.Random random, bool noShadow, float lodBias = 2f)
-        {
-            var plant = Prop("Assets/_Game/Prefabs/Vegetation/Bamboo.prefab", position, (float)random.NextDouble() * 360f, 0.75f + (float)random.NextDouble() * 0.6f, root);
-            if (plant == null) return;
-            foreach (var t in plant.GetComponentsInChildren<Transform>()) t.gameObject.layer = 0;
-            foreach (var renderer in plant.GetComponentsInChildren<Renderer>())
-            {
-                renderer.meshLodSelectionBias = lodBias;
-                if (noShadow) renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            }
-        }
-
         /// <summary>Cylinder lying between two points: fallen culms, roots, produce bundles.</summary>
         private static void Fallen(Transform root, Vector3 a, Vector3 b, float radius, Material material)
         {
@@ -613,13 +477,6 @@ namespace ThuyKieu.Core.Editor
             go.transform.position = (a + b) * 0.5f;
             go.transform.rotation = Quaternion.FromToRotation(Vector3.up, (b - a).normalized);
             go.transform.localScale = new Vector3(radius * 2f, Vector3.Distance(a, b) * 0.5f, radius * 2f);
-        }
-
-        private static float RailZ(Vector3[] points, float x)
-        {
-            for (int i = 1; i < points.Length; i++)
-                if (x <= points[i].x) return Mathf.Lerp(points[i - 1].z, points[i].z, Mathf.InverseLerp(points[i - 1].x, points[i].x, x));
-            return points[points.Length - 1].z;
         }
 
         // ------------------------------------------------------------------ shared bits

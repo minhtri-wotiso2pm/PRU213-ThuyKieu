@@ -1,0 +1,411 @@
+AUTOPILOT FAIL: PASS · 1 errors
+[4.0s] forest ground built in 0.85 s (shape 0.80 s on 16 threads · meshes 0.04 · cook 0.01 · colliders 0.00 · hedges 28, 1214 m) · 181374 vertices
+[4.8s] bamboo grown in 0.70 s (grow 0.57 s · meshes and colliders 0.14 · vertices back 316286 leaves 235125 low 80977 near 137944 roof 42136 side 101624 skyline 9172): 11389 culms, 3051 colliders, 923264 vertices, 499 ferns
+[0.0s] SCENE Chapter05_Escape
+[0.1s] forest NavMesh baked by the setup, added in 0.001 s
+[0.9s] TAG scene:Escape_Forest
+[0.9s] TAG music:none
+[0.9s] FOREST ready · waited 0.00 s for the NavMesh · 2.68 s after the scene woke
+[0.9s] MUSIC chase starts at level 0 (chase_level0, 125.0 BPM)
+[1.0s] FOREST layout way 1: 27 decisions (Jump 8 Duck 5 Dodge 6 Hazard 3 Gap 2 Squeeze 1 Bridge 1 · the fork) · longest clear run 6.6 s at 162→195 m
+[1.0s] FOREST ok   layout way 1: 27 decisions (22–26 wanted, plus fork and stake)
+[1.0s] FOREST ok   layout way 1: no clear run longer than 8 s (6.6 s)
+[1.0s] FOREST layout way 2: 27 decisions (Jump 8 Duck 6 Dodge 6 Hazard 3 Squeeze 1 Gap 1 Bridge 1 · the fork) · longest clear run 6.0 s at 14→44 m
+[1.0s] FOREST ok   layout way 2: 27 decisions (22–26 wanted, plus fork and stake)
+[1.0s] FOREST ok   layout way 2: no clear run longer than 8 s (6.0 s)
+[1.0s] FOREST first frame up 2.72 s after the scene woke
+[1.0s] SEQUENCE chase_forest
+[3.5s] HITCH 2547 ms
+[3.5s] FOREST run starts · pursuer 12 m behind · Lam no
+[3.5s] pilot way 1 at 16 m · off the line 0.0 m · above it 0.02 m · gap 13.6 m
+[4.2s] HITCH 752 ms
+[4.8s] pursuer shouts at 15.1 m
+[7.9s] pilot way 1 at 36 m · off the line 0.0 m · above it 0.02 m · gap 14.1 m
+[9.2s] FOREST jump at (135.2, -2.4, 6.1) · 5.0 m/s · t 5.69 · gap 13.7 (flat 13.5) · his speed 5.35
+[10.5s] pursuer shouts at 13.2 m
+[11.9s] pilot way 1 at 56 m · off the line 0.1 m · above it 0.02 m · gap 12.7 m
+[15.8s] pursuer shouts at 8.5 m
+[15.9s] pilot way 1 at 73 m · off the line 0.0 m · above it 0.02 m · gap 8.5 m
+[17.6s] GiaNhan0 crossed Duck 4.6 m in 1.55 s (came in at 5.2 m/s)
+[19.9s] pilot way 1 at 93 m · off the line 0.8 m · above it 0.02 m · gap 10.7 m
+[21.4s] bamboo Falling_H1 cracks
+[22.1s] pursuer shouts at 10.0 m
+[23.4s] bamboo Falling_H1 down 1.97 s after the crack
+[23.9s] pilot way 1 at 113 m · off the line 0.0 m · above it 0.01 m · gap 9.4 m
+[24.4s] FOREST jump at (206.4, -3.1, 14.7) · 5.0 m/s · t 20.84 · gap 9.2 (flat 9.1) · his speed 5.31
+[26.7s] GiaNhan0 crossed Vault 3.0 m in 0.67 s (came in at 5.3 m/s)
+[26.8s] pursuer shouts at 9.0 m
+[27.9s] pilot way 1 at 133 m · off the line 0.1 m · above it 0.03 m · gap 8.7 m
+[29.3s] FOREST jump at (230.9, -3.0, 16.1) · 5.0 m/s · t 25.79 · gap 8.3 (flat 8.2) · his speed 5.19
+[31.9s] pilot way 1 at 154 m · off the line 0.1 m · above it 0.03 m · gap 7.8 m
+[32.3s] pursuer shouts at 7.6 m
+[35.9s] pilot way 1 at 173 m · off the line 0.0 m · above it 0.02 m · gap 7.4 m
+[36.9s] pursuer shouts at 7.3 m
+[40.0s] pilot way 1 at 194 m · off the line 0.1 m · above it 0.03 m · gap 7.1 m
+[43.0s] pursuer shouts at 7.0 m
+[44.0s] pilot way 1 at 214 m · off the line 0.6 m · above it 0.03 m · gap 7.0 m
+[47.5s] FOREST jump at (313.6, -3.4, 52.2) · 5.0 m/s · t 43.98 · gap 6.9 (flat 6.8) · his speed 5.00
+[48.0s] pilot way 1 at 234 m · off the line 0.1 m · above it 0.97 m · gap 7.9 m
+[48.4s] pursuer shouts at 6.8 m
+[49.6s] GiaNhan0 crossed Leap 3.8 m in 0.86 s (came in at 5.0 m/s)
+[50.9s] FOREST jump at (330.4, -3.5, 51.2) · 5.0 m/s · t 47.37 · gap 7.2 (flat 7.2) · his speed 5.05
+[52.0s] pilot way 1 at 254 m · off the line 0.1 m · above it 0.03 m · gap 7.2 m
+[53.1s] pursuer shouts at 7.1 m
+[56.0s] pilot way 1 at 271 m · off the line 0.0 m · above it 0.02 m · gap 5.5 m
+[56.4s] GiaNhan0 crossed Duck 4.6 m in 1.55 s (came in at 4.9 m/s)
+[57.5s] pursuer shouts at 7.4 m
+[58.8s] MUSIC level 1 (chase_level1)
+[60.0s] pilot way 1 at 291 m · off the line 0.0 m · above it 0.03 m · gap 7.2 m
+[61.7s] FOREST jump at (379.9, -3.6, 40.1) · 5.0 m/s · t 58.22 · gap 7.1 (flat 7.1) · his speed 5.03
+[62.2s] pursuer shouts at 7.1 m
+[64.0s] pilot way 1 at 311 m · off the line 0.0 m · above it 0.03 m · gap 7.1 m
+[66.2s] pursuer shouts at 5.2 m
+[68.0s] pilot way 1 at 329 m · off the line 0.1 m · above it 0.03 m · gap 5.0 m
+[68.1s] GiaNhan0 crossed Duck 4.7 m in 1.55 s (came in at 4.9 m/s)
+[68.4s] MUSIC level 2 (chase_level2)
+[70.8s] pursuer shouts at 7.2 m
+[71.5s] FOREST jump at (424.9, -3.9, 36.4) · 5.0 m/s · t 67.95 · gap 7.1 (flat 7.1) · his speed 5.04
+[72.0s] pilot way 1 at 349 m · off the line 0.0 m · above it 0.70 m · gap 7.1 m
+[72.8s] bamboo Falling_H2 cracks
+[73.5s] GiaNhan0 crossed Vault 2.8 m in 0.67 s (came in at 5.0 m/s)
+[74.7s] bamboo Falling_H2 down 1.96 s after the crack
+[75.7s] FOREST jump at (445.3, -4.0, 30.5) · 5.0 m/s · t 72.20 · gap 7.4 (flat 7.4) · his speed 5.07
+[76.0s] pilot way 1 at 369 m · off the line 0.1 m · above it 1.16 m · gap 7.4 m
+[76.3s] pursuer shouts at 7.4 m
+[77.9s] GiaNhan0 crossed Vault 3.0 m in 0.71 s (came in at 5.0 m/s)
+[80.0s] pilot way 1 at 389 m · off the line 0.0 m · above it 0.02 m · gap 7.5 m
+[80.3s] FOREST jump at (468.0, -4.1, 30.4) · 5.0 m/s · t 76.76 · gap 7.5 (flat 7.5) · his speed 5.09
+[80.6s] pursuer shouts at 7.5 m
+[82.5s] GiaNhan0 crossed Leap 3.9 m in 0.86 s (came in at 5.1 m/s)
+[83.5s] FOREST jump at (483.9, -4.2, 31.7) · 5.0 m/s · t 79.95 · gap 7.7 (flat 7.6) · his speed 5.11
+[84.0s] pilot way 1 at 409 m · off the line 0.0 m · above it 0.63 m · gap 7.6 m
+[85.3s] pursuer shouts at 7.5 m
+[88.0s] pilot way 1 at 426 m · off the line 0.4 m · above it 0.02 m · gap 5.7 m
+[88.3s] GiaNhan0 crossed Duck 4.6 m in 1.55 s (came in at 4.9 m/s)
+[91.1s] pursuer shouts at 7.5 m
+[92.0s] pilot way 1 at 446 m · off the line 0.2 m · above it 0.03 m · gap 7.3 m
+[93.6s] FOREST jump at (529.8, -4.9, 27.7) · 5.0 m/s · t 90.10 · gap 7.2 (flat 7.2) · his speed 5.04
+[96.1s] pilot way 1 at 466 m · off the line 0.2 m · above it 0.03 m · gap 7.3 m
+[97.8s] pursuer shouts at 7.3 m
+[100.1s] pilot way 1 at 484 m · off the line 0.2 m · above it 0.02 m · gap 7.2 m
+[101.0s] bamboo Falling_H3 cracks
+[101.6s] GiaNhan0 crossed Duck 4.6 m in 1.54 s (came in at 4.9 m/s)
+[102.3s] pursuer shouts at 7.9 m
+[103.0s] bamboo Falling_H3 down 1.96 s after the crack
+[104.0s] FOREST jump at (527.6, -5.7, -19.0) · 5.0 m/s · t 100.48 · gap 7.7 (flat 7.6) · his speed 5.10
+[104.1s] pilot way 1 at 504 m · off the line 0.0 m · above it 0.42 m · gap 7.7 m
+[106.2s] FOREST jump at (524.9, -5.7, -29.3) · 5.0 m/s · t 102.63 · gap 7.5 (flat 8.0) · his speed 5.08
+[106.2s] GiaNhan0 crossed Vault 3.1 m in 0.71 s (came in at 5.1 m/s)
+[106.9s] pursuer shouts at 7.9 m
+[108.1s] pilot way 1 at 524 m · off the line 0.0 m · above it 0.02 m · gap 7.7 m
+[112.1s] pilot way 1 at 544 m · off the line 0.0 m · above it 0.02 m · gap 7.4 m
+[113.1s] bridge dropped
+[113.1s] FOREST pursuer was on the bridge: thrown back against the near bank
+[116.1s] pilot way 1 at 564 m · off the line 0.1 m · above it 0.04 m · gap 18.4 m
+[120.1s] pilot way 1 at 584 m · off the line 0.0 m · above it 0.01 m · gap 18.4 m
+[120.2s] FOREST Escaped after 116.6 s · bumps 0 · closest 5.0 m · way moon · at (540.3, -3.2, -84.0)
+[120.2s] FOREST ok   way 1 sound: the bridge's kick, rope, swing and impact once each (1, 1, 1, 1) · rope strain on the planks 2
+[120.2s] FOREST ok   way 1 sound: 3 falling culms in three beats (crack 6, sweep 3, impact 3, settle 3)
+[120.2s] FOREST ok   way 1 sound: no step in the air (0) or on top of a landing (0)
+[120.2s] FOREST ok   way 1 sound: 395 steps over 571 m (one per 1.45 m; stride 1.35 m)
+[120.2s] FOREST ok   way 1 sound: 13 jumps → push-offs 13, landings 13 (earth 13, wood 0, stone 0)
+[120.2s] FOREST ok   way 1 sound: none of the old synthesised stand-ins ()
+[120.2s] FOREST ok   way 1 music: reached its top level by the bridge (2)
+[120.2s] FOREST way 1 sounds: bamboo_crack 6, bamboo_impact 3, bamboo_sweep 3, breath_in 131, cloth 13, deck_hit 1, deck_swing 1, gong 1, guard_land 1, guard_step 359, guard_step_wood 1, heartbeat 80, jump_earth 13, land_earth 13, leaf_settle 3, rope_snap 1, rope_strain 2, stake_kick 1, step_earth.crouch 38, step_earth.run 350, step_wood.run 7
+[120.2s] FOREST ok   clean run, way 1: Escaped in 116.6 s game time · bumps 0 · jumps 13 · closest 5.0 m
+[120.2s] FOREST ok   clean run, way 1: no bump (0)
+[120.2s] FOREST ok   clean run, way 1: he never got close (5.0 m)
+[120.2s] FOREST ok   clean run, way 1: the bridge fell once (1)
+[120.2s] FOREST ok   culm Falling_H1: 1.97 s from crack to landing · hit her False
+[120.2s] FOREST ok   culm Falling_H2: 1.96 s from crack to landing · hit her False
+[120.2s] FOREST ok   culm Falling_H3: 1.96 s from crack to landing · hit her False
+[120.2s] FOREST pursuer crossed: vault 4 · duck 5 · leap 2 · bridge 0
+[120.2s] FOREST ok   pursuer went over, under and across (vault, duck, leap links)
+[120.2s] FOREST run starts · pursuer 12 m behind · Lam no
+[120.2s] pilot way 1 at 14 m · off the line 0.0 m · above it 0.06 m · gap 12.0 m
+[121.4s] pursuer shouts at 12.2 m
+[122.1s] MUSIC level 0 (chase_level0)
+[124.2s] pilot way 1 at 34 m · off the line 0.0 m · above it 0.03 m · gap 11.3 m
+[126.0s] FOREST jump at (135.2, -2.4, 6.1) · 5.0 m/s · t 5.76 · gap 10.7 (flat 10.6) · his speed 5.35
+[128.0s] pursuer shouts at 9.9 m
+[128.2s] pilot way 1 at 54 m · off the line 0.1 m · above it 0.04 m · gap 9.9 m
+[132.2s] pilot way 1 at 71 m · off the line 0.0 m · above it 0.03 m · gap 6.1 m
+[133.7s] pursuer shouts at 8.8 m
+[133.9s] GiaNhan0 crossed Duck 4.6 m in 1.55 s (came in at 4.9 m/s)
+[136.2s] pilot way 1 at 91 m · off the line 0.8 m · above it 0.03 m · gap 8.5 m
+[138.2s] bamboo Falling_H1 cracks
+[140.1s] pursuer shouts at 7.8 m
+[140.1s] bamboo Falling_H1 down 1.96 s after the crack
+[140.2s] pilot way 1 at 111 m · off the line 0.0 m · above it 0.02 m · gap 7.8 m
+[141.1s] FOREST jump at (206.4, -3.1, 14.7) · 5.0 m/s · t 20.94 · gap 7.7 (flat 7.6) · his speed 5.11
+[143.3s] GiaNhan0 crossed Vault 3.1 m in 0.71 s (came in at 5.2 m/s)
+[144.2s] pilot way 1 at 131 m · off the line 0.1 m · above it 0.02 m · gap 7.8 m
+[146.1s] FOREST jump at (230.9, -3.0, 16.1) · 5.0 m/s · t 25.87 · gap 7.6 (flat 7.5) · his speed 5.09
+[146.6s] pursuer shouts at 7.5 m
+[148.2s] pilot way 1 at 151 m · off the line 0.1 m · above it 0.03 m · gap 7.3 m
+[152.2s] pursuer shouts at 7.0 m
+[152.2s] pilot way 1 at 171 m · off the line 0.0 m · above it 0.04 m · gap 7.0 m
+[156.2s] pilot way 1 at 191 m · off the line 0.2 m · above it 0.02 m · gap 6.9 m
+[158.7s] pursuer shouts at 6.9 m
+[160.3s] pilot way 1 at 211 m · off the line 0.8 m · above it 0.03 m · gap 6.9 m
+[164.3s] FOREST jump at (313.5, -3.4, 52.2) · 5.0 m/s · t 44.07 · gap 6.8 (flat 6.7) · his speed 4.99
+[164.3s] pilot way 1 at 231 m · off the line 0.1 m · above it 0.08 m · gap 6.8 m
+[165.6s] pursuer shouts at 6.9 m
+[166.3s] GiaNhan0 crossed Leap 3.8 m in 0.85 s (came in at 5.0 m/s)
+[167.6s] FOREST jump at (330.4, -3.5, 51.2) · 5.0 m/s · t 47.45 · gap 7.1 (flat 7.0) · his speed 5.03
+[168.3s] pilot way 1 at 251 m · off the line 0.1 m · above it 0.31 m · gap 7.1 m
+[171.6s] pursuer shouts at 4.6 m
+[172.3s] pilot way 1 at 269 m · off the line 0.0 m · above it 0.04 m · gap 5.6 m
+[173.1s] GiaNhan0 crossed Duck 4.7 m in 1.56 s (came in at 4.9 m/s)
+[174.0s] MUSIC level 1 (chase_level1)
+[175.8s] pursuer shouts at 7.2 m
+[176.3s] pilot way 1 at 289 m · off the line 0.0 m · above it 0.02 m · gap 7.2 m
+[178.5s] FOREST jump at (379.9, -3.6, 40.1) · 5.0 m/s · t 58.31 · gap 7.1 (flat 7.1) · his speed 5.03
+[180.3s] pilot way 1 at 309 m · off the line 0.0 m · above it 0.03 m · gap 7.1 m
+[180.5s] pursuer shouts at 7.0 m
+[184.3s] pilot way 1 at 326 m · off the line 0.1 m · above it 0.03 m · gap 5.2 m
+[184.9s] GiaNhan0 crossed Duck 4.7 m in 1.57 s (came in at 4.9 m/s)
+[185.7s] pursuer shouts at 7.4 m
+[188.2s] FOREST jump at (424.9, -3.9, 36.4) · 5.0 m/s · t 68.03 · gap 7.2 (flat 7.1) · his speed 5.04
+[188.3s] pilot way 1 at 346 m · off the line 0.1 m · above it 0.55 m · gap 7.2 m
+[189.5s] bamboo Falling_H2 cracks
+[190.3s] GiaNhan0 crossed Vault 2.8 m in 0.67 s (came in at 5.0 m/s)
+[191.5s] bamboo Falling_H2 down 1.97 s after the crack
+[191.8s] pursuer shouts at 7.5 m
+[192.3s] pilot way 1 at 366 m · off the line 0.1 m · above it 0.02 m · gap 7.5 m
+[192.5s] FOREST jump at (445.3, -4.0, 30.5) · 5.0 m/s · t 72.28 · gap 7.5 (flat 7.4) · his speed 5.08
+[194.6s] GiaNhan0 crossed Vault 3.0 m in 0.71 s (came in at 5.0 m/s)
+[195.9s] pursuer shouts at 7.6 m
+[196.3s] pilot way 1 at 386 m · off the line 0.0 m · above it 0.02 m · gap 7.6 m
+[197.0s] FOREST jump at (468.0, -4.1, 30.4) · 5.0 m/s · t 76.84 · gap 7.5 (flat 7.5) · his speed 5.09
+[199.2s] GiaNhan0 crossed Leap 3.9 m in 0.86 s (came in at 5.0 m/s)
+[200.2s] FOREST jump at (483.9, -4.2, 31.7) · 5.0 m/s · t 80.03 · gap 7.6 (flat 7.6) · his speed 5.10
+[200.3s] pilot way 1 at 406 m · off the line 0.0 m · above it 0.68 m · gap 7.6 m
+[200.8s] pursuer shouts at 7.6 m
+[204.3s] pilot way 1 at 424 m · off the line 0.0 m · above it 0.03 m · gap 5.9 m
+[205.1s] GiaNhan0 crossed Duck 4.7 m in 1.56 s (came in at 5.0 m/s)
+[205.1s] pursuer shouts at 7.9 m
+[208.3s] pilot way 1 at 444 m · off the line 0.2 m · above it 0.03 m · gap 7.4 m
+[210.5s] pursuer shouts at 7.3 m
+[210.6s] FOREST bump at (530.7, -4.7, 26.6) · t 90.41 · gap 7.3 (flat 7.2) · his speed 5.06
+[212.3s] pilot way 1 at 461 m · off the line 0.2 m · above it 0.01 m · gap 4.8 m
+[212.4s] MUSIC level 2 (chase_level2)
+[216.2s] FOREST bump at (533.5, -4.1, 3.0) · t 95.98 · gap 4.6 (flat 4.5) · his speed 4.95
+[216.3s] pilot way 1 at 480 m · off the line 0.0 m · above it 0.02 m · gap 4.0 m
+[216.8s] FOREST no catch at 1.79 m: out of reach
+[217.0s] FOREST Caught after 96.8 s · bumps 2 · closest 1.0 m · way moon · at (533.4, -5.6, 2.4)
+[217.0s] FOREST ok   many mistakes are caught: Caught · bumps 2 · closest 1.0 m
+[218.1s] MUSIC level 1 (chase_level1)
+[218.7s] CATCH Rear by GiaNhan0 · dragged · worst frame 22 ms
+[218.8s] FOREST ok   a failure counts once (0 → 1)
+[218.8s] FOREST run starts · pursuer 12 m behind · Lam no
+[218.9s] FOREST ok   no reach across the ditch (3.00 m flat)
+[219.0s] FOREST ok   reach on the same side (1.00 m flat · reached · him (313.1, -3.4, 52.1) · her (312.1, -3.4, 52.0) · lip (313.1, -3.5, 52.1))
+[219.0s] FOREST run starts · pursuer 12 m behind · Lam with her
+[219.0s] pilot way 1 at 14 m · off the line 0.0 m · above it 0.05 m · gap 12.0 m
+[220.2s] pursuer shouts at 12.3 m
+[222.0s] MUSIC level 0 (chase_level0)
+[223.0s] pilot way 1 at 34 m · off the line 0.0 m · above it 0.03 m · gap 11.4 m
+[224.7s] pursuer shouts at 10.7 m
+[224.7s] FOREST jump at (135.2, -2.4, 6.1) · 5.0 m/s · t 5.76 · gap 10.8 (flat 10.7) · his speed 5.35
+[227.0s] pilot way 1 at 54 m · off the line 0.1 m · above it 0.03 m · gap 9.9 m
+[228.8s] pursuer shouts at 9.2 m
+[229.8s] CoLam crossed Duck 4.1 m in 1.35 s (came in at 5.7 m/s)
+[231.0s] pilot way 1 at 71 m · off the line 0.0 m · above it 0.03 m · gap 6.1 m
+[232.7s] GiaNhan0 crossed Duck 4.6 m in 1.56 s (came in at 4.9 m/s)
+[235.0s] pilot way 1 at 91 m · off the line 0.8 m · above it 0.03 m · gap 8.5 m
+[235.3s] pursuer shouts at 8.4 m
+[237.0s] bamboo Falling_H1 cracks
+[238.9s] bamboo Falling_H1 down 1.96 s after the crack
+[239.0s] pilot way 1 at 111 m · off the line 0.0 m · above it 0.02 m · gap 7.9 m
+[239.6s] CoLam crossed Vault 2.7 m in 0.71 s (came in at 4.7 m/s)
+[239.9s] FOREST jump at (206.5, -3.1, 14.7) · 5.0 m/s · t 20.94 · gap 7.8 (flat 7.7) · his speed 5.12
+[240.5s] pursuer shouts at 7.7 m
+[242.1s] GiaNhan0 crossed Vault 3.1 m in 0.71 s (came in at 5.2 m/s)
+[243.1s] pilot way 1 at 131 m · off the line 0.1 m · above it 0.02 m · gap 7.8 m
+[244.9s] FOREST jump at (231.0, -3.0, 16.1) · 5.0 m/s · t 25.89 · gap 7.6 (flat 7.5) · his speed 5.09
+[245.0s] pursuer shouts at 7.5 m
+[247.1s] pilot way 1 at 151 m · off the line 0.1 m · above it 0.02 m · gap 7.3 m
+[251.1s] pilot way 1 at 171 m · off the line 0.0 m · above it 0.04 m · gap 7.0 m
+[251.9s] pursuer shouts at 7.0 m
+[255.1s] pilot way 1 at 191 m · off the line 0.2 m · above it 0.03 m · gap 6.9 m
+[258.8s] pursuer shouts at 6.9 m
+[259.1s] pilot way 1 at 211 m · off the line 0.8 m · above it 0.03 m · gap 6.9 m
+[262.9s] CoLam crossed Leap 3.8 m in 0.96 s (came in at 4.4 m/s)
+[263.0s] FOREST jump at (313.5, -3.4, 52.2) · 5.0 m/s · t 44.07 · gap 6.8 (flat 6.7) · his speed 4.99
+[263.1s] pilot way 1 at 232 m · off the line 0.1 m · above it 0.36 m · gap 6.8 m
+[264.8s] pursuer shouts at 7.1 m
+[265.1s] GiaNhan0 crossed Leap 3.8 m in 0.85 s (came in at 5.0 m/s)
+[266.4s] FOREST jump at (330.4, -3.5, 51.2) · 5.0 m/s · t 47.46 · gap 7.1 (flat 7.1) · his speed 5.04
+[267.1s] pilot way 1 at 252 m · off the line 0.1 m · above it 0.14 m · gap 7.1 m
+[269.5s] CoLam crossed Duck 4.5 m in 1.51 s (came in at 5.7 m/s)
+[270.6s] pursuer shouts at 4.9 m
+[271.1s] pilot way 1 at 269 m · off the line 0.0 m · above it 0.04 m · gap 5.5 m
+[271.9s] GiaNhan0 crossed Duck 4.6 m in 1.55 s (came in at 4.9 m/s)
+[273.8s] MUSIC level 1 (chase_level1)
+[275.1s] pilot way 1 at 289 m · off the line 0.0 m · above it 0.02 m · gap 7.2 m
+[275.2s] pursuer shouts at 7.2 m
+[277.3s] FOREST jump at (380.0, -3.6, 40.1) · 5.0 m/s · t 58.31 · gap 7.2 (flat 7.1) · his speed 5.04
+[279.1s] pilot way 1 at 309 m · off the line 0.0 m · above it 0.02 m · gap 7.1 m
+[280.7s] pursuer shouts at 7.0 m
+[281.3s] CoLam crossed Duck 4.7 m in 1.56 s (came in at 5.3 m/s)
+[283.1s] pilot way 1 at 326 m · off the line 0.1 m · above it 0.03 m · gap 5.1 m
+[283.7s] GiaNhan0 crossed Duck 4.7 m in 1.56 s (came in at 4.9 m/s)
+[286.3s] pursuer shouts at 7.2 m
+[286.8s] CoLam crossed Vault 2.8 m in 0.77 s (came in at 4.4 m/s)
+[287.0s] FOREST jump at (424.9, -3.9, 36.4) · 5.0 m/s · t 68.03 · gap 7.2 (flat 7.1) · his speed 5.04
+[287.1s] pilot way 1 at 346 m · off the line 0.1 m · above it 0.61 m · gap 7.2 m
+[288.3s] bamboo Falling_H2 cracks
+[289.1s] GiaNhan0 crossed Vault 2.8 m in 0.66 s (came in at 5.1 m/s)
+[290.3s] bamboo Falling_H2 down 1.96 s after the crack
+[291.0s] CoLam crossed Vault 2.6 m in 0.72 s (came in at 4.9 m/s)
+[291.1s] pilot way 1 at 366 m · off the line 0.1 m · above it 0.02 m · gap 7.5 m
+[291.3s] FOREST jump at (445.3, -4.0, 30.5) · 5.0 m/s · t 72.28 · gap 7.4 (flat 7.4) · his speed 5.07
+[291.6s] pursuer shouts at 7.4 m
+[293.4s] GiaNhan0 crossed Vault 3.0 m in 0.71 s (came in at 5.0 m/s)
+[295.1s] pilot way 1 at 387 m · off the line 0.0 m · above it 0.02 m · gap 7.6 m
+[295.7s] CoLam crossed Leap 3.9 m in 0.98 s (came in at 5.7 m/s)
+[295.8s] FOREST jump at (468.0, -4.1, 30.4) · 5.0 m/s · t 76.84 · gap 7.5 (flat 7.4) · his speed 5.08
+[296.5s] pursuer shouts at 7.4 m
+[298.0s] GiaNhan0 crossed Leap 3.9 m in 0.86 s (came in at 5.1 m/s)
+[299.0s] FOREST jump at (483.9, -4.2, 31.7) · 5.0 m/s · t 80.03 · gap 7.7 (flat 7.6) · his speed 5.10
+[299.1s] pilot way 1 at 407 m · off the line 0.0 m · above it 0.76 m · gap 7.6 m
+[300.7s] pursuer shouts at 7.5 m
+[301.4s] CoLam crossed Duck 4.6 m in 1.55 s (came in at 5.2 m/s)
+[303.1s] pilot way 1 at 424 m · off the line 0.0 m · above it 0.03 m · gap 5.8 m
+[303.9s] GiaNhan0 crossed Duck 4.7 m in 1.55 s (came in at 4.9 m/s)
+[307.1s] pilot way 1 at 444 m · off the line 0.2 m · above it 0.03 m · gap 7.4 m
+[307.3s] pursuer shouts at 7.3 m
+[308.9s] CoLam crossed Vault 2.8 m in 0.76 s (came in at 4.4 m/s)
+[309.2s] FOREST jump at (529.8, -4.9, 27.7) · 5.0 m/s · t 90.20 · gap 7.2 (flat 7.2) · his speed 5.04
+[311.1s] pilot way 1 at 464 m · off the line 0.2 m · above it 0.03 m · gap 7.1 m
+[311.6s] pursuer shouts at 7.0 m
+[312.2s] MUSIC level 2 (chase_level2)
+[314.7s] CoLam crossed Duck 4.3 m in 1.44 s (came in at 4.4 m/s)
+[315.2s] pilot way 1 at 482 m · off the line 0.0 m · above it 0.02 m · gap 5.4 m
+[315.8s] pursuer shouts at 4.9 m
+[316.6s] bamboo Falling_H3 cracks
+[317.1s] GiaNhan0 crossed Duck 4.7 m in 1.56 s (came in at 4.9 m/s)
+[318.5s] bamboo Falling_H3 down 1.96 s after the crack
+[319.2s] pilot way 1 at 501 m · off the line 0.1 m · above it 0.02 m · gap 7.3 m
+[319.3s] CoLam crossed Vault 3.0 m in 0.79 s (came in at 4.4 m/s)
+[319.6s] FOREST jump at (527.6, -5.7, -19.0) · 5.0 m/s · t 100.57 · gap 7.3 (flat 7.2) · his speed 5.05
+[321.7s] GiaNhan0 crossed Vault 3.1 m in 0.72 s (came in at 5.0 m/s)
+[321.7s] FOREST jump at (524.9, -5.7, -29.3) · 5.0 m/s · t 102.71 · gap 7.7 (flat 7.7) · his speed 5.12
+[322.1s] pursuer shouts at 7.7 m
+[323.2s] pilot way 1 at 521 m · off the line 0.0 m · above it 0.02 m · gap 7.6 m
+[326.7s] pursuer shouts at 7.6 m
+[327.2s] pilot way 1 at 541 m · off the line 0.0 m · above it 0.02 m · gap 8.0 m
+[328.5s] CoLam crossed Run 15.2 m in 2.11 s (came in at 5.9 m/s)
+[329.7s] bridge dropped
+[329.7s] FOREST pursuer was on the bridge: thrown back against the near bank
+[331.2s] pilot way 1 at 560 m · off the line 0.1 m · above it 0.04 m · gap 17.8 m
+[335.2s] pilot way 1 at 580 m · off the line 0.0 m · above it 0.03 m · gap 17.8 m
+[336.0s] FOREST Escaped after 117.1 s · bumps 0 · closest 5.1 m · way moon · at (540.3, -3.3, -84.0)
+[336.0s] FOREST ok   with Cô Lam: Escaped · she is over True · put back 0 times
+[336.0s] FOREST probe done in 335 s real time
+[336.1s] FOREST run starts · pursuer 12 m behind · Lam no
+[336.1s] pilot way 1 at 14 m · off the line 0.0 m · above it 0.06 m · gap 12.0 m
+[337.2s] MUSIC level 0 (chase_level0)
+[337.3s] pursuer shouts at 12.2 m
+[340.1s] pilot way 1 at 34 m · off the line 0.0 m · above it 0.03 m · gap 11.3 m
+[341.8s] FOREST jump at (135.2, -2.4, 6.1) · 5.0 m/s · t 5.77 · gap 10.7 (flat 10.6) · his speed 5.35
+[342.5s] pursuer shouts at 10.4 m
+[344.1s] pilot way 1 at 54 m · off the line 0.1 m · above it 0.04 m · gap 9.9 m
+[347.2s] pursuer shouts at 7.5 m
+[348.1s] pilot way 1 at 71 m · off the line 0.0 m · above it 0.03 m · gap 6.1 m
+[349.7s] GiaNhan0 crossed Duck 4.7 m in 1.56 s (came in at 4.9 m/s)
+[351.7s] pursuer shouts at 8.6 m
+[352.1s] pilot way 1 at 91 m · off the line 0.8 m · above it 0.03 m · gap 8.5 m
+[354.0s] bamboo Falling_H1 cracks
+[356.0s] bamboo Falling_H1 down 1.96 s after the crack
+[356.1s] pilot way 1 at 111 m · off the line 0.0 m · above it 0.02 m · gap 7.8 m
+[357.0s] FOREST jump at (206.4, -3.1, 14.7) · 5.0 m/s · t 20.93 · gap 7.7 (flat 7.6) · his speed 5.11
+[357.1s] pursuer shouts at 7.7 m
+[359.1s] GiaNhan0 crossed Vault 3.1 m in 0.70 s (came in at 5.2 m/s)
+[360.1s] pilot way 1 at 131 m · off the line 0.1 m · above it 0.02 m · gap 7.8 m
+[361.9s] FOREST jump at (230.9, -3.0, 16.1) · 5.0 m/s · t 25.88 · gap 7.5 (flat 7.5) · his speed 5.09
+[362.8s] pursuer shouts at 7.4 m
+[364.1s] pilot way 1 at 151 m · off the line 0.1 m · above it 0.03 m · gap 7.3 m
+[367.8s] pursuer shouts at 7.0 m
+[368.1s] pilot way 1 at 171 m · off the line 0.0 m · above it 0.04 m · gap 7.0 m
+[372.1s] pilot way 1 at 191 m · off the line 0.2 m · above it 0.02 m · gap 6.9 m
+[374.4s] pursuer shouts at 6.9 m
+[376.1s] pilot way 1 at 211 m · off the line 0.8 m · above it 0.03 m · gap 6.9 m
+[380.1s] FOREST jump at (313.6, -3.4, 52.2) · 5.0 m/s · t 44.07 · gap 6.8 (flat 6.7) · his speed 4.99
+[380.1s] pilot way 1 at 231 m · off the line 0.1 m · above it 0.09 m · gap 6.8 m
+[380.9s] pursuer shouts at 6.7 m
+[382.2s] GiaNhan0 crossed Leap 3.9 m in 0.86 s (came in at 5.0 m/s)
+[383.5s] FOREST jump at (330.4, -3.5, 51.2) · 5.0 m/s · t 47.46 · gap 7.1 (flat 7.1) · his speed 5.04
+[384.1s] pilot way 1 at 251 m · off the line 0.1 m · above it 0.39 m · gap 7.1 m
+[387.3s] pursuer shouts at 4.9 m
+[388.1s] pilot way 1 at 269 m · off the line 0.0 m · above it 0.04 m · gap 5.5 m
+[389.0s] GiaNhan0 crossed Duck 4.7 m in 1.56 s (came in at 4.9 m/s)
+[390.9s] MUSIC level 1 (chase_level1)
+[392.1s] pilot way 1 at 289 m · off the line 0.0 m · above it 0.03 m · gap 7.2 m
+[394.2s] pursuer shouts at 7.1 m
+[394.3s] FOREST jump at (379.9, -3.6, 40.1) · 5.0 m/s · t 58.31 · gap 7.1 (flat 7.1) · his speed 5.03
+[396.1s] pilot way 1 at 309 m · off the line 0.0 m · above it 0.03 m · gap 7.1 m
+[398.8s] pursuer shouts at 5.2 m
+[400.1s] pilot way 1 at 326 m · off the line 0.1 m · above it 0.03 m · gap 5.3 m
+[400.7s] GiaNhan0 crossed Duck 4.7 m in 1.56 s (came in at 4.9 m/s)
+[403.2s] pursuer shouts at 7.2 m
+[404.1s] FOREST jump at (424.9, -3.9, 36.3) · 5.0 m/s · t 68.04 · gap 7.2 (flat 7.1) · his speed 5.04
+[404.1s] pilot way 1 at 346 m · off the line 0.1 m · above it 0.42 m · gap 7.2 m
+[405.4s] bamboo Falling_H2 cracks
+[406.1s] GiaNhan0 crossed Vault 2.9 m in 0.67 s (came in at 5.0 m/s)
+[407.3s] bamboo Falling_H2 down 1.97 s after the crack
+[408.1s] pilot way 1 at 366 m · off the line 0.1 m · above it 0.02 m · gap 7.5 m
+[408.3s] FOREST jump at (445.3, -4.0, 30.5) · 5.0 m/s · t 72.28 · gap 7.4 (flat 7.4) · his speed 5.08
+[409.5s] pursuer shouts at 7.3 m
+[410.5s] GiaNhan0 crossed Vault 3.1 m in 0.72 s (came in at 5.0 m/s)
+[412.1s] pilot way 1 at 386 m · off the line 0.0 m · above it 0.02 m · gap 7.6 m
+[412.9s] FOREST jump at (468.0, -4.1, 30.4) · 5.0 m/s · t 76.84 · gap 7.5 (flat 7.5) · his speed 5.09
+[415.1s] GiaNhan0 crossed Leap 4.0 m in 0.87 s (came in at 5.1 m/s)
+[416.1s] FOREST jump at (483.9, -4.2, 31.7) · 5.0 m/s · t 80.03 · gap 7.6 (flat 7.5) · his speed 5.10
+[416.1s] pilot way 1 at 406 m · off the line 0.0 m · above it 0.55 m · gap 7.6 m
+[416.2s] pursuer shouts at 7.6 m
+[420.2s] pilot way 1 at 424 m · off the line 0.0 m · above it 0.03 m · gap 5.8 m
+[420.6s] pursuer shouts at 7.2 m
+[420.9s] GiaNhan0 crossed Duck 4.6 m in 1.54 s (came in at 5.0 m/s)
+[424.2s] pilot way 1 at 444 m · off the line 0.2 m · above it 0.03 m · gap 7.4 m
+[426.2s] FOREST jump at (529.8, -4.9, 27.7) · 5.0 m/s · t 90.17 · gap 7.1 (flat 7.2) · his speed 5.03
+[427.4s] pursuer shouts at 7.3 m
+[428.2s] pilot way 1 at 464 m · off the line 0.2 m · above it 0.04 m · gap 7.5 m
+[429.3s] MUSIC level 2 (chase_level2)
+[432.2s] pilot way 1 at 482 m · off the line 0.0 m · above it 0.02 m · gap 6.0 m
+[433.0s] pursuer shouts at 5.5 m
+[433.6s] bamboo Falling_H3 cracks
+[434.2s] GiaNhan0 crossed Duck 4.6 m in 1.53 s (came in at 4.9 m/s)
+[435.6s] bamboo Falling_H3 down 1.97 s after the crack
+[436.2s] pilot way 1 at 501 m · off the line 0.1 m · above it 0.02 m · gap 7.7 m
+[436.6s] FOREST jump at (527.6, -5.7, -19.0) · 5.0 m/s · t 100.56 · gap 7.6 (flat 7.6) · his speed 5.10
+[438.2s] pursuer shouts at 7.7 m
+[438.8s] FOREST jump at (524.8, -5.7, -29.4) · 5.0 m/s · t 102.71 · gap 7.5 (flat 7.9) · his speed 5.08
+[438.8s] GiaNhan0 crossed Vault 3.0 m in 0.70 s (came in at 5.1 m/s)
+[440.2s] pilot way 1 at 521 m · off the line 0.0 m · above it 0.02 m · gap 7.8 m
+[444.2s] pilot way 1 at 541 m · off the line 0.0 m · above it 0.02 m · gap 7.4 m
+[445.0s] pursuer shouts at 9.1 m
+[445.7s] bridge dropped
+[445.7s] FOREST pursuer was on the bridge: thrown back against the near bank
+[448.2s] pilot way 1 at 562 m · off the line 0.2 m · above it 0.03 m · gap 12.0 m
+[452.2s] pilot way 1 at 582 m · off the line 0.0 m · above it 0.02 m · gap 12.0 m
+[452.8s] FOREST Escaped after 116.7 s · bumps 0 · closest 5.1 m · way moon · at (540.3, -3.2, -84.0)
+[453.5s] HITCH 209 ms
+[454.2s] FOREST escaped in 117 s (game time) · failures 0 · bumps 0 · way 1 · Lam over False
+[454.3s] TAG scene:Escape_Rain
+[454.3s] TAG music:none
+[454.6s] TAG music:resolve
+[454.7s] TAG gameplay:kieu_voice
+[455.0s] HITCH 170 ms
+[455.3s] CHAPTER 5 COMPLETE · lines 15 · choices 0
+[455.3s] FRAMES Chapter05_Escape · avg 85 fps · 1% low 27 fps · worst 2547 ms · 38631 frames · 401x664 · median 11.2 ms · p99 22.3 ms · under 60 fps 3.4% · load 5.0 s (first frame 4847 ms) · warm-up worst 991 ms
+   c5_so_khanh = 0
+   c5_bi_bat = 0
+   c5_vap = 0
+   c5_loi = 1
+   c5_giay = 117
+   c5_co_lam_thoat = False
+   clues = 
+ERROR Exception: ArgumentOutOfRangeException: Index was out of range. Must be non-negative and less than the size of the collection.
+Parameter name: index @ System.Collections.Generic.List`1[T].get_Item (System.Int32 index) (at <c5ae8a4eeb824526b5df2932bc2395e0>:0)

@@ -53,6 +53,68 @@ namespace ThuyKieu.Player
         [SerializeField] private PlayerMovement _body;
 
         public bool IsFirstPerson => _firstPerson && _body != null;
+
+        private readonly List<(Renderer renderer, ShadowCastingMode mode)> _ownBody = new List<(Renderer, ShadowCastingMode)>();
+
+        /// <summary>
+        /// Switches to Kiều's own eyes (or back) at runtime, for a chapter that plays one sequence in first person: her body
+        /// is drawn as shadow only while it lasts and handed back exactly as it was.
+        /// </summary>
+        public void SetFirstPerson(bool on, PlayerMovement body)
+        {
+            if (body != null) _body = body;
+            if (_firstPerson == on || _body == null) return;
+            _firstPerson = on;
+            _closeView = null;
+            _closeWeight = 0f;
+            _collisionDistance = -1f;
+            RestoreFaded();
+            HideBody(false);
+            if (on)
+            {
+                foreach (var renderer in _body.GetComponentsInChildren<Renderer>(true))
+                {
+                    _ownBody.Add((renderer, renderer.shadowCastingMode));
+                    renderer.shadowCastingMode = ShadowCastingMode.ShadowsOnly;
+                }
+                transform.SetPositionAndRotation(EyePosition(), Quaternion.Euler(pitch, yaw, 0f));
+            }
+            else
+            {
+                foreach (var (renderer, mode) in _ownBody) if (renderer != null) renderer.shadowCastingMode = mode;
+                _ownBody.Clear();
+            }
+        }
+
+        /// <summary>Running in first person: height of the stride bob (metres), 0 for none.</summary>
+        public float RunBob { get; set; }
+        /// <summary>
+        /// First person: a chapter's own body motion this frame (Chapter 5's run), added to the eyes after they are placed:
+        /// an offset in the camera's own axes (metres) and a tilt (degrees: pitch, yaw, roll). Zero leaves the view as it
+        /// was; it never turns the heading the mouse steers.
+        /// </summary>
+        public Vector3 MotionOffset { get; set; }
+        public Vector3 MotionTilt { get; set; }
+        /// <summary>Field of view that replaces the chapter's own while set (0 = none).</summary>
+        public float FovOverride { get; set; }
+        public float Sensitivity { get => mouseSensitivity; set => mouseSensitivity = value; }
+        public Vector2 PitchLimits { get => new Vector2(minPitch, maxPitch); set { minPitch = value.x; maxPitch = value.y; } }
+
+        private float _bobPhase, _dip;
+
+        /// <summary>A landing or a knock: the eyes drop by <paramref name="metres"/> and come back up.</summary>
+        public void Dip(float metres) { _dip = Mathf.Max(_dip, metres); }
+
+        private Vector3 Bob()
+        {
+            _dip = Mathf.Lerp(_dip, 0f, 1f - Mathf.Exp(-9f * Time.deltaTime));
+            if (RunBob <= 0f || _body == null) return Vector3.down * _dip;
+            float speed = _body.IsGrounded ? _body.CurrentSpeed : 0f;
+            _bobPhase += speed * Time.deltaTime * Mathf.PI / 1.3f; // one footfall every 1.3 m
+            float k = Mathf.Clamp01(speed / 5f);
+            return Vector3.up * (Mathf.Abs(Mathf.Sin(_bobPhase)) - 0.5f) * RunBob * k
+                   + transform.right * Mathf.Sin(_bobPhase) * RunBob * 0.45f * k + Vector3.down * _dip;
+        }
         /// <summary>First person, while control is locked: the head turns towards this point (the person speaking).</summary>
         public Vector3? LookTarget { get; set; }
         private bool _limitLook;
@@ -204,7 +266,8 @@ namespace ThuyKieu.Player
             bool close = _closeView != null;
             _closeWeight = Mathf.MoveTowards(_closeWeight, close ? 1f : 0f, Time.deltaTime / Mathf.Max(0.01f, _closeBlendSeconds));
             if (!ControlLocked) HandleCursorToggle();
-            if (!close && _closeWeight <= 0f && !ControlLocked && Cursor.lockState == CursorLockMode.Locked)
+            // QA input counts without a locked cursor (a batch run has no window to lock it to).
+            if (!close && _closeWeight <= 0f && !ControlLocked && (Cursor.lockState == CursorLockMode.Locked || InputReader.SimulatedLook != Vector2.zero))
             {
                 Vector2 look = InputReader.Look * mouseSensitivity * GameSettings.MouseSensitivity;
                 yaw += look.x;
@@ -224,7 +287,7 @@ namespace ThuyKieu.Player
             }
             pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
             if (_limitLook) yaw = _limitCentre + Mathf.Clamp(Mathf.DeltaAngle(_limitCentre, yaw), -_limitRange, _limitRange);
-            float ownFov = ObserveFov > 0f ? ObserveFov : _fov > 0f ? _fov : _baseFov;
+            float ownFov = ObserveFov > 0f ? ObserveFov : FovOverride > 0f ? FovOverride : _fov > 0f ? _fov : _baseFov;
             if (_closeWeight > 0f && _closeLast != null)
             {
                 // Leaning in (or back out): from her eyes to the close shot, never through what lies between.
@@ -236,6 +299,9 @@ namespace ThuyKieu.Player
                 return;
             }
             transform.SetPositionAndRotation(EyePosition(), Quaternion.Euler(pitch, yaw, 0f));
+            if (RunBob > 0f || _dip > 0.001f) transform.position += Bob();
+            if (MotionOffset != Vector3.zero || MotionTilt != Vector3.zero)
+                transform.SetPositionAndRotation(transform.position + transform.rotation * MotionOffset, transform.rotation * Quaternion.Euler(MotionTilt));
             BlendFov(ownFov, ObserveFov > 0f ? 8f : 3f);
         }
 

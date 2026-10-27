@@ -202,6 +202,8 @@ namespace ThuyKieu.Core.Editor
         {
             var spawn = new Vector3(-15.5f, Floor + 0.05f, 3.6f);
             var (scene, s, folder) = Begin(Chapter4Path, 4, "Không còn đường lui", "chapter_4_dem", Chapter05Setup.SceneName, spawn, 90f, "rain_house");
+            // Out of the back door straight into the Chapter 5 run: no summary screen in between.
+            Set(s.Director, "_seamlessNext", true);
             try
             {
                 var world = new GameObject("World").transform;

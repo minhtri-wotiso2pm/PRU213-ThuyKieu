@@ -9,9 +9,10 @@ using UnityEngine;
 namespace ThuyKieu.Gameplay.Chapters
 {
     /// <summary>
-    /// Chapter 5 — the escape. Sets up the back yard at night, brings Cô Lam along if the player invited her,
-    /// raises the alarm when the story says so, and turns the night into rain once Kiều is clear of the forest.
-    /// The gameplay itself lives in the sneak, chase and forest sequences.
+    /// Chapter 5 — the escape. The chapter opens on the run: Kiều is already at the edge of the bamboo (behind black until
+    /// the forest is ready), Cô Lam with her if the player invited her, and once she is clear of the forest she stops by the
+    /// temple path under a dimmer moon (a dry night: no rain anywhere in the chapter). The run itself is <see cref="ThuyKieu.Gameplay.Sequences.BambooChaseSequence"/>. The yard and the town
+    /// stay in the scene as they were; the old sneak, alarm and Sở Khanh beats are no longer called from the story.
     /// </summary>
     public class Chapter05World : MonoBehaviour, IChapterSummary
     {
@@ -23,11 +24,12 @@ namespace ThuyKieu.Gameplay.Chapters
         [SerializeField] private Follower _companion;
         [SerializeField] private StoryActor[] _pursuers;
         [SerializeField] private GameObject _gateBlocker;
-        [SerializeField] private ParticleSystem _rain;
         [SerializeField] private Transform _rainSpot;
         [SerializeField] private Light _moon;
         [SerializeField] private Stamina _stamina;
         [SerializeField] private StoryActor _soKhanh;
+        [Tooltip("Where Kiều stands at the edge of the bamboo once she is out of the alley (the chase starts from here).")]
+        [SerializeField] private Transform _forestEdge;
 
         private MaterialPropertyBlock _coneBlock;
         private float _coneAlpha = 0.18f;
@@ -38,18 +40,19 @@ namespace ThuyKieu.Gameplay.Chapters
 
         private void Start()
         {
-            if (_navMesh != null) _navMesh.BuildNavMesh();
-            foreach (var actor in FindObjectsByType<StoryActor>()) actor.EnableNavigation();
+            // Black from the first frame: nothing of the yard is shown, the run comes up once the forest is ready.
+            _director.Hud.FadeAlpha = 1f;
+            _director.Hud.SetControls(string.Empty);
             _director.Player.AllowCrouch = true;
-            _director.Hud.SetControls("WASD: đi · Shift: chạy · Ctrl: khom · E: tương tác / đẩy cửa / xô đổ · J: sổ tay");
-            LightExposure.Enable(true);
             _stamina.enabled = false;
             _tuBa.gameObject.SetActive(false);
-            foreach (var pursuer in _pursuers) pursuer.gameObject.SetActive(false);
             _guard.Patrolling = false;
-            if (_director.GetBool("c4_ru_co_lam")) _companion.Snap();
-            else _companion.gameObject.SetActive(false);
-            if (_director.Audio != null) _director.Audio.SetAmbience("night");
+            _guard.gameObject.SetActive(false);
+            foreach (var pursuer in _pursuers) pursuer.gameObject.SetActive(false);
+            // Cô Lam is placed and led by the run itself (on the forest's NavMesh, which is still being built now).
+            _companion.Following = false;
+            if (!_director.GetBool("c4_ru_co_lam")) _companion.gameObject.SetActive(false);
+            PlaceAtForestEdge();
         }
 
         private void Update()
@@ -69,8 +72,9 @@ namespace ThuyKieu.Gameplay.Chapters
             switch (scene)
             {
                 case "Escape_Alarm": Alarm(); break;
+                case "Escape_Forest": PlaceAtForestEdge(); break;
                 case "Escape_SoKhanh": MeetSoKhanh(); break;
-                case "Escape_Rain": if (_soKhanh != null) _soKhanh.gameObject.SetActive(false); StartCoroutine(Rain()); break;
+                case "Escape_Rain": if (_soKhanh != null) _soKhanh.gameObject.SetActive(false); StartCoroutine(ClearOfTheForest()); break;
             }
         }
 
@@ -97,12 +101,23 @@ namespace ThuyKieu.Gameplay.Chapters
                 _soKhanh.Recast("SoKhanh");
             }
             if (_soKhanh == null) return;
+            // The town's NavMesh is only built for this beat now (the chapter no longer plays in the yard and streets).
+            if (_navMesh != null && _navMesh.navMeshData == null) _navMesh.BuildNavMesh();
             _director.RegisterActor(_soKhanh);
             var player = _director.Player.transform;
             Vector3 spot = player.position + player.forward * 2.4f;
             _soKhanh.gameObject.SetActive(true);
             _soKhanh.Place(spot, Quaternion.LookRotation(player.position - spot));
             _soKhanh.FaceTowards(player.position);
+        }
+
+        /// <summary>Kiều at the edge of the bamboo where the run starts, facing into it; the pursuers are placed by the run itself.</summary>
+        private void PlaceAtForestEdge()
+        {
+            if (_forestEdge == null) return;
+            _director.Player.Teleport(_forestEdge.position, _forestEdge.rotation);
+            _director.CameraController.SnapBehindTarget(_forestEdge.eulerAngles.y);
+            if (_director.Audio != null) _director.Audio.SetAmbience(null); // the forest is dry: no rain while she runs
         }
 
         /// <summary>The gate is open, a window bangs upstairs and the whole house wakes.</summary>
@@ -117,7 +132,8 @@ namespace ThuyKieu.Gameplay.Chapters
             if (_director.Audio != null) _director.Audio.PlaySfx("dog");
         }
 
-        private IEnumerator Rain()
+        /// <summary>Out of the forest, at the temple path: the pursuit is gone, the moon goes behind thin cloud.</summary>
+        private IEnumerator ClearOfTheForest()
         {
             yield return _director.Hud.Fade(1f, 0.4f);
             LightExposure.Enable(false);
@@ -126,23 +142,21 @@ namespace ThuyKieu.Gameplay.Chapters
             foreach (var pursuer in _pursuers) pursuer.gameObject.SetActive(false);
             if (_director.GetBool("c5_co_lam_thoat")) { _companion.gameObject.SetActive(true); _companion.Following = true; _companion.Snap(); }
             else _companion.gameObject.SetActive(false);
-            _rain.Play();
-            if (_director.Audio != null) _director.Audio.SetAmbience("forest_rain");
             if (_moon != null) { _moon.intensity *= 0.6f; _moon.color = new Color(0.5f, 0.6f, 0.85f); }
-            RenderSettings.fogDensity *= 1.8f;
             yield return _director.Hud.Fade(0f, 0.8f);
         }
 
         public IEnumerable<string> SummaryLines(Ink.Runtime.Story story)
         {
             var v = story.variablesState;
-            int quiet = (int)v["c5_lang_le"], road = (int)v["c5_duong"], qte = (int)v["c5_qte"];
-            yield return "Lẻn khỏi sân sau: " + (quiet >= 3 ? "êm như gió." : quiet >= 2 ? "khá êm." : quiet >= 1 ? "suýt bị lộ." : "ồn ào, may mà thoát.");
-            yield return "Đường chạy: " + (road == 2 ? "lẫn vào chợ đêm." : "ngõ tắt tối om.") + " · xô đổ " + (int)v["c5_xo_do"] + " vật cản.";
-            yield return "Rừng tre: vượt " + qte + "/3 thử thách khó · số lần bị đuổi kịp: " + (int)v["c5_bi_bat"];
+            int caught = (int)v["c5_bi_bat"], seconds = (int)v["c5_giay"];
+            yield return "Rừng tre: " + (caught == 0 ? "thoát ngay lần đầu." : "thoát sau " + caught + " lần bị đuổi kịp hoặc ngã xuống khe.");
+            yield return "Lượt chạy thoát: " + seconds / 60 + " phút " + seconds % 60 + " giây · vấp " + (int)v["c5_vap"] + " lần · "
+                         + ((int)v["c5_loi"] == 2 ? "lối tre rậm." : "lối khe trăng.");
+            yield return "Cầu tre qua khe suối đã đổ: lính của mụ Tú không qua được.";
             if ((bool)v["c4_ru_co_lam"])
                 yield return (bool)v["c5_co_lam_thoat"] ? "Chị Lam đã thoát cùng bạn." : "Chị Lam bị bắt lại. Bạn đã hứa sẽ quay lại.";
-            yield return "<i>Chương tiếp theo — Kim Trọng: một mái chùa trong mưa...</i>";
+            yield return "<i>Chương tiếp theo — Kim Trọng: một mái chùa trong sương sớm...</i>";
         }
     }
 }
