@@ -299,6 +299,9 @@ namespace ThuyKieu.Core.Editor
             var material = Material(name + "Static", Color.white);
             var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
             if (texture != null) material.SetTexture("_BaseMap", texture);
+            string normalPath = Path.GetDirectoryName(texturePath)?.Replace('\\', '/') + "/texture_pbr_20250901_normal.png";
+            if (AssetImporter.GetAtPath(normalPath) is TextureImporter normalImporter) { if (normalImporter.textureType != TextureImporterType.NormalMap || normalImporter.maxTextureSize > 2048) { normalImporter.textureType = TextureImporterType.NormalMap; normalImporter.maxTextureSize = 2048; normalImporter.SaveAndReimport(); } var nTex = AssetDatabase.LoadAssetAtPath<Texture2D>(normalPath); if (nTex != null) { material.EnableKeyword("_NORMALMAP"); material.SetTexture("_BumpMap", nTex); } }
+            EditorUtility.SetDirty(material);
             material.SetFloat("_Smoothness", 0.25f);
             foreach (var renderer in model.GetComponentsInChildren<Renderer>())
                 renderer.sharedMaterials = Enumerable.Repeat(material, renderer.sharedMaterials.Length).ToArray();
@@ -436,7 +439,11 @@ namespace ThuyKieu.Core.Editor
             if (AssetImporter.GetAtPath(texturePath) is TextureImporter textureImporter && textureImporter.maxTextureSize > 2048) { textureImporter.maxTextureSize = 2048; textureImporter.SaveAndReimport(); }
             var texture = AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath);
             var material = Material(name + "Story", tint);
+            material.SetColor("_BaseColor", tint);
             if (texture != null) material.SetTexture("_BaseMap", texture);
+            string normalPath = Path.GetDirectoryName(texturePath)?.Replace('\\', '/') + "/texture_pbr_20250901_normal.png";
+            if (AssetImporter.GetAtPath(normalPath) is TextureImporter normalImporter) { if (normalImporter.textureType != TextureImporterType.NormalMap || normalImporter.maxTextureSize > 2048) { normalImporter.textureType = TextureImporterType.NormalMap; normalImporter.maxTextureSize = 2048; normalImporter.SaveAndReimport(); } var nTex = AssetDatabase.LoadAssetAtPath<Texture2D>(normalPath); if (nTex != null) { material.EnableKeyword("_NORMALMAP"); material.SetTexture("_BumpMap", nTex); } }
+            EditorUtility.SetDirty(material);
             material.SetFloat("_Smoothness", 0.25f);
             foreach (var renderer in model.GetComponentsInChildren<Renderer>())
                 renderer.sharedMaterials = Enumerable.Repeat(material, renderer.sharedMaterials.Length).ToArray();

@@ -147,7 +147,7 @@ namespace ThuyKieu.UI
             {
                 string prefix = text.Substring(0, colon).Trim();
                 if (prefix == displayName || prefix == managerName || prefix == "Kiều" || prefix.StartsWith("Cô gái") || prefix == "Tùy tùng"
-                    || prefix == "Người canh" || prefix == "Chị Lam" || prefix == "Tú Bà" || prefix == "Mã Kiều" || prefix == "Mẹ Kiều" || prefix == "Mã Giám Sinh")
+                    || prefix == "Người canh" || prefix == "Chị Lam" || prefix == "Tú Bà" || prefix == "Mã Kiều" || prefix == "Mẹ Kiều" || prefix == "Mã Giám Sinh" || prefix == "Vương Quan" || prefix == "Thúy Vân")
                     return text.Substring(colon + 1).TrimStart();
             }
             return text;

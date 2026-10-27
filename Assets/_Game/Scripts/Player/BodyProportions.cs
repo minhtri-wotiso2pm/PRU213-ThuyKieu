@@ -196,7 +196,9 @@ namespace ThuyKieu.Player
             Vector3 forward = transform.forward;
             Vector3 legs = Vector3.ProjectOnPlane(_hips.position - (_leftFoot.position + _rightFoot.position) * 0.5f, forward);
             float tilt = Vector3.SignedAngle(Vector3.up, legs, forward);
-            _legTilt = Mathf.Lerp(_legTilt, tilt, 1f - Mathf.Exp(-1.5f * Time.deltaTime));
+            // Tracks the stride (a run cycles ~3 steps a second): at the old 1.5 Hz average the hips stayed
+            // off-centre for most of each step, which read as skewed legs while running.
+            _legTilt = Mathf.Lerp(_legTilt, tilt, 1f - Mathf.Exp(-4f * Time.deltaTime));
             float roll = -_legTilt * _legAlign * _move;
             if (Mathf.Abs(roll) < 0.01f) return;
             _hips.rotation = Quaternion.AngleAxis(roll, forward) * _hips.rotation;

@@ -383,10 +383,10 @@ namespace ThuyKieu.Core.Editor
             glow.transform.SetParent(root, false);
             glow.transform.position = top + Vector3.up * 0.18f;
             var light = glow.AddComponent<Light>();
-            light.type = LightType.Point; light.color = new Color(1f, 0.82f, 0.45f); light.range = 3.5f; light.intensity = 3.2f; light.shadows = LightShadows.None;
-            var halo = Block("GlowPlane", top + new Vector3(0, 0.03f, 0), new Vector3(0.42f, 0.002f, 0.28f), Emissive("ClassBookGlow", new Color(1f, 0.85f, 0.5f), 2.2f), glow.transform, false);
+            light.type = LightType.Point; light.color = new Color(1f, 0.82f, 0.45f); light.range = 2.2f; light.intensity = 1.1f; light.shadows = LightShadows.None;
+            var halo = Block("GlowPlane", top + new Vector3(0, 0.03f, 0), new Vector3(0.42f, 0.002f, 0.28f), Emissive("ClassBookGlow", new Color(1f, 0.85f, 0.5f), 0.85f), glow.transform, false);
             halo.transform.SetParent(glow.transform, true);
-            Sphere("GlowMotes", top + Vector3.up * 0.25f, Vector3.one * 0.05f, Emissive("ClassBookGlow", new Color(1f, 0.85f, 0.5f), 2.2f), glow.transform);
+            Sphere("GlowMotes", top + Vector3.up * 0.25f, Vector3.one * 0.05f, Emissive("ClassBookGlow", new Color(1f, 0.85f, 0.5f), 0.85f), glow.transform);
             Dust("GlowDust", top + Vector3.up * 0.3f, new Vector3(0.4f, 0.4f, 0.3f), glow.transform, new Color(1f, 0.85f, 0.5f, 0.6f), 40);
             parts.BookGlow = glow;
             glow.SetActive(false);
@@ -461,7 +461,7 @@ namespace ThuyKieu.Core.Editor
 
         private static void Lights(Transform root, Vector3 o, bool sunset)
         {
-            var tube = Emissive(sunset ? "ClassTubeOff" : "ClassTube", sunset ? new Color(0.85f, 0.85f, 0.82f) : new Color(0.95f, 0.98f, 1f), sunset ? 0.05f : 1.4f);
+            var tube = Emissive(sunset ? "ClassTubeOff" : "ClassTube", sunset ? new Color(0.85f, 0.85f, 0.82f) : new Color(0.95f, 0.98f, 1f), sunset ? 0.05f : 0.65f);
             foreach (float x in new[] { -2.6f, 2.6f })
                 foreach (float z in new[] { -2f, 2f })
                     Block("Tube", o + new Vector3(x, 3.37f, z), new Vector3(0.1f, 0.05f, 1.2f), tube, root, false);
@@ -472,7 +472,7 @@ namespace ThuyKieu.Core.Editor
                 go.transform.SetParent(root, false);
                 go.transform.position = o + new Vector3(0, 3f, z);
                 var light = go.AddComponent<Light>();
-                light.type = LightType.Point; light.color = new Color(0.95f, 0.97f, 1f); light.range = 8f; light.intensity = 1.05f; light.shadows = LightShadows.None;
+                light.type = LightType.Point; light.color = new Color(0.95f, 0.97f, 1f); light.range = 7.5f; light.intensity = 0.5f; light.shadows = LightShadows.None;
             }
         }
 

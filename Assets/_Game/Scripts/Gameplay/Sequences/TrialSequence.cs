@@ -69,7 +69,7 @@ namespace ThuyKieu.Gameplay.Sequences
             _trust = _round == 1 ? StartTrust : Mathf.Max(RecoverTrust, director.GetInt("c7_long_tin") / 100f);
             // Định Mệnh ≥ 85: the magistrate has taken Tú Bà's gift. Seeing the bribe at the gate cancels it.
             if (_round == 1 && director.GetInt("dinh_menh") >= 85 && !director.GetBool("c7_biet_hoi_lo")) _trust -= BribedCost;
-            bool thorough = director.Autopilot && System.Environment.GetCommandLineArgs().Contains("-autopilotThorough");
+            bool thorough = director.Autopilot && StoryAutopilot.Args.Contains("-autopilotThorough");
             bool forcedLoss = false;
 
             var statements = Build();
@@ -337,8 +337,12 @@ namespace ThuyKieu.Gameplay.Sequences
             VoicePlayer.PlayBark(line.Speaker, line.Text);
             if (_director.Autopilot) { yield return new WaitForSecondsRealtime(0.05f); if (actor != null) actor.SetTalking(false, 0); yield break; }
             float wait = Mathf.Clamp(line.Text.Length * 0.045f, 1.4f, 7f);
-            for (float t = 0; t < wait; t += Time.unscaledDeltaTime)
+            double started = ThuyKieu.Core.GamePause.UnpausedTime;
+            while (true)
             {
+                if (PauseMenuView.IsPaused) { yield return null; continue; }
+                float t = (float)(ThuyKieu.Core.GamePause.UnpausedTime - started);
+                if (t >= wait) break;
                 if (t > minimum && Skip()) break;
                 yield return null;
             }

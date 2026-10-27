@@ -143,6 +143,8 @@ namespace ThuyKieu.Player
         private float gameplayYaw;
         private float gameplayPitch;
         private Vector3 followVelocity;
+        private Vector3 _smoothedTarget;
+        private bool _hasSmoothedTarget;
         [SerializeField] private LayerMask _collisionMask;
         public bool ControlLocked { get; set; }
         private Transform _dialogueCue, _lastCue;
@@ -224,6 +226,8 @@ namespace ThuyKieu.Player
                 return;
             }
             if (target == null) return;
+            _smoothedTarget = target.position;
+            _hasSmoothedTarget = true;
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
             transform.SetPositionAndRotation(Pivot(rotation) - rotation * Vector3.forward * _currentDistance, rotation);
         }
@@ -371,10 +375,8 @@ namespace ThuyKieu.Player
                 }
                 else
                 {
-                    // Locking the cursor can produce a one-frame warp delta large enough to throw the
-                    // camera straight above the player. Cap only that implausible per-frame spike.
-                    rawLook.x = Mathf.Clamp(rawLook.x, -30f, 30f);
-                    rawLook.y = Mathf.Clamp(rawLook.y, -30f, 30f);
+                    // The first delta after locking is ignored above. Normal mouse deltas already
+                    // accumulate movement per frame; clamping them makes fast turns depend on FPS.
                     Vector2 look = rawLook * mouseSensitivity * GameSettings.MouseSensitivity;
                     yaw += look.x;
                     pitch += invertY != GameSettings.InvertY ? look.y : -look.y;
@@ -416,6 +418,11 @@ namespace ThuyKieu.Player
             _currentHeight = Mathf.Lerp(_currentHeight, wantHeight, k);
             BlendFov(wantFov, ObserveFov > 0f ? 8f : 3f);
 
+            if (!_hasSmoothedTarget) { _smoothedTarget = target.position; _hasSmoothedTarget = true; }
+            _smoothedTarget = followSmoothTime > 0f
+                ? Vector3.SmoothDamp(_smoothedTarget, target.position, ref followVelocity, followSmoothTime)
+                : target.position;
+
             Quaternion rotation = Quaternion.Euler(pitch, yaw, 0f);
             Vector3 pivot = Pivot(rotation);
             Vector3 back = -(rotation * Vector3.forward);
@@ -425,24 +432,28 @@ namespace ThuyKieu.Player
             _collisionDistance = allowed < _collisionDistance
                 ? Mathf.Lerp(_collisionDistance, allowed, 1 - Mathf.Exp(-30f * Time.deltaTime))
                 : Mathf.Lerp(_collisionDistance, allowed, 1 - Mathf.Exp(-4f * Time.deltaTime));
-            Vector3 desiredPosition = pivot + back * _collisionDistance;
             HideBody(_collisionDistance < HideBodyDistance);
 
-            transform.position = followSmoothTime > 0f
-                ? Vector3.SmoothDamp(transform.position, desiredPosition, ref followVelocity, followSmoothTime)
-                : desiredPosition;
+            transform.SetPositionAndRotation(pivot + back * _collisionDistance, rotation);
+        }
 
-            transform.rotation = rotation;
+        /// <summary>Only structural walls/floors block the camera; props, scrolls, tables and lintels do not yank the lens.</summary>
+        private static bool IsStructuralWall(Collider col)
+        {
+            if (col == null || col.GetComponentInParent<CameraFadeable>() != null) return false;
+            Bounds b = col.bounds;
+            return b.size.y >= 1.8f && Mathf.Max(b.size.x, b.size.z) >= 1.2f;
         }
 
         /// <summary>Target point plus the shoulder offset, pulled back towards the target if a wall is in the way.</summary>
         private Vector3 Pivot(Quaternion rotation)
         {
-            Vector3 centre = target.position + targetOffset + Vector3.up * _currentHeight;
+            Vector3 basePos = _hasSmoothedTarget ? _smoothedTarget : target.position;
+            Vector3 centre = basePos + targetOffset + Vector3.up * _currentHeight;
             if (Mathf.Abs(_currentShoulder) < 0.001f) return centre;
             Vector3 side = rotation * Vector3.right * _currentShoulder;
             if (_collisionMask.value != 0 && Physics.SphereCast(centre, 0.15f, side.normalized, out RaycastHit hit, side.magnitude, _collisionMask, QueryTriggerInteraction.Ignore)
-                && hit.collider.GetComponentInParent<CameraFadeable>() == null)
+                && IsStructuralWall(hit.collider) && Vector3.Dot(hit.normal, side.normalized) < -0.1f)
                 side = side.normalized * Mathf.Max(0f, hit.distance - 0.05f);
             return centre + side;
         }
@@ -459,13 +470,13 @@ namespace ThuyKieu.Player
                 {
                     var hit = _hits[i];
                     if (hit.distance <= 0f && hit.point == Vector3.zero) continue; // started inside: the ray below covers it
-                    if (hit.collider.GetComponentInParent<CameraFadeable>() != null) continue;
+                    if (!IsStructuralWall(hit.collider) || Vector3.Dot(hit.normal, back) >= -0.1f) continue;
                     // No minimum distance: a floor wider than the gap to the wall put the lens behind thin walls.
                     allowed = Mathf.Min(allowed, Mathf.Max(0.05f, hit.distance - 0.1f));
                 }
                 // With the player's back to a wall the sphere starts inside it and reports nothing; a thin ray still sees it.
                 if (Physics.Raycast(pivot, back, out RaycastHit ray, length, _collisionMask, QueryTriggerInteraction.Ignore)
-                    && ray.collider.GetComponentInParent<CameraFadeable>() == null)
+                    && IsStructuralWall(ray.collider) && Vector3.Dot(ray.normal, back) < -0.1f)
                     allowed = Mathf.Min(allowed, Mathf.Max(0.05f, ray.distance - 0.15f));
                 for (int i = 0; i < count; i++)
                 {

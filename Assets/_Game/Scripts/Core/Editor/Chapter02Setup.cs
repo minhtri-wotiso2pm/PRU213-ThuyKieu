@@ -433,6 +433,7 @@ namespace ThuyKieu.Core.Editor
             for (int i = 0; i < 4; i++)
                 Rock(new Vector3(RoadX(TeaZ) + 2.2f + i * 0.75f, -0.08f, TeaZ - 0.3f + (i % 2) * 0.3f), new Vector3(0.55f, 0.18f, 0.45f), i * 47f, root, i + 2);
             Dust("TeaHouseMotes", c + new Vector3(0, 1.6f, 0), new Vector3(5f, 2f, 4.5f), root, new Color(1f, 0.8f, 0.55f, 0.4f), 60);
+            TeaHouseDetails(world, root, c, wood, thatch, bamboo, weave, stone, clay);
             RoadsideLife(world);
 
             // Bench where Kiều is told to sit (the c2_eavesdrop interaction).
@@ -512,6 +513,97 @@ namespace ThuyKieu.Core.Editor
 
             // A stone milestone half-way.
             Block("Milestone", new Vector3(RoadX(30f) - 2.7f, 0.35f, 30f), new Vector3(0.3f, 0.7f, 0.18f), stone, root);
+        }
+
+        private static void TeaHouseDetails(Transform world, Transform root, Vector3 c, Material wood, Material thatch, Material bamboo, Material weave, Material stone, Material clay)
+        {
+            var ceramic = Material("Ch2Ceramic", new Color(0.84f, 0.8f, 0.72f), 0.65f);
+            var darkCeramic = Material("Ch2DarkCeramic", new Color(0.38f, 0.24f, 0.16f), 0.55f);
+            var cloth = Material("Ch2BannerCloth", new Color(0.76f, 0.64f, 0.44f), 0.15f);
+            var bannerRed = Material("Ch2BannerTrim", new Color(0.58f, 0.14f, 0.1f), 0.2f);
+
+            // Extra middle bamboo posts, roof beams, rafters and hanging bamboo sun-blind (mành tre).
+            foreach (var p in new[] { new Vector3(-2.6f, 0, 0f), new Vector3(2.6f, 0, 0f), new Vector3(0f, 0, 2.3f) })
+                StoryArtKit.Pillar("PostMid", c + p, 0.085f, 2.5f, bamboo, stone, root);
+            foreach (float z in new[] { -2.3f, 0f, 2.3f })
+                Block("Crossbeam", c + new Vector3(0, 2.48f, z), new Vector3(5.4f, 0.09f, 0.09f), bamboo, root, false);
+            foreach (float x in new[] { -2.6f, 0f, 2.6f })
+                Block("Purlin", c + new Vector3(x, 2.56f, 0), new Vector3(0.09f, 0.09f, 4.8f), bamboo, root, false);
+            Block("ManhTre", c + new Vector3(-2.62f, 2.12f, 0.6f), new Vector3(0.03f, 0.68f, 2.1f), weave, root, false);
+            Cylinder("ManhTreRoll", c + new Vector3(-2.64f, 1.76f, -0.45f), 0.045f, 2.1f, bamboo, root, false).transform.rotation = Quaternion.Euler(90, 0, 0);
+
+            // Half-height woven bamboo walls (vách liếp tre) on the north and east-back corners to shelter the stall.
+            Block("NorthWeaveWall", c + new Vector3(-0.3f, 0.68f, 2.32f), new Vector3(4.6f, 1.05f, 0.06f), weave, root);
+            Block("NorthWallRail", c + new Vector3(-0.3f, 1.22f, 2.32f), new Vector3(4.65f, 0.06f, 0.08f), bamboo, root, false);
+            Block("EastCornerWeave", c + new Vector3(2.6f, 0.68f, -1.15f), new Vector3(0.06f, 1.05f, 2.3f), weave, root);
+            Block("EastCornerRail", c + new Vector3(2.6f, 1.22f, -1.15f), new Vector3(0.08f, 0.06f, 2.35f), bamboo, root, false);
+
+            // Wooden tea counter (quầy hàng nước) with shelves, woven trays (mẹt tre), teapot and cups.
+            Block("TeaCounter", c + new Vector3(1.55f, 0.52f, 0.35f), new Vector3(0.75f, 0.72f, 1.85f), wood, root);
+            Block("TeaCounterTop", c + new Vector3(1.55f, 0.9f, 0.35f), new Vector3(0.84f, 0.05f, 1.95f), wood, root, false);
+            Cylinder("MetTreA", c + new Vector3(1.52f, 0.93f, 0.75f), 0.28f, 0.025f, weave, root, false);
+            Cylinder("MetTreB", c + new Vector3(1.56f, 0.93f, -0.1f), 0.24f, 0.025f, weave, root, false);
+            StoryArtKit.Sphere("AmTraCounter", c + new Vector3(1.5f, 1.02f, 0.72f), new Vector3(0.18f, 0.15f, 0.18f), darkCeramic, root);
+            for (int i = 0; i < 4; i++)
+                Cylinder("ChenTra", c + new Vector3(1.38f + (i % 2) * 0.12f, 0.95f, 0.52f + (i / 2) * 0.12f), 0.032f, 0.045f, ceramic, root, false);
+            for (int i = 0; i < 3; i++)
+                StoryArtKit.Sphere("BanhQue", c + new Vector3(1.54f + (i - 1) * 0.08f, 0.97f, -0.1f), new Vector3(0.09f, 0.045f, 0.09f), cloth, root);
+
+            // Traditional bamboo slatted bed (chõng tre) & low tea table with teapot and cups near Kiều's bench.
+            Block("ChongTreTop", c + new Vector3(-1.35f, 0.46f, 1.15f), new Vector3(1.55f, 0.06f, 0.92f), bamboo, root);
+            foreach (float dx in new[] { -0.68f, 0.68f })
+                foreach (float dz in new[] { -0.38f, 0.38f })
+                    Cylinder("ChongLeg", c + new Vector3(-1.35f + dx, 0.16f, 1.15f + dz), 0.04f, 0.3f, bamboo, root, false);
+            Cylinder("TrayOnChong", c + new Vector3(-1.3f, 0.49f, 1.15f), 0.22f, 0.02f, weave, root, false);
+            StoryArtKit.Sphere("TeapotChong", c + new Vector3(-1.32f, 0.56f, 1.15f), new Vector3(0.15f, 0.12f, 0.15f), darkCeramic, root);
+            for (int i = 0; i < 3; i++)
+                Cylinder("CupChong", c + new Vector3(-1.18f, 0.51f, 1.05f + i * 0.1f), 0.028f, 0.04f, ceramic, root, false);
+
+            // Tea table right next to Kiều's resting bench so she sits at a proper roadside table.
+            Block("BenchTeaTable", c + new Vector3(-0.55f, 0.48f, -1.5f), new Vector3(0.65f, 0.04f, 0.55f), wood, root);
+            foreach (float dx in new[] { -0.26f, 0.26f })
+                foreach (float dz in new[] { -0.21f, 0.21f })
+                    Block("BenchTableLeg", c + new Vector3(-0.55f + dx, 0.31f, -1.5f + dz), new Vector3(0.04f, 0.3f, 0.04f), wood, root, false);
+            StoryArtKit.Sphere("BenchTeapot", c + new Vector3(-0.55f, 0.56f, -1.48f), new Vector3(0.14f, 0.11f, 0.14f), darkCeramic, root);
+            Cylinder("BenchCupA", c + new Vector3(-0.68f, 0.5f, -1.55f), 0.028f, 0.04f, ceramic, root, false);
+            Cylinder("BenchCupB", c + new Vector3(-0.42f, 0.5f, -1.42f), 0.028f, 0.04f, ceramic, root, false);
+
+            // Big terracotta rainwater jar (chum nước mưa) with wooden lid and bamboo dipper by the front post.
+            StoryArtKit.Sphere("RainwaterJar", c + new Vector3(-2.35f, 0.52f, -2.05f), new Vector3(0.62f, 0.72f, 0.62f), clay, root);
+            Cylinder("JarLid", c + new Vector3(-2.35f, 0.88f, -2.05f), 0.24f, 0.04f, wood, root, false);
+
+            // Roadside bamboo sign pole, cloth banner ("TRÀ QUÁN") and warm beacon lantern at the road edge.
+            Vector3 signBase = c + new Vector3(-3.35f, 0f, -2.45f);
+            Cylinder("RoadSignPole", signBase, 0.055f, 3.3f, bamboo, root, false);
+            Block("RoadSignArm", signBase + new Vector3(0.45f, 3.05f, 0f), new Vector3(1.05f, 0.05f, 0.05f), bamboo, root, false);
+            Block("RoadBanner", signBase + new Vector3(0.42f, 2.35f, 0f), new Vector3(0.52f, 1.25f, 0.02f), cloth, root, false);
+            Block("RoadBannerTop", signBase + new Vector3(0.42f, 2.98f, 0f), new Vector3(0.58f, 0.06f, 0.03f), bannerRed, root, false);
+            Block("RoadBannerBottom", signBase + new Vector3(0.42f, 1.72f, 0f), new Vector3(0.58f, 0.06f, 0.03f), bannerRed, root, false);
+            Lantern("RoadBeaconLantern", signBase + new Vector3(-0.1f, 2.85f, 0f), new Color(1f, 0.58f, 0.24f), root, 14f, 3.1f);
+            Lantern("InteriorWarmLantern", c + new Vector3(0.4f, 2.35f, 0.2f), new Color(1f, 0.62f, 0.28f), root, 10f, 2.2f);
+
+            // Shade tree overarching the tea house and bà hàng nước tending the counter.
+            Prop("Assets/_Game/Prefabs/Props/CayNhan.prefab", c + new Vector3(-3.4f, 0f, 2.9f), 35f, 1.15f, root);
+            var shared = StoryAnimationSetup.Controller();
+            var owner = RiggedActor("BaHangNuoc", "BaHangNuoc", "Assets/_Game/Art/Characters/MeThuyKieu/Models/MeThuyKieu_Rigged.fbx",
+                "Assets/_Game/Art/Characters/MeThuyKieu/Tectures", 1.56f, c + new Vector3(2.18f, 0.16f, 0.35f), 270f, new Color(0.82f, 0.72f, 0.6f), shared);
+            owner.transform.SetParent(root, true);
+            GroundFeet(owner.GetComponentInChildren<Animator>().transform, owner.gameObject, c.y + 0.16f);
+            if (owner.GetComponentInChildren<Animator>() != null)
+                owner.GetComponentInChildren<Animator>().gameObject.AddComponent<AnimatorRootAnchor>();
+            if (owner.GetComponent<UnityEngine.AI.NavMeshAgent>() != null)
+                Object.DestroyImmediate(owner.GetComponent<UnityEngine.AI.NavMeshAgent>());
+
+            // Mid-road rest shelter & signpost at z = 58 so players see a clear rest stop & lantern trail right after the paper drop.
+            Vector3 mid = new Vector3(RoadX(58f) + 3.8f, 0f, 58f);
+            var wayRoot = new GameObject("TeaWaystation").transform;
+            wayRoot.SetParent(world, false);
+            Block("WayBench", mid + new Vector3(0f, 0.36f, 0f), new Vector3(1.5f, 0.08f, 0.48f), bamboo, wayRoot);
+            foreach (float dx in new[] { -0.6f, 0.6f })
+                Cylinder("WayBenchLeg", mid + new Vector3(dx, 0f, 0f), 0.045f, 0.34f, bamboo, wayRoot, false);
+            Cylinder("WaySignPole", mid + new Vector3(-1.1f, 0f, -0.8f), 0.05f, 2.4f, bamboo, wayRoot, false);
+            Lantern("WayLantern", mid + new Vector3(-1.1f, 2.15f, -0.8f), new Color(1f, 0.56f, 0.24f), wayRoot, 11f, 2.5f);
+            StoryArtKit.Jars(mid + new Vector3(0.95f, 0f, 0.3f), 2, wayRoot, 19);
         }
 
         private static void Gate(Transform world, out GameObject[] nightLights)

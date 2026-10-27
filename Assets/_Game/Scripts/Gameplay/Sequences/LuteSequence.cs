@@ -104,7 +104,8 @@ namespace ThuyKieu.Gameplay.Sequences
 
         private void Pluck(int index, LuteView view)
         {
-            _strings[index].PlayOneShot(_strings[index].clip, 0.75f * GameSettings.Effects);
+            var note = _strings[index].clip;
+            if (note != null) _strings[index].PlayOneShot(note, 0.75f * GameSettings.Effects);
             view.Pluck(index);
             _played.Add(index);
             if (_played.Count > BacMenh.Length) _played.RemoveAt(0);

@@ -232,6 +232,8 @@ namespace ThuyKieu.Player
 
         private void Update()
         {
+            // Cinematics disable the capsule while they drive the body; moving it then errors every frame.
+            if (!controller.enabled) return;
             CacheAnimatorParameters();
             bool autoRun = AutoRun && !ScriptedMove.HasValue && !ControlLocked && !HeldStill;
             Vector3 moveDirection = ScriptedMove.HasValue ? Flat(ScriptedMove.Value)

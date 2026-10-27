@@ -1,6 +1,7 @@
 using ThuyKieu.Core.Story;
 using ThuyKieu.Player;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace ThuyKieu.Gameplay.Chase
 {
@@ -22,6 +23,8 @@ namespace ThuyKieu.Gameplay.Chase
         private float _repath;
 
         public bool Following { get; set; } = true;
+        /// <summary>Opt-in lateral spacing; chase companions retain their existing following behaviour.</summary>
+        public float SideOffset { get; set; }
 
         private void Awake()
         {
@@ -34,21 +37,40 @@ namespace ThuyKieu.Gameplay.Chase
         /// <summary>Puts her right behind the player (checkpoints, scene cuts).</summary>
         public void Snap()
         {
-            Vector3 behind = _player.transform.position - _player.transform.forward * _distance;
+            Vector3 behind = FollowPoint();
             _actor.Place(behind, _player.transform.rotation);
         }
 
         private void Update()
         {
-            if (!Following || _player == null) return;
+            if (!Following || _player == null || ThuyKieu.Core.GamePause.IsPaused) return;
             if (_hasCrouch) _animator.SetBool(CrouchParameter, _player.IsCrouching);
             float distance = Vector3.Distance(transform.position, _player.transform.position);
             if (distance > _catchUp && !Visible()) { Snap(); return; }
             if ((_repath -= Time.deltaTime) > 0f) return;
             _repath = 0.2f;
-            if (distance < _distance + 0.3f) { _actor.Stop(); _actor.FaceTowards(_player.transform.position); return; }
+            Vector3 destination = Mathf.Abs(SideOffset) > 0.01f
+                ? FollowPoint()
+                : _player.transform.position - (_player.transform.position - transform.position).normalized * _distance;
+            bool inPlace = Mathf.Abs(SideOffset) > 0.01f
+                ? Vector3.ProjectOnPlane(destination - transform.position, Vector3.up).sqrMagnitude < 0.36f
+                : distance < _distance + 0.3f;
+            if (inPlace) { _actor.Stop(); _actor.FaceTowards(_player.transform.position); return; }
             float speed = _player.IsCrouching ? 1.2f : _player.IsRunning || _player.ScriptedMove.HasValue ? 5.6f : distance > 4f ? 4f : 2.6f;
-            _actor.MoveTo(_player.transform.position - (_player.transform.position - transform.position).normalized * _distance, speed);
+            _actor.MoveTo(destination, speed);
+        }
+
+        private Vector3 FollowPoint()
+        {
+            Vector3 behind = _player.transform.position - _player.transform.forward * _distance;
+            if (Mathf.Abs(SideOffset) < 0.01f || _actor.Agent == null) return behind;
+            var filter = new NavMeshQueryFilter { agentTypeID = _actor.Agent.agentTypeID, areaMask = _actor.Agent.areaMask };
+            Vector3 desired = behind + _player.transform.right * SideOffset;
+            // In narrow lanes, stay behind rather than selecting a point through a wall or off the walkway.
+            if (NavMesh.SamplePosition(_player.transform.position, out var origin, 1f, filter)
+                && NavMesh.SamplePosition(desired, out var side, 0.5f, filter)
+                && !NavMesh.Raycast(origin.position, side.position, out _, filter)) return side.position;
+            return behind;
         }
 
         private bool Visible()

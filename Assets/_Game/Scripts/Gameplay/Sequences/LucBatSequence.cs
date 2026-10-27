@@ -42,7 +42,7 @@ namespace ThuyKieu.Gameplay.Sequences
                 if (director.Audio != null) director.Audio.PlaySfx("clue");
             }
             bool helped = !verse && director.GetInt("dong_dieu") >= 6;
-            float deadline = couplet.TimeLimit > 0f ? Time.unscaledTime + couplet.TimeLimit : -1f;
+            double deadline = couplet.TimeLimit > 0f ? ThuyKieu.Core.GamePause.UnpausedTime + couplet.TimeLimit : -1;
 
             // Step 1: the rhyme word.
             var dimTiles = couplet.Tiles.Select((_, i) => verse && i != couplet.Correct).ToArray();
@@ -93,7 +93,7 @@ namespace ThuyKieu.Gameplay.Sequences
         }
 
         /// <summary>Waits for a key (1–n), a click, the autopilot's answer or the deadline (-1 = none).</summary>
-        private static IEnumerator Pick(StoryDirector director, LucBatView view, int count, bool[] dimmed, float deadline, float limit, int autopick, System.Action<int> done)
+        private static IEnumerator Pick(StoryDirector director, LucBatView view, int count, bool[] dimmed, double deadline, float limit, int autopick, System.Action<int> done)
         {
             if (director.Autopilot)
             {
@@ -107,7 +107,7 @@ namespace ThuyKieu.Gameplay.Sequences
                 if (PauseMenuView.IsPaused) continue;
                 if (deadline > 0f)
                 {
-                    float left = deadline - Time.unscaledTime;
+                    float left = (float)(deadline - ThuyKieu.Core.GamePause.UnpausedTime);
                     view.SetTimer(left / limit);
                     if (left <= 0f) { done(-1); yield break; }
                 }
@@ -143,8 +143,12 @@ namespace ThuyKieu.Gameplay.Sequences
         private static IEnumerator Hold(StoryDirector director, float seconds)
         {
             if (director.Autopilot) { yield return new WaitForSecondsRealtime(0.1f); yield break; }
-            for (float t = 0; t < seconds; t += Time.unscaledDeltaTime)
+            double started = ThuyKieu.Core.GamePause.UnpausedTime;
+            while (true)
             {
+                if (PauseMenuView.IsPaused) { yield return null; continue; }
+                float t = (float)(ThuyKieu.Core.GamePause.UnpausedTime - started);
+                if (t >= seconds) break;
                 var keyboard = Keyboard.current;
                 if (t > 0.4f && keyboard != null && (keyboard.spaceKey.wasPressedThisFrame || keyboard.enterKey.wasPressedThisFrame)) break;
                 yield return null;

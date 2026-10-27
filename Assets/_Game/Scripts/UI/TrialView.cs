@@ -33,6 +33,7 @@ namespace ThuyKieu.UI
         }
 
         private GameObject _root, _stamp, _press, _present, _evidence;
+        private Image _actionsPanel;
         private TMP_Text _title, _subtitle, _actionHeader, _help, _lineName, _lineText, _stampText;
         private RectTransform _trustFill, _rows;
         private Image _trustImage;
@@ -67,6 +68,7 @@ namespace ThuyKieu.UI
             _press = trial.Find("Actions/Press").gameObject;
             _present = trial.Find("Actions/Present").gameObject;
             _evidence = trial.Find("Actions/Evidence").gameObject;
+            _actionsPanel = trial.Find("Actions").GetComponent<Image>();
             _cardTemplate = StoryUIBuilder.Find<Button>(trial, "Actions/Evidence/Template");
             _lineName = StoryUIBuilder.Find<TMP_Text>(trial, "Line/Name");
             _lineText = StoryUIBuilder.Find<TMP_Text>(trial, "Line/Text");
@@ -124,6 +126,7 @@ namespace ThuyKieu.UI
         public void ShowActions(int selected, bool disproved)
         {
             _evidence.SetActive(false);
+            if (_actionsPanel != null) _actionsPanel.color = new Color(0.04f, 0.03f, 0.035f, 0.72f);
             _press.SetActive(selected >= 0 && !disproved);
             _present.SetActive(selected >= 0 && !disproved);
             _actionHeader.text = selected < 0 ? "CHỌN MỘT LỜI KHAI" : "LỜI KHAI SỐ " + (selected + 1);
@@ -140,7 +143,9 @@ namespace ThuyKieu.UI
             _press.SetActive(false);
             _present.SetActive(false);
             _evidence.SetActive(true);
-            _actionHeader.text = "ĐƯA BẰNG CHỨNG NÀO?";
+            // Opaque like a case file held up, so the cards read as a dossier instead of floating over the hall.
+            if (_actionsPanel != null) _actionsPanel.color = new Color(0.05f, 0.035f, 0.03f, 0.96f);
+            _actionHeader.text = "HỒ SƠ — ĐƯA BẰNG CHỨNG NÀO?";
             _help.text = string.Empty;
             foreach (var button in _cardButtons) Destroy(button.gameObject);
             _cardButtons.Clear();

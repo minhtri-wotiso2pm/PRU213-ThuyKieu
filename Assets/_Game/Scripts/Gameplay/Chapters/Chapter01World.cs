@@ -1054,8 +1054,10 @@ namespace ThuyKieu.Gameplay.Chapters
             {
                 altar.SetPositionAndRotation(new Vector3(0f, 0f, 5.92f), Quaternion.identity);
                 altar.localScale = Vector3.one * 1.35f;
-                MovePoint("AltarTarget", altar.position + Vector3.back * 0.78f);
-                MovePoint("AltarTargetStand", altar.position + Vector3.back * 0.78f + Vector3.up * 0.05f);
+                // Far enough that a reaching or praying pose clears the table top and its plinth;
+                // at 0.78 the hands of the staged mother/Kiều clipped through the altar's edge.
+                MovePoint("AltarTarget", altar.position + Vector3.back * 1.08f);
+                MovePoint("AltarTargetStand", altar.position + Vector3.back * 1.08f + Vector3.up * 0.05f);
                 MovePoint("Focus_Altar", altar.position + Vector3.up * 1.22f);
                 Transform lamp = GameObject.Find("AltarOilLamp")?.transform;
                 if (lamp != null) lamp.position = altar.position + new Vector3(0.41f, 1.22f, -0.04f);

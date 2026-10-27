@@ -36,6 +36,8 @@ namespace ThuyKieu.UI
         // hints only after they change; subtitles get a soft shadow so they read over a bright scene.
         [SerializeField] private bool _compact;
         private float _headerTimer, _controlsTimer;
+        // While an objective toast is on screen the header waits, so the same text is not shown twice at once.
+        private float _objectiveToastHold;
         private CanvasGroup _headerGroup, _controlsGroup;
         private const float HeaderSeconds = 9f, ControlsSeconds = 14f;
 
@@ -126,9 +128,12 @@ namespace ThuyKieu.UI
 
         public void SetObjective(string text, bool announce = true)
         {
+            bool changed = _objective.text != text;
             _objective.text = text;
             _headerTimer = HeaderSeconds;
-            if (announce && !_compact) ShowToast("MỤC TIÊU", text);
+            // A new objective is announced by the toast; the header then repeats it, not both at once.
+            // Re-setting the same objective (a sequence re-stating it) stays quiet instead of re-announcing.
+            if (announce && !_compact && changed) { ShowToast("MỤC TIÊU", text); _objectiveToastHold = 3.4f; }
         }
 
         public void SetExploreOptions(IList<string> options)
@@ -223,7 +228,8 @@ namespace ThuyKieu.UI
             _barTop.sizeDelta = new Vector2(0, _barHeight);
             _barBottom.sizeDelta = new Vector2(0, _barHeight);
             bool overlay = System.Array.Exists(_overlays, o => o.activeSelf);
-            _header.SetActive(!_dialogueMode && !overlay);
+            if (_objectiveToastHold > 0f) _objectiveToastHold -= Time.unscaledDeltaTime;
+            _header.SetActive(!_dialogueMode && !overlay && _objectiveToastHold <= 0f);
             _barkRoot.SetActive(!_dialogueMode && !overlay);
             _toastGroup.alpha = overlay ? 0f : 1f; // documents and boards cover the screen; toasts wait underneath
             _controls.gameObject.SetActive(!_dialogueMode);

@@ -68,6 +68,11 @@ namespace ThuyKieu.UI
             int page = _list.pageToDisplay;
             if (keyboard.leftArrowKey.wasPressedThisFrame || keyboard.aKey.wasPressedThisFrame) page--;
             if (keyboard.rightArrowKey.wasPressedThisFrame || keyboard.dKey.wasPressedThisFrame) page++;
+            // The mouse wheel pages too: rolling down reads on, like scrolling a document.
+            var mouse = UnityEngine.InputSystem.Mouse.current;
+            float wheel = mouse != null ? mouse.scroll.ReadValue().y : 0f;
+            if (wheel < -0.5f) page++;
+            if (wheel > 0.5f) page--;
             page = Mathf.Clamp(page, 1, pages);
             if (page == _list.pageToDisplay) return;
             _list.pageToDisplay = page;
@@ -78,7 +83,7 @@ namespace ThuyKieu.UI
         {
             if (_hint == null) return;
             int pages = Mathf.Max(1, _list.textInfo.pageCount);
-            _hint.text = pages > 1 ? "←/→: lật trang (" + _list.pageToDisplay + "/" + pages + ") · J / Esc: đóng sổ tay" : "J / Esc: đóng sổ tay";
+            _hint.text = pages > 1 ? "←/→ / lăn chuột: lật trang (" + _list.pageToDisplay + "/" + pages + ") · J / Esc: đóng sổ tay" : "J / Esc: đóng sổ tay";
         }
 
         public void Close()

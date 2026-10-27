@@ -269,6 +269,9 @@ namespace ThuyKieu.Dialogue
 
         private void AdvanceInk()
         {
+            // The story can be reset (checkpoint restore, chapter change) between the UI's continue
+            // click and this call; advancing into a dead story throws NullReferenceException.
+            if (InkStory == null) return;
             while (InkStory.canContinue)
             {
                 string previousState = InkStopBeforeLine != null ? InkStory.state.ToJson() : null;

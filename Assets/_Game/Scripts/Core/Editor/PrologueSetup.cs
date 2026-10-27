@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using ThuyKieu.Core.Story;
 using ThuyKieu.Gameplay.Chapters;
 using ThuyKieu.Gameplay.Sequences;
@@ -29,9 +29,9 @@ namespace ThuyKieu.Core.Editor
             var scene = NewScene(ScenePath);
             var shared = StoryAnimationSetup.Controller();
             var s = CreateSystems(ChapterCatalog.Prologue, "Trang sách", "prologue", "Chapter01_GiaBien", ClassOrigin + new Vector3(2.9f, 0.05f, -1.15f), 0f, "classroom");
-            Grade(s.Fx, 0.2f, 8f, 6f, 4f, new Color(0.5f, 0.52f, 0.6f), new Color(0.82f, 0.74f, 0.6f));
+            Grade(s.Fx, -0.22f, 6f, 4f, 2f, new Color(0.5f, 0.52f, 0.6f), new Color(0.78f, 0.72f, 0.62f));
             Set(s.Fx, "_baseBloom", 0f);
-            UseSky(s.CameraComponent, Sky("PrologueSky", "kloppenheim_06_puresky", 1f, new Color(0.62f, 0.64f, 0.66f), 60f));
+            UseSky(s.CameraComponent, Sky("PrologueSky", "kloppenheim_06_puresky", 0.78f, new Color(0.58f, 0.6f, 0.62f), 60f));
             // The camera-mounted spotlight creates a moving white hotspot on classroom desks/windows.
             Set(s.Shots, "_keyLight", 0f);
             var world = new GameObject("World").transform;
@@ -68,7 +68,7 @@ namespace ThuyKieu.Core.Editor
             // through the rear wall and breakfast table.
             var father = CharacterActor("VuongOng", "VuongOng", "VuongOng", 1.66f, new Vector3(2.05f, 0.27f, 4.75f), 180f);
             var mother = RiggedActor("MeKieu", "MeKieu", Characters + "MeThuyKieu/Models/MeThuyKieu_Rigged.fbx", Characters + "MeThuyKieu/Tectures", 1.56f, new Vector3(-1.1f, 0.27f, 5.3f), 150f, Color.white, shared);
-            var brother = RiggedActor("VuongQuan", "VuongQuan", Characters + "MaGiamSinh/Models/MaGiamSinh_Rigged.fbx", Characters + "MaGiamSinh/Tectures", 1.48f, new Vector3(-0.9f, 0.27f, 4.3f), 165f, new Color(0.72f, 0.86f, 0.7f), shared);
+            var brother = RiggedActor("VuongQuan", "VuongQuan", Characters + "ThuyVan/Models/ThuyVan_Rigged.fbx", Characters + "ThuyVan/Textures", 1.52f, new Vector3(0.55f, 0.27f, 4.3f), 180f, Color.white, shared);
             var officials = new[]
             {
                 CharacterActor("QuanSai", "QuanSai", "LinhCanh", 1.8f, new Vector3(-0.4f, 0f, -8f), 0f),
@@ -89,8 +89,8 @@ namespace ThuyKieu.Core.Editor
             var officialSpots = new[] { Point("OfficialSpotA", new Vector3(-1.15f, 0f, 3.35f), 0f, marks), Point("OfficialSpotB", new Vector3(1.15f, 0f, 3.35f), 0f, marks) };
 
             // ------------------------------------------------------------ light & atmosphere
-            var sun = Sun("Sun", new Color(1f, 0.9f, 0.76f), 1.3f, new Vector3(34f, 250f, 0f));
-            RenderSettings.ambientLight = new Color(0.6f, 0.59f, 0.56f);
+            var sun = Sun("Sun", new Color(1f, 0.9f, 0.76f), 0.82f, new Vector3(34f, 250f, 0f));
+            RenderSettings.ambientLight = new Color(0.46f, 0.45f, 0.43f);
             RenderSettings.fogColor = new Color(0.72f, 0.74f, 0.74f);
             RenderSettings.fogDensity = 0.006f;
             var rain = Rain("PrologueRain", courtyard);

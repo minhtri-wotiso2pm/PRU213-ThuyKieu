@@ -279,7 +279,7 @@ namespace ThuyKieu.Gameplay.Chapters
             }
             // The gong at the gate: the officials burst into the courtyard.
             if (key == "sfx" && value == "gong" && !_officials[0].gameObject.activeSelf) StartCoroutine(OfficialsArrive());
-            if (key == "speaker" && _officials[0].gameObject.activeSelf && _director.CurrentSequence == null) StartCoroutine(Address(value));
+            if (key == "speaker" && _director.CurrentSequence == null) StartCoroutine(Address(value));
             if (key == "gameplay" && value == "arrest") StartCoroutine(WatchArrest());
             if (key == "hands") Hands(value);
             if (key == "act")
@@ -536,6 +536,9 @@ namespace ThuyKieu.Gameplay.Chapters
             // RouteTags turns everyone towards the speaker (and the speaker towards the player) after TagReceived.
             yield return null;
             var kieu = _director.Player.GetComponent<StoryActor>();
+
+
+            if (!_officials[0].gameObject.activeSelf) { if (speaker == "VuongOng" || speaker == "VuongQuan") { _father.TurnForLine(_courtyard.position); _brother.TurnForLine(_courtyard.position); kieu.TurnForLine(speaker == "VuongQuan" ? _brother.transform.position : _father.transform.position); } yield break; }
             StoryActor official = NearestOfficial(kieu.transform.position);
             bool down = _kneelGraph.IsValid();
             switch (speaker)
@@ -583,6 +586,7 @@ namespace ThuyKieu.Gameplay.Chapters
             var shot = new GameObject("ArrestShot").transform;
             camera.ControlLocked = true;
             var kieu = _director.Player.GetComponent<StoryActor>();
+
             Vector3 centre = EscortCentre();
             shot.position = ArrestLens(centre, shot.position, true);
             shot.rotation = Quaternion.LookRotation(centre + Vector3.up * 0.9f - shot.position);
@@ -1342,6 +1346,8 @@ namespace ThuyKieu.Gameplay.Chapters
             StartCoroutine(_director.Hud.Fade(0f, _director.Autopilot ? 0f : 0.6f));
             yield return WalkPlayer(_courtyard.position, 1.4f, 2f);
             player.Teleport(_courtyard.position, _courtyard.rotation);
+            _brother.TurnForLine(_courtyard.position);
+            _father.TurnForLine(_courtyard.position);
         }
 
         /// <summary>Walks the player (with the walk animation) to a point, giving up after <paramref name="limit"/> seconds.</summary>

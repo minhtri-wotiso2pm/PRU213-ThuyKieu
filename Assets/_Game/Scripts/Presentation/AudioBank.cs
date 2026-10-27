@@ -26,7 +26,10 @@ namespace ThuyKieu.Presentation
                 ?? Resources.Load<AudioClip>(ResourceRoot + "/" + key)
                 ?? Synthesise(kind)(id);
             if (clip == null) Debug.LogWarning("AudioBank: no clip for " + key);
-            return Cache[key] = clip;
+            // A miss is not cached: with domain reload off the static cache outlives Play sessions, and one
+            // transient failure would otherwise mute the id for the whole Editor session.
+            if (clip != null) Cache[key] = clip;
+            return clip;
         }
 
         public static Func<string, AudioClip> Synthesise(string kind) =>
