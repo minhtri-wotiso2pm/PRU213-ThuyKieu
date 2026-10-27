@@ -45,3 +45,7 @@ desktop.ini
 # ---- Anh chup tam cua tool ----
 /Assets/Screenshots/
 /Assets/Screenshots.meta
+
+# ---- Scene recovery / log tam cua Unity ----
+/Assets/_Recovery/
+/gitstatus.txt
