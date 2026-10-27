@@ -17,7 +17,7 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
     /// the guard, chị Lam, what Kiều carries) together with the Ink state, and restores it with Kiều at a safe spot for the
     /// stage. Whether a scare has been seen is kept apart from progress, so a retry keeps the warnings but not the jolt.
     /// </summary>
-    public partial class Chapter04LauWorld : MonoBehaviour, IChapterSummary, IAutopilotDriver
+    public partial class Chapter04LauWorld : MonoBehaviour, IChapterSummary, IAutopilotDriver, IChapterExit
     {
         /// <summary>A guard's round: its stops and how long he stands at each (one stop with a long pause is a post).</summary>
         [System.Serializable]
@@ -327,6 +327,26 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
         {
             if (door.MovedByNpc) return;
             if (door.Lock == DoorLock.None && _lamTalk != null) _lamTalk.Reveal(true);
+        }
+
+        /// <summary>
+        /// The hand-over to Chapter 5, which opens on the run through the bamboo: she breaks into a run out of the back door,
+        /// the dark doorway and the rain beyond fill her eyes, and the frame goes black under her breath.
+        /// </summary>
+        public IEnumerator Exit(StoryDirector director)
+        {
+            var player = director.Player;
+            Vector3 door = _backDoor.Centre, outward = door - player.transform.position;
+            outward.y = 0f;
+            outward = outward.sqrMagnitude > 0.09f ? outward.normalized : player.transform.forward;
+            director.CameraController.LookTarget = door + outward * 5f + Vector3.up * 1.4f;
+            player.ScriptedSpeed = 3.8f;
+            player.ScriptedMove = outward;
+            if (director.Audio != null) director.Audio.PlaySfx("breath_in", 0.7f);
+            yield return new WaitForSeconds(0.25f);
+            yield return director.Hud.Fade(1f, 0.5f);
+            player.ScriptedMove = null;
+            director.CameraController.LookTarget = null;
         }
 
         private void OnBackDoor(HouseDoor door)

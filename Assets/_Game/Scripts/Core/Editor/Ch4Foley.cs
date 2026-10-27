@@ -183,7 +183,7 @@ namespace ThuyKieu.Core.Editor
         }
 
         /// <summary>One contact: from just before the hit to the end of its ring (within a maximum), 2 ms fade in, soft fade out.</summary>
-        private static float[] OneShot(float[] x, int rate, float maxSeconds, out int start)
+        internal static float[] OneShot(float[] x, int rate, float maxSeconds, out int start)
         {
             var env = Envelope(x, Mathf.Max(1, rate / 400));
             float peak = env.Max();
@@ -199,7 +199,7 @@ namespace ThuyKieu.Core.Editor
             return shot;
         }
 
-        private static float[] Resample(float[] x, int from, int to)
+        internal static float[] Resample(float[] x, int from, int to)
         {
             if (from == to) return x;
             var y = new float[(int)((long)x.Length * to / from)];
@@ -249,7 +249,7 @@ namespace ThuyKieu.Core.Editor
         }
 
         /// <summary>Short effects: decompressed into memory, mono, Vorbis like the rest of the effects.</summary>
-        private static void Configure(string path)
+        internal static void Configure(string path)
         {
             if (!(AssetImporter.GetAtPath(path) is AudioImporter importer)) return;
             var settings = importer.defaultSampleSettings;

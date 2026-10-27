@@ -79,8 +79,9 @@ namespace ThuyKieu.Gameplay.Sequences
         {
             var b = new StringBuilder();
             Header(b, "CHƯƠNG 5 · ĐÀO THOÁT");
-            if (v.GetBool("c4_ru_co_lam")) Item(b, v.GetBool("c5_co_lam_thoat") ? "Kéo được chị Lam ra khỏi rừng tre." : "Chị Lam không thoát được cùng bạn.");
-            Item(b, "Rượt đuổi trong rừng: " + v.GetInt("c5_qte") + "/3 lần thoát hiểm gọn gàng.");
+            if (v.GetBool("c4_ru_co_lam")) Item(b, v.GetBool("c5_co_lam_thoat") ? "Chị Lam cùng bạn chạy thoát qua rừng tre." : "Chị Lam không thoát được cùng bạn.");
+            int caught = v.GetInt("c5_bi_bat");
+            Item(b, "Rừng tre: " + (caught == 0 ? "thoát ngay lần đầu" : "thoát sau " + caught + " lần bị đuổi kịp hoặc ngã") + " · vấp " + v.GetInt("c5_vap") + " lần ở lượt cuối.");
             Header(b, "CHƯƠNG 6 · KIM TRỌNG");
             int trust = v.GetInt("kt_tin_tuong");
             Item(b, "Kim Trọng tin bạn " + (trust >= 5 ? "trọn vẹn" : trust >= 3 ? "nhiều" : "còn dè dặt") + (v.GetBool("kt_biet_xuyen_khong") ? " · chàng biết bạn đến từ nơi rất xa." : "."));

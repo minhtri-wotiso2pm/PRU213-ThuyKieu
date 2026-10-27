@@ -72,7 +72,7 @@ namespace ThuyKieu.Gameplay.Stealth
 
         // What the playing catch has taken over, so Cleanup can hand it all back from anywhere.
         private bool _owns;
-        private Watchman _catcher;
+        private StoryActor _catcher;
         private GrabPose _pose;
         private StoryActor _actor;
         private Animator _animator;
@@ -137,25 +137,37 @@ namespace ThuyKieu.Gameplay.Stealth
         /// </summary>
         public bool TryPlay(Watchman catcher, string speakerId, string line, Action done)
         {
-            if (Playing || catcher == null || catcher.Actor == null || _camera == null || _player == null) return false;
-            var pose = catcher.Actor.GetComponent<GrabPose>();
-            if (pose == null) pose = catcher.Actor.gameObject.AddComponent<GrabPose>();
+            if (catcher == null) return false;
+            return TryPlay(catcher.Actor, catcher.State.ToString(), speakerId, line, done);
+        }
+
+        /// <summary>
+        /// The same catch by someone who is not a house watcher (the Chapter 5 pursuer in the bamboo). The caller has judged
+        /// the catch valid (reach, sight, same side of any gap); this only refuses to dress up a grab from too far away.
+        /// </summary>
+        public bool TryPlay(StoryActor catcher, string speakerId, string line, Action done) => TryPlay(catcher, "pursuit", speakerId, line, done);
+
+        private bool TryPlay(StoryActor actor, string state, string speakerId, string line, Action done)
+        {
+            if (Playing || actor == null || _camera == null || _player == null) return false;
+            var pose = actor.GetComponent<GrabPose>();
+            if (pose == null) pose = actor.gameObject.AddComponent<GrabPose>();
             if (!pose.Ready) return false;
             // From her body, not the camera: right after a teleport (checkpoint, story) the camera may still be catching up.
-            Vector3 flat = _player.transform.position - catcher.transform.position;
+            Vector3 flat = _player.transform.position - actor.transform.position;
             flat.y = 0f;
             var hide = HideSpot.Current;
             float reach = hide != null ? 2.2f : 2.0f;
             if (flat.magnitude > reach)
             {
-                StoryAutopilot.Note($"CATCH not staged: {catcher.name} {flat.magnitude:F1} m away (plain failure) · {catcher.State} at {catcher.transform.position} · her at {_player.transform.position} · hidden in {(hide != null ? hide.name : "nothing")}");
+                StoryAutopilot.Note($"CATCH not staged: {actor.name} {flat.magnitude:F1} m away (plain failure) · {state} at {actor.transform.position} · her at {_player.transform.position} · hidden in {(hide != null ? hide.name : "nothing")}");
                 return false;
             }
-            StartCoroutine(Run(catcher, pose, hide, speakerId, line, done));
+            StartCoroutine(Run(actor, pose, hide, speakerId, line, done));
             return true;
         }
 
-        private IEnumerator Run(Watchman catcher, GrabPose pose, HideSpot hide, string speakerId, string line, Action done)
+        private IEnumerator Run(StoryActor catcher, GrabPose pose, HideSpot hide, string speakerId, string line, Action done)
         {
             Playing = true;
             Started?.Invoke();
@@ -164,7 +176,7 @@ namespace ThuyKieu.Gameplay.Stealth
             LastWorstFrame = 0f;
             _catcher = catcher;
             _pose = pose;
-            _actor = catcher.Actor;
+            _actor = catcher;
             _animator = _actor.GetComponentInChildren<Animator>();
             _agent = _actor.GetComponent<NavMeshAgent>();
             _agentWas = _agent != null && _agent.enabled;

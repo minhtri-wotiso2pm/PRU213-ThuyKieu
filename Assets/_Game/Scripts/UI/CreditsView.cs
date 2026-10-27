@@ -28,9 +28,15 @@ namespace ThuyKieu.UI
             "Unity 6 · Universal Render Pipeline\n" +
             "Ink — inkle Ltd. <size=22><color=#FFFFFFAA>(giấy phép MIT)</color></size>\n" +
             "Texture & bầu trời HDRI — Poly Haven <size=22><color=#FFFFFFAA>(CC0)</color></size>\n" +
+            "Rừng Chương 5: Brown Mud 02 (Rob Tuytel), Fern 02 (Rob Tuytel, Rico Cilliers), Rock Moss Set 01 (Kless Gyzen) — Poly Haven <size=22><color=#FFFFFFAA>(CC0)</color></size>\n" +
             "Rig & hoạt ảnh nhân vật — Adobe Mixamo\n" +
             "Giọng đọc — Microsoft Edge Neural TTS <size=22><color=#FFFFFFAA>(vi-VN HoaiMy, NamMinh)</color></size>\n" +
-            "Nhạc nền & hiệu ứng âm thanh — tạo bằng mã (procedural)\n\n\n" +
+            "Nhạc nền & phần lớn hiệu ứng âm thanh — tạo bằng mã (procedural)\n" +
+            "Nhạc truy đuổi Chương 5: 'Juggernaut' by Scott Buckley - released under CC-BY 4.0. www.scottbuckley.com.au <size=22><color=#FFFFFFAA>(cắt thành ba đoạn lặp)</color></size>\n" +
+            "Âm bước chân, va chạm, cửa — Kenney <size=22><color=#FFFFFFAA>(CC0)</color></size> · rubberduck, qubodup — OpenGameArt <size=22><color=#FFFFFFAA>(CC0)</color></size>\n" +
+            "Bước trên sỏi — Ali_6868 (Freesound, CC0), bản biên tập của congusbongus <size=22><color=#FFFFFFAA>(OpenGameArt, CC BY 3.0; đã cắt và trộn dưới tiếng đất)</color></size>\n" +
+            "Cây đổ — kheetor <size=22><color=#FFFFFFAA>(OpenGameArt, CC0; chỉ dùng đoạn kẽo kẹt, đổ, chạm đất)</color></size>\n" +
+            "Tiếng ngáy — Langenbergstefan, Wikimedia Commons <size=22><color=#FFFFFFAA>(CC BY-SA 3.0; đã biên tập)</color></size>\n\n\n" +
             "<size=24><color=#E8C27A>CẢM ƠN</color></size>\n" +
             "Các thầy cô bộ môn, và những ai từng đọc Truyện Kiều mà thấy lòng mình chùng xuống.\n\n\n\n" +
             "<size=30><i>\"Có những chuyện chỉ khi ở trong hoàn cảnh đó mới hiểu được.\"</i></size>\n\n\n\n" +

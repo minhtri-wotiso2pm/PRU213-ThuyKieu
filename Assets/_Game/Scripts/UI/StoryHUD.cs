@@ -198,12 +198,13 @@ namespace ThuyKieu.UI
 
         public void ClearBark() { _bark.text = string.Empty; _barkTimer = 0f; }
 
-        public void ShowBark(string speakerId, string text, float duration = 3f)
+        /// <param name="voiced">False when the caller plays the voice itself (from a place in the world).</param>
+        public void ShowBark(string speakerId, string text, float duration = 3f, bool voiced = true)
         {
             var entry = SpeakerCatalog.Get(speakerId);
             _bark.text = "<color=#" + ColorUtility.ToHtmlStringRGB(entry.Color) + ">" + entry.DisplayName + ":</color> " + text;
             _barkTimer = duration;
-            VoicePlayer.PlayBark(speakerId, text);
+            if (voiced) VoicePlayer.PlayBark(speakerId, text);
         }
 
         private void NextToast()

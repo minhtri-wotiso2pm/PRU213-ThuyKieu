@@ -1,0 +1,261 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 700a25e68b8d5d147b0f22c93363faaf, type: 3}
+  m_Name: Ch5FoleyBank
+  m_EditorClassIdentifier: Assembly-CSharp::ThuyKieu.Presentation.FoleyBank
+  _groups:
+  - Id: bamboo_crack
+    Takes:
+    - {fileID: 8300000, guid: d2f789dcbdb83994c8d113c8f45a73e1, type: 3}
+    - {fileID: 8300000, guid: dee2c8d748e12c946b08ffc5060c4c1a, type: 3}
+    Gain: 1
+  - Id: bamboo_impact
+    Takes:
+    - {fileID: 8300000, guid: 1222acc31ff80494595c9d7e15f32592, type: 3}
+    Gain: 1
+  - Id: bamboo_sweep
+    Takes:
+    - {fileID: 8300000, guid: 90983189e68942646ab000de0cfac3a7, type: 3}
+    Gain: 1
+  - Id: culm_knock
+    Takes:
+    - {fileID: 8300000, guid: 6291988c5a9e5e247960fdeeed68ed3b, type: 3}
+    - {fileID: 8300000, guid: f332e989deaff8641bb718b19fe2bb94, type: 3}
+    - {fileID: 8300000, guid: ed2ad37fb41472f499bdd95824c87d8f, type: 3}
+    - {fileID: 8300000, guid: ac52e5a007077084797a861b01698751, type: 3}
+    - {fileID: 8300000, guid: f04662ed1d5c3594bbc7256167d964f7, type: 3}
+    Gain: 1
+  - Id: deck_hit
+    Takes:
+    - {fileID: 8300000, guid: c441223e1d5106345a3cbe7340e7d99f, type: 3}
+    - {fileID: 8300000, guid: 3c1090ae1d6fcbd4eb5d4c5eb1d6daac, type: 3}
+    - {fileID: 8300000, guid: 35fb772b53db6a24fab51c42cb0caa93, type: 3}
+    Gain: 1
+  - Id: deck_swing
+    Takes:
+    - {fileID: 8300000, guid: 491b257b6fffd3746891900f8ae8a7aa, type: 3}
+    - {fileID: 8300000, guid: d8409105ae8274d4eaa5c51172140e1d, type: 3}
+    Gain: 1
+  - Id: guard_land
+    Takes:
+    - {fileID: 8300000, guid: f4ec095f39250c54a9fc51ae259a4cdb, type: 3}
+    - {fileID: 8300000, guid: f1a7cf52db566094e930787725bfda10, type: 3}
+    - {fileID: 8300000, guid: fc4e7186ff9d58543b4c218bc4045133, type: 3}
+    Gain: 1
+  - Id: guard_step
+    Takes:
+    - {fileID: 8300000, guid: 6ff8948786cb2354c810d34ac89f0c14, type: 3}
+    - {fileID: 8300000, guid: 6d98f9d422c5c004c9ddc170102b3950, type: 3}
+    - {fileID: 8300000, guid: 970f6bec41a0bf14287abc7bff1e2aa8, type: 3}
+    - {fileID: 8300000, guid: d17f846590761864b93fbe0828ba8a3e, type: 3}
+    - {fileID: 8300000, guid: 0ab99e623dee73443946b2124ed086ea, type: 3}
+    - {fileID: 8300000, guid: c48fc11738f89aa499e5b0d72bf9e2f3, type: 3}
+    Gain: 1
+  - Id: guard_step_wood
+    Takes:
+    - {fileID: 8300000, guid: 97dab65373e7e7b4f839727073b5c4db, type: 3}
+    - {fileID: 8300000, guid: 500f4e3d1b194cc4dba6bd9a2952af1b, type: 3}
+    - {fileID: 8300000, guid: 36359f14cca4aee428304cc5fce76c3d, type: 3}
+    - {fileID: 8300000, guid: 0df1d52fcd603a64980718d6a2c4e5a1, type: 3}
+    - {fileID: 8300000, guid: e72228a3dee175448a7c48a44edf963e, type: 3}
+    Gain: 1.873761
+  - Id: jump_earth
+    Takes:
+    - {fileID: 8300000, guid: d66d7104fe1314445ad60247636b378b, type: 3}
+    - {fileID: 8300000, guid: 5a7ccd1b449215f4db693e9edfc022a4, type: 3}
+    - {fileID: 8300000, guid: 9823d6373952d1c4fa2e472860c9e1a3, type: 3}
+    - {fileID: 8300000, guid: ac834f783eae52d499e60104bbb0c9fe, type: 3}
+    - {fileID: 8300000, guid: 7b1611bda6b05654d90e7eb8499822f3, type: 3}
+    Gain: 1
+  - Id: jump_stone
+    Takes:
+    - {fileID: 8300000, guid: 15a666e628036d945999f6e596a5c949, type: 3}
+    - {fileID: 8300000, guid: 091f5e97ac509ca4aa4f0de9269af0cb, type: 3}
+    - {fileID: 8300000, guid: 159a7b484dcd142409d2614da8ebc81d, type: 3}
+    - {fileID: 8300000, guid: 106237e4cf22b3744a015abc989c1a8f, type: 3}
+    - {fileID: 8300000, guid: e6d8266f819671245a5e1a15d8ad2923, type: 3}
+    Gain: 1
+  - Id: jump_wood
+    Takes:
+    - {fileID: 8300000, guid: 962a6c30d2ed78e42953cee166c4f8ec, type: 3}
+    - {fileID: 8300000, guid: b709e33cfb856654fa9cd436ff815bef, type: 3}
+    - {fileID: 8300000, guid: 76dcad0ab531aae4697a3c41fbc939eb, type: 3}
+    - {fileID: 8300000, guid: 77ba55ca28b14e947bdacf7b2b689e92, type: 3}
+    - {fileID: 8300000, guid: 8a8ef9bccc5e1e34980df2f39b678348, type: 3}
+    Gain: 1
+  - Id: land_earth
+    Takes:
+    - {fileID: 8300000, guid: 069fef32f6064f94bad24201452ddf9a, type: 3}
+    - {fileID: 8300000, guid: 803d77bb194ebef4288fc418e409d8f6, type: 3}
+    - {fileID: 8300000, guid: 1648952a60b0b3c4ba4a3df7f39e9203, type: 3}
+    - {fileID: 8300000, guid: 3a33645804b8a6d47ae3b582142f11ef, type: 3}
+    - {fileID: 8300000, guid: 91be654e7644bdb4f93be10a5657dc9b, type: 3}
+    - {fileID: 8300000, guid: 701513d1b2d929d4aa313f67befc59fa, type: 3}
+    Gain: 1
+  - Id: land_stone
+    Takes:
+    - {fileID: 8300000, guid: 5af837a21b4fee949819d99233deaf63, type: 3}
+    - {fileID: 8300000, guid: c82dcd2ef4d29b049b03e9082a06c1fb, type: 3}
+    - {fileID: 8300000, guid: d3fd4d6ca5c0d0c4ca08408f574edd88, type: 3}
+    - {fileID: 8300000, guid: f2ff06bcccd28c345aa8d670ff78d3ee, type: 3}
+    - {fileID: 8300000, guid: d3abcebbe2363b64faee5667c6edd9e4, type: 3}
+    Gain: 1
+  - Id: land_wood
+    Takes:
+    - {fileID: 8300000, guid: 3c14de6172134d242bc3d8b91737c35d, type: 3}
+    - {fileID: 8300000, guid: fb47a22ba9d237b41b7af536dd4942b1, type: 3}
+    - {fileID: 8300000, guid: 563e42cfa82c30f4c80c196399aa6982, type: 3}
+    - {fileID: 8300000, guid: 69df259e979673f4789845e31bfd818f, type: 3}
+    - {fileID: 8300000, guid: 4780eb4ddbb3db54192052cc0dbe5cf6, type: 3}
+    Gain: 1
+  - Id: leaf_settle
+    Takes:
+    - {fileID: 8300000, guid: dabe77c131b856e47880a1a2fc601ab6, type: 3}
+    Gain: 1
+  - Id: rope_snap
+    Takes:
+    - {fileID: 8300000, guid: 28e35714bd2a10546b27b38b41264146, type: 3}
+    Gain: 1
+  - Id: rope_strain
+    Takes:
+    - {fileID: 8300000, guid: cb064338d04c953479f99a368e314d9b, type: 3}
+    - {fileID: 8300000, guid: 4569486dbca289348976bd0a6b8bf8f6, type: 3}
+    - {fileID: 8300000, guid: 251eeb2fd829ffc4e8b276bd5a709add, type: 3}
+    Gain: 1
+  - Id: stake_kick
+    Takes:
+    - {fileID: 8300000, guid: 071806ceec9d16245a24c45c20ea6ff6, type: 3}
+    - {fileID: 8300000, guid: a35798f4c7642ba429272bf7f958151b, type: 3}
+    - {fileID: 8300000, guid: e024c7dda6d0fa149953251ecb320ccd, type: 3}
+    Gain: 1
+  - Id: step_earth
+    Takes:
+    - {fileID: 8300000, guid: 14efd694880467048b3eaa619181b31b, type: 3}
+    - {fileID: 8300000, guid: 5b388975ac4711d479479839a1839c24, type: 3}
+    - {fileID: 8300000, guid: c06f995b14b615c4685e83c0c96bcff0, type: 3}
+    - {fileID: 8300000, guid: bb03eda6a7f503a4d9434952a252bde4, type: 3}
+    - {fileID: 8300000, guid: 6db349b562b216b4ab3c9996ae1e4d97, type: 3}
+    - {fileID: 8300000, guid: 3d47d450606f3c54f99ea9e33d2aa54d, type: 3}
+    - {fileID: 8300000, guid: 253925c1d16e88445b029f8656773332, type: 3}
+    - {fileID: 8300000, guid: 93f7e9de6f00d584282a4409b115f254, type: 3}
+    - {fileID: 8300000, guid: 3393a573d24d26041bfbb40152e8d015, type: 3}
+    - {fileID: 8300000, guid: 931545cb73c70fd4c848dbca75eda465, type: 3}
+    Gain: 1
+  - Id: step_earth.crouch
+    Takes:
+    - {fileID: 8300000, guid: 9fba31cbc2dcee042bbbf0d3124ab3f7, type: 3}
+    - {fileID: 8300000, guid: 09687ca79d3637640a32316a155f5736, type: 3}
+    - {fileID: 8300000, guid: 24d3dba98cb0bd348996a737bf07ab77, type: 3}
+    - {fileID: 8300000, guid: 7725d7e34d4992744b9bc741651ada4c, type: 3}
+    Gain: 1
+  - Id: step_earth.run
+    Takes:
+    - {fileID: 8300000, guid: 14efd694880467048b3eaa619181b31b, type: 3}
+    - {fileID: 8300000, guid: 5b388975ac4711d479479839a1839c24, type: 3}
+    - {fileID: 8300000, guid: c06f995b14b615c4685e83c0c96bcff0, type: 3}
+    - {fileID: 8300000, guid: bb03eda6a7f503a4d9434952a252bde4, type: 3}
+    - {fileID: 8300000, guid: 6db349b562b216b4ab3c9996ae1e4d97, type: 3}
+    - {fileID: 8300000, guid: 3d47d450606f3c54f99ea9e33d2aa54d, type: 3}
+    - {fileID: 8300000, guid: 253925c1d16e88445b029f8656773332, type: 3}
+    - {fileID: 8300000, guid: 93f7e9de6f00d584282a4409b115f254, type: 3}
+    - {fileID: 8300000, guid: 3393a573d24d26041bfbb40152e8d015, type: 3}
+    - {fileID: 8300000, guid: 931545cb73c70fd4c848dbca75eda465, type: 3}
+    Gain: 1
+  - Id: step_earth.walk
+    Takes:
+    - {fileID: 8300000, guid: 14efd694880467048b3eaa619181b31b, type: 3}
+    - {fileID: 8300000, guid: 5b388975ac4711d479479839a1839c24, type: 3}
+    - {fileID: 8300000, guid: c06f995b14b615c4685e83c0c96bcff0, type: 3}
+    - {fileID: 8300000, guid: bb03eda6a7f503a4d9434952a252bde4, type: 3}
+    - {fileID: 8300000, guid: 6db349b562b216b4ab3c9996ae1e4d97, type: 3}
+    - {fileID: 8300000, guid: 3d47d450606f3c54f99ea9e33d2aa54d, type: 3}
+    - {fileID: 8300000, guid: 253925c1d16e88445b029f8656773332, type: 3}
+    - {fileID: 8300000, guid: 93f7e9de6f00d584282a4409b115f254, type: 3}
+    - {fileID: 8300000, guid: 3393a573d24d26041bfbb40152e8d015, type: 3}
+    - {fileID: 8300000, guid: 931545cb73c70fd4c848dbca75eda465, type: 3}
+    Gain: 1
+  - Id: step_stone
+    Takes:
+    - {fileID: 8300000, guid: b2cf8d8944eda024b90ce827e2d4e704, type: 3}
+    - {fileID: 8300000, guid: d38c4c71894160541852755d6a47ba9a, type: 3}
+    - {fileID: 8300000, guid: 27fcc056a22d8eb4dabe66e29ada0c52, type: 3}
+    - {fileID: 8300000, guid: be0e67407e31239499e04ab521147230, type: 3}
+    - {fileID: 8300000, guid: b1945628c36bfcc43938d04e732ea317, type: 3}
+    Gain: 1.4433088
+  - Id: step_stone.crouch
+    Takes:
+    - {fileID: 8300000, guid: 27fcc056a22d8eb4dabe66e29ada0c52, type: 3}
+    - {fileID: 8300000, guid: d38c4c71894160541852755d6a47ba9a, type: 3}
+    Gain: 1.4433088
+  - Id: step_stone.run
+    Takes:
+    - {fileID: 8300000, guid: b1945628c36bfcc43938d04e732ea317, type: 3}
+    - {fileID: 8300000, guid: b2cf8d8944eda024b90ce827e2d4e704, type: 3}
+    Gain: 1.4433088
+  - Id: step_stone.walk
+    Takes:
+    - {fileID: 8300000, guid: b2cf8d8944eda024b90ce827e2d4e704, type: 3}
+    - {fileID: 8300000, guid: d38c4c71894160541852755d6a47ba9a, type: 3}
+    - {fileID: 8300000, guid: 27fcc056a22d8eb4dabe66e29ada0c52, type: 3}
+    - {fileID: 8300000, guid: be0e67407e31239499e04ab521147230, type: 3}
+    - {fileID: 8300000, guid: b1945628c36bfcc43938d04e732ea317, type: 3}
+    Gain: 1.4433088
+  - Id: step_wood
+    Takes:
+    - {fileID: 8300000, guid: 97dab65373e7e7b4f839727073b5c4db, type: 3}
+    - {fileID: 8300000, guid: 500f4e3d1b194cc4dba6bd9a2952af1b, type: 3}
+    - {fileID: 8300000, guid: 36359f14cca4aee428304cc5fce76c3d, type: 3}
+    - {fileID: 8300000, guid: 0df1d52fcd603a64980718d6a2c4e5a1, type: 3}
+    - {fileID: 8300000, guid: e72228a3dee175448a7c48a44edf963e, type: 3}
+    Gain: 1.5614675
+  - Id: step_wood.crouch
+    Takes:
+    - {fileID: 8300000, guid: 0df1d52fcd603a64980718d6a2c4e5a1, type: 3}
+    - {fileID: 8300000, guid: 97dab65373e7e7b4f839727073b5c4db, type: 3}
+    Gain: 1.5614675
+  - Id: step_wood.run
+    Takes:
+    - {fileID: 8300000, guid: 500f4e3d1b194cc4dba6bd9a2952af1b, type: 3}
+    - {fileID: 8300000, guid: 36359f14cca4aee428304cc5fce76c3d, type: 3}
+    Gain: 1.5614675
+  - Id: step_wood.walk
+    Takes:
+    - {fileID: 8300000, guid: 97dab65373e7e7b4f839727073b5c4db, type: 3}
+    - {fileID: 8300000, guid: 500f4e3d1b194cc4dba6bd9a2952af1b, type: 3}
+    - {fileID: 8300000, guid: 36359f14cca4aee428304cc5fce76c3d, type: 3}
+    - {fileID: 8300000, guid: 0df1d52fcd603a64980718d6a2c4e5a1, type: 3}
+    - {fileID: 8300000, guid: e72228a3dee175448a7c48a44edf963e, type: 3}
+    Gain: 1.5614675
+  - Id: trip_earth
+    Takes:
+    - {fileID: 8300000, guid: 56564f7a515fc574f885cb82503ea708, type: 3}
+    - {fileID: 8300000, guid: 2b9e0c5abc74d0e48abddf135843f594, type: 3}
+    - {fileID: 8300000, guid: 76f7c6ff1cdc36f47a4135c6dfc6de7c, type: 3}
+    - {fileID: 8300000, guid: a39d025c2ee07ff468a350263477b19f, type: 3}
+    - {fileID: 8300000, guid: 5e534f6ba0ba9bb40bd36f73068458a2, type: 3}
+    Gain: 1
+  - Id: trip_stone
+    Takes:
+    - {fileID: 8300000, guid: cae1ef3ab623c2843b85b6afd418f630, type: 3}
+    - {fileID: 8300000, guid: f0f3191377698554590de640d8ef8dd1, type: 3}
+    - {fileID: 8300000, guid: 24122b021c34c064fafac27296ee0d93, type: 3}
+    - {fileID: 8300000, guid: 381502d4bbafde74eb8d2816d58ed83e, type: 3}
+    - {fileID: 8300000, guid: 052943c8aad07804fa486d54b0835e1f, type: 3}
+    Gain: 1
+  - Id: trip_wood
+    Takes:
+    - {fileID: 8300000, guid: f1a9547a47ac3374c886d0caf5a969f8, type: 3}
+    - {fileID: 8300000, guid: ada9d1e10c1676545837df580c81d628, type: 3}
+    - {fileID: 8300000, guid: 034c33378293e7d46bf335874c7839c5, type: 3}
+    - {fileID: 8300000, guid: eaf783173a86cf1488b3428d5fe513e2, type: 3}
+    - {fileID: 8300000, guid: a88d638cf48d71b44aa674c7d8015d19, type: 3}
+    Gain: 1

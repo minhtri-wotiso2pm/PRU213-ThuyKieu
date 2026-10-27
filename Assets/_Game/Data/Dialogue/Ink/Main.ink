@@ -93,12 +93,16 @@ VAR c4_bi_bat = 0         // số lần bị bắt gặp (Unity ghi)
 VAR c4_buoc = 0           // Ch4 góc nhìn thứ nhất (Unity ghi): 0 trong phòng · 1 đã ra · 2 có chìa · 3 có giao kèo · 4 xong J1 · 5 xong J2
 
 // --- Chương 5 ---
-VAR c5_lang_le = 0        // 0–3: lẻn ra êm đến đâu (Unity ghi)
-VAR c5_bi_bat = 0         // số lần bị bắt khi chạy (Unity ghi)
-VAR c5_duong = 0          // 1 ngõ tắt · 2 chợ đêm (Unity ghi)
-VAR c5_xo_do = 0          // số vật cản đã xô đổ (Unity ghi)
-VAR c5_qte = 0            // 0–3: rượt đuổi trong rừng tre (Unity ghi)
+VAR c5_bi_bat = 0         // số lần thất bại trong cuộc chạy rừng tre: bị lính bắt hoặc ngã xuống khe (Unity ghi)
+VAR c5_vap = 0            // số lần vấp/va trong lượt chạy thoát (Unity ghi)
+VAR c5_loi = 0            // lối rẽ giữa rừng ở lượt chạy thoát: 1 lối khe trăng · 2 lối tre rậm (Unity ghi)
+VAR c5_giay = 0           // số giây của lượt chạy thoát (Unity ghi)
 VAR c5_co_lam_thoat = false // cô gái áo lam thoát cùng (Unity ghi)
+// Bản cũ (lẻn sân bếp, chạy ngõ/chợ, QTE rừng tre) — không còn ghi, giữ khai báo để save cũ vẫn nạp được.
+VAR c5_lang_le = 0
+VAR c5_duong = 0
+VAR c5_xo_do = 0
+VAR c5_qte = 0
 
 // --- Chương 6 ---
 VAR kt_tin_tuong = 0      // độ tin tưởng của Kim Trọng

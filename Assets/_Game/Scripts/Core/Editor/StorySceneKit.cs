@@ -50,10 +50,14 @@ namespace ThuyKieu.Core.Editor
 
         // ------------------------------------------------------------------ scene
 
-        public static UnityEngine.SceneManagement.Scene NewScene(string path)
+        /// <param name="remake">
+        /// Build the scene again from scratch to be saved over its own file (same .meta, so the same GUID and place in the
+        /// build list): only for a full story rebuild of a chapter whose setup owns the whole scene.
+        /// </param>
+        public static UnityEngine.SceneManagement.Scene NewScene(string path, bool remake = false)
         {
             if (Application.isPlaying) throw new InvalidOperationException("Stop Play Mode before scene setup.");
-            if (File.Exists(path)) throw new InvalidOperationException(path + " exists; use targeted edits instead of replacing it.");
+            if (File.Exists(path) && !remake) throw new InvalidOperationException(path + " exists; use targeted edits instead of replacing it.");
             InkStoryCompiler.Compile();
             PrepareFont();
             Directory.CreateDirectory(MaterialFolder);
@@ -213,16 +217,17 @@ namespace ThuyKieu.Core.Editor
             if (lowest < float.MaxValue) mover.position += Vector3.up * (floorY - lowest);
         }
 
-        public static StoryActor RiggedActor(string name, string speakerId, string fbxPath, string textureFolder, float height, Vector3 position, float yaw, Color tint, RuntimeAnimatorController controller)
+        public static StoryActor RiggedActor(string name, string speakerId, string fbxPath, string textureFolder, float height, Vector3 position, float yaw, Color tint, RuntimeAnimatorController controller, bool humanoid = true)
         {
             var importer = AssetImporter.GetAtPath(fbxPath) as ModelImporter;
-            if (importer != null && importer.animationType != ModelImporterAnimationType.Human)
+            if (humanoid && importer != null && importer.animationType != ModelImporterAnimationType.Human)
             { importer.animationType = ModelImporterAnimationType.Human; importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel; importer.SaveAndReimport(); }
             var root = new GameObject(name);
             var model = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(fbxPath));
             model.transform.SetParent(root.transform, false);
             Fit(model, height);
             var animator = model.GetComponentInChildren<Animator>();
+            if (animator == null && !humanoid) animator = model.AddComponent<Animator>();
             if (animator != null)
             {
                 animator.runtimeAnimatorController = controller;
@@ -249,10 +254,10 @@ namespace ThuyKieu.Core.Editor
         /// A second, swappable body under an existing character root (the modern student inside Kiều's player object):
         /// the rigged model fitted to height, tinted and animated by the given controller. Starts hidden.
         /// </summary>
-        public static GameObject Body(Transform root, string name, string fbxPath, string textureFolder, float height, Color tint, RuntimeAnimatorController controller)
+        public static GameObject Body(Transform root, string name, string fbxPath, string textureFolder, float height, Color tint, RuntimeAnimatorController controller, bool humanoid = true)
         {
             var importer = AssetImporter.GetAtPath(fbxPath) as ModelImporter;
-            if (importer != null && importer.animationType != ModelImporterAnimationType.Human)
+            if (humanoid && importer != null && importer.animationType != ModelImporterAnimationType.Human)
             { importer.animationType = ModelImporterAnimationType.Human; importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel; importer.SaveAndReimport(); }
             // Fit at the world origin (Fit works in world space), then hang the body under its root, cancelling any
             // scale on the root so the body keeps its fitted height.
@@ -263,11 +268,12 @@ namespace ThuyKieu.Core.Editor
             // Humanoid playback already puts the feet on the Animator's origin; Fit's lift (from the bind-pose mesh
             // bottom) would leave the body floating above the CharacterController.
             var lifted = model.transform.localPosition;
-            model.transform.localPosition = new Vector3(lifted.x, 0f, lifted.z);
+            if (humanoid) model.transform.localPosition = new Vector3(lifted.x, 0f, lifted.z);
             holder.transform.SetParent(root, false);
             Vector3 rootScale = root.lossyScale;
             holder.transform.localScale = new Vector3(1f / rootScale.x, 1f / rootScale.y, 1f / rootScale.z);
             var animator = model.GetComponentInChildren<Animator>();
+            if (animator == null && !humanoid) animator = model.AddComponent<Animator>();
             animator.runtimeAnimatorController = controller;
             animator.applyRootMotion = false;
             animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
@@ -715,6 +721,10 @@ namespace ThuyKieu.Core.Editor
                 case string[] lines:
                     field.arraySize = lines.Length;
                     for (int i = 0; i < lines.Length; i++) field.GetArrayElementAtIndex(i).stringValue = lines[i];
+                    break;
+                case float[] numbers:
+                    field.arraySize = numbers.Length;
+                    for (int i = 0; i < numbers.Length; i++) field.GetArrayElementAtIndex(i).floatValue = numbers[i];
                     break;
                 default: throw new InvalidOperationException("Unsupported value for " + property);
             }

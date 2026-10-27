@@ -1,0 +1,269 @@
+AUTOPILOT PASS
+[4.9s] NAVMESH built in 40 ms · 388 sources
+[4.9s] C4 Foley recorded set loaded
+[0.0s] SCENE Chapter04_LauTuBaDem
+[2.9s] HITCH 3052 ms
+[3.0s] TAG scene:Dem_Opening
+[3.0s] TAG music:tension_low
+[3.2s] CHOICE 2/4: Cãi lại: "Tôi không nợ bà thứ gì cả."
+[3.2s] TAG sfx:knock
+[3.3s] TAG sfx:latch_drop
+[3.4s] TAG scene:Dem_Night
+[3.4s] TAG gameplay:tutorial_dem
+[4.4s] C4 KEYS standing (opening): ok · hook 24 cm out from her hip bone, -8 cm below it · keys hang 6° from straight down · reach 0.71 m above her feet · size 20 cm · breathing False · keys can be taken False · scene running False
+[17.8s] C4 Tú Bà on her sập: body 12 cm above the mat with the old lift, lift now 0.33 m
+[19.5s] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 640×480
+[23.6s] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 640×480
+[31.0s] HITCH 166 ms
+[32.6s] HITCH 925 ms
+[43.4s] C4 keys taken through the minigame ok · 24.9 s game time · held 12.0/12 s · catches 0 · breath played on 12998 frames · while not asleep in bed 0 · breath sources on her 1
+[44.4s] TAG gameplay:search_drawer
+[44.7s] TAG sfx:paper
+[45.0s] TAG sfx:lock_open
+[45.3s] TAG gameplay:document_deal
+[45.5s] CHOICE 3/3: Để nguyên chỗ cũ — mụ sẽ không phát hiện sớm.
+[45.6s] CHOICE 1/3: Chỉ lấy vài lạng làm lộ phí.
+[45.6s] TAG sfx:lock_open
+[65.1s] HITCH 920 ms
+[75.3s] C4 J1 done · mirror seen False
+[122.5s] C4 J2 done · Tú Bà phase 1 · after J2: Awake, breathing False, snore False · breath played on 28548 frames · while not asleep in bed 0 · breath sources on her 1
+[123.0s] TAG scene:Dem_BackDoor
+[123.0s] TAG music:none
+[123.3s] TAG gameplay:kieu_voice
+[123.3s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[123.4s] TAG music:resolve
+[124.1s] HITCH 619 ms
+[124.1s] CHAPTER 4 COMPLETE · lines 33 · choices 4
+[124.1s] FRAMES Chapter04_LauTuBaDem · avg 575 fps · 1% low 71 fps · worst 3052 ms · 71451 frames · 640x480 · median 1.5 ms · p99 3.5 ms · under 60 fps 0.0% · load 5.0 s (first frame 4802 ms) · warm-up worst 0 ms
+   c4_viec = 2
+   c4_canh_giac = 2
+   c4_tien = 1
+   c4_van_tu = 0
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_trang_no, c4_giao_keo
+[124.1s] HANDOVER Chapter05_Escape: exit 0.70 s · preloaded 100 %
+[125.4s] forest ground built in 0.93 s (shape 0.88 s on 16 threads · meshes 0.04 · cook 0.01 · colliders 0.00 · hedges 28, 1214 m) · 181374 vertices
+[126.2s] bamboo grown in 0.88 s (grow 0.74 s · meshes and colliders 0.14 · vertices back 316286 leaves 235125 low 80977 near 137944 roof 42136 side 101624 skyline 9172): 11389 culms, 3051 colliders, 923264 vertices, 499 ferns
+[126.3s] SCENE Chapter05_Escape
+[126.4s] forest NavMesh baked by the setup, added in 0.001 s
+[126.4s] TAG scene:Escape_Forest
+[126.4s] TAG music:none
+[126.4s] FOREST ready · waited 0.00 s for the NavMesh · 0.12 s after the scene woke
+[126.4s] MUSIC chase starts at level 0 (chase_level0, 125.0 BPM)
+[126.4s] FOREST first frame up 0.13 s after the scene woke, 2.93 s after Chapter 4's exit began
+[126.4s] SEQUENCE chase_forest
+[126.4s] FOREST run starts · pursuer 12 m behind · Lam no
+[126.4s] pilot way 1 at 14 m · off the line 0.0 m · above it 0.05 m · gap 12.0 m
+[127.6s] pursuer shouts at 12.2 m
+[130.4s] pilot way 1 at 34 m · off the line 0.0 m · above it 0.03 m · gap 11.3 m
+[132.1s] FOREST jump at (135.2, -2.4, 6.1) · 5.0 m/s · t 5.76 · gap 10.7 (flat 10.6) · his speed 5.35
+[133.8s] pursuer shouts at 10.0 m
+[134.4s] pilot way 1 at 54 m · off the line 0.1 m · above it 0.04 m · gap 9.9 m
+[138.3s] pursuer shouts at 6.1 m
+[138.4s] pilot way 1 at 71 m · off the line 0.0 m · above it 0.03 m · gap 6.1 m
+[140.0s] GiaNhan0 crossed Duck 4.6 m in 1.55 s (came in at 4.9 m/s)
+[142.4s] pilot way 1 at 91 m · off the line 0.8 m · above it 0.03 m · gap 8.5 m
+[143.6s] pursuer shouts at 8.4 m
+[144.3s] bamboo Falling_H1 cracks
+[146.3s] bamboo Falling_H1 down 1.95 s after the crack
+[146.4s] pilot way 1 at 111 m · off the line 0.0 m · above it 0.02 m · gap 7.9 m
+[147.3s] FOREST jump at (206.4, -3.1, 14.7) · 5.0 m/s · t 20.92 · gap 7.8 (flat 7.7) · his speed 5.12
+[149.2s] pursuer shouts at 7.7 m
+[149.5s] GiaNhan0 crossed Vault 3.1 m in 0.70 s (came in at 5.1 m/s)
+[150.4s] pilot way 1 at 131 m · off the line 0.1 m · above it 0.02 m · gap 7.8 m
+[152.2s] FOREST jump at (230.9, -3.0, 16.1) · 5.0 m/s · t 25.87 · gap 7.5 (flat 7.5) · his speed 5.09
+[154.4s] pilot way 1 at 151 m · off the line 0.1 m · above it 0.03 m · gap 7.3 m
+[155.5s] pursuer shouts at 7.1 m
+[158.4s] pilot way 1 at 171 m · off the line 0.0 m · above it 0.04 m · gap 7.0 m
+[161.8s] pursuer shouts at 6.9 m
+[162.4s] pilot way 1 at 191 m · off the line 0.2 m · above it 0.02 m · gap 6.9 m
+[166.4s] pilot way 1 at 211 m · off the line 0.8 m · above it 0.03 m · gap 6.9 m
+[167.3s] pursuer shouts at 6.8 m
+[170.4s] pilot way 1 at 231 m · off the line 0.1 m · above it 0.02 m · gap 6.8 m
+[170.4s] FOREST jump at (313.5, -3.4, 52.2) · 5.0 m/s · t 44.06 · gap 6.8 (flat 6.8) · his speed 4.99
+[172.5s] GiaNhan0 crossed Leap 3.9 m in 0.86 s (came in at 5.0 m/s)
+[173.8s] FOREST jump at (330.4, -3.5, 51.2) · 5.0 m/s · t 47.45 · gap 7.2 (flat 7.1) · his speed 5.04
+[173.8s] pursuer shouts at 7.2 m
+[174.4s] pilot way 1 at 251 m · off the line 0.1 m · above it 0.46 m · gap 7.1 m
+[178.2s] MUSIC level 1 (chase_level1)
+[178.4s] pilot way 1 at 269 m · off the line 0.0 m · above it 0.03 m · gap 4.9 m
+[179.0s] pursuer shouts at 6.8 m
+[179.3s] GiaNhan0 crossed Duck 4.7 m in 1.56 s (came in at 4.9 m/s)
+[180.1s] MUSIC level 2 (chase_level2)
+[182.4s] pilot way 1 at 289 m · off the line 0.0 m · above it 0.02 m · gap 7.2 m
+[184.6s] pursuer shouts at 7.1 m
+[184.7s] FOREST jump at (379.9, -3.6, 40.1) · 5.0 m/s · t 58.30 · gap 7.1 (flat 7.1) · his speed 5.03
+[186.4s] pilot way 1 at 309 m · off the line 0.0 m · above it 0.03 m · gap 7.1 m
+[190.4s] pilot way 1 at 326 m · off the line 0.1 m · above it 0.03 m · gap 5.1 m
+[191.0s] GiaNhan0 crossed Duck 4.7 m in 1.55 s (came in at 4.9 m/s)
+[191.4s] pursuer shouts at 7.4 m
+[194.4s] FOREST jump at (424.9, -3.9, 36.4) · 5.0 m/s · t 68.03 · gap 7.1 (flat 7.1) · his speed 5.04
+[194.4s] pilot way 1 at 346 m · off the line 0.1 m · above it 0.22 m · gap 7.1 m
+[195.7s] bamboo Falling_H2 cracks
+[195.8s] pursuer shouts at 7.1 m
+[196.5s] GiaNhan0 crossed Vault 2.9 m in 0.67 s (came in at 5.0 m/s)
+[197.6s] bamboo Falling_H2 down 1.95 s after the crack
+[198.4s] pilot way 1 at 366 m · off the line 0.1 m · above it 0.03 m · gap 7.4 m
+[198.6s] FOREST jump at (445.2, -4.0, 30.5) · 5.0 m/s · t 72.27 · gap 7.4 (flat 7.4) · his speed 5.07
+[200.8s] GiaNhan0 crossed Vault 3.1 m in 0.72 s (came in at 5.0 m/s)
+[202.1s] pursuer shouts at 7.6 m
+[202.4s] pilot way 1 at 386 m · off the line 0.0 m · above it 0.03 m · gap 7.6 m
+[203.2s] FOREST jump at (468.0, -4.1, 30.4) · 5.0 m/s · t 76.84 · gap 7.5 (flat 7.5) · his speed 5.09
+[205.4s] GiaNhan0 crossed Leap 4.0 m in 0.86 s (came in at 5.0 m/s)
+[206.4s] FOREST jump at (483.8, -4.2, 31.7) · 5.0 m/s · t 80.02 · gap 7.6 (flat 7.6) · his speed 5.10
+[206.4s] pilot way 1 at 406 m · off the line 0.0 m · above it 0.31 m · gap 7.6 m
+[207.8s] pursuer shouts at 7.5 m
+[210.4s] pilot way 1 at 423 m · off the line 0.0 m · above it 0.03 m · gap 4.9 m
+[211.2s] GiaNhan0 crossed Duck 4.7 m in 1.56 s (came in at 4.9 m/s)
+[212.4s] pursuer shouts at 7.7 m
+[214.4s] pilot way 1 at 443 m · off the line 0.2 m · above it 0.02 m · gap 7.4 m
+[216.5s] FOREST jump at (529.8, -4.9, 27.7) · 5.0 m/s · t 90.17 · gap 7.2 (flat 7.2) · his speed 5.05
+[217.8s] pursuer shouts at 7.5 m
+[218.4s] pilot way 1 at 463 m · off the line 0.2 m · above it 0.04 m · gap 7.6 m
+[221.9s] pursuer shouts at 7.3 m
+[222.4s] pilot way 1 at 482 m · off the line 0.0 m · above it 0.03 m · gap 6.4 m
+[223.9s] bamboo Falling_H3 cracks
+[224.7s] GiaNhan0 crossed Duck 4.7 m in 1.56 s (came in at 4.9 m/s)
+[225.9s] bamboo Falling_H3 down 1.95 s after the crack
+[226.4s] pilot way 1 at 501 m · off the line 0.1 m · above it 0.03 m · gap 8.0 m
+[226.9s] FOREST jump at (527.6, -5.7, -19.0) · 5.0 m/s · t 100.56 · gap 7.9 (flat 7.9) · his speed 5.14
+[228.2s] pursuer shouts at 7.8 m
+[229.1s] FOREST jump at (524.9, -5.7, -29.3) · 5.0 m/s · t 102.70 · gap 7.7 (flat 8.1) · his speed 5.12
+[229.1s] GiaNhan0 crossed Vault 3.1 m in 0.71 s (came in at 5.1 m/s)
+[230.4s] pilot way 1 at 521 m · off the line 0.0 m · above it 0.03 m · gap 8.0 m
+[234.2s] pursuer shouts at 7.5 m
+[234.4s] pilot way 1 at 541 m · off the line 0.0 m · above it 0.02 m · gap 7.5 m
+[236.0s] bridge dropped
+[236.0s] FOREST pursuer was on the bridge: thrown back against the near bank
+[238.4s] pilot way 1 at 561 m · off the line 0.2 m · above it 0.05 m · gap 10.1 m
+[242.4s] pilot way 1 at 582 m · off the line 0.0 m · above it 0.03 m · gap 10.1 m
+[243.1s] FOREST Escaped after 116.7 s · bumps 0 · closest 4.9 m · way moon · at (540.2, -3.3, -84.0)
+[244.5s] FOREST escaped in 117 s (game time) · failures 0 · bumps 0 · way 1 · Lam over False
+[244.5s] TAG scene:Escape_Rain
+[244.5s] TAG music:none
+[244.7s] TAG music:resolve
+[244.8s] TAG gameplay:kieu_voice
+[245.0s] CHAPTER 5 COMPLETE · lines 15 · choices 0
+[245.0s] FRAMES Chapter05_Escape · avg 271 fps · 1% low 141 fps · worst 32 ms · 31596 frames · 640x480 · median 3.7 ms · p99 5.3 ms · under 60 fps 0.0% · load 131.3 s (first frame 2 ms) · warm-up worst 2087 ms
+   c5_so_khanh = 0
+   c5_bi_bat = 0
+   c5_vap = 0
+   c5_loi = 1
+   c5_giay = 117
+   c5_co_lam_thoat = False
+   clues = c4_trang_no, c4_giao_keo
+[246.7s] SCENE Chapter06_KimTrong
+[246.8s] TAG scene:Temple_Dawn
+[246.8s] TAG music:temple
+[247.1s] CHOICE 1/4: Lật trang "Người quốc sắc, kẻ thiên tài...": đọc lại câu thơ hai người từng đối nhau
+[247.2s] TAG gameplay:document_deal_kt
+[247.3s] CHOICE 1/2: An ủi: "Không phải lỗi của chàng."
+[247.5s] TAG scene:KimTrong_Study
+[247.5s] TAG music:study
+[247.5s] TAG gameplay:doi_chieu
+[247.6s] SEQUENCE doi_chieu
+[247.7s] TAG scene:LamTri_Street
+[247.7s] TAG music:street
+[247.7s] TAG gameplay:tutorial_street
+[247.9s] EXPLORE c6_ba_nuoc
+[248.1s] CHOICE 1/2: Đưa khế ước Mã–Tú Bà.
+[248.1s] CHOICE 1/1: Nhờ Kim Trọng nói giúp.
+[248.4s] EXPLORE c6_hieu_bac
+[248.5s] CHOICE 1/3: Để Kim Trọng đứng ra.
+[248.8s] EXPLORE c6_dossier
+[248.9s] TAG scene:KimTrong_Night
+[248.9s] TAG music:study
+[248.9s] TAG gameplay:ho_so
+[249.0s] TAG gameplay:lucbat_ch6
+[249.1s] SEQUENCE lucbat_ch6
+[249.6s] LUCBAT lucbat_ch6 tile ok · tone ok · score 3
+[249.9s] TAG gameplay:kieu_voice
+[249.9s] TAG sfx:knock
+[250.0s] TAG music:resolve
+[250.1s] CHAPTER 6 COMPLETE · lines 52 · choices 5
+[250.1s] FRAMES Chapter06_KimTrong · avg 542 fps · 1% low 42 fps · worst 37 ms · 728 frames · 640x480 · median 1.4 ms · p99 14.5 ms · under 60 fps 0.7% · load 251.7 s (first frame 968 ms) · warm-up worst 474 ms
+   kt_tin_tuong = 6
+   kt_biet_xuyen_khong = False
+   c6_doi_chieu = 2
+   ev_nhan_chung = 1
+   ev_giay_no = True
+   ev_tien = True
+   c6_ho_so = 4
+   clues = c4_trang_no, c4_giao_keo, c6_ba_hang_nuoc, c6_so_hieu_bac
+[251.3s] SCENE Chapter07_HuyenDuong
+[251.3s] TAG scene:HuyenDuong_Cong
+[251.3s] TAG music:resolve
+[251.4s] TAG gameplay:tutorial_gate
+[251.6s] EXPLORE c7_trong
+[251.7s] TAG sfx:drum
+[251.7s] TAG scene:HuyenDuong_CongDuong
+[251.7s] TAG music:trial
+[251.8s] TAG gameplay:tutorial_trial
+[251.9s] TAG gameplay:trial_1
+[251.9s] SEQUENCE trial_1
+[252.1s] TRIAL r1 proved statement 3 with so_bac
+[252.5s] TRIAL r1 proved statement 1 with khe_hon
+[253.2s] TRIAL r1 proved statement 2 with so_bac
+[253.5s] TRIAL r1 proved statement 4 with giao_keo (key)
+[253.8s] TRIAL r1 done · score 4 · trust 100
+[253.8s] TAG gameplay:trial_2
+[253.9s] SEQUENCE trial_2
+[254.1s] TRIAL r2 proved statement 2 with so_bac
+[254.5s] TRIAL r2 proved statement 3 with giao_keo (key)
+[254.7s] TRIAL r2 done · score 2 · trust 100
+[254.8s] TAG gameplay:trial_3
+[254.9s] SEQUENCE trial_3
+[255.1s] TRIAL r3 proved statement 1 with giao_keo (key)
+[255.3s] TRIAL r3 done · score 1 · trust 100
+[255.3s] TAG gameplay:lucbat_ch7
+[255.4s] SEQUENCE lucbat_ch7
+[255.9s] LUCBAT lucbat_ch7 tile wrong · tone off · score 0
+[256.0s] TAG music:resolve
+[256.0s] TAG sfx:gavel
+[256.3s] TAG sfx:fire
+[256.3s] TAG scene:HuyenDuong_DoanTu
+[256.3s] TAG music:family
+[256.5s] CHOICE 2/2: "Không phải mình con đâu, cha ạ. Có rất nhiều người đã giúp."
+[256.6s] TAG music:spirit
+[256.6s] TAG scene:HuyenDuong_AnhSang
+[256.7s] TAG gameplay:kieu_voice
+[256.8s] CHOICE 2/2: Lắc đầu.
+[256.9s] TAG music:none
+[257.0s] TAG sfx:memory
+[257.0s] TAG gameplay:light
+[257.0s] CHAPTER 7 COMPLETE · lines 68 · choices 2
+[257.0s] FRAMES Chapter07_HuyenDuong · avg 505 fps · 1% low 71 fps · worst 28 ms · 1908 frames · 640x480 · median 1.5 ms · p99 10.4 ms · under 60 fps 0.2% · load 256.2 s (first frame 584 ms) · warm-up worst 303 ms
+   c7_viec = 0
+   c7_nhan_chung_vung = False
+   c7_ke_hoach_kt = False
+   c7_biet_hoi_lo = False
+   c7_lui = 2
+   c7_r1 = 4
+   c7_r2 = 2
+   c7_r3 = 1
+   c7_diem = 7
+   c7_long_tin = 100
+   c7_thua_vong = 0
+   c7_ket = 3
+   clues = c4_trang_no, c4_giao_keo, c6_ba_hang_nuoc, c6_so_hieu_bac
+[258.1s] SCENE Chapter08_Epilogue
+[258.2s] TAG scene:LopHoc_HoangHon
+[258.2s] TAG music:epilogue
+[258.2s] TAG gameplay:wake_class
+[258.3s] TAG gameplay:tutorial_epilogue
+[258.4s] EXPLORE ep_window
+[258.6s] EXPLORE ep_book
+[258.8s] TAG gameplay:open_book
+[258.9s] CHOICE 1/3: "Bài về nhà, tao viết xong trong đầu rồi."
+[259.0s] TAG music:epilogue
+[259.0s] TAG gameplay:ending
+[259.1s] SEQUENCE ending
+[259.1s] ENDING tone 3 · verdict 115 · soul 0 · fate 5 · bond 0 · trial 7 · dossier 4
+[259.1s] CHAPTER 8 COMPLETE · lines 16 · choices 1
+[259.1s] FRAMES Chapter08_Epilogue · no frames
+   c7_ket = 3
+   pl_che_kieu = 0
+   c7_diem = 7
+   clues = c4_trang_no, c4_giao_keo, c6_ba_hang_nuoc, c6_so_hieu_bac

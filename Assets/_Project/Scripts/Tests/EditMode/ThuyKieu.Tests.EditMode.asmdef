@@ -18,7 +18,7 @@
     "autoReferenced": false,
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS",
-        "THUYKIEU_LEGACY"
+        "THUYKIEU_LEGACY_PROJECT"
     ],
     "versionDefines": [],
     "noEngineReferences": false

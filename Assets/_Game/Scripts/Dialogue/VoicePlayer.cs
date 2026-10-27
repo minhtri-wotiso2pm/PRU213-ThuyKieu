@@ -194,6 +194,14 @@ namespace ThuyKieu.Dialogue
             _spirit.Stop();
         }
 
+        /// <summary>
+        /// The recorded bark for a line, or null (voices off, not recorded), for callers that play it from a place in the
+        /// world (a pursuer shouting behind her) instead of over the scene.
+        /// </summary>
+        public static AudioClip BarkClip(string speakerId, string text) => Core.GameSettings.VoiceOn ? Load(speakerId, text) : null;
+
+        public static float BarkVolume => Volume * Core.GameSettings.Voice;
+
         private static AudioClip Load(string speakerId, string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return null;
