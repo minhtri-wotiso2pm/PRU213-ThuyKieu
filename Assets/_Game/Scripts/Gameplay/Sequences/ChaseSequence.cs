@@ -23,6 +23,8 @@ namespace ThuyKieu.Gameplay.Sequences
         [SerializeField] private BoxCollider _crowd;
         [SerializeField] private Stamina _stamina;
         [SerializeField] private float _catchDistance = 1.1f;
+        [SerializeField] private DogPursuer _dog;
+        [SerializeField, Range(0.5f, 1f)] private float _pursuitSpeedMultiplier = 0.85f;
         [Tooltip("QA route: waypoints the autopilot follows.")]
         [SerializeField] private Transform[] _autopilotRoute;
 
@@ -54,10 +56,18 @@ namespace ThuyKieu.Gameplay.Sequences
 
                 float closest = float.MaxValue;
                 foreach (var pursuer in _pursuers) closest = Mathf.Min(closest, Flat(pursuer.transform.position, player.transform.position));
+                if (_dog != null) closest = Mathf.Min(closest, Flat(_dog.transform.position, player.transform.position));
                 if ((repath -= Time.deltaTime) <= 0f)
                 {
                     repath = 0.15f;
                     foreach (var pursuer in _pursuers) Pursue(pursuer, player.transform.position);
+                    if (_dog != null)
+                    {
+                        var leader = _pursuers.Length > 0 ? _pursuers[0].transform : null;
+                        Vector3 target = leader != null ? leader.position + leader.right * 0.8f : player.transform.position;
+                        float correction = Mathf.Clamp(Flat(_dog.transform.position, target) * 0.5f, 0f, 0.6f);
+                        _dog.Pursue(target, PursuitSpeed(leader != null ? leader.position : _dog.transform.position, player.transform.position) + correction);
+                    }
                 }
                 if ((shout -= Time.deltaTime) <= 0f)
                 {
@@ -78,6 +88,7 @@ namespace ThuyKieu.Gameplay.Sequences
                     director.SetInt("c5_bi_bat", director.GetInt("c5_bi_bat") + 1);
                     director.SetFreeControl(false);
                     foreach (var pursuer in _pursuers) pursuer.Stop();
+                    if (_dog != null) _dog.Stop();
                     if (director.Audio != null) director.Audio.PlaySfx("fail");
                     yield return hud.FailCard("Bị bắt lại!", "Để dành sức chạy nước rút (Shift) cho đoạn chúng sát nút. Bấm E khi chạy ngang xe hàng, thúng mủng để xô đổ chặn đường.", director.Autopilot ? 0f : 2.2f);
                     route = 0;
@@ -90,6 +101,7 @@ namespace ThuyKieu.Gameplay.Sequences
 
             director.SetFreeControl(false);
             foreach (var pursuer in _pursuers) pursuer.Stop();
+            if (_dog != null) _dog.Stop();
             foreach (var obstacle in _obstacles) obstacle.Armed = false;
             _stamina.enabled = false;
             StoryAutopilot.Note("chase_alley nearest pursuer " + nearest.ToString("0.0") + " m");
@@ -111,6 +123,11 @@ namespace ThuyKieu.Gameplay.Sequences
                 _pursuers[i].Place(_pursuerStarts[i].position, _pursuerStarts[i].rotation);
             }
             foreach (var obstacle in _obstacles) { obstacle.ResetObstacle(); obstacle.Armed = true; }
+            if (_dog != null && _pursuerStarts.Length > 0)
+            {
+                var leader = _pursuerStarts[0];
+                _dog.StartAt(leader.position + leader.right * 0.8f, leader.rotation);
+            }
             _stamina.Refill();
             yield return director.Hud.Fade(0f, 0.4f);
             director.SetFreeControl(true);
@@ -119,12 +136,17 @@ namespace ThuyKieu.Gameplay.Sequences
         /// <summary>Rubber band: fast when far behind, a little slower than a sprint when close; slowed by wreckage and crowds.</summary>
         private void Pursue(StoryActor pursuer, Vector3 target)
         {
-            float distance = Flat(pursuer.transform.position, target);
-            float speed = distance > 14f ? 6.2f : distance < 5f ? 4.3f : 4.8f;
+            pursuer.MoveTo(target, PursuitSpeed(pursuer.transform.position, target));
+        }
+
+        private float PursuitSpeed(Vector3 position, Vector3 target)
+        {
+            float distance = Flat(position, target);
+            float speed = (distance > 14f ? 6.2f : distance < 5f ? 4.3f : 4.8f) * _pursuitSpeedMultiplier;
             foreach (var obstacle in _obstacles)
-                if (obstacle.Toppled && Flat(obstacle.transform.position, pursuer.transform.position) < obstacle.SlowRadius) speed *= 0.35f;
-            if (_crowd != null && _crowd.bounds.Contains(pursuer.transform.position + Vector3.up * 0.5f)) speed *= 0.8f;
-            pursuer.MoveTo(target, speed);
+                if (obstacle.Toppled && Flat(obstacle.SlowCenter, position) < obstacle.SlowRadius) speed *= 0.35f;
+            if (_crowd != null && _crowd.bounds.Contains(position + Vector3.up * 0.5f)) speed *= 0.8f;
+            return speed;
         }
 
         private static float Flat(Vector3 a, Vector3 b) { a.y = 0; b.y = 0; return Vector3.Distance(a, b); }

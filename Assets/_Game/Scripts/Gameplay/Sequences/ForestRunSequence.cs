@@ -6,6 +6,7 @@ using ThuyKieu.Core.Story;
 using ThuyKieu.Gameplay.Chase;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.AI;
 
 namespace ThuyKieu.Gameplay.Sequences
 {
@@ -26,6 +27,8 @@ namespace ThuyKieu.Gameplay.Sequences
 
         [SerializeField] private Transform[] _rail;
         [SerializeField] private StoryActor[] _pursuers;
+        [SerializeField] private DogPursuer _dog;
+        [SerializeField, Range(0.5f, 1f)] private float _pursuitSpeedMultiplier = 0.85f;
         [SerializeField] private Transform _camera;
         [SerializeField] private float _speed = 5.2f;
         [SerializeField] private float _startGap = 7f;
@@ -77,9 +80,18 @@ namespace ThuyKieu.Gameplay.Sequences
                 AimCamera(player, distance);
                 for (int i = 0; i < _pursuers.Length; i++)
                 {
-                    Vector3 target = PointAt(distance - gap - i * 1.3f);
+                    Vector3 target = PointAt(Mathf.Max(0f, distance - gap - i * 1.3f));
+                    if (NavMesh.SamplePosition(target, out var hit, 2f, NavMesh.AllAreas)) target = hit.position;
                     float error = Vector3.Distance(_pursuers[i].transform.position, target);
-                    _pursuers[i].MoveTo(target, _speed + Mathf.Clamp(error, 0f, 4f));
+                    _pursuers[i].MoveTo(target, _speed * _pursuitSpeedMultiplier + Mathf.Clamp(error * 0.75f, 0f, 2f));
+                }
+                if (_dog != null)
+                {
+                    Vector3 forward = (PointAt(distance + 1f) - PointAt(distance - 1f)).normalized;
+                    Vector3 side = Vector3.Cross(Vector3.up, forward).normalized;
+                    Vector3 target = (_pursuers.Length > 0 ? _pursuers[0].transform.position : PointAt(distance - gap)) + side * 0.8f;
+                    float error = Vector3.Distance(_dog.transform.position, target);
+                    _dog.Pursue(target, _speed * _pursuitSpeedMultiplier + Mathf.Clamp(error * 0.75f, 0f, 2f));
                 }
                 if (Random.value < Time.deltaTime * 0.4f && director.Fx != null) director.Fx.Shake(0.05f, 0.3f);
 
@@ -111,6 +123,7 @@ namespace ThuyKieu.Gameplay.Sequences
                     StoryAutopilot.Note("CAUGHT in chase_forest → retry");
                     director.SetInt("c5_bi_bat", director.GetInt("c5_bi_bat") + 1);
                     player.ScriptedMove = null;
+                    if (_dog != null) _dog.Stop();
                     yield return hud.FailCard("Bị đuổi kịp!", "Bấm đúng phím hiện trên màn hình trước khi vạch đỏ cạn. Bấm sai phím cũng là vấp ngã.", director.Autopilot ? 0f : 2f);
                     successes = 0; next = 0; companionSaved = false; distance = 0f; gap = startGap; stumble = 0f;
                     Restart(player, companion, withCompanion);
@@ -123,6 +136,7 @@ namespace ThuyKieu.Gameplay.Sequences
             hud.HideQte();
             director.CameraController.SetDialogueCue(null);
             foreach (var pursuer in _pursuers) { pursuer.Stop(); pursuer.gameObject.SetActive(false); }
+            if (_dog != null) { _dog.Stop(); _dog.gameObject.SetActive(false); }
             director.SetInt("c5_qte", Mathf.Clamp(successes - 1, 0, 3));
             director.SetBool("c5_co_lam_thoat", withCompanion && companionSaved);
         }
@@ -130,13 +144,31 @@ namespace ThuyKieu.Gameplay.Sequences
         private void Restart(ThuyKieu.Player.PlayerMovement player, Follower companion, bool withCompanion)
         {
             player.Teleport(_rail[0].position, _rail[0].rotation);
+            if (_dog != null) _dog.StartAt(PursuerStart(-_startGap, 0.8f), _rail[0].rotation);
             if (withCompanion) { companion.gameObject.SetActive(true); companion.Following = true; companion.Snap(); }
             for (int i = 0; i < _pursuers.Length; i++)
             {
                 _pursuers[i].gameObject.SetActive(true);
                 _pursuers[i].EnableNavigation();
-                _pursuers[i].Place(PointAt(-_startGap - i * 1.3f), _rail[0].rotation);
+                Vector3 start = PursuerStart(-_startGap - i * 1.3f, 0f);
+                _pursuers[i].Place(start, _rail[0].rotation);
+                _pursuers[i].EnableNavigation();
             }
+        }
+
+        private Vector3 PursuerStart(float distance, float sideOffset)
+        {
+            // The town wall cuts the entry into separate NavMesh islands. Start on the one connected to the forest.
+            if (!NavMesh.SamplePosition(_rail[0].position, out var entrance, 2f, NavMesh.AllAreas)) return _rail[0].position;
+            var path = new NavMeshPath();
+            for (float at = distance; at <= 1f; at += 1f)
+            {
+                Vector3 candidate = PointAt(Mathf.Min(at, 0f)) + _rail[0].right * sideOffset;
+                if (NavMesh.SamplePosition(candidate, out var hit, 1.5f, NavMesh.AllAreas)
+                    && NavMesh.CalculatePath(hit.position, entrance.position, NavMesh.AllAreas, path)
+                    && path.status == NavMeshPathStatus.PathComplete) return hit.position;
+            }
+            return entrance.position;
         }
 
         private static void LoseCompanion(Follower companion, ThuyKieu.UI.StoryHUD hud)
