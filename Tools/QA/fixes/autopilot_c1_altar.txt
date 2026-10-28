@@ -1,0 +1,61 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter01_GiaBien
+[0.8s] SEQUENCE 
+[2.0s] TAG scene:VuongGia_DemMua
+[2.0s] TAG music:sad_strings
+[2.0s] SEQUENCE montage_c1_mo
+[9.2s] HITCH 174 ms
+[9.3s] TAG gameplay:kieu_voice
+[11.4s] HITCH 222 ms
+[11.4s] TAG music:sad_strings
+[13.4s] HITCH 177 ms
+[15.1s] HITCH 181 ms
+[15.2s] EXPLORE c1_tu
+[15.4s] TAG sfx:creak
+[17.3s] HITCH 152 ms
+[19.1s] HITCH 153 ms
+[21.2s] EXPLORE c1_cong
+[21.3s] TAG scene:VuongGia_MaDen
+[21.3s] TAG sfx:knock
+[21.3s] TAG music:tension_low
+[23.5s] HITCH 180 ms
+[23.6s] TAG scene:VuongGia_DamPhan
+[23.6s] TAG gameplay:tutorial_suspicion
+[23.8s] SEQUENCE tutorial_suspicion
+[24.8s] HITCH 174 ms
+[25.5s] EXPLORE c1_tui_bac
+[25.8s] EXPLORE c1_hoi
+[27.8s] CHOICE 3/3: Không hỏi gì, để Mẹ nói thay.
+[27.8s] HITCH 159 ms
+[28.3s] EXPLORE c1_khe
+[28.4s] TAG scene:VuongGia_BanKyKhe
+[30.2s] CHOICE 2/2: Ký ngay để bạc được đưa đi cứu cha.
+[30.2s] TAG gameplay:diem_chi
+[30.2s] HITCH 174 ms
+[30.3s] SEQUENCE diem_chi
+[30.4s] TAG gameplay:kieu_voice
+[31.4s] HITCH 155 ms
+[31.4s] TAG music:tension_low
+[31.6s] TAG scene:VuongGia_RaDi
+[31.6s] TAG music:sad_strings
+[31.6s] SEQUENCE montage_c1_sang
+[32.7s] HITCH 152 ms
+[35.3s] EXPLORE c1_me_cuoi
+[35.7s] EXPLORE c1_ra_di
+[35.8s] SEQUENCE montage_c1_ra_di
+[39.3s] TAG gameplay:kieu_voice
+[40.8s] CHAPTER 1 COMPLETE · lines 36 · choices 2
+[40.8s] FRAMES Chapter01_GiaBien · avg 100 fps · 1% low 9 fps · worst 222 ms · 3841 frames · 603x496 · median 8.2 ms · p99 28.3 ms · under 60 fps 4.4% · load 2.6 s (first frame 2476 ms) · warm-up worst 412 ms
+   c1_viec = 1
+   c1_manh_moi = 2
+   c1_nghi_ngo = 0
+   tinh_tao = 1
+   tu_trong = 1
+   doc_ky_khe = False
+   c1_hoi_tien = False
+   c1_bac_truoc = False
+   c1_ma_lo = False
+   c1_ca_hai = False
+   nghi_ngo = 5
+   ts_hieu = 2
+   clues = c1_don_kien, c1_bac_phuc_ky

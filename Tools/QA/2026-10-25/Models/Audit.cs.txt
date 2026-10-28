@@ -1,0 +1,12 @@
+var d=UnityEngine.Object.FindAnyObjectByType<ThuyKieu.Core.Story.StoryDirector>();
+if(d==null)return "No story scene";
+var rows=new List<object>();
+foreach(var actor in UnityEngine.Object.FindObjectsByType<ThuyKieu.Core.Story.StoryActor>(FindObjectsSortMode.None)) {
+    var renderers=actor.GetComponentsInChildren<Renderer>().Where(r=>r.enabled && !(r is ParticleSystemRenderer)).ToArray();
+    var animators=actor.GetComponentsInChildren<Animator>().Select(a=>new {name=a.name,enabled=a.enabled,initialized=a.isInitialized,human=a.isHuman,avatar=a.avatar==null?null:a.avatar.name,validAvatar=a.avatar!=null&&a.avatar.isValid,controller=a.runtimeAnimatorController==null?null:a.runtimeAnimatorController.name,rootMotion=a.applyRootMotion,clips=a.isInitialized&&a.runtimeAnimatorController!=null?a.GetCurrentAnimatorClipInfo(0).Select(c=>c.clip.name).ToArray():new string[0],leftFoot=a.isHuman&&a.isInitialized&&a.GetBoneTransform(HumanBodyBones.LeftFoot)!=null?a.GetBoneTransform(HumanBodyBones.LeftFoot).position.ToString():null,rightFoot=a.isHuman&&a.isInitialized&&a.GetBoneTransform(HumanBodyBones.RightFoot)!=null?a.GetBoneTransform(HumanBodyBones.RightFoot).position.ToString():null}).ToArray();
+    var meshes=renderers.Select(r=>new {name=r.name,kind=r.GetType().Name,boundsCenter=r.bounds.center.ToString(),boundsSize=r.bounds.size.ToString(),scale=r.transform.lossyScale.ToString(),mesh=r is SkinnedMeshRenderer?((SkinnedMeshRenderer)r).sharedMesh==null?null:((SkinnedMeshRenderer)r).sharedMesh.name:r.GetComponent<MeshFilter>()==null||r.GetComponent<MeshFilter>().sharedMesh==null?null:r.GetComponent<MeshFilter>().sharedMesh.name,missingBones=r is SkinnedMeshRenderer?((SkinnedMeshRenderer)r).bones.Count(b=>b==null):0,materials=r.sharedMaterials.Select(m=>new {name=m==null?null:m.name,shader=m==null||m.shader==null?null:m.shader.name,supported=m!=null&&m.shader!=null&&m.shader.isSupported}).ToArray()}).ToArray();
+    rows.Add(new{id=actor.SpeakerId,name=actor.name,position=actor.transform.position.ToString(),height=actor.VisualHeight,lying=actor.IsLying,agent=actor.Agent!=null,animators=animators,meshes=meshes});
+}
+string path="Tools/QA/2026-10-25/Models/C"+d.ChapterNumber+"-audit.json";
+System.IO.File.WriteAllText(path,Newtonsoft.Json.JsonConvert.SerializeObject(rows,Newtonsoft.Json.Formatting.Indented));
+return new{chapter=d.ChapterNumber,actors=rows.Count,path=path};

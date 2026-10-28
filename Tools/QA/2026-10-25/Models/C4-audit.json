@@ -1,0 +1,538 @@
+[
+  {
+    "id": "MaKieu",
+    "name": "MaKieu",
+    "position": "(-16.45, 0.16, 17.60)",
+    "height": 0.521067142,
+    "lying": true,
+    "agent": true,
+    "animators": [
+      {
+        "name": "ThuyKieu_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "ThuyKieu_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(-16.34, 0.33, 17.46)",
+        "rightFoot": "(-16.35, 0.33, 17.66)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-15.70, 0.37, 17.57)",
+        "boundsSize": "(1.54, 0.52, 0.66)",
+        "scale": "(126.70, 126.70, 126.70)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "MaKieuStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Khach",
+    "name": "KhachB",
+    "position": "(12.80, 0.38, -1.80)",
+    "height": 1.74418,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "MaGiamSinh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "MaGiamSinh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(12.76, 0.54, -1.71)",
+        "rightFoot": "(12.77, 0.54, -1.88)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(12.81, 1.24, -1.79)",
+        "boundsSize": "(0.68, 1.74, 1.39)",
+        "scale": "(141.69, 141.69, 141.69)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "KhachBStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "NguoiCanh",
+    "name": "NguoiCanh",
+    "position": "(2.60, 0.38, 9.60)",
+    "height": 1.754769,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "LinhCanh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "LinhCanh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "LinhCanhStory",
+        "rootMotion": false,
+        "clips": [
+          "LinhCanh-Idle"
+        ],
+        "leftFoot": "(2.63, 0.56, 9.50)",
+        "rightFoot": "(2.66, 0.57, 9.78)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(2.60, 1.26, 9.60)",
+        "boundsSize": "(0.75, 1.75, 0.87)",
+        "scale": "(133.22, 133.22, 133.22)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "NguoiCanhStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "name": "Body",
+        "kind": "MeshRenderer",
+        "boundsCenter": "(2.57, 1.02, 9.82)",
+        "boundsSize": "(0.21, 0.24, 0.21)",
+        "scale": "(0.21, 0.24, 0.21)",
+        "mesh": "Sphere",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "Lantern_FF8C33",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "name": "Rib",
+        "kind": "MeshRenderer",
+        "boundsCenter": "(2.56, 0.96, 9.82)",
+        "boundsSize": "(0.18, 0.01, 0.18)",
+        "scale": "(0.18, 0.00, 0.18)",
+        "mesh": "Cylinder",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "LanternFrame",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "name": "Rib",
+        "kind": "MeshRenderer",
+        "boundsCenter": "(2.57, 1.02, 9.82)",
+        "boundsSize": "(0.21, 0.01, 0.21)",
+        "scale": "(0.21, 0.00, 0.21)",
+        "mesh": "Cylinder",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "LanternFrame",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "name": "Rib",
+        "kind": "MeshRenderer",
+        "boundsCenter": "(2.57, 1.09, 9.82)",
+        "boundsSize": "(0.18, 0.01, 0.18)",
+        "scale": "(0.18, 0.00, 0.18)",
+        "mesh": "Cylinder",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "LanternFrame",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "name": "Cap",
+        "kind": "MeshRenderer",
+        "boundsCenter": "(2.57, 1.15, 9.82)",
+        "boundsSize": "(0.11, 0.04, 0.11)",
+        "scale": "(0.11, 0.02, 0.11)",
+        "mesh": "Cylinder",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "LanternFrame",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "name": "Base",
+        "kind": "MeshRenderer",
+        "boundsCenter": "(2.56, 0.90, 9.82)",
+        "boundsSize": "(0.11, 0.04, 0.11)",
+        "scale": "(0.11, 0.02, 0.11)",
+        "mesh": "Cylinder",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "LanternFrame",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "name": "Cord",
+        "kind": "MeshRenderer",
+        "boundsCenter": "(2.57, 1.17, 9.82)",
+        "boundsSize": "(0.03, 0.16, 0.03)",
+        "scale": "(0.03, 0.08, 0.03)",
+        "mesh": "Cylinder",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "LanternFrame",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "NguoiCanh",
+    "name": "NguoiCanhCong",
+    "position": "(2.40, 0.38, -17.90)",
+    "height": 1.73482847,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "LinhCanh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "LinhCanh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "LinhCanhStory",
+        "rootMotion": false,
+        "clips": [
+          "LinhCanh-Idle"
+        ],
+        "leftFoot": "(2.30, 0.56, -17.92)",
+        "rightFoot": "(2.56, 0.56, -17.99)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(2.40, 1.25, -17.90)",
+        "boundsSize": "(0.95, 1.73, 0.82)",
+        "scale": "(131.70, 131.70, 131.70)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "NguoiCanhCongStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Kieu",
+    "name": "ThuyKieu",
+    "position": "(-15.50, 0.37, 3.60)",
+    "height": 1.55738938,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "Model",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "ThuyKieu_WalkAvatar",
+        "validAvatar": true,
+        "controller": "ThuyKieuStory",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(-15.59, 0.46, 3.74)",
+        "rightFoot": "(-15.48, 0.42, 3.56)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "tripo_node_f1bebe54",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-15.49, 0.91, 3.60)",
+        "boundsSize": "(1.01, 1.56, 0.70)",
+        "scale": "(1.28, 1.28, 1.28)",
+        "mesh": "tripo_node_f1bebe54",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "ThuyKieu_Skin_URP",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          },
+          {
+            "name": "ThuyKieu_Hanfu_URP",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CoLam",
+    "name": "CoLam",
+    "position": "(-12.39, 0.38, -1.60)",
+    "height": 1.58178329,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "LauXanh1_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "LauXanh1_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "LauXanh1Story",
+        "rootMotion": false,
+        "clips": [
+          "LauXanh1-Idle"
+        ],
+        "leftFoot": "(-12.40, 0.66, -1.48)",
+        "rightFoot": "(-12.39, 0.66, -1.77)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-12.39, 1.19, -1.67)",
+        "boundsSize": "(1.01, 1.58, 1.02)",
+        "scale": "(125.97, 125.97, 125.97)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "CoLamStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "TuBa",
+    "name": "TuBa",
+    "position": "(-10.90, 0.38, 5.60)",
+    "height": 1.620362,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "TuBa_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "TuBa_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "TuBaStory",
+        "rootMotion": false,
+        "clips": [
+          "TuBa-Idle"
+        ],
+        "leftFoot": "(-10.88, 0.59, 5.46)",
+        "rightFoot": "(-10.80, 0.59, 5.66)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "KeyRing",
+        "kind": "MeshRenderer",
+        "boundsCenter": "(-10.92, 1.26, 5.40)",
+        "boundsSize": "(0.01, 0.06, 0.02)",
+        "scale": "(1.00, 1.00, 1.00)",
+        "mesh": "LTB_KeyHook",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "LTB_KeyBronze",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "name": "Bunch",
+        "kind": "MeshRenderer",
+        "boundsCenter": "(-10.92, 1.17, 5.39)",
+        "boundsSize": "(0.10, 0.15, 0.06)",
+        "scale": "(1.00, 1.00, 1.00)",
+        "mesh": "LTB_KeyBunch",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "LTB_KeyBronze",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      },
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-10.90, 1.19, 5.60)",
+        "boundsSize": "(0.72, 1.62, 0.97)",
+        "scale": "(125.36, 125.36, 125.36)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "TuBaStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Khach",
+    "name": "CoTrenLauDem",
+    "position": "(4.00, 3.40, 8.50)",
+    "height": 1.526243,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "LauXanh3_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "LauXanh3_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(4.05, 3.58, 8.50)",
+        "rightFoot": "(3.91, 3.58, 8.51)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(4.01, 4.23, 8.49)",
+        "boundsSize": "(0.75, 1.53, 0.50)",
+        "scale": "(121.96, 121.96, 121.96)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "CoTrenLauDemStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Khach",
+    "name": "KhachA",
+    "position": "(12.75, 0.38, -6.20)",
+    "height": 1.74418,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "MaGiamSinh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "MaGiamSinh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(12.72, 0.54, -6.11)",
+        "rightFoot": "(12.71, 0.54, -6.27)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(12.76, 1.24, -6.19)",
+        "boundsSize": "(0.49, 1.74, 1.34)",
+        "scale": "(141.69, 141.69, 141.69)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "KhachAStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  }
+]

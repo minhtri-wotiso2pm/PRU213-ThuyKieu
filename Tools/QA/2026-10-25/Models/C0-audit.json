@@ -1,0 +1,604 @@
+[
+  {
+    "id": "BanHoc",
+    "name": "BanHoc7",
+    "position": "(-597.10, -0.10, -2.09)",
+    "height": 1.29951477,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "seat",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "seatAvatar",
+        "validAvatar": true,
+        "controller": "HocSinhNam",
+        "rootMotion": false,
+        "clips": [
+          "Sitting"
+        ],
+        "leftFoot": "(-597.19, 0.23, -2.16)",
+        "rightFoot": "(-597.06, 0.24, -2.15)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-597.10, 0.65, -2.19)",
+        "boundsSize": "(0.67, 1.30, 0.91)",
+        "scale": "(119.36, 119.36, 119.36)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "HocSinhNam",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "BanHoc",
+    "name": "BanHoc1",
+    "position": "(-599.70, -0.10, 2.26)",
+    "height": 1.29951477,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "seat",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "seatAvatar",
+        "validAvatar": true,
+        "controller": "HocSinhNam",
+        "rootMotion": false,
+        "clips": [
+          "Sitting"
+        ],
+        "leftFoot": "(-599.79, 0.23, 2.19)",
+        "rightFoot": "(-599.66, 0.24, 2.20)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-599.70, 0.65, 2.16)",
+        "boundsSize": "(0.67, 1.30, 0.91)",
+        "scale": "(119.36, 119.36, 119.36)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "HocSinhNam",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Kieu",
+    "name": "ThuyKieu",
+    "position": "(-597.10, 0.02, -0.97)",
+    "height": 1.53285491,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "idle",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "idleAvatar",
+        "validAvatar": true,
+        "controller": "NuChinh",
+        "rootMotion": false,
+        "clips": [
+          "Sitting"
+        ],
+        "leftFoot": "(-597.22, 0.24, -0.69)",
+        "rightFoot": "(-596.97, 0.24, -0.65)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-597.14, 0.50, -0.89)",
+        "boundsSize": "(0.90, 1.53, 1.29)",
+        "scale": "(118.10, 118.10, 118.10)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "NuChinh",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Ngan",
+    "name": "Ngan",
+    "position": "(-596.30, 0.00, -1.19)",
+    "height": 1.30047309,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "seat",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "seatAvatar",
+        "validAvatar": true,
+        "controller": "HocSinhNu",
+        "rootMotion": false,
+        "clips": [
+          "Sitting"
+        ],
+        "leftFoot": "(-596.39, 0.26, -0.68)",
+        "rightFoot": "(-596.25, 0.26, -0.68)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-596.30, 0.65, -0.74)",
+        "boundsSize": "(0.63, 1.30, 0.91)",
+        "scale": "(123.23, 123.23, 123.23)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "HocSinhNu",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "BanHoc",
+    "name": "BanHoc5",
+    "position": "(-602.90, -0.03, -0.74)",
+    "height": 1.3404876,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "seat",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "seatAvatar",
+        "validAvatar": true,
+        "controller": "HocSinhNu",
+        "rootMotion": false,
+        "clips": [
+          "Sitting"
+        ],
+        "leftFoot": "(-602.99, 0.27, -0.68)",
+        "rightFoot": "(-602.85, 0.27, -0.68)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-602.90, 0.67, -0.75)",
+        "boundsSize": "(0.65, 1.34, 0.94)",
+        "scale": "(127.02, 127.02, 127.02)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "HocSinhNu",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "MeKieu",
+    "name": "MeKieu",
+    "position": "(-1.10, 0.27, 5.30)",
+    "height": 1.575788,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "MeThuyKieu_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "MeThuyKieu_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(-1.04, 0.35, 5.37)",
+        "rightFoot": "(-1.17, 0.35, 5.30)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-1.09, 0.97, 5.29)",
+        "boundsSize": "(1.31, 1.58, 1.02)",
+        "scale": "(126.01, 126.01, 126.01)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "MeKieuStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "VuongQuan",
+    "name": "VuongQuan",
+    "position": "(-0.90, 0.27, 4.30)",
+    "height": 1.49284,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "MaGiamSinh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "MaGiamSinh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(-0.83, 0.34, 4.35)",
+        "rightFoot": "(-0.97, 0.33, 4.32)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-0.89, 0.93, 4.28)",
+        "boundsSize": "(1.21, 1.49, 0.67)",
+        "scale": "(120.52, 120.52, 120.52)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "VuongQuanStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "BanHoc",
+    "name": "BanHoc3",
+    "position": "(-599.70, -0.10, 0.81)",
+    "height": 1.25952983,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "seat",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "seatAvatar",
+        "validAvatar": true,
+        "controller": "HocSinhNam",
+        "rootMotion": false,
+        "clips": [
+          "Sitting"
+        ],
+        "leftFoot": "(-599.79, 0.23, 0.74)",
+        "rightFoot": "(-599.66, 0.23, 0.75)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-599.70, 0.63, 0.71)",
+        "boundsSize": "(0.65, 1.26, 0.88)",
+        "scale": "(115.69, 115.69, 115.69)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "HocSinhNam",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ThayGiao",
+    "name": "ThayGiao",
+    "position": "(-601.20, 0.22, 3.55)",
+    "height": 1.65653276,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "idle",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "idleAvatar",
+        "validAvatar": true,
+        "controller": "ThayGiao",
+        "rootMotion": false,
+        "clips": [
+          "Talking"
+        ],
+        "leftFoot": "(-601.21, 0.30, 3.63)",
+        "rightFoot": "(-601.28, 0.30, 3.37)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-601.17, 0.91, 3.56)",
+        "boundsSize": "(1.10, 1.66, 1.01)",
+        "scale": "(140.39, 140.39, 140.39)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "ThayGiao",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "VuongOng",
+    "name": "VuongOng",
+    "position": "(2.05, 0.27, 4.75)",
+    "height": 1.691499,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "VuongOng_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "VuongOng_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "VuongOngStory",
+        "rootMotion": false,
+        "clips": [
+          "VuongOng-Idle"
+        ],
+        "leftFoot": "(2.28, 0.34, 4.78)",
+        "rightFoot": "(1.90, 0.35, 4.80)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "laoVuong",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(2.09, 0.97, 4.73)",
+        "boundsSize": "(0.92, 1.69, 1.17)",
+        "scale": "(87.07, 87.07, 87.07)",
+        "mesh": "laoVuong",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "VuongOngStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "BanHoc",
+    "name": "BanHoc0",
+    "position": "(-603.50, -0.10, 2.26)",
+    "height": 1.25952983,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "seat",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "seatAvatar",
+        "validAvatar": true,
+        "controller": "HocSinhNam",
+        "rootMotion": false,
+        "clips": [
+          "Sitting"
+        ],
+        "leftFoot": "(-603.59, 0.23, 2.19)",
+        "rightFoot": "(-603.46, 0.23, 2.20)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-603.50, 0.63, 2.16)",
+        "boundsSize": "(0.65, 1.26, 0.88)",
+        "scale": "(115.69, 115.69, 115.69)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "HocSinhNam",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "BanHoc",
+    "name": "BanHoc6",
+    "position": "(-603.50, -0.10, -2.09)",
+    "height": 1.25952983,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "seat",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "seatAvatar",
+        "validAvatar": true,
+        "controller": "HocSinhNam",
+        "rootMotion": false,
+        "clips": [
+          "Sitting"
+        ],
+        "leftFoot": "(-603.59, 0.23, -2.16)",
+        "rightFoot": "(-603.46, 0.23, -2.15)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-603.50, 0.63, -2.19)",
+        "boundsSize": "(0.65, 1.26, 0.88)",
+        "scale": "(115.69, 115.69, 115.69)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "HocSinhNam",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "BanHoc",
+    "name": "BanHoc4",
+    "position": "(-596.50, -0.10, 0.81)",
+    "height": 1.29951477,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "seat",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "seatAvatar",
+        "validAvatar": true,
+        "controller": "HocSinhNam",
+        "rootMotion": false,
+        "clips": [
+          "Sitting"
+        ],
+        "leftFoot": "(-596.59, 0.23, 0.74)",
+        "rightFoot": "(-596.46, 0.24, 0.75)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-596.50, 0.65, 0.71)",
+        "boundsSize": "(0.67, 1.30, 0.91)",
+        "scale": "(119.36, 119.36, 119.36)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "HocSinhNam",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "BanHoc",
+    "name": "BanHoc2",
+    "position": "(-603.50, -0.03, 0.81)",
+    "height": 1.3404876,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "seat",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "seatAvatar",
+        "validAvatar": true,
+        "controller": "HocSinhNu",
+        "rootMotion": false,
+        "clips": [
+          "Sitting"
+        ],
+        "leftFoot": "(-603.59, 0.27, 0.77)",
+        "rightFoot": "(-603.45, 0.27, 0.77)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-603.50, 0.67, 0.70)",
+        "boundsSize": "(0.65, 1.34, 0.94)",
+        "scale": "(127.02, 127.02, 127.02)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "HocSinhNu",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  }
+]

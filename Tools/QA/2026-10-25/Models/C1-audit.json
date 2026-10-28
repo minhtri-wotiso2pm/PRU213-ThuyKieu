@@ -1,0 +1,94 @@
+[
+  {
+    "id": "Kieu",
+    "name": "ThuyKieu",
+    "position": "(-0.64, 0.02, 1.69)",
+    "height": 1.72750866,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "Model",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "ThuyKieu_WalkAvatar",
+        "validAvatar": true,
+        "controller": "ThuyKieuStory",
+        "rootMotion": false,
+        "clips": [
+          "Idle",
+          "ThuyKieu_Walk"
+        ],
+        "leftFoot": "(-0.71, 0.11, 1.54)",
+        "rightFoot": "(-0.59, 0.08, 1.72)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "tripo_node_f1bebe54",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-0.64, 0.62, 1.69)",
+        "boundsSize": "(1.05, 1.73, 1.29)",
+        "scale": "(1.42, 1.42, 1.42)",
+        "mesh": "tripo_node_f1bebe54",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "ThuyKieu_Skin_URP",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          },
+          {
+            "name": "ThuyKieu_Hanfu_URP",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "MeKieu",
+    "name": "MeKieu",
+    "position": "(-0.89, 0.00, 3.10)",
+    "height": 1.54045916,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "MeThuyKieu_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "MeThuyKieu_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(-0.91, 0.16, 3.18)",
+        "rightFoot": "(-0.92, 0.16, 3.04)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-0.87, 0.76, 3.10)",
+        "boundsSize": "(0.47, 1.54, 1.21)",
+        "scale": "(122.82, 122.82, 122.82)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "MeKieuStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  }
+]

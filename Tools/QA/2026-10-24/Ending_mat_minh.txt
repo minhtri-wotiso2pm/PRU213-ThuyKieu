@@ -1,0 +1,58 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter07_HuyenDuong
+[0.0s] STEER ending → mat_minh
+[0.2s] TAG scene:HuyenDuong_Cong
+[0.2s] TAG music:resolve
+[0.4s] TAG gameplay:tutorial_gate
+[0.5s] EXPLORE c7_quan_sat
+[0.9s] EXPLORE c7_kim_trong
+[1.3s] EXPLORE c7_trong
+[1.4s] TAG sfx:drum
+[1.4s] TAG scene:HuyenDuong_CongDuong
+[1.4s] TAG music:trial
+[1.5s] TAG gameplay:tutorial_trial
+[1.6s] TAG gameplay:trial_1
+[1.6s] SEQUENCE trial_1
+[2.2s] TRIAL r1 proved statement 3 with hoi_lo
+[2.6s] TRIAL r1 proved statement 2 with kim_trong
+[3.0s] TRIAL r1 proved statement 1 with khe_hon
+[3.4s] TRIAL r1 proved statement 4 with giao_keo (key)
+[3.6s] TRIAL r1 done · score 4 · trust 100
+[3.7s] TAG gameplay:trial_2
+[3.8s] SEQUENCE trial_2
+[4.0s] TRIAL r2 proved statement 3 with giao_keo (key)
+[4.2s] TRIAL r2 done · score 1 · trust 100
+[4.3s] TAG gameplay:trial_3
+[4.4s] SEQUENCE trial_3
+[4.6s] TRIAL r3 proved statement 1 with giao_keo (key)
+[4.8s] TRIAL r3 done · score 1 · trust 100
+[4.9s] TAG gameplay:lucbat_ch7
+[4.9s] SEQUENCE lucbat_ch7
+[5.5s] LUCBAT lucbat_ch7 tile ok · tone ok · score 3
+[5.6s] TAG music:resolve
+[5.6s] TAG sfx:gavel
+[5.9s] TAG scene:HuyenDuong_DoanTu
+[5.9s] TAG music:family
+[6.1s] CHOICE 1/2: Ôm chầm lấy cha.
+[6.2s] TAG music:spirit
+[6.2s] TAG scene:HuyenDuong_AnhSang
+[6.2s] TAG gameplay:kieu_voice
+[6.4s] CHOICE 2/2: Lắc đầu.
+[6.5s] TAG music:none
+[6.6s] TAG sfx:memory
+[6.6s] TAG gameplay:light
+[6.7s] CHAPTER 7 COMPLETE · lines 70 · choices 2
+[6.7s] FRAMES Chapter07_HuyenDuong · avg 93 fps · 1% low 36 fps · worst 29 ms · 438 frames · 1210x654
+   c7_viec = 2
+   c7_nhan_chung_vung = False
+   c7_ke_hoach_kt = True
+   c7_biet_hoi_lo = True
+   c7_lui = 0
+   c7_r1 = 4
+   c7_r2 = 1
+   c7_r3 = 1
+   c7_diem = 6
+   c7_long_tin = 100
+   c7_thua_vong = 0
+   c7_ket = 2
+   clues = c7_hoi_lo, c7_kim_trong

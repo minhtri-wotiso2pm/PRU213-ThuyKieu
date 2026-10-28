@@ -1,0 +1,66 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter07_HuyenDuong
+[0.0s] STEER ending → nghich_menh
+[0.2s] TAG scene:HuyenDuong_Cong
+[0.2s] TAG music:resolve
+[0.4s] TAG gameplay:kieu_voice
+[0.5s] TAG gameplay:tutorial_gate
+[0.6s] EXPLORE c7_quan_sat
+[0.9s] EXPLORE c7_trong
+[1.1s] TAG sfx:drum
+[1.1s] TAG scene:HuyenDuong_CongDuong
+[1.1s] TAG music:trial
+[1.2s] TAG gameplay:tutorial_trial
+[1.3s] TAG gameplay:trial_1
+[1.4s] SEQUENCE trial_1
+[1.5s] TRIAL r1 turned page ts_tai_menh (Tiên tri)
+[2.2s] TRIAL r1 proved statement 1 with khe_hon
+[2.8s] TRIAL r1 proved statement 2 with so_bac
+[3.2s] TRIAL r1 proved statement 3 with so_bac
+[3.9s] TRIAL r1 proved statement 4 with giao_keo (key)
+[4.1s] TRIAL r1 done · score 4 · trust 100
+[4.2s] TAG gameplay:trial_2
+[4.3s] SEQUENCE trial_2
+[4.5s] TRIAL r2 proved statement 2 with so_bac
+[4.9s] TRIAL r2 proved statement 4 with thu_lai
+[5.2s] TRIAL r2 proved statement 1 with thu_lai
+[5.6s] TRIAL r2 proved statement 3 with giao_keo (key)
+[5.9s] TRIAL r2 done · score 4 · trust 100
+[6.0s] CHOICE 2/2: Im lặng, mặc họ tự quyết.
+[6.1s] TAG gameplay:trial_3
+[6.2s] SEQUENCE trial_3
+[6.6s] TRIAL r3 proved statement 3 with thu_lai
+[7.0s] TRIAL r3 proved statement 1 with giao_keo (key)
+[7.2s] TRIAL r3 done · score 2 · trust 100
+[7.3s] TAG gameplay:lucbat_ch7
+[7.3s] SEQUENCE lucbat_ch7
+[7.9s] LUCBAT lucbat_ch7 tile ok · tone ok · score 3
+[8.0s] TAG music:resolve
+[8.0s] TAG sfx:gavel
+[8.4s] TAG sfx:fire
+[8.4s] TAG scene:HuyenDuong_DoanTu
+[8.4s] TAG music:family
+[8.6s] CHOICE 2/2: "Không phải mình con đâu, cha ạ. Có rất nhiều người đã giúp."
+[8.7s] TAG music:spirit
+[8.7s] TAG scene:HuyenDuong_AnhSang
+[8.7s] TAG gameplay:kieu_voice
+[8.9s] CHOICE 2/2: Lắc đầu.
+[9.0s] TAG music:nghich_menh
+[9.1s] CHOICE 2/2: Ở lại cùng nàng: "Hai chúng ta, một thân. Không ai phải đi một mình nữa."
+[9.2s] TAG sfx:memory
+[9.2s] TAG gameplay:light
+[9.2s] CHAPTER 7 COMPLETE · lines 74 · choices 4
+[9.2s] FRAMES Chapter07_HuyenDuong · avg 91 fps · 1% low 30 fps · worst 40 ms · 657 frames · 1210x654
+   c7_viec = 1
+   c7_nhan_chung_vung = False
+   c7_ke_hoach_kt = False
+   c7_biet_hoi_lo = True
+   c7_lui = 2
+   c7_r1 = 4
+   c7_r2 = 4
+   c7_r3 = 2
+   c7_diem = 10
+   c7_long_tin = 100
+   c7_thua_vong = 0
+   c7_ket = 3
+   clues = c7_hoi_lo

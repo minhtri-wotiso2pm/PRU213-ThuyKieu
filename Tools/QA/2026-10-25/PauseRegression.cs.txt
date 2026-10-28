@@ -1,0 +1,78 @@
+var director = UnityEngine.Object.FindAnyObjectByType<ThuyKieu.Core.Story.StoryDirector>();
+var pause = UnityEngine.Object.FindAnyObjectByType<ThuyKieu.UI.PauseMenuView>();
+var dialogue = UnityEngine.Object.FindAnyObjectByType<ThuyKieu.UI.StoryDialogueView>();
+if (director == null || pause == null || ThuyKieu.Core.GamePause.IsPaused) return "Need an unpaused story scene";
+var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+var host = new GameObject("QA-PauseRegression");
+var forest = host.AddComponent<ThuyKieu.Gameplay.Sequences.ForestRunSequence>();
+var trial = host.AddComponent<ThuyKieu.Gameplay.Sequences.TrialSequence>();
+var trialType = trial.GetType();
+var trialView = director.Hud.GetComponent<ThuyKieu.UI.TrialView>();
+trialType.GetField("_director", flags).SetValue(trial, director);
+trialType.GetField("_view", flags).SetValue(trial, trialView);
+var lineType = trialType.GetNestedType("Line", BindingFlags.NonPublic);
+var line = Activator.CreateInstance(lineType);
+lineType.GetField("Speaker").SetValue(line, "NoiTam");
+lineType.GetField("Text").SetValue(line, "Kiểm tra pause.");
+var beatType = forest.GetType().GetNestedType("Beat", BindingFlags.NonPublic);
+var beat = Activator.CreateInstance(beatType);
+beatType.GetField("Key").SetValue(beat, UnityEngine.InputSystem.Key.E);
+beatType.GetField("Label").SetValue(beat, "E");
+beatType.GetField("Caption").SetValue(beat, "QA pause");
+var view = ThuyKieu.UI.LucBatView.Create();
+var reports = new List<object>();
+bool forestCallback = false;
+int picked = -99;
+var lucType = typeof(ThuyKieu.Gameplay.Sequences.LucBatSequence);
+var routines = new Dictionary<string, System.Collections.IEnumerator>();
+routines["forest_prompt"] = (System.Collections.IEnumerator)forest.GetType().GetMethod("Prompt", flags).Invoke(forest, new object[] {director, beat, new Action<bool>(ok => forestCallback = true)});
+routines["lucbat_pick"] = (System.Collections.IEnumerator)lucType.GetMethod("Pick", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] {director, view, 2, new bool[2], ThuyKieu.Core.GamePause.UnpausedTime + 1.2, 1.2f, 0, new Action<int>(i => picked = i)});
+routines["lucbat_hold"] = (System.Collections.IEnumerator)lucType.GetMethod("Hold", BindingFlags.Static | BindingFlags.NonPublic).Invoke(null, new object[] {director, 1.2f});
+routines["trial_speak"] = (System.Collections.IEnumerator)trialType.GetMethod("Speak", flags).Invoke(trial, new object[] {line, 0.35f});
+var alive = routines.Keys.ToDictionary(k=>k, k=>true);
+float oldScale = Time.timeScale;
+bool oldBackground = Application.runInBackground;
+bool oldEnabled = dialogue.enabled;
+Application.runInBackground = true;
+dialogue.enabled = false;
+Time.timeScale = 0.55f;
+foreach (var key in routines.Keys) alive[key] = routines[key].MoveNext();
+pause.Pause();
+int phase = 1;
+double mark = EditorApplication.timeSinceStartup;
+double frozen = ThuyKieu.Core.GamePause.UnpausedTime;
+EditorApplication.CallbackFunction tick = null;
+tick = () => {
+    try {
+        double now = EditorApplication.timeSinceStartup;
+        foreach (var key in routines.Keys) if (alive[key]) alive[key] = routines[key].MoveNext();
+        if (phase == 1 && now - mark >= 2.2) {
+            reports.Add(new {test="paused_longer_than_timeouts", pass=alive.Values.All(x=>x) && !forestCallback && picked == -99, alive=alive.ToDictionary(x=>x.Key,x=>x.Value)});
+            reports.Add(new {test="unscaled_clock_frozen", pass=Math.Abs(ThuyKieu.Core.GamePause.UnpausedTime-frozen)<0.001, drift=ThuyKieu.Core.GamePause.UnpausedTime-frozen});
+            reports.Add(new {test="pause_time_scale", pass=Time.timeScale == 0f, scale=Time.timeScale});
+            pause.Resume();
+            reports.Add(new {test="resume_slow_motion", pass=Math.Abs(Time.timeScale-0.55f)<0.001, scale=Time.timeScale});
+            phase=2; mark=now;
+        } else if (phase == 2 && now - mark >= 0.25) {
+            reports.Add(new {test="remaining_time_preserved_after_resume",pass=alive.Values.All(x=>x)});
+            phase=3;
+        } else if (phase == 3 && now - mark >= 2.5) {
+            reports.Add(new {test="timers_expire_after_active_time",pass=alive.Values.All(x=>!x) && forestCallback && picked == -1, alive=alive.ToDictionary(x=>x.Key,x=>x.Value),picked=picked});
+            phase=4;
+        }
+    } catch(Exception e) { reports.Add(new {test="exception",pass=false,error=e.ToString()}); phase=4; }
+    if (phase == 4 || !EditorApplication.isPlaying) {
+        EditorApplication.update -= tick;
+        if (ThuyKieu.Core.GamePause.IsPaused) pause.Resume();
+        Time.timeScale=oldScale;
+        Application.runInBackground=oldBackground;
+        dialogue.enabled=oldEnabled;
+        director.Hud.HideQte();
+        trialView.Close();
+        view.Close();
+        UnityEngine.Object.Destroy(host);
+        System.IO.File.WriteAllText("Tools/QA/2026-10-25/PauseRegression.json",Newtonsoft.Json.JsonConvert.SerializeObject(reports,Newtonsoft.Json.Formatting.Indented));
+    }
+};
+EditorApplication.update += tick;
+return "Pause regression scheduled; report in ~5 seconds";

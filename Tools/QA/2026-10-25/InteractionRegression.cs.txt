@@ -1,0 +1,51 @@
+if (!EditorApplication.isPlaying) return "Need Play Mode";
+var reports = new List<object>();
+var root = new GameObject("QA-InteractionRegression");
+root.transform.position = new Vector3(10000,100,10000);
+try {
+    var player = new GameObject("QA-Player"); player.transform.SetParent(root.transform,false);
+    var interaction = player.AddComponent<ThuyKieu.Interaction.PlayerInteraction>(); interaction.enabled=false;
+    var flags = BindingFlags.Instance | BindingFlags.NonPublic;
+    var type = interaction.GetType();
+    var rayMethod = type.GetMethod("Raycast",flags);
+    var ray = (Func<Vector3,Vector3,float,int,QueryTriggerInteraction,int>)Delegate.CreateDelegate(typeof(Func<Vector3,Vector3,float,int,QueryTriggerInteraction,int>),interaction,rayMethod);
+    var rays = new GameObject("Rays"); rays.transform.SetParent(root.transform,false);
+    for(int i=0;i<40;i++) {
+        var g = new GameObject("Block"+i); g.transform.SetParent(rays.transform,false);
+        g.transform.localPosition = new Vector3(20,1,1+i);
+        g.AddComponent<BoxCollider>().size=Vector3.one*0.3f;
+    }
+    Physics.SyncTransforms();
+    var origin=root.transform.position+new Vector3(20,1,0);
+    var expected=Physics.RaycastAll(origin,Vector3.forward,50f,~0,QueryTriggerInteraction.Ignore).Select(h=>h.collider.name).OrderBy(x=>x).ToArray();
+    int count=ray(origin,Vector3.forward,50f,~0,QueryTriggerInteraction.Ignore);
+    var hits=(RaycastHit[])type.GetField("_rayHits",flags).GetValue(interaction);
+    var actual=hits.Take(count).Select(h=>h.collider.name).OrderBy(x=>x).ToArray();
+    reports.Add(new{test="ray_buffer_overflow_preserves_all_hits",pass=expected.Length==40 && expected.SequenceEqual(actual),expected=expected.Length,actual=count,capacity=hits.Length});
+    ray(origin,Vector3.forward,50f,~0,QueryTriggerInteraction.Ignore);
+    long before=GC.GetAllocatedBytesForCurrentThread();
+    for(int i=0;i<100;i++)ray(origin,Vector3.forward,50f,~0,QueryTriggerInteraction.Ignore);
+    long bytes=GC.GetAllocatedBytesForCurrentThread()-before;
+    reports.Add(new{test="warm_physics_rays_no_managed_allocation",pass=bytes==0,bytes=bytes,calls=100});
+    var nearby=new GameObject("Nearby"); nearby.transform.SetParent(root.transform,false);
+    for(int i=0;i<65;i++) {
+        var g=new GameObject("Trigger"+i);g.transform.SetParent(nearby.transform,false);
+        g.transform.localPosition=new Vector3((i%8-4)*0.1f,0.5f,0.5f+(i/8)*0.1f);
+        var c=g.AddComponent<BoxCollider>(); c.size=Vector3.one*0.1f;c.isTrigger=true;
+    }
+    var target=new GameObject("Target"); target.transform.SetParent(nearby.transform,false);target.transform.localPosition=new Vector3(0,1,2);
+    var box=target.AddComponent<BoxCollider>(); box.size=Vector3.one*0.5f;
+    var interactable=target.AddComponent<ThuyKieu.Interaction.TestInteractable>();
+    Physics.SyncTransforms();
+    var find=type.GetMethod("FindInteractable",flags);
+    var found=find.Invoke(interaction,null);
+    reports.Add(new{test="overlap_overflow_still_finds_target",pass=ReferenceEquals(found,interactable),capacity=((Collider[])type.GetField("_nearby",flags).GetValue(interaction)).Length});
+    var wall=new GameObject("Wall");wall.transform.SetParent(nearby.transform,false);wall.transform.localPosition=new Vector3(0,1,1.5f);wall.AddComponent<BoxCollider>().size=new Vector3(3,3,0.2f);
+    Physics.SyncTransforms();
+    reports.Add(new{test="solid_wall_blocks_interaction",pass=find.Invoke(interaction,null)==null});
+    wall.GetComponent<BoxCollider>().isTrigger=true;
+    Physics.SyncTransforms();
+    reports.Add(new{test="trigger_does_not_block_interaction",pass=ReferenceEquals(find.Invoke(interaction,null),interactable)});
+} finally { root.SetActive(false); UnityEngine.Object.Destroy(root); }
+System.IO.File.WriteAllText("Tools/QA/2026-10-25/InteractionRegression.json",Newtonsoft.Json.JsonConvert.SerializeObject(reports,Newtonsoft.Json.Formatting.Indented));
+return reports;

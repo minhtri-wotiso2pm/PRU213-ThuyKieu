@@ -1,0 +1,12 @@
+[
+  {
+    "test": "cursor_lock_discards_first_delta",
+    "pass": true
+  },
+  {
+    "test": "equal_mouse_distance_equal_turn",
+    "pass": true,
+    "oneFrame": 7.5,
+    "fiveFrames": 7.5
+  }
+]

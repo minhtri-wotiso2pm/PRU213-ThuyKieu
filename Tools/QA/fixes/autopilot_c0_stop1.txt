@@ -1,0 +1,8 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter00_Prologue
+[0.3s] TAG scene:LopHoc
+[0.3s] TAG music:classroom
+[0.4s] CHOICE 3/4: "Kiều cam chịu quá. Em không thích nhân vật này."
+[0.5s] TAG sfx:school_bell
+[0.5s] TAG gameplay:tutorial_classroom
+[0.6s] STOP at explore 1 · player (-597.10, 0.02, -0.97) · clues 0

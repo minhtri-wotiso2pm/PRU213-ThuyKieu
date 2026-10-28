@@ -1,0 +1,32 @@
+var camera=UnityEngine.Object.FindAnyObjectByType<ThuyKieu.Player.ThirdPersonCameraController>();
+if(camera==null || !EditorApplication.isPlaying || camera.IsFirstPerson)return "Need third-person Play Mode";
+var flags=BindingFlags.Instance|BindingFlags.NonPublic;
+var yaw=camera.GetType().GetField("yaw",flags);
+var pitch=camera.GetType().GetField("pitch",flags);
+var ignore=camera.GetType().GetField("ignoreNextLookDelta",flags);
+var late=camera.GetType().GetMethod("LateUpdate",flags);
+float oldYaw=camera.Yaw,oldPitch=camera.Pitch;
+bool oldLocked=camera.ControlLocked,oldIgnore=(bool)ignore.GetValue(camera),oldVisible=Cursor.visible;
+var oldCursor=Cursor.lockState;
+var oldLook=ThuyKieu.Core.InputReader.SimulatedLook;
+var reports=new List<object>();
+try {
+    camera.ControlLocked=false;camera.SetCursorLocked(true);
+    ThuyKieu.Core.InputReader.SimulatedLook=new Vector2(1000,0);
+    late.Invoke(camera,null);
+    reports.Add(new{test="cursor_lock_discards_first_delta",pass=Math.Abs(camera.Yaw-oldYaw)<0.001});
+    ThuyKieu.Core.InputReader.SimulatedLook=new Vector2(50,0);
+    late.Invoke(camera,null);
+    float large=camera.Yaw-oldYaw;
+    yaw.SetValue(camera,oldYaw);
+    ThuyKieu.Core.InputReader.SimulatedLook=new Vector2(10,0);
+    for(int i=0;i<5;i++)late.Invoke(camera,null);
+    float small=camera.Yaw-oldYaw;
+    reports.Add(new{test="equal_mouse_distance_equal_turn",pass=Math.Abs(large-small)<0.01&&Math.Abs(large)>0.1,oneFrame=large,fiveFrames=small});
+} finally {
+    ThuyKieu.Core.InputReader.SimulatedLook=oldLook;
+    yaw.SetValue(camera,oldYaw);pitch.SetValue(camera,oldPitch);ignore.SetValue(camera,oldIgnore);
+    camera.ControlLocked=oldLocked;Cursor.lockState=oldCursor;Cursor.visible=oldVisible;
+}
+System.IO.File.WriteAllText("Tools/QA/2026-10-25/CameraRegression.json",Newtonsoft.Json.JsonConvert.SerializeObject(reports,Newtonsoft.Json.Formatting.Indented));
+return reports;

@@ -1,0 +1,42 @@
+[
+  {
+    "test": "paused_longer_than_timeouts",
+    "pass": true,
+    "alive": {
+      "forest_prompt": true,
+      "lucbat_pick": true,
+      "lucbat_hold": true,
+      "trial_speak": true
+    }
+  },
+  {
+    "test": "unscaled_clock_frozen",
+    "pass": true,
+    "drift": 0.0
+  },
+  {
+    "test": "pause_time_scale",
+    "pass": true,
+    "scale": 0.0
+  },
+  {
+    "test": "resume_slow_motion",
+    "pass": true,
+    "scale": 0.55
+  },
+  {
+    "test": "remaining_time_preserved_after_resume",
+    "pass": true
+  },
+  {
+    "test": "timers_expire_after_active_time",
+    "pass": true,
+    "alive": {
+      "forest_prompt": false,
+      "lucbat_pick": false,
+      "lucbat_hold": false,
+      "trial_speak": false
+    },
+    "picked": -1
+  }
+]

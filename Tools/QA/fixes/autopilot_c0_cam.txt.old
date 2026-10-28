@@ -1,0 +1,108 @@
+AUTOPILOT FAIL: PASS · 60 errors
+[0.0s] SCENE Chapter00_Prologue
+[0.9s] SEQUENCE 
+[2.0s] TAG scene:LopHoc
+[2.0s] TAG music:classroom
+  L000 ThayGiao cam (-602.15, 1.81, 0.55) head (-601.20, 1.50, 3.61) root (-601.20, 0.22, 3.55)
+  L001 Ngan cam (-598.55, 1.55, -1.68) head (-596.32, 1.06, -0.93) root (-596.30, 0.00, -1.19)
+  L002 ThayGiao cam (-600.08, 1.54, 1.74) head (-601.20, 1.50, 3.61) root (-601.20, 0.22, 3.55)
+[8.0s] CHOICE 3/4: "Kiều cam chịu quá. Em không thích nhân vật này."
+[8.1s] HITCH 153 ms
+  L003 HocSinh cam (-596.66, 1.47, 0.98) head (-597.07, 0.98, -0.98) root (-597.10, 0.02, -0.97)
+  L004 ThayGiao cam (-600.08, 1.54, 1.74) head (-601.20, 1.50, 3.61) root (-601.20, 0.22, 3.55)
+[10.9s] TAG sfx:school_bell
+  L005 ThayGiao cam (-602.15, 1.81, 0.55) head (-601.20, 1.50, 3.61) root (-601.20, 0.22, 3.55)
+[12.3s] TAG gameplay:tutorial_classroom
+  L006 NoiTam cam (-602.15, 1.81, 0.55) head - root -
+[13.8s] SEQUENCE tutorial_classroom
+[17.1s] EXPLORE pl_board
+  L007 NoiTam cam (-599.40, 1.75, 1.60) head - root -
+[18.6s] TAG gameplay:lucbat_pl
+  L008 Narrator cam (-599.40, 1.75, 1.60) head - root -
+[20.0s] SEQUENCE lucbat_pl
+[21.2s] LUCBAT lucbat_pl tile ok · tone ok · score 3
+  L009 TrangSach cam (-600.25, 1.15, 4.02) head - root -
+  L010 NoiTam cam (-600.25, 1.15, 4.02) head - root -
+[25.9s] EXPLORE pl_window
+  L011 NoiTam cam (-596.45, 1.62, -0.55) head - root -
+  L012 NoiTam cam (-596.45, 1.62, -0.55) head - root -
+[28.9s] EXPLORE pl_ngan
+  L013 Ngan cam (-595.36, 1.68, 1.54) head (-596.31, 1.06, -0.94) root (-596.30, 0.00, -1.19)
+  L014 Ngan cam (-595.36, 1.68, 1.53) head (-596.31, 1.06, -0.93) root (-596.30, 0.00, -1.19)
+  L015 HocSinh cam (-596.67, 1.63, -2.53) head (-595.73, 1.10, -0.08) root (-595.72, 0.02, -0.03)
+  L016 Ngan cam (-595.37, 1.67, 1.52) head (-596.31, 1.06, -0.93) root (-596.30, 0.00, -1.19)
+[34.9s] EXPLORE pl_book
+[35.0s] TAG gameplay:book_glow
+  L017 TrangSach cam (-597.05, 1.10, -0.84) head - root -
+  L018 Narrator cam (-597.10, 2.23, -4.21) head - root -
+[37.8s] TAG gameplay:kieu_voice
+  L019 KieuThat cam (-596.72, 1.15, 1.31) head - root -
+  L020 HocSinh cam (-596.71, 1.15, 1.01) head (-597.12, 1.10, -0.93) root (-597.10, 0.02, -0.97)
+[42.4s] CHOICE 1/3: "Đúng. Biết trước mọi chuyện, tôi sẽ không để ai lừa."
+[42.5s] HITCH 188 ms
+  L021 HocSinh cam (-596.71, 1.15, 1.02) head (-597.11, 1.11, -0.95) root (-597.10, 0.02, -0.97)
+  L022 KieuThat cam (-596.71, 1.15, 1.30) head - root -
+  L023 KieuThat cam (-596.71, 1.15, 1.31) head - root -
+[46.8s] TAG sfx:memory
+[46.8s] TAG gameplay:into_room
+  L024 TrangSach cam (-596.71, 1.15, 1.30) head - root -
+[48.3s] SEQUENCE into_room
+[49.9s] TAG scene:PhongKieu
+[49.9s] TAG music:morning
+[49.9s] TAG gameplay:wake_room
+  L025 NoiTam cam (-6.90, 2.30, 0.60) head - root -
+[51.3s] TAG gameplay:than_xac
+  L026 MeKieu cam (-8.03, 1.34, 1.20) head (-1.03, 1.56, 5.26) root (-1.10, 0.27, 5.30)
+[52.7s] TAG gameplay:tutorial_room
+  L027 NoiTam cam (-6.66, 1.34, 1.66) head - root -
+[54.2s] SEQUENCE tutorial_room
+[55.3s] HITCH 173 ms
+[55.9s] EXPLORE pl_guong
+  L028 TrangSach cam (-8.25, 1.45, 1.55) head - root -
+  L029 NoiTam cam (-8.25, 1.45, 1.55) head - root -
+[59.6s] HITCH 154 ms
+[60.4s] HITCH 156 ms
+[61.0s] HITCH 162 ms
+[61.1s] EXPLORE pl_dan
+[61.2s] TAG gameplay:dan_tu_do
+  L030 TrangSach cam (-8.24, 1.23, 3.45) head - root -
+[62.7s] SEQUENCE dan_tu_do
+[63.8s] HITCH 209 ms
+  L031 NoiTam cam (-7.08, 1.32, 2.69) head - root -
+[65.3s] EXPLORE pl_tho
+  L032 KimTrong cam (-8.26, 1.30, 0.94) head - root -
+  L033 NoiTam cam (-8.26, 1.30, 0.94) head - root -
+[68.4s] EXPLORE pl_san
+[68.5s] TAG scene:VuongGia_San
+  L034 VuongOng cam (0.26, 1.92, 1.82) head (2.09, 1.71, 4.78) root (2.05, 0.27, 4.75)
+  L035 VuongQuan cam (2.05, 1.36, 1.69) head (-0.93, 1.53, 4.30) root (-0.90, 0.27, 4.30)
+  L036 NoiTam cam (0.56, 1.28, 4.74) head - root -
+[72.7s] TAG sfx:gong
+[72.8s] TAG music:tension_low
+  L037 QuanSai cam (0.11, 1.73, -5.07) head (0.67, 1.23, -4.67) root (0.67, 0.00, -4.79)
+  L038 VuongOng cam (0.30, 1.36, 0.84) head (2.07, 1.68, 4.71) root (2.05, 0.27, 4.75)
+  L039 QuanSai cam (-0.12, 1.36, 3.91) head (1.11, 1.23, 2.73) root (1.11, 0.00, 2.61)
+[78.8s] CHOICE 3/3: Đứng yên, ghi nhớ từng gương mặt.
+[78.8s] HITCH 166 ms
+  L040 NoiTam cam (2.71, 1.28, 3.07) head - root -
+  L041 VuongOng cam (0.29, 1.36, 0.87) head (2.16, 1.70, 4.73) root (2.05, 0.27, 4.75)
+[81.7s] TAG gameplay:arrest
+  L042 MeKieu cam (1.90, 1.36, 1.50) head (-1.06, 1.56, 5.36) root (-1.10, 0.27, 5.30)
+  L043 VuongQuan cam (-1.29, 2.01, -0.23) head (-0.29, 1.30, -10.12) root (-0.27, 0.06, -10.11)
+[84.6s] TAG scene:VuongGia_Mua
+[84.6s] TAG music:sad_strings
+[84.6s] SEQUENCE montage_pl_mua
+[85.7s] HITCH 157 ms
+  L044 MeKieu cam (1.21, 1.36, 0.95) head (0.67, 1.56, 4.42) root (0.60, 0.27, 4.45)
+[89.4s] TAG gameplay:kieu_voice
+  L045 KieuThat cam (2.02, 1.28, 4.27) head - root -
+  L046 NoiTam cam (2.01, 1.28, 4.26) head - root -
+[93.7s] CHAPTER 0 COMPLETE · lines 47 · choices 3
+[93.7s] FRAMES Chapter00_Prologue · avg 99 fps · 1% low 13 fps · worst 209 ms · 9061 frames · 1210x630 · median 9.0 ms · p99 22.4 ms · under 60 fps 2.6% · load 2.6 s (first frame 2532 ms) · warm-up worst 448 ms
+   pl_che_kieu = 3
+   pl_vat = 3
+   pl_hanh_dong = 3
+   tinh_tao = 0
+   tu_trong = 3
+   clues = pl_guong, pl_thu_kim_trong
+ERROR Exception: InvalidOperationException: You are trying to read Input using the UnityEngine.Input class, but you have switched active Input handling to Input System package in Player Settings. @ UnityEngine.Input.get_mouseScrollDelta () (at <7fdf22b76a554395b892b73f7625ddc3>:0)

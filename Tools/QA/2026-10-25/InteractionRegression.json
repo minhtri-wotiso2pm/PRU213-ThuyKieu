@@ -1,0 +1,28 @@
+[
+  {
+    "test": "ray_buffer_overflow_preserves_all_hits",
+    "pass": true,
+    "expected": 40,
+    "actual": 40,
+    "capacity": 64
+  },
+  {
+    "test": "warm_physics_rays_no_managed_allocation",
+    "pass": true,
+    "bytes": 0,
+    "calls": 100
+  },
+  {
+    "test": "overlap_overflow_still_finds_target",
+    "pass": true,
+    "capacity": 128
+  },
+  {
+    "test": "solid_wall_blocks_interaction",
+    "pass": true
+  },
+  {
+    "test": "trigger_does_not_block_interaction",
+    "pass": true
+  }
+]
