@@ -1,0 +1,4 @@
+[GiaThuanMerge] Preserved 4532 unrelated scene components byte-for-byte in Editor serialization
+[GiaThuanMerge] Vendor avatar valid, head height 1.178 m
+[GiaThuanMerge] Vendor avatar valid, head height 1.178 m
+[GiaThuanMerge] PASS: vendor survives scene reload, humanoid avatar/controller/textures resolve, Thuy Van model resolves, no missing scene scripts

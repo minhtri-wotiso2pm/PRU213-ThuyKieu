@@ -585,8 +585,8 @@ namespace ThuyKieu.Core.Editor
             // Shade tree overarching the tea house and bà hàng nước tending the counter.
             Prop("Assets/_Game/Prefabs/Props/CayNhan.prefab", c + new Vector3(-3.4f, 0f, 2.9f), 35f, 1.15f, root);
             var shared = StoryAnimationSetup.Controller();
-            var owner = RiggedActor("BaHangNuoc", "BaHangNuoc", "Assets/_Game/Art/Characters/MeThuyKieu/Models/MeThuyKieu_Rigged.fbx",
-                "Assets/_Game/Art/Characters/MeThuyKieu/Tectures", 1.56f, c + new Vector3(2.18f, 0.16f, 0.35f), 270f, new Color(0.82f, 0.72f, 0.6f), shared);
+            var owner = RiggedActor("BaHangNuoc", "BaHangNuoc", "Assets/_Game/Art/Characters/BaHangNuoc/Models/BaHangNuoc_Rigged.fbx",
+                "Assets/_Game/Art/Characters/BaHangNuoc/Textures", 1.56f, c + new Vector3(2.18f, 0.16f, 0.35f), 270f, Color.white, shared);
             owner.transform.SetParent(root, true);
             GroundFeet(owner.GetComponentInChildren<Animator>().transform, owner.gameObject, c.y + 0.16f);
             if (owner.GetComponentInChildren<Animator>() != null)
