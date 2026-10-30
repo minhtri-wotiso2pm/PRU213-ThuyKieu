@@ -1,0 +1,11 @@
+BRIGHTNESS PASS
+PASS Chapter00_Prologue: saved setting on entry, live paused changes, neutral grade, mood, no accumulation, world lights/scene unchanged
+PASS Chapter01_GiaBien: saved setting on entry, live paused changes, neutral grade, mood, no accumulation, world lights/scene unchanged
+PASS Chapter02_RoadToMaGiamSinh: saved setting on entry, live paused changes, neutral grade, mood, no accumulation, world lights/scene unchanged
+PASS Chapter03_LauTuBa: saved setting on entry, live paused changes, neutral grade, mood, no accumulation, world lights/scene unchanged
+PASS Chapter04_LauTuBaDem: saved setting on entry, live paused changes, neutral grade, mood, no accumulation, world lights/scene unchanged
+PASS Chapter05_Escape: saved setting on entry, live paused changes, neutral grade, mood, no accumulation, world lights/scene unchanged
+PASS Chapter06_KimTrong: saved setting on entry, live paused changes, neutral grade, mood, no accumulation, world lights/scene unchanged
+PASS Chapter07_HuyenDuong: saved setting on entry, live paused changes, neutral grade, mood, no accumulation, world lights/scene unchanged
+PASS Chapter08_Epilogue: saved setting on entry, live paused changes, neutral grade, mood, no accumulation, world lights/scene unchanged
+PASS Settings UI: display tab, arrows, live percentage, 50–200% limits, five rows fit, reset to 100%

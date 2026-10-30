@@ -1,0 +1,60 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter04_LauTuBaDem
+[0.0s] NAVMESH built in 26 ms · 388 sources
+[0.1s] C4 Foley recorded set loaded
+[0.8s] TAG scene:Dem_Opening
+[0.8s] TAG music:tension_low
+[0.9s] CHOICE 2/5: Cúi đầu: "Dạ... con xin nghe lời mẹ."
+[1.0s] TAG sfx:latch_drop
+[1.2s] TAG scene:Dem_Night
+[1.2s] TAG gameplay:tutorial_dem
+[1.2s] C4 KEYS standing (opening): ok · hook 24 cm out from her hip bone, -7 cm below it · keys hang 6° from straight down · reach 0.72 m above her feet · size 20 cm · breathing False · keys can be taken False · scene running False
+[1.9s] GUIDE ok   start: only the room · step Room · "Tìm cây trâm, nâng then cửa phòng." · office 0.00 · cabinet 0.00 · kitchen 0.00
+[2.4s] GUIDE ok   out of the room: the keys · "Tìm phòng Tú Bà — mụ đeo chìa khoá ở thắt lưng." · office 0.00 · cabinet 0.00 · kitchen 0.00
+[6.0s] C4 Tú Bà on her sập: body 12 cm above the mat with the old lift, lift now 0.33 m
+[6.2s] FAIL → checkpoint restored
+[6.4s] GUIDE ok   checkpoint before the keys · step Keys · "Tìm phòng Tú Bà — mụ đeo chìa khoá ở thắt lưng." · office 0.00 · cabinet 0.00 · kitchen 0.00
+[6.4s] GUIDE ok   no cue duplicated (before the keys) · 9 cues (at the start 9)
+[8.0s] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 640×480
+[9.4s] KEYS info press: target KeyTheft · leaning in True (ready True) · hand on True · stage 1 · pull way (0.00, 1.00) · screen 640×480
+[15.3s] C4 keys taken through the minigame ok · 26.2 s game time · held 12.0/12 s · catches 0 · breath played on 6603 frames · while not asleep in bed 0 · breath sources on her 1
+[15.4s] GUIDE ok   nothing during the close view · office cue at most 0.00 · line early False
+[15.9s] GUIDE ok   keys taken: the office · 1.6 s after the camera came back · office lamp lit True · office 0.50 · cabinet 0.00 · kitchen 0.00
+[15.9s] GUIDE ok   the cabinet can be opened with the keys · explore options: c4_cabinet, c4_ledger, c4_colam, c4_wait
+[15.9s] GUIDE ok   the way can be seen from the keys · from the sập 3 (Guide_DoorBRing, Guide_DoorBBolt, Guide_DoorBCrack) · from the store 3 (Guide_DoorBRing, Guide_DoorBBolt, Guide_DoorBCrack)
+[15.9s] GUIDE ok   guards' light and sight the same lit and dark · no light or collider on a cue True · 0.1874 000 0.1348 111 0.4223 111 0.5375 111 0.1513 000 0.1999 000 1.0000 111
+[33.9s] GUIDE ok   reminder after no headway · after 34 s 1 · after 54 s 1
+[34.0s] FAIL → checkpoint restored
+[34.2s] GUIDE ok   checkpoint after the keys · step Office · office 1.00 · cabinet 0.00 · kitchen 0.00
+[34.2s] GUIDE ok   no cue duplicated (after the keys) · 9 cues (at the start 9)
+[35.4s] GUIDE ok   in the office: the cabinet · office 0.00 · cabinet 1.00 · kitchen 0.00
+[35.7s] TAG sfx:lock_open
+[35.7s] TAG gameplay:document_deal
+[35.9s] CHOICE 3/3: Để nguyên chỗ cũ — mụ sẽ không phát hiện sớm.
+[35.9s] CHOICE 1/3: Chỉ lấy vài lạng làm lộ phí.
+[36.0s] TAG sfx:lock_open
+[36.8s] GUIDE ok   contract: the office cues gone · J1 running True · office 0.00 · cabinet 0.00 · kitchen 0.00
+[45.4s] GUIDE ok   J1: no kitchen cue, no reminder, warned only once heard · J1 done True · kitchen at most 0.00 · reminders 0 · warning "Có người ngoài cửa. Tìm chỗ tránh." with the guard 0.2 m from the door
+[45.4s] C4 J1 done · mirror seen False
+[46.7s] GUIDE ok   after J1: the kitchen · danger False · situation "" · office 0.00 · cabinet 0.00 · kitchen 1.00
+[46.8s] FAIL → checkpoint restored
+[47.0s] GUIDE ok   checkpoint after the contract · stage 4 · office 0.00 · cabinet 0.00 · kitchen 1.00
+[47.0s] GUIDE ok   no cue duplicated (after the contract) · 9 cues (at the start 9)
+[47.0s] GUIDE ok   guards' sensitivity untouched · guard 0.85 · gate 1.00
+[47.0s] GUIDE info brightness 50/100/200 %: cue against the room 1.41 / 1.00 / 0.71
+[62.6s] C4 J2 done · Tú Bà phase 1 · after J2: Awake, breathing False, snore False · breath played on 24440 frames · while not asleep in bed 0 · breath sources on her 1
+[63.1s] TAG scene:Dem_BackDoor
+[63.1s] TAG music:none
+[63.4s] TAG gameplay:kieu_voice
+[63.4s] CHOICE 2/2: "Ngươi đã ở lại. Ta thì không."
+[63.5s] TAG music:resolve
+[63.5s] CHAPTER 4 COMPLETE · lines 29 · choices 4
+[63.5s] FRAMES Chapter04_LauTuBaDem · avg 711 fps · 1% low 202 fps · worst 29 ms · 43704 frames · 640x480 · median 1.3 ms · p99 3.4 ms · under 60 fps 0.0% · load 3.3 s (first frame 3090 ms) · warm-up worst 800 ms
+   c4_viec = 1
+   c4_canh_giac = 0
+   c4_tien = 1
+   c4_van_tu = 0
+   c4_so_no = False
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = c4_giao_keo
