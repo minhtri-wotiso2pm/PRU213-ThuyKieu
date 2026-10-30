@@ -208,6 +208,17 @@ namespace ThuyKieu.Core
             }
         }
 
+        /// <summary>Tab pressed this frame: show the current objective again where the HUD fades it out.</summary>
+        public static bool ObjectivePressedThisFrame
+        {
+            get
+            {
+                if (GamePause.IsPaused) return default;
+                Keyboard keyboard = Keyboard.current;
+                return keyboard != null && keyboard.tabKey.wasPressedThisFrame;
+            }
+        }
+
         /// <summary>B pressed this frame: open or close the Trang Sách book.</summary>
         public static bool BookPressedThisFrame
         {

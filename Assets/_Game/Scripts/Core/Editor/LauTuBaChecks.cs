@@ -180,6 +180,7 @@ namespace ThuyKieu.Core.Editor
             EditorSceneManager.OpenScene(scenePath);
             log.AppendLine(Path.GetFileNameWithoutExtension(scenePath));
             void Check(bool condition, string what) { log.AppendLine((condition ? "  ok   " : "  FAIL ") + what); if (!condition) failures.Add(Path.GetFileNameWithoutExtension(scenePath) + ": " + what); }
+            if (night) foreach (var (ok, what) in LauTuBaGuide.Validate()) Check(ok, what);
 
             var nav = Object.FindAnyObjectByType<ThuyKieu.Environment.NarrowNavMesh>();
             // Doorways are tested as if every door stood open: a shut leaf carves its doorway closed, as it should.
