@@ -1,0 +1,38 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter02_RoadToMaGiamSinh
+[1.2s] TAG scene:Road_Departure
+[1.2s] TAG music:road_dusk
+[1.2s] SEQUENCE montage_c2_mo
+[1.3s] TAG gameplay:tutorial_road
+[1.5s] TEST forced failure
+[1.6s] FAIL → checkpoint restored
+[2.6s] EXPLORE c2_observe
+[2.9s] EXPLORE c2_ask
+[3.1s] CHOICE 1/4: Hỏi khéo: "Quê nhà công tử ở đâu? Phụ mẫu có dễ tính không?"
+[3.4s] EXPLORE c2_eavesdrop
+[3.5s] TAG scene:Road_RestStop
+[3.5s] TAG gameplay:eavesdrop_c2
+[3.5s] SEQUENCE eavesdrop_c2
+[5.9s] TAG music:none
+[5.9s] TAG gameplay:memory_flash
+[6.1s] CHOICE 2/2: Tự ghép các manh mối.
+[6.1s] TAG gameplay:deduction_c2
+[6.1s] SEQUENCE deduction_c2
+[6.2s] TAG music:tension_low
+[6.2s] CHOICE 2/2: Giả vờ như chưa biết gì.
+[6.2s] TAG scene:Road_MaskTest
+[6.3s] CHOICE 1/3: Mỉm cười: "Thiếp đi tìm chỗ rửa mặt cho tỉnh."
+[6.4s] CHOICE 3/3: Lạnh nhạt: "Mong hay không thì có khác gì đâu."
+[6.5s] TAG scene:Road_LamTriGate
+[6.5s] TAG music:road_night
+[6.7s] CHAPTER 2 COMPLETE · lines 31 · choices 5
+[6.7s] FRAMES Chapter02_RoadToMaGiamSinh · avg 395 fps · 1% low 36 fps · worst 51 ms · 1741 frames · 640x480 · median 1.8 ms · p99 17.6 ms · under 60 fps 1.0% · load 4.7 s (first frame 4295 ms) · warm-up worst 1247 ms
+   nghi_ngo = 36
+   manh_moi = 3
+   suy_luan = 0
+   gia_vo = 1
+   c3_viec = 0
+   c3_khe_uoc = False
+   c3_bi_bat = 0
+   tra_loi_kieu_that = 0
+   clues = c2_ban_tay, c2_lam_tri, c2_tu_ba

@@ -50,6 +50,8 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
         [SerializeField] private PebblePile _pebblePile;
         [Tooltip("Kiều's own room: the one place at night no watcher enters, sees into, or catches her in.")]
         [SerializeField] private SafeZone _safeZone;
+        [Tooltip("The objective line and the house's cues towards it, worked out from the night's state.")]
+        [SerializeField] private Chapter04Guidance _guidance;
 
         [Header("People")]
         [SerializeField] private Watchman _guard;
@@ -212,8 +214,14 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
         private void UpdateControls()
         {
             int pebbles = _pebbles != null ? _pebbles.Count : 0;
-            _director.Hud.SetControls("WASD: đi · Shift: chạy · Ctrl: khom · E: tương tác (giữ E: làm khẽ) · Q: ném sỏi để dụ lính (" + pebbles + ") · Chuột phải: nhìn kỹ");
+            _director.Hud.SetControls("WASD: đi · Shift: chạy · Ctrl: khom · E: tương tác (giữ E: làm khẽ) · Q: ném sỏi để dụ lính (" + pebbles + ") · Chuột phải: nhìn kỹ · Tab: xem mục tiêu");
         }
+
+        /// <summary>Someone is chasing her now.</summary>
+        internal bool Chased => _watchers.Any(w => w.isActiveAndEnabled && w.State == WatchState.Chase);
+
+        /// <summary>A danger is playing out now (a scare, a chase, a catch, Tú Bà lying awake): guidance steps back.</summary>
+        internal bool InDanger => _j1Running || _j2Running || CatchScene.Playing || _sleeper.State == TuBaSleeper.Sleep.Roused || Chased;
 
         /// <summary>Both guards in their places for the stage (a fresh night, a resumed save, a probe), calm.</summary>
         private void ArmGuard()
@@ -307,7 +315,6 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
         {
             if (_stage != 0 || door.Lock != DoorLock.None || door.MovedByNpc) return;
             SetStage(1);
-            _director.Hud.SetObjective(_director.GetBool("c3_biet_chia_khoa") ? "Lấy chùm chìa ở thắt lưng Tú Bà" : "Tìm chìa khoá — Tú Bà đeo ở thắt lưng");
             _director.Hud.ShowBark("NoiTam", "Then nhấc rồi. Đi khẽ thôi... phòng mụ ở dãy nhà sau.", 3.4f);
             Checkpoint();
         }
@@ -317,7 +324,8 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             _director.SetBool("c4_chia_khoa", true);
             _director.SetBool("c4_quan_sat", true);
             SetStage(2);
-            _director.Hud.SetObjective("Lấy giao kèo trong tủ khoá — phòng sổ sách");
+            // The new objective and the office's cues follow from here once the close view has handed the camera back
+            // (Chapter04Guidance).
             _director.Hud.ShowBark("NoiTam", "Năm chiếc chìa. Chiếc khắc hình con cá... giống ổ khoá trên cái tủ đồng.", 3.6f);
             // Checkpoint in the dark store next door, not beside her.
             Checkpoint();
@@ -496,6 +504,7 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             if (KieuAtBedside()) { TuBaCatches("Mụ mở mắt — bạn đứng ngay cạnh sập."); return; }
             _director.Hud.ShowBark("TuBa", "(quát vọng ra) Thằng Tư! Tiếng gì ngoài kia? Ra xem!", 3f);
             SendGuardTo(source);
+            WarnGuardSent();
         }
 
         private void OnTuBaHeard(TuBaSleeper sleeper, Vector3 source)
@@ -504,6 +513,13 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             if (_tuBaCallCooldown > 0f) return;
             _director.Hud.ShowBark("TuBa", "(gắt) Lại nữa! Thằng Tư đâu?!", 2.4f);
             SendGuardTo(source);
+            WarnGuardSent();
+        }
+
+        /// <summary>After her shout, out loud: the guard is coming to where the sound was.</summary>
+        private void WarnGuardSent()
+        {
+            if (_guidance != null && _guard.Perceiving && _guard.State != WatchState.Chase) _guidance.Warn("Lính đang tới chỗ vừa có tiếng động. Tránh xa.", 7f);
         }
 
         /// <summary>The guard is sent to check the place a sound came from (not where Kiều is now), unless he is chasing.</summary>
@@ -615,6 +631,7 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             if (_tuBaCallCooldown > 0f) _tuBaCallCooldown -= Time.deltaTime;
             if (StoryAutopilot.Enabled) WatchBreath();
             if (_ended || !_director.InExplore || CatchScene.Playing) return;
+            RefreshHub();
 
             // Lying awake and listening, she sees whoever stands at her bedside.
             if (_sleeper.State == TuBaSleeper.Sleep.Roused && !_j2Running && KieuAtBedside()) TuBaCatches("Mụ nằm thức, nghe ngóng — và thấy bạn ngay cạnh sập.");
@@ -655,7 +672,22 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
         }
 
         private bool _heroShadow, _maKieuTurned;
-        private float _shadowTimer;
+        private float _shadowTimer, _hubRefreshAt;
+
+        /// <summary>
+        /// The story's hub draws its choices when it is reached, so the ones in force when Kiều takes the keys (or when the
+        /// checkpoint after them is restored) were drawn without them: the cabinet and chị Lam are missing. The world goes
+        /// round the hub once ("c4_wait", the sentinel kept for this, see InkStoryValidator.SimulateWorld) when she is free
+        /// again, out of the keys' close view and out of danger, so they are offered.
+        /// </summary>
+        private void RefreshHub()
+        {
+            if (Time.time < _hubRefreshAt || !_director.GetBool("c4_chia_khoa") || _director.GetBool("c4_khe_uoc_mg") || _director.IsBusy) return;
+            if (_keyTheft.InMinigame || _director.CameraController.CloseWeight > 0.01f || InDanger) return;
+            if (_director.IsExploreAvailable("c4_cabinet") || !_director.IsExploreAvailable("c4_wait")) return;
+            _hubRefreshAt = Time.time + 2f;
+            _director.ChooseExplore("c4_wait");
+        }
 
         private bool SecondScareReady()
         {
@@ -682,7 +714,7 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
         private IEnumerator FirstScare()
         {
             _j1Running = true;
-            _director.Hud.SetObjective("Mang giao kèo ra cửa sau trong bếp");
+            // The objective stays the long way out (Chapter04Guidance); what happens here is said only once it is heard.
             // Warning: the flame leans, the cloth on the mirror slips, the rain goes quiet.
             if (_director.Audio != null) _director.Audio.DuckAmbience(0.55f);
             for (float t = 0f; t < 2f; t += Time.deltaTime) { LeanFlames(t / 2f); yield return Exploring(); }
@@ -712,6 +744,9 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             {
                 if (_director.Audio != null) _director.Audio.PlayAt("lock_rattle", _officeDoor.transform.position + Vector3.up, 0.9f, 14f);
                 _sleeper.Stir(4f); // the rattle carries next door: she stirs, she does not wake
+                // Heard from inside: say what it means, and nothing about him beyond what she heard.
+                bool inside = _guidance != null && _guidance.KieuInOffice;
+                if (inside) _guidance.Warn("Có người ngoài cửa. Tìm chỗ tránh.", 9f);
                 yield return new WaitForSeconds(1.2f);
                 if (_officeDoor.Lock != DoorLock.None)
                 {
@@ -723,6 +758,7 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
                 {
                     _officeDoor.SetOpen(1f, 0.6f, "door_fast");
                     _director.Hud.ShowBark("NguoiCanh", "Ai ở trong đấy?", 2f);
+                    if (inside) _guidance.Warn("Hắn đang vào phòng. Nấp kỹ, đừng động.", 9f);
                     yield return new WaitForSeconds(0.6f);
                     if (_guard.State != WatchState.Chase) _guard.Investigate(_officeInside.position, 6f);
                 }
@@ -731,6 +767,7 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             while (!(_guard.State == WatchState.Patrol || _guard.State == WatchState.Return) || Vector3.Distance(_guard.transform.position, _officeDoorOutside.position) < 6f)
                 yield return Exploring();
             LeanFlames(0f);
+            if (_guidance != null) _guidance.ClearWarning();
             _j1Running = false;
             _j1Done = true;
             _j1EndTime = Time.time;
@@ -808,6 +845,7 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             else _tuBaDoor.SetOpen(1f, 0.6f, "slide_fast");
             _tuBa.Place(_tuBaDoorOutside.position, _tuBaDoorOutside.rotation);
             _director.Hud.ShowBark("TuBa", "Thằng Tư! Chìa của tao đâu?! Đứa nào vào phòng tao?!", 3.4f);
+            if (_guidance != null) _guidance.Warn("Tú Bà đã tỉnh — cả nhà đi lùng. Tránh chỗ sáng.", 10f);
             WakeTuBaAt(_tuBaDoorOutside, true);
             // A moment of startle before she can make anyone out.
             _tuBaWatch.Perceiving = false;
@@ -829,7 +867,6 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             _j2Done = true;
             _j2Running = false;
             SetStage(5);
-            _director.Hud.SetObjective("Về bếp — cửa sau");
             Checkpoint();
             yield return TuBaAtKieuDoor();
         }
@@ -935,6 +972,8 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             _gateGuard.ResetAt(0);
             SyncInventoryFromStory();
             LightExposure.Enable(true);
+            // The objective and the cues worked out again from what was just restored, none left over from before.
+            if (_guidance != null) _guidance.Restore();
             // J1 interrupted: it plays again (without the mirror if it was seen), warnings and all.
             if (_stage == 3 && !_j1Done) _scare = StartCoroutine(FirstScareAfterRestore());
         }
@@ -988,6 +1027,8 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-autopilotSound") >= 0 && !_soundProbed) { _soundProbed = true; yield return SoundProbe(); }
             if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-autopilotChase") >= 0 && !_chaseProbed) { _chaseProbed = true; yield return ChaseProbe(); }
             if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-autopilotGuards") >= 0 && !_guardsProbed) { _guardsProbed = true; yield return GuardProbe(); }
+            if (System.Array.IndexOf(System.Environment.GetCommandLineArgs(), "-autopilotGuide") >= 0 && !_guideProbed) { _guideProbed = true; yield return GuideProbe(); }
+            if (_guideProbed && !_guideAfterContract && _j1Done && _stage >= 4) { _guideAfterContract = true; yield return GuideAfterContract(); }
             switch (_stage)
             {
                 case 0:

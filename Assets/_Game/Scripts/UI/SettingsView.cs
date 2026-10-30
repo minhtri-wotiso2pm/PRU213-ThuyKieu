@@ -81,6 +81,7 @@ namespace ThuyKieu.UI
             });
             view.AddPage(panel, makeButton, new List<Option>
             {
+                Percent("Độ sáng", () => GameSettings.Brightness, v => GameSettings.Brightness = v),
                 new Option { Label = "Độ phân giải", Value = ResolutionName, Step = d =>
                 {
                     var all = GameSettings.Resolutions();

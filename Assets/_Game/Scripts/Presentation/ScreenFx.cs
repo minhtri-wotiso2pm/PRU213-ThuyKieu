@@ -200,7 +200,8 @@ namespace ThuyKieu.Presentation
             _vignette.intensity.Override(m.Vignette);
             _chroma.intensity.Override(m.Chroma);
             _color.saturation.Override(m.Saturation);
-            _color.postExposure.Override(m.Exposure);
+            // Apply the player's brightness after mood blending so it never accumulates or changes world lighting.
+            _color.postExposure.Override(m.Exposure + Mathf.Log(ThuyKieu.Core.GameSettings.Brightness, 2f));
             _color.contrast.Override(m.Contrast);
             _color.colorFilter.Override(m.Filter);
             _grain.intensity.Override(m.Grain);

@@ -39,7 +39,10 @@ namespace ThuyKieu.UI
         // While an objective toast is on screen the header waits, so the same text is not shown twice at once.
         private float _objectiveToastHold;
         private CanvasGroup _headerGroup, _controlsGroup;
-        private const float HeaderSeconds = 9f, ControlsSeconds = 14f;
+        private const float HeaderSeconds = 9f, ControlsSeconds = 14f, SituationSeconds = 7f;
+        // The objective as set (the header line), and a danger happening now shown under it, above any options.
+        private string _objectiveLine = string.Empty, _situation, _optionsText = string.Empty;
+        private int _optionLines;
 
         /// <summary>QA autopilot shortens cards and waits.</summary>
         public bool FastMode { get; set; }
@@ -52,6 +55,7 @@ namespace ThuyKieu.UI
             _header = t.Find("HUD/Header").gameObject;
             _chapterLabel = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Header/ChapterLabel");
             _objective = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Header/Objective");
+            _objectiveLine = _objective.text;
             _exploreList = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Header/ExploreList");
             _controls = StoryUIBuilder.Find<TMP_Text>(t, "HUD/Controls");
             _prompt = t.Find("HUD/Prompt").gameObject;
@@ -124,11 +128,12 @@ namespace ThuyKieu.UI
             _controlsTimer = ControlsSeconds;
         }
 
-        public string Objective => _objective.text;
+        public string Objective => _objectiveLine;
 
         public void SetObjective(string text, bool announce = true)
         {
-            bool changed = _objective.text != text;
+            bool changed = _objectiveLine != text;
+            _objectiveLine = text;
             _objective.text = text;
             _headerTimer = HeaderSeconds;
             // A new objective is announced by the toast; the header then repeats it, not both at once.
@@ -141,14 +146,35 @@ namespace ThuyKieu.UI
             // Keep the list short so it never covers the scene; the rest stays one line away.
             const int shown = 4;
             int count = options == null ? 0 : options.Count;
-            int lines = count > shown ? shown + 1 : count;
-            var header = (RectTransform)_header.transform;
-            header.offsetMin = new Vector2(header.offsetMin.x, header.offsetMax.y - 122 - 25 * lines);
-            if (count == 0) { _exploreList.text = string.Empty; return; }
+            _optionLines = count > shown ? shown + 1 : count;
             var builder = new StringBuilder();
             for (int i = 0; i < count && i < shown; i++) builder.Append("<color=#E8C27A>›</color> ").AppendLine(options[i]);
             if (count > shown) builder.Append("<color=#A89A86><i>+ ").Append(count - shown).AppendLine(" việc khác có thể làm…</i></color>");
-            _exploreList.text = builder.ToString();
+            _optionsText = builder.ToString();
+            LayoutHeader();
+        }
+
+        /// <summary>
+        /// A short line under the objective about a danger happening now ("someone at the door"); null clears it. The
+        /// objective stays as it is. In the compact HUD a new line brings the header back for a few seconds.
+        /// </summary>
+        public void SetSituation(string text)
+        {
+            if (string.IsNullOrEmpty(text)) text = null;
+            if (_situation == text) return;
+            _situation = text;
+            LayoutHeader();
+            if (text != null) _headerTimer = Mathf.Max(_headerTimer, SituationSeconds);
+        }
+
+        public string Situation => _situation;
+
+        private void LayoutHeader()
+        {
+            int lines = _optionLines + (_situation != null ? 1 : 0);
+            var header = (RectTransform)_header.transform;
+            header.offsetMin = new Vector2(header.offsetMin.x, header.offsetMax.y - 122 - 25 * lines);
+            _exploreList.text = _situation == null ? _optionsText : "<color=#E3A58C>" + _situation + "</color>\n" + _optionsText;
         }
 
         public void SetDialogueMode(bool active)
@@ -277,7 +303,7 @@ namespace ThuyKieu.UI
             _controlsGroup.alpha = Mathf.MoveTowards(_controlsGroup.alpha, _controlsTimer > 0f ? 1f : 0f, step * 1.2f);
         }
 
-        /// <summary>Compact mode: bring the objective back for a moment (after a checkpoint, on request).</summary>
+        /// <summary>Compact mode: bring the objective back for a moment (after a checkpoint, on request: Tab in Chapter 4).</summary>
         public void RemindObjective() => _headerTimer = HeaderSeconds;
 
         // ------------------------------------------------------------------ cards

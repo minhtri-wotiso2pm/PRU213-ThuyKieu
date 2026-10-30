@@ -1,0 +1,126 @@
+LAU TU BA CHECKS PASS
+Rules
+  ok   standing close in front is noticed within ~1.1 s even dark + crouched + still (rate 0.90/s)
+  ok   dark + crouched + still at 3 m still builds awareness (rate 0.20/s)
+  ok   at 7 m: unseen in the dark, seen in lamplight
+  ok   nothing is seen behind him
+  ok   the edge of his eye only reaches 4 m
+  ok   rate is capped (1.60)
+  ok   J2 never before J1 is over
+  ok   J2 waits a full minute after J1
+  ok   J2 allowed after the rest, in the corridor
+  ok   J2 waits while she hides
+  ok   J2 waits while she is chased
+  ok   J2 never on top of her (closer than 3.5 m)
+  ok   J2 never while she is in Tú Bà's room
+  ok   J2 only where the door can be seen
+  ok   an unseen hider stays hidden however suspicious he is
+  ok   a glimpse he has not registered does not give her away
+  ok   seen slipping in while he watches: he knows the place
+Chapter03_LauTuBa
+  ok   main way 1: (-15.5, 3.6) → (-10.5, 9.5) (8.2 m)
+  ok   main way 2: (-10.5, 9.5) → (-7.0, 14.0) (7.7 m)
+  ok   main way 3: (-7.0, 14.0) → (2.5, 14.0) (13.7 m)
+  ok   main way 4: (2.5, 14.0) → (11.0, 13.5) (9.2 m)
+  ok   main way 5: (11.0, 13.5) → (18.0, 14.0) (7.3 m)
+  ok   way back 1: (18.0, 14.0) → (11.0, 9.5) (9.9 m)
+  ok   way back 2: (11.0, 9.5) → (-10.5, 9.5) (21.5 m)
+  ok   way back 3: (-10.5, 9.5) → (-16.0, 15.0) (8.2 m)
+  ok   way back 4: (-16.0, 15.0) → (-20.2, 14.6) (4.2 m)
+  ok   kitchen through the store 1: (-7.0, 14.0) → (-16.0, 15.0) (9.1 m)
+  ok   Lam and the yard 1: (-17.0, -4.0) → (0.0, 0.0) (18.8 m)
+  ok   Lam and the yard 2: (0.0, 0.0) → (-2.6, -12.5) (12.9 m)
+  ok   Lam and the yard 3: (-2.6, -12.5) → (16.0, 3.0) (28.6 m)
+  ok   door 2 (Kiều) · 1.8 m
+  ok   door 3 (Lam) · 1.8 m
+  ok   door 6 (kitchen) · 1.6 m
+  ok   door 8 (kitchen–store) · 1.6 m
+  ok   door 9 (store) · 1.6 m
+  ok   door A (Tú Bà) · 1.6 m
+  ok   door B (Tú Bà–office) · 1.6 m
+  ok   door C (office) · 1.6 m
+  ok   back door (kitchen–alley) · 1.8 m
+  ok   archive doorway · 1.2 m
+  ok   west steps · 2.5 m
+  ok   east steps · 2.5 m
+  ok   south steps · 2.0 m
+  ok   north gap · 2.0 m
+  ok   store slats are not a doorway (11.7 m around)
+  ok   round of NguoiCanh 1: (0.0, 9.5) → (10.5, 9.5) (10.5 m)
+  ok   round of NguoiCanh 2: (10.5, 9.5) → (10.5, -3.5) (13.0 m)
+  ok   round of NguoiCanh 3: (10.5, -3.5) → (2.4, 0.0) (11.3 m)
+  ok   round of NguoiCanh 4: (2.4, 0.0) → (-10.5, -3.0) (15.5 m)
+  ok   round of NguoiCanh 5: (-10.5, -3.0) → (-10.5, 9.5) (12.5 m)
+  ok   round of NguoiCanh 6: (-10.5, 9.5) → (0.0, 9.5) (10.5 m)
+  ok   hiding place 'Hide_KieuBed' has room
+  ok   hiding place 'Hide_Jars' has room (crouched)
+  ok   hiding place 'Hide_KitchenJars' has room (crouched)
+  ok   hiding place 'Hide_LamScreen' has room (crouched)
+  ok   hiding place 'Hide_ClothHeap' has room (crouched)
+  ok   hiding place 'Hide_KieuWardrobe' has room
+  ok   hiding place 'Hide_ArchiveWardrobe' has room
+  ok   hiding place 'Hide_ArchiveScreen' has room (crouched)
+  ok   door B (Tú Bà–office) is shut when its leaf is closed (no path)
+  ok   door C (office) is shut when its leaf is closed (no path)
+  ok   back door (kitchen–alley) is shut when its leaf is closed (no path)
+Chapter04_LauTuBaDem
+  ok   objective guidance: 1 in the scene (1 expected)
+  ok   the chapter is linked to its guidance
+  ok   guidance references set
+  ok   cues: 9 in the scene, each used once True
+  ok   cues have no collider and no light
+  ok   main way 1: (-15.5, 3.6) → (-10.5, 9.5) (8.2 m)
+  ok   main way 2: (-10.5, 9.5) → (-7.0, 14.0) (7.7 m)
+  ok   main way 3: (-7.0, 14.0) → (2.5, 14.0) (13.7 m)
+  ok   main way 4: (2.5, 14.0) → (11.0, 13.5) (9.2 m)
+  ok   main way 5: (11.0, 13.5) → (18.0, 14.0) (7.3 m)
+  ok   way back 1: (18.0, 14.0) → (11.0, 9.5) (9.9 m)
+  ok   way back 2: (11.0, 9.5) → (-10.5, 9.5) (21.5 m)
+  ok   way back 3: (-10.5, 9.5) → (-16.0, 15.0) (8.2 m)
+  ok   way back 4: (-16.0, 15.0) → (-20.2, 14.6) (4.2 m)
+  ok   kitchen through the store 1: (-7.0, 14.0) → (-16.0, 15.0) (9.1 m)
+  ok   Lam and the yard 1: (-17.0, -4.0) → (0.0, 0.0) (18.8 m)
+  ok   Lam and the yard 2: (0.0, 0.0) → (-2.6, -12.5) (12.9 m)
+  ok   Lam and the yard 3: (-2.6, -12.5) → (16.0, 3.0) (28.6 m)
+  ok   door 2 (Kiều) · 1.8 m
+  ok   door 3 (Lam) · 1.8 m
+  ok   door 6 (kitchen) · 1.6 m
+  ok   door 8 (kitchen–store) · 1.6 m
+  ok   door 9 (store) · 1.6 m
+  ok   door A (Tú Bà) · 1.6 m
+  ok   door B (Tú Bà–office) · 1.6 m
+  ok   door C (office) · 1.6 m
+  ok   back door (kitchen–alley) · 1.8 m
+  ok   archive doorway · 1.2 m
+  ok   west steps · 2.5 m
+  ok   east steps · 2.5 m
+  ok   south steps · 2.0 m
+  ok   north gap · 2.0 m
+  ok   store slats are not a doorway (11.7 m around)
+  info room → Tú Bà's sập: 20.6 m · walk 13 s · crouch 22 s
+  info sập → cabinet (door B): 21.4 m · walk 14 s · crouch 23 s
+  info cabinet → chị Lam: 45.6 m · walk 29 s · crouch 48 s
+  info chị Lam → kitchen: 24.3 m · walk 16 s · crouch 26 s
+  info kitchen → back door: 4.2 m · walk 3 s · crouch 4 s
+  info back door → alley: 2.7 m · walk 2 s · crouch 3 s
+  ok   chị Lam's way out 1: (-10.7, -3.0) → (-10.5, 4.0) (7.0 m)
+  ok   chị Lam's way out 2: (-10.5, 4.0) → (-16.0, 9.6) (8.9 m)
+  ok   chị Lam's way out 3: (-16.0, 9.6) → (-16.5, 14.6) (6.5 m)
+  ok   hiding place 'Hide_ArchiveWardrobe' has room
+  ok   hiding place 'Hide_Jars' has room (crouched)
+  ok   hiding place 'Hide_KieuWardrobe' has room
+  ok   hiding place 'Hide_KieuBed' has room
+  ok   hiding place 'Hide_ArchiveScreen' has room (crouched)
+  ok   hiding place 'Hide_KitchenJars' has room (crouched)
+  ok   hiding place 'Hide_ClothHeap' has room (crouched)
+  ok   hiding place 'Hide_LamScreen' has room (crouched)
+  ok   GateLeft cannot be opened by the player
+  ok   GateRight cannot be opened by the player
+  ok   door B (Tú Bà–office) is shut when its leaf is closed (no path)
+  ok   door C (office) is shut when its leaf is closed (no path)
+  ok   back door (kitchen–alley) is shut when its leaf is closed (no path)
+Floors (Chapter 4, walkable points every 0.5 m)
+  info Wood 2387 · Stone 1473 · WetStone 856 · Mud 539 · Mat (covering) 305 · Earth 257 · Mat 254 · untagged 33 · 6 rugs/mats
+  info untagged floor under: KieuSap/Collider ×6, Stage/Collider ×6, HongSap/Collider ×6, Store/HeapBolt ×4, West/Sill ×2, LamTable/Collider ×2, LowBench/Collider ×2, HongTea/Collider ×2, WorkTable/Jar ×1, TeaTable/Collider ×1, BronzeMirror/Foot ×1
+  ok   floor slabs and steps without a surface: 0 of 6104 points (33 on untagged sills and furniture, heard as wood)
+  info TuBa-Yell: 7.83 s · loop True · moves most: LeftHand.Thumb.1 Stretched 1.55, Left Forearm Stretch 1.34, LeftHand.Middle.Spread 1.13, Right Forearm Stretch 1.07, LeftHand.Thumb.Spread 0.98, RightHand.Middle.Spread 0.97, Head Turn Left-Right 0.90, Left Arm Down-Up 0.78

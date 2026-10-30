@@ -34,6 +34,8 @@ namespace ThuyKieu.Core
         public static float ShakeAmount { get => Get("shake", 1f); set => Set("shake", Mathf.Clamp01(value)); }
 
         // ---------------------------------------------------------------- display
+        /// <summary>Image brightness multiplier, 0.5–2; 1 preserves the chapter's authored grade.</summary>
+        public static float Brightness { get => Mathf.Clamp(Get("brightness", 1f), 0.5f, 2f); set => Set("brightness", Mathf.Clamp(value, 0.5f, 2f)); }
         public static int ResolutionIndex { get => PlayerPrefs.GetInt(Prefix + "resolution", -1); set { PlayerPrefs.SetInt(Prefix + "resolution", value); Save(); } }
         public static bool Fullscreen { get => Get("fullscreen", 1f) > 0.5f; set => Set("fullscreen", value ? 1f : 0f); }
         public static int Quality { get => PlayerPrefs.GetInt(Prefix + "quality", QualitySettings.GetQualityLevel()); set { PlayerPrefs.SetInt(Prefix + "quality", value); Save(); } }
@@ -74,7 +76,7 @@ namespace ThuyKieu.Core
 
         public static void ResetAll()
         {
-            foreach (string key in new[] { "master", "music", "sfx", "ambience", "voice", "textSpeed", "voiceOn", "autoAdvance", "mouse", "invertY", "shake", "resolution", "fullscreen", "quality", "vsync" })
+            foreach (string key in new[] { "master", "music", "sfx", "ambience", "voice", "textSpeed", "voiceOn", "autoAdvance", "mouse", "invertY", "shake", "brightness", "resolution", "fullscreen", "quality", "vsync" })
                 PlayerPrefs.DeleteKey(Prefix + key);
             Save();
             ApplyDisplay();
