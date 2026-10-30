@@ -442,6 +442,8 @@ namespace ThuyKieu.Core.Editor
                 Set(deal, "_sealed", true);
                 Drawer(sequences);
                 Chapter03Setup.Fx(sequences, "kieu_voice", "spirit", "memory", "none", 2f, 0f, 1);
+                // The objective line and the house's cues towards it (also installable into the scene as it stands).
+                LauTuBaGuide.Install();
 
                 Save(scene, Chapter4Path);
             }

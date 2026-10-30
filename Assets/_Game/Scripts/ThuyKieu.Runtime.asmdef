@@ -4,14 +4,11 @@
     "references": [
         "Unity.TextMeshPro",
         "Unity.InputSystem",
-        "Unity.InputSystem.Editor",
         "Unity.RenderPipelines.Universal.Runtime",
-        "Unity.RenderPipelines.Universal.Editor",
         "Unity.RenderPipelines.Core.Runtime",
         "Unity.AI.Navigation",
         "Unity.Timeline",
-        "Ink.Runtime",
-        "Ink.Editor"
+        "Ink.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
