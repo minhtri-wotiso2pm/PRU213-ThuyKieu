@@ -13075,6 +13075,7 @@ MonoBehaviour:
   _fallOffset: {x: 0, y: -0.3, z: 0}
   _slowRadius: 2.4
   _label: "X\xF4 \u0111\u1ED5 xe h\xE0ng"
+  _highlight: {fileID: 0}
 --- !u!65 &35527565
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -47159,6 +47160,7 @@ MonoBehaviour:
   _fallOffset: {x: 0, y: -0.3, z: 0}
   _slowRadius: 2.4
   _label: "X\xF4 \u0111\u1ED5 ch\u1ED3ng th\xFAng"
+  _highlight: {fileID: 0}
 --- !u!65 &272387932
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -67213,6 +67215,7 @@ MonoBehaviour:
   _fallOffset: {x: 0, y: -0.3, z: 0}
   _slowRadius: 2.4
   _label: "X\xF4 \u0111\u1ED5 th\xFAng rau"
+  _highlight: {fileID: 0}
 --- !u!65 &353488060
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -107298,8 +107301,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 576087626}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 106.97979, y: -0.61457366, z: 6}
+  m_LocalRotation: {x: -0, y: 0.6755904, z: -0, w: 0.7372772}
+  m_LocalPosition: {x: 497.93475, y: -4.31258, z: 32.963257}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -175667,8 +175670,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 929352345}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 94.99991, y: 0.042601213, z: 6}
+  m_LocalRotation: {x: -0, y: 0.6755903, z: -0, w: 0.73727727}
+  m_LocalPosition: {x: 485.98053, y: -4.268047, z: 31.9174}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -294036,6 +294039,7 @@ MonoBehaviour:
   _fallOffset: {x: 0, y: -0.3, z: 0}
   _slowRadius: 2.4
   _label: "X\xF4 \u0111\u1ED5 xe k\xE9o"
+  _highlight: {fileID: 0}
 --- !u!65 &1499255381
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -350627,6 +350631,7 @@ MonoBehaviour:
   _fallOffset: {x: 0, y: -0.3, z: 0}
   _slowRadius: 2.4
   _label: "X\xF4 \u0111\u1ED5 xe h\xE0ng"
+  _highlight: {fileID: 0}
 --- !u!65 &1799387094
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -354777,6 +354782,7 @@ MonoBehaviour:
   _fallOffset: {x: 0, y: -0.3, z: 0}
   _slowRadius: 2.4
   _label: "X\xF4 \u0111\u1ED5 gi\xE1 n\u1ED3i ni\xEAu"
+  _highlight: {fileID: 0}
 --- !u!65 &1822828522
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -398921,8 +398927,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2032861911}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 110.96505, y: -0.9575047, z: 6}
+  m_LocalRotation: {x: -0, y: 0.6755901, z: -0, w: 0.73727745}
+  m_LocalPosition: {x: 501.91946, y: -4.3382564, z: 33.31187}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -398996,6 +399002,7 @@ MonoBehaviour:
   _fallOffset: {x: 0, y: -0.3, z: 0}
   _slowRadius: 2.4
   _label: "X\xF4 \u0111\u1ED5 ch\u1ED3ng th\xFAng"
+  _highlight: {fileID: 0}
 --- !u!65 &2035541616
 BoxCollider:
   m_ObjectHideFlags: 0

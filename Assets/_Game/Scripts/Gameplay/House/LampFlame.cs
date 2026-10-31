@@ -9,6 +9,7 @@ namespace ThuyKieu.Gameplay.House
     /// <summary>
     /// An oil lamp or candle Kiều can blow out: the room darkens (guards see less in the dark, see <see cref="LightExposure"/>),
     /// and anyone who knows the lamp was burning may notice. The flame flickers while lit.
+    /// Kiều can also relight the lamp.
     /// </summary>
     public class LampFlame : MonoBehaviour, IInteractable, IInteractableDisplayName, IInteractionAvailability
     {
@@ -23,30 +24,43 @@ namespace ThuyKieu.Gameplay.House
         public event Action<LampFlame> Changed;
         public bool Lit { get; private set; } = true;
         public Light Light => _light;
-        public string DisplayName => "Thổi tắt đèn";
-        public bool IsAvailable => _canBlowOut && Lit;
+        public string DisplayName => Lit ? "Thổi tắt đèn" : "Thắp lại đèn";
+        public bool IsAvailable => _canBlowOut;
         /// <summary>A draught leans the flame (a warning before something happens). 0 = still.</summary>
         public float Lean { get; set; }
 
         private void Awake()
         {
             if (_light != null) _base = _light.intensity;
+            if (_base <= 0f && _light != null) _base = 1.8f;
             _phase = UnityEngine.Random.value * 10f;
         }
 
         public void Interact()
         {
             if (!IsAvailable) return;
-            SetLit(false);
-            if (_audio != null) _audio.PlayAt("blow", transform.position, 0.5f, 8f);
-            Noise.Emit(transform.position, 1f, NoiseKind.Object);
+            bool nextState = !Lit;
+            SetLit(nextState);
+            if (!nextState)
+            {
+                if (_audio != null) _audio.PlayAt("blow", transform.position, 0.5f, 8f);
+                Noise.Emit(transform.position, 1f, NoiseKind.Object);
+            }
+            else
+            {
+                if (_audio != null) _audio.PlayAt("cloth", transform.position, 0.4f, 6f);
+            }
         }
 
         public void SetLit(bool lit)
         {
             if (Lit == lit) return;
             Lit = lit;
-            if (_light != null) _light.enabled = lit;
+            if (_light != null)
+            {
+                _light.enabled = lit;
+                if (lit && _base > 0f) _light.intensity = _base;
+            }
             if (_flame != null) _flame.SetActive(lit);
             Changed?.Invoke(this);
         }

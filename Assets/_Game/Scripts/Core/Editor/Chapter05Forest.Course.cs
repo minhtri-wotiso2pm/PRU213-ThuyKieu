@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using ThuyKieu.Environment;
 using ThuyKieu.Gameplay.Chase;
@@ -39,7 +39,7 @@ namespace ThuyKieu.Core.Editor
             public readonly List<Vector3> Thick = new List<Vector3>();
             public readonly List<float> ThickHalf = new List<float>();
             public readonly List<Mark> Marks = new List<Mark>();
-            public float StartAt = 14f, ForkAt, MergeAt, ThickForkFrom, ThickForkTo, BridgeNear, BridgeFar, Corner, End;
+            public float StartAt = 420f, ForkAt, MergeAt, ThickForkFrom, ThickForkTo, BridgeNear, BridgeFar, Corner, End;
             public Vector3 TempleGate;
             public Vector3 TempleForward;
             private float[] _moonS, _thickS;

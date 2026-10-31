@@ -189,7 +189,8 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             }
             if (_pebbles != null) { _pebbles.CountChanged += _ => UpdateControls(); _pebbles.SetCount(_pebbles.Capacity); }
             UpdateControls();
-            foreach (var light in _corridorLanterns) light.enabled = false;
+            _corridorLit = true;
+            foreach (var light in _corridorLanterns) light.enabled = true;
             LightExposure.Enable(true);
 
             // A fresh night or a resumed save: the stage in Ink decides how the house looks.
@@ -293,7 +294,11 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             SyncInventoryFromStory();
             // A conversation just ended: act on what it decided before saving.
             if (_director.GetBool("c4_gap_co_lam") && _director.GetBool("c4_ru_co_lam") && !_lamCompanion.Following) _lamCompanion.Begin();
-            if (_director.GetBool("c4_khe_uoc_mg") && _stage < 3) SetStage(3);
+            if (_director.GetBool("c4_khe_uoc_mg") && _stage < 3)
+            {
+                SetStage(3);
+                _director.Hud.ShowToast("TRỐN THOÁT", "Đã lấy được giao kèo! Mau chạy theo hướng bếp ra cửa sau để trốn thoát!");
+            }
             TakeSnapshot();
             if (_stage == 3 && !_j1Done && !_j1Running) _scare = StartCoroutine(FirstScare());
         }
@@ -315,6 +320,7 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
         {
             if (_stage != 0 || door.Lock != DoorLock.None || door.MovedByNpc) return;
             SetStage(1);
+            _director.Hud.ShowToast("NHẶT SỎI DỤ LÍNH (Q)", "Nhặt sỏi ở đống đá ngoài hiên. Nhấn [Q] để ném sỏi đánh lạc hướng người canh!");
             _director.Hud.ShowBark("NoiTam", "Then nhấc rồi. Đi khẽ thôi... phòng mụ ở dãy nhà sau.", 3.4f);
             Checkpoint();
         }
@@ -651,7 +657,7 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             if (_stage == 4 && !_j2Done && !_j2Running && SecondScareReady()) _scare = StartCoroutine(SecondScare());
 
             // Mã Kiều wakes when Kiều crosses the kitchen, looks at her, and turns to the wall: she has seen nothing.
-            if (!_maKieuTurned && _stage >= 2 && Vector3.Distance(Player.position, _kitchen.position) < 3.2f)
+            if (!_maKieuTurned && _maKieu != null && _stage >= 2 && Vector3.Distance(Player.position, _kitchen.position) < 3.2f)
             {
                 _maKieuTurned = true;
                 if (_director.Audio != null) _director.Audio.PlayAt("cloth", _maKieu.HeadPosition, 0.5f, 6f);

@@ -537,7 +537,8 @@ namespace ThuyKieu.Gameplay.Chapters
             _servant.EnableNavigation();
             _ma.FaceTowards(_kieuMeet.position);
             camera.SetDialogueCue(null);
-            camera.ControlLocked = cameraLocked;
+            camera.ControlLocked = !_director.InExplore && cameraLocked;
+            if (_director.InExplore) camera.SetCursorLocked(true);
             Destroy(shot.gameObject);
             yield return _director.Hud.Fade(0f, _director.Autopilot ? 0f : 0.45f);
             _arrival = null;
@@ -651,11 +652,16 @@ namespace ThuyKieu.Gameplay.Chapters
         {
             if (!TableSeats(out _, out _, out Vector3 kieuSeat, out Quaternion kieuFacing)) yield break;
             if (!_motherSeated) MotherDo(MotherWeeps());
+            var body = _director.Player.GetComponent<CharacterController>();
             _director.Player.Teleport(kieuSeat, kieuFacing);
+            if (body != null) body.enabled = false;
             _kieu.Sit(true);
             yield return new WaitForSeconds(_director.Autopilot ? 0f : 0.35f);
             while (!_director.InExplore && _scene == "VuongGia_DemMua") yield return null;
             yield return StandFromSeat();
+            Vector3 forward = kieuFacing * Vector3.forward;
+            _director.Player.Teleport(kieuSeat - forward * 0.65f, kieuFacing);
+            if (body != null) body.enabled = true;
             _action = null;
         }
 
@@ -736,7 +742,8 @@ namespace ThuyKieu.Gameplay.Chapters
             Destroy(kieuPose);
             Destroy(motherPose);
             camera.SetDialogueCue(null);
-            camera.ControlLocked = cameraLocked;
+            camera.ControlLocked = !_director.InExplore && cameraLocked;
+            if (_director.InExplore) camera.SetCursorLocked(true);
             Destroy(shot.gameObject);
             _action = null;
         }
@@ -771,7 +778,7 @@ namespace ThuyKieu.Gameplay.Chapters
             motherSeat = table.TransformPoint(new Vector3(-0.77f, 0f, 0f));
             // Kiều's stool stands further out than her mother's chair: at 0.77 her hips came down on the gap between the
             // table edge and the stool and she sank through it.
-            kieuSeat = table.TransformPoint(new Vector3(1.08f, 0.05f, 0f));
+            kieuSeat = table.TransformPoint(new Vector3(0.77f, 0f, 0f));
             Vector3 centre = table.position;
             motherFacing = Quaternion.LookRotation(Vector3.ProjectOnPlane(centre - motherSeat, Vector3.up));
             kieuFacing = Quaternion.LookRotation(Vector3.ProjectOnPlane(centre - kieuSeat, Vector3.up));
@@ -988,7 +995,8 @@ namespace ThuyKieu.Gameplay.Chapters
             }
             Destroy(pose);
             camera.SetDialogueCue(null);
-            camera.ControlLocked = cameraLocked;
+            camera.ControlLocked = !_director.InExplore && cameraLocked;
+            if (_director.InExplore) camera.SetCursorLocked(true);
             Destroy(shot.gameObject);
             yield return StandFromSeat();
             // Standing, she steps back off the bench before her collider returns.
@@ -1044,10 +1052,54 @@ namespace ThuyKieu.Gameplay.Chapters
             _cabinetReplacement.gameObject.SetActive(false);
         }
 
+        private static void EnsureTableColliders(Transform table)
+        {
+            var legacy = GameObject.Find("ContractTable")?.GetComponent<BoxCollider>();
+            if (legacy != null) legacy.enabled = false;
+
+            EnsureBox(table, "Col_Table", new Vector3(0f, 0.37f, -0.03f), new Vector3(0.76f, 0.75f, 1.55f));
+            EnsureBox(table, "Col_MotherBench", new Vector3(-0.64f, 0.28f, -0.02f), new Vector3(0.50f, 0.56f, 1.52f));
+            EnsureBox(table, "Col_KieuBench", new Vector3(0.69f, 0.28f, -0.06f), new Vector3(0.50f, 0.56f, 1.50f));
+
+            var chest = GameObject.Find("Chapter01Story/SearchedCourtyard/ChestOverturned");
+            if (chest != null && chest.GetComponent<Collider>() == null)
+            {
+                var box = chest.AddComponent<BoxCollider>();
+                box.center = new Vector3(0f, 0.28f, 0f);
+                box.size = new Vector3(1.06f, 0.56f, 0.92f);
+            }
+        }
+
+        private static void EnsureBox(Transform parent, string name, Vector3 localPos, Vector3 size)
+        {
+            Transform t = parent.Find(name);
+            if (t == null)
+            {
+                var go = new GameObject(name);
+                go.layer = parent.gameObject.layer;
+                t = go.transform;
+                t.SetParent(parent, false);
+            }
+            t.localPosition = localPos;
+            t.localRotation = Quaternion.identity;
+            t.localScale = Vector3.one;
+
+            var col = t.GetComponent<BoxCollider>();
+            if (col == null) col = t.gameObject.AddComponent<BoxCollider>();
+            col.center = Vector3.zero;
+            col.size = size;
+            col.enabled = true;
+            col.isTrigger = false;
+        }
+
         private void ArrangeInterior()
         {
             Transform table = GameObject.Find("ChairsAndContractTable")?.transform;
-            if (table != null) table.localScale = Vector3.one * 1.15f;
+            if (table != null)
+            {
+                table.localScale = Vector3.one * 1.15f;
+                EnsureTableColliders(table);
+            }
 
             Transform altar = GameObject.Find("FamilyAltar")?.transform;
             if (altar != null)

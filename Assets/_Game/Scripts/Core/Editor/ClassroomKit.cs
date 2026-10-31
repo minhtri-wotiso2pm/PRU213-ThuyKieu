@@ -383,10 +383,10 @@ namespace ThuyKieu.Core.Editor
             glow.transform.SetParent(root, false);
             glow.transform.position = top + Vector3.up * 0.18f;
             var light = glow.AddComponent<Light>();
-            light.type = LightType.Point; light.color = new Color(1f, 0.82f, 0.45f); light.range = 2.2f; light.intensity = 1.1f; light.shadows = LightShadows.None;
-            var halo = Block("GlowPlane", top + new Vector3(0, 0.03f, 0), new Vector3(0.42f, 0.002f, 0.28f), Emissive("ClassBookGlow", new Color(1f, 0.85f, 0.5f), 0.85f), glow.transform, false);
-            halo.transform.SetParent(glow.transform, true);
-            Sphere("GlowMotes", top + Vector3.up * 0.25f, Vector3.one * 0.05f, Emissive("ClassBookGlow", new Color(1f, 0.85f, 0.5f), 0.85f), glow.transform);
+            light.type = LightType.Point; light.color = new Color(1f, 0.82f, 0.45f); light.range = 1.2f; light.intensity = 0.18f; light.shadows = LightShadows.None;
+
+
+
             Dust("GlowDust", top + Vector3.up * 0.3f, new Vector3(0.4f, 0.4f, 0.3f), glow.transform, new Color(1f, 0.85f, 0.5f, 0.6f), 40);
             parts.BookGlow = glow;
             glow.SetActive(false);
@@ -472,7 +472,7 @@ namespace ThuyKieu.Core.Editor
                 go.transform.SetParent(root, false);
                 go.transform.position = o + new Vector3(0, 3f, z);
                 var light = go.AddComponent<Light>();
-                light.type = LightType.Point; light.color = new Color(0.95f, 0.97f, 1f); light.range = 7.5f; light.intensity = 0.5f; light.shadows = LightShadows.None;
+                light.type = LightType.Point; light.color = new Color(0.98f, 0.98f, 1f); light.range = 8f; light.intensity = 0.85f; light.shadows = LightShadows.None;
             }
         }
 

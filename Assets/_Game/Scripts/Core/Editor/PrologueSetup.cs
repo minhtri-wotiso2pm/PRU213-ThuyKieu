@@ -29,7 +29,7 @@ namespace ThuyKieu.Core.Editor
             var scene = NewScene(ScenePath);
             var shared = StoryAnimationSetup.Controller();
             var s = CreateSystems(ChapterCatalog.Prologue, "Trang sách", "prologue", "Chapter01_GiaBien", ClassOrigin + new Vector3(2.9f, 0.05f, -1.15f), 0f, "classroom");
-            Grade(s.Fx, -0.22f, 6f, 4f, 2f, new Color(0.5f, 0.52f, 0.6f), new Color(0.78f, 0.72f, 0.62f));
+            Grade(s.Fx, 0.55f, 7f, 6f, 2f, new Color(0.5f, 0.52f, 0.6f), new Color(0.78f, 0.72f, 0.62f));
             Set(s.Fx, "_baseBloom", 0f);
             UseSky(s.CameraComponent, Sky("PrologueSky", "kloppenheim_06_puresky", 0.78f, new Color(0.58f, 0.6f, 0.62f), 60f));
             // The camera-mounted spotlight creates a moving white hotspot on classroom desks/windows.
@@ -89,8 +89,8 @@ namespace ThuyKieu.Core.Editor
             var officialSpots = new[] { Point("OfficialSpotA", new Vector3(-1.15f, 0f, 3.35f), 0f, marks), Point("OfficialSpotB", new Vector3(1.15f, 0f, 3.35f), 0f, marks) };
 
             // ------------------------------------------------------------ light & atmosphere
-            var sun = Sun("Sun", new Color(1f, 0.9f, 0.76f), 0.82f, new Vector3(34f, 250f, 0f));
-            RenderSettings.ambientLight = new Color(0.46f, 0.45f, 0.43f);
+            var sun = Sun("Sun", new Color(1f, 0.9f, 0.76f), 1.15f, new Vector3(34f, 250f, 0f));
+            RenderSettings.ambientLight = new Color(0.52f, 0.52f, 0.51f);
             RenderSettings.fogColor = new Color(0.72f, 0.74f, 0.74f);
             RenderSettings.fogDensity = 0.006f;
             var rain = Rain("PrologueRain", courtyard);
