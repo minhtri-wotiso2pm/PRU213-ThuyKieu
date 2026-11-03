@@ -136,6 +136,8 @@ namespace ThuyKieu.Gameplay.Sequences
                     statement.Disproved = true;
                     score += proof.Points;
                     bool witnessSpent = DrainWitness(proof.Evidence);
+                    if (proof.Evidence == "so_bac") director.SetInt("c7_dung_so_bac", 1);
+                    if (proof.Evidence == "giao_keo") director.SetInt("c7_dung_giao_keo", 1);
                     ShowResolve();
                     _trust = Mathf.Min(1f, _trust + ProofGain * proof.Points);
                     _view.SetTrust(_trust);
@@ -548,6 +550,9 @@ namespace ThuyKieu.Gameplay.Sequences
             if (d.GetBool("ev_giay_no")) list.Add(new Evidence { Id = "so_no", Title = "Trang sổ nợ", Body = "Vương Thúy Kiều nợ tiền mua 450 lạng. Áo lụa 30, son phấn 10. Chưa trả." });
             if (d.GetInt("c4_tien") == 2) list.Add(new Evidence { Id = "tui_bac", Title = "Túi bạc dấu \"T.\"", Body = "450 lạng nén, mỗi nén đóng dấu lầu Lâm Tri. Chưa tiêu một đồng." });
             if (d.GetBool("c6_so_bac")) list.Add(new Evidence { Id = "so_bac", Title = "Sổ hiệu bạc Phúc Ký", Body = "14 tháng Tư: người nhà Tú Bà giao 450 lạng cho \"Mã công tử\", có điểm chỉ." });
+            // Both papers in court turn the same 450 into a loop: paid once to Mã, charged again to Kiều.
+            if (d.GetInt("c7_dung_so_bac") > 0 && d.GetInt("c7_dung_giao_keo") > 0)
+                list.Add(new Evidence { Id = "vong_no", Title = "Vòng nợ 450", Body = "Giao kèo: Tú Bà trả Mã 450 lạng mỗi người. Sổ hiệu bạc: đúng 450 lạng ấy đã giao. Cùng một số bạc quay một vòng — trả một lần, thu hai lần." });
             if (d.GetBool("giu_mau_giay")) list.Add(new Evidence { Id = "mau_giay", Title = "Mẩu giấy trên đường", Body = "\"Bà T. ở Lâm Tri nhận hàng — giá 450 lạng.\"" });
             if (d.GetBool("c7_biet_hoi_lo")) list.Add(new Evidence { Id = "hoi_lo", Title = "Túi gấm đổi tay", Body = "Sáng nay, trước cổng: Tú Bà dúi túi gấm cho một nha dịch." });
             if (d.GetBool("nc_ba_nuoc") && d.GetInt("nc_tin_ba_nuoc") > 0 && retreated != 2) list.Add(new Evidence { Id = "ba_nuoc", Title = "Nhân chứng: bà hàng nước", Body = "Nghe Mã và tùy tùng nói chuyện \"giao hàng\" cho Tú Bà sau vách quán." });
@@ -650,6 +655,8 @@ namespace ThuyKieu.Gameplay.Sequences
                 {
                     P("so_bac", 1, Say("Kieu", "Mười ngày sau, chính ngươi nhận lại bốn trăm năm mươi lạng của Tú Bà, có điểm chỉ trong sổ hiệu bạc. \"Ân nhân\" lãi năm mươi lạng."),
                         Say("MaGiamSinh", "Đó... đó là tiền ta cho mụ vay!")),
+                    P("vong_no", 1, Say("Kieu", "Bốn trăm lạng ngươi đưa, bốn trăm năm mươi lạng mụ trả lại. Giao kèo và sổ hiệu bạc khớp nhau từng ngày. Ngươi không lỗ một đồng — còn ta thành món nợ."),
+                        Say("QuanHuyen", "Một vòng bạc khép kín. Ghi vào biên bản.")),
                     P("van_tu", 1, Say("Kieu", "Mười ngày sau đám cưới, ngươi đứng tên người bán trên văn tự này. Bán chính người vợ ngươi vừa cưới."),
                         Say("QuanHuyen", "Cưới tháng Tư, bán cũng tháng Tư..."))
                 }
@@ -693,7 +700,9 @@ namespace ThuyKieu.Gameplay.Sequences
                     P("giao_keo", 1, Say("Kieu", "Bốn trăm năm mươi lạng, đúng bằng giá bà trả cho Mã Giám Sinh trên giao kèo. Đó không phải nợ của ta. Đó là giá bà mua ta."),
                         Say("TuBa", "Thì... thì cũng là tiền tôi bỏ ra!")),
                     P("van_tu", 1, Say("Kieu", "Văn tự ghi rõ: bốn trăm năm mươi lạng là giá bà trả cho người bán. Người bị bán không ký vào món nợ nào cả."),
-                        Say("QuanHuyen", "Giá mua người lại biến thành nợ của người bị mua. Hay cho cái sổ sách!"))
+                        Say("QuanHuyen", "Giá mua người lại biến thành nợ của người bị mua. Hay cho cái sổ sách!")),
+                    P("vong_no", 2, Say("Kieu", "Đây không phải món nợ. Sổ hiệu bạc ghi bà trả Mã bốn trăm năm mươi lạng; giao kèo ghi đúng số ấy cho mỗi người bà mua. Cùng một số bạc quay một vòng: bà trả một lần, rồi bắt ta trả lại lần nữa."),
+                        Say("QuanHuyen", "Một vòng nợ... cùng một số bạc, hai lần thu. Bản quan chưa từng thấy sổ sách nào trơ trẽn thế."))
                 }
             },
             new Statement

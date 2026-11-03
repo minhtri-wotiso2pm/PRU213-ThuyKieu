@@ -141,6 +141,8 @@ VAR c7_r3 = 0
 VAR c7_diem = 0           // tổng điểm đối chất (Unity ghi)
 VAR c7_long_tin = 0       // lòng tin của quan huyện khi kết thúc, 0–100 (Unity ghi)
 VAR c7_thua_vong = 0      // số vòng đối chất bị thua: quan mất kiên nhẫn, tự xét giấy tờ (Unity ghi)
+VAR c7_dung_so_bac = 0    // đã nộp sổ hiệu bạc Phúc Ký trong phiên tòa (Unity ghi)
+VAR c7_dung_giao_keo = 0  // đã nộp giao kèo Mã – Tú Bà trong phiên tòa (Unity ghi)
 VAR c7_kien_nhan = 100    // kiên nhẫn của quan trong vòng đang xét, 0–100: nộp sai −25, hỏi vặn vô ích −10 (Unity ghi)
 VAR c7_diem_pq = 0        // điểm phán quyết = lòng tin + bảo lãnh + nhân chứng + lục bát − vòng thua
 VAR c7_ket = 0            // kết: 0 thua kiện (nguyên tác) · 1 chật vật · 2 ấm · 3 trọn vẹn

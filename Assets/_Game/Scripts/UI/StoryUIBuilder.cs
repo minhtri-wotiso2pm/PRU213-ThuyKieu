@@ -319,7 +319,7 @@ namespace ThuyKieu.UI
             }
             var cases = Rect(right, "Evidence", new Vector2(0.04f, 0.04f), new Vector2(0.96f, 0.89f));
             var grid = cases.gameObject.AddComponent<GridLayoutGroup>();
-            grid.cellSize = new Vector2(376, 94); grid.spacing = new Vector2(10, 8);
+            grid.cellSize = new Vector2(376, 82); grid.spacing = new Vector2(10, 8);
             grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount; grid.constraintCount = 2;
             var card = Panel(cases, "Template", Vector2.zero, Vector2.one, new Color(Paper.r, Paper.g, Paper.b, 0.95f), 12);
             card.gameObject.AddComponent<Button>();
