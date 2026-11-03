@@ -18,7 +18,9 @@ namespace ThuyKieu.Gameplay.Sequences
     /// Mistakes earn hints (an inner-voice nudge, then a marked statement and the card to use). At zero trust Kim Trọng
     /// speaks up once (if the plan was made at the gate); after that the round is lost — never replayed: the magistrate
     /// reads the papers himself, the story goes on, and the round scores nothing.
-    /// Writes c7_r&lt;round&gt;, c7_diem, c7_long_tin and c7_thua_vong.
+    /// The magistrate also has patience (c7_kien_nhan, 100 at the start of each round): a wrong card costs 25 and
+    /// pressing a statement that has nothing more to say costs 10. At zero he cuts the round at once, with no hint.
+    /// Writes c7_r&lt;round&gt;, c7_diem, c7_long_tin, c7_kien_nhan and c7_thua_vong.
     /// </summary>
     public class TrialSequence : StorySequence
     {
@@ -51,10 +53,12 @@ namespace ThuyKieu.Gameplay.Sequences
 
         private const float StartTrust = 0.6f, RecoverTrust = 0.4f, LostTrust = 0.1f, WrongCost = 0.2f, ProofGain = 0.15f, BribedCost = 0.15f;
         private const int ForesightCost = 10, LostRoundFate = 10;
+        private const int PatienceMax = 100, WrongPatience = 25, IdlePressPatience = 10;
         private static bool _lifelineUsed;
 
         private StoryDirector _director;
         private float _trust;
+        private int _patience;
 
         private static Line Say(string speaker, string text) => new Line { Speaker = speaker, Text = text };
 
@@ -65,6 +69,9 @@ namespace ThuyKieu.Gameplay.Sequences
             director.CameraController.SetCursorLocked(false);
             if (director.Audio != null) director.Audio.PlayMusic("trial");
             if (_round == 1) _lifelineUsed = false;
+            // Each round is a fresh hearing: the magistrate starts patient again, whatever the last witness cost him.
+            _patience = PatienceMax;
+            director.SetInt("c7_kien_nhan", _patience);
             // A lost round leaves the magistrate cold, but the next witness still gets a fair hearing.
             _trust = _round == 1 ? StartTrust : Mathf.Max(RecoverTrust, director.GetInt("c7_long_tin") / 100f);
             // Định Mệnh ≥ 85: the magistrate has taken Tú Bà's gift. Seeing the bribe at the gate cancels it.
@@ -105,7 +112,16 @@ namespace ThuyKieu.Gameplay.Sequences
                 }
                 Refresh(statements, selected);
                 var statement = statements[selected];
-                if (action == 1) { yield return PressStatement(statement); Refresh(statements, selected); continue; }
+                if (action == 1)
+                {
+                    bool hadMoreToSay = statement.Revision.Text != null;
+                    yield return PressStatement(statement);
+                    // Pressing a statement that cannot change wastes the court's time.
+                    if (!hadMoreToSay) DrainPatience(IdlePressPatience);
+                    Refresh(statements, selected);
+                    if (_patience <= 0) { lost = true; break; }
+                    continue;
+                }
                 if (action == 3) { yield return TurnPage(statements); Refresh(statements, selected); ShowHelp(); continue; }
 
                 var proof = card >= 0 && (!statement.NeedsRevision || statement.Revised)
@@ -128,12 +144,15 @@ namespace ThuyKieu.Gameplay.Sequences
                 // Wrong evidence (or evidence against a statement that is still true).
                 _trust -= WrongCost;
                 mistakes++;
+                DrainPatience(WrongPatience);
                 _view.SetTrust(_trust);
                 if (director.Audio != null) director.Audio.PlaySfx("wrong");
                 if (director.Fx != null) director.Fx.Shake(0.15f, 0.3f);
                 StoryAutopilot.Note("TRIAL r" + _round + " wrong evidence on statement " + (selected + 1));
                 Shot("CU_QuanHuyen");
                 yield return Speak(Wrong(), 0.5f);
+                // Out of patience: the magistrate cuts the round at once, without the usual hint.
+                if (_patience <= 0) { lost = true; break; }
                 if (_trust > 0.001f)
                 {
                     yield return Hint(statements, evidence, mistakes);
@@ -183,6 +202,13 @@ namespace ThuyKieu.Gameplay.Sequences
         }
 
         // ------------------------------------------------------------------ hints
+
+        /// <summary>Takes patience away and mirrors the value into Ink for the HUD and the save file.</summary>
+        private void DrainPatience(int amount)
+        {
+            _patience = Mathf.Max(0, _patience - amount);
+            _director.SetInt("c7_kien_nhan", _patience);
+        }
 
         /// <summary>
         /// After a mistake: the first nudges towards the statement that ends the round; from the second on, that
