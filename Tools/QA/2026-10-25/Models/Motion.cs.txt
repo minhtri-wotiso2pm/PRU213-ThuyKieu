@@ -1,0 +1,22 @@
+Application.runInBackground=true;
+var actors=UnityEngine.Object.FindObjectsByType<ThuyKieu.Core.Story.StoryActor>(FindObjectsSortMode.None).Where(a=>a.SpeakerId=="Kieu"||a.SpeakerId=="KimTrong").ToArray();
+var follower=UnityEngine.Object.FindAnyObjectByType<ThuyKieu.Gameplay.Chase.Follower>();
+if(follower!=null)follower.Following=true;
+double start=-1; double next=0; int shot=0;
+var samples=new List<object>();
+Action step=null;
+step=()=>{
+ if(UnityEngine.InputSystem.LowLevel.InputState.currentUpdateType!=UnityEngine.InputSystem.LowLevel.InputUpdateType.Dynamic)return;
+ if(start<0)start=EditorApplication.timeSinceStartup;
+ double t=EditorApplication.timeSinceStartup-start;
+ var keys=t<2?new[]{UnityEngine.InputSystem.Key.W}:t<4?new[]{UnityEngine.InputSystem.Key.W,UnityEngine.InputSystem.Key.LeftShift}:new UnityEngine.InputSystem.Key[0];
+ if(UnityEngine.InputSystem.Keyboard.current!=null)UnityEngine.InputSystem.LowLevel.InputState.Change(UnityEngine.InputSystem.Keyboard.current,new UnityEngine.InputSystem.LowLevel.KeyboardState(keys));
+ if(t>=next){
+  samples.Add(new{time=t,actors=actors.Select(a=>new{id=a.SpeakerId,position=a.transform.position.ToString("F3"),moving=a.IsMoving,anim=a.GetComponentsInChildren<Animator>().Where(x=>x.isInitialized&&x.runtimeAnimatorController!=null).Select(x=>new{clips=x.GetCurrentAnimatorClipInfo(0).Select(c=>c.clip.name).ToArray(),speed=x.speed,feet=x.isHuman?new[]{x.GetBoneTransform(HumanBodyBones.LeftFoot).position.ToString("F3"),x.GetBoneTransform(HumanBodyBones.RightFoot).position.ToString("F3")}:null}).ToArray()}).ToArray()});
+  next=t+.2;
+ }
+ if(shot==0&&t>1.1||shot==1&&t>3.1||shot==2&&t>4.8){ScreenCapture.CaptureScreenshot("Tools/QA/2026-10-25/Models/C6-motion-"+shot+".png");shot++;}
+ if(t>5.2){UnityEngine.InputSystem.InputSystem.onAfterUpdate-=step;System.IO.File.WriteAllText("Tools/QA/2026-10-25/Models/Motion.json",Newtonsoft.Json.JsonConvert.SerializeObject(samples,Newtonsoft.Json.Formatting.Indented));}
+};
+UnityEngine.InputSystem.InputSystem.onAfterUpdate+=step;
+return "Walk 2s, run 2s, settle 1.2s queued";

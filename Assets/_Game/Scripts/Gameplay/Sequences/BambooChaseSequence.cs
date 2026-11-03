@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Linq;
 using ThuyKieu.Core;
 using ThuyKieu.Core.Story;
@@ -199,6 +199,21 @@ namespace ThuyKieu.Gameplay.Sequences
                 {
                     _hinted = true;
                     _director.Hud.ShowBark("NoiTam", "Cái cọc cầu mục rồi — đạp đổ nó!", 2.2f);
+                    _director.Hud.ShowToast("ĐẠP ĐỔ CẦU", "Nhấn [E] ĐỂ ĐẠP ĐỔ CỌC CẦU!");
+                    Time.timeScale = 0.45f;
+                    ThuyKieu.Interaction.PlayerInteraction.Pinned = _bridge;
+                }
+                if (!_bridge.Dropped && _bridge.OnFarBank(feet) && (InputReader.InteractPressedThisFrame || (UnityEngine.InputSystem.Keyboard.current != null && UnityEngine.InputSystem.Keyboard.current.eKey.wasPressedThisFrame)))
+                {
+                    _bridge.Drop();
+                    Time.timeScale = 1f;
+                    ThuyKieu.Interaction.PlayerInteraction.Pinned = null;
+                    _director.Hud.ShowToast("ĐÃ ĐẠP ĐỔ CẦU", "Cây cầu đã sập! Tên lính không thể đuổi theo nữa!");
+                }
+                if (_bridge.Dropped && Time.timeScale < 1f)
+                {
+                    Time.timeScale = 1f;
+                    ThuyKieu.Interaction.PlayerInteraction.Pinned = null;
                 }
                 if (_bridge.Dropped && _course.InFinish(feet)) _outcome = Outcome.Escaped;
                 else if (_course.Fallen(feet)) _outcome = Outcome.Fell;
@@ -224,6 +239,8 @@ namespace ThuyKieu.Gameplay.Sequences
         /// <summary>Caught (his hands on her, the Chapter 4 catch played by him) or fallen; counted once; then back to the start.</summary>
         private IEnumerator Fail(Outcome outcome)
         {
+            if (Time.timeScale < 1f) Time.timeScale = 1f;
+            ThuyKieu.Interaction.PlayerInteraction.Pinned = null;
             Failures++;
             _director.SetInt("c5_bi_bat", _director.GetInt("c5_bi_bat") + 1);
             _director.SetFreeControl(false);
@@ -259,6 +276,8 @@ namespace ThuyKieu.Gameplay.Sequences
         /// <summary>Over the bridge and up the temple path: she looks back at the torch stopped across the ravine.</summary>
         private IEnumerator Escape()
         {
+            if (Time.timeScale < 1f) Time.timeScale = 1f;
+            ThuyKieu.Interaction.PlayerInteraction.Pinned = null;
             var player = _director.Player;
             int seconds = Mathf.RoundToInt(Time.time - _runStart);
             _director.SetFreeControl(false);

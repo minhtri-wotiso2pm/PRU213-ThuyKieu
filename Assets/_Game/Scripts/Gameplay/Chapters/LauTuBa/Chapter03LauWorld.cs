@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ThuyKieu.Core.Story;
@@ -106,11 +106,16 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             _guard.Caught += OnCaught;
             _tuBaEyes.Caught += OnCaught;
             _tuBaEyes.enabled = false;
-            foreach (var door in _allDoors) door.Refused += OnRefused;
+            foreach (var door in _allDoors)
+            {
+                door.Refused += OnRefused;
+                if (door.name == "BackDoor") door.SetLock(DoorLock.Locked);
+            }
             _innerDoor.SetLock(DoorLock.None);
             _officeDoor.SetLock(DoorLock.Locked);
             if (_director.Audio != null) _director.Audio.SetAmbience("after_rain");
             _director.Hud.SetControls("WASD: đi · Shift: chạy · Ctrl: khom · E: tương tác (giữ E: làm khẽ) · Chuột phải: nhìn kỹ · Esc: tạm dừng");
+            _director.Hud.SetObjective("Khám phá xung quanh lầu Tú Bà · Quan sát hoặc tìm hiểu những người xung quanh");
             foreach (var light in _lanterns) light.enabled = false;
             LightExposure.Enable(true);
             // Arrival: Tú Bà and Mã Giám Sinh by the gate; the gate open behind Kiều.
@@ -328,6 +333,8 @@ namespace ThuyKieu.Gameplay.Chapters.LauTuBa
             _barkCooldown = 4f;
             if (door == _officeDoor && _overheard)
                 _director.Hud.ShowBark("NoiTam", "Khoá ngoài rồi. Họ vào bằng cửa thông bên phòng Tú Bà — lối đó còn mở.", 3.4f);
+            else if (door.name == "BackDoor")
+                _director.Hud.ShowBark("NoiTam", "Cửa sau bị khoá ngoài bằng ổ khoá đồng lớn. Chưa có chìa khoá thì không thể mở được.", 3.5f);
         }
 
         // ------------------------------------------------------------------ failure & hiding

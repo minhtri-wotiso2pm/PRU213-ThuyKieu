@@ -1,0 +1,136 @@
+[
+  {
+    "id": "MaGiamSinh",
+    "name": "MaGiamSinh",
+    "position": "(2.08, 0.10, 5.50)",
+    "height": 1.45167172,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "MaGiamSinh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "MaGiamSinh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(2.01, 0.26, 5.47)",
+        "rightFoot": "(2.15, 0.25, 5.46)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(2.08, 0.83, 5.51)",
+        "boundsSize": "(1.11, 1.45, 0.41)",
+        "scale": "(117.24, 117.24, 117.24)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "MaGiamSinhStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Kieu",
+    "name": "ThuyKieu",
+    "position": "(0.54, 0.02, 2.00)",
+    "height": 1.572166,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "Model",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "ThuyKieu_WalkAvatar",
+        "validAvatar": true,
+        "controller": "ThuyKieuStory",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(0.40, 0.11, 1.91)",
+        "rightFoot": "(0.59, 0.07, 2.02)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "tripo_node_f1bebe54",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(0.54, 0.56, 2.02)",
+        "boundsSize": "(0.71, 1.57, 1.03)",
+        "scale": "(1.28, 1.28, 1.28)",
+        "mesh": "tripo_node_f1bebe54",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "ThuyKieu_Skin_URP",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          },
+          {
+            "name": "ThuyKieu_Hanfu_URP",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "TuyTung",
+    "name": "TuyTung",
+    "position": "(0.24, 0.09, 4.20)",
+    "height": 1.52870488,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "LinhCanh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "LinhCanh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "LinhCanhStory",
+        "rootMotion": false,
+        "clips": [
+          "LinhCanh-Idle"
+        ],
+        "leftFoot": "(0.15, 0.26, 4.17)",
+        "rightFoot": "(0.39, 0.27, 4.15)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(0.24, 0.86, 4.20)",
+        "boundsSize": "(0.75, 1.53, 0.64)",
+        "scale": "(115.57, 115.57, 115.57)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "TuyTungStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  }
+]

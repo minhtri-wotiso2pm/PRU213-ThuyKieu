@@ -1,0 +1,481 @@
+[
+  {
+    "id": "NguoiCanh",
+    "name": "NguoiCanh",
+    "position": "(3.95, 0.38, 9.62)",
+    "height": 1.74328506,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "LinhCanh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "LinhCanh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "LinhCanhStory",
+        "rootMotion": false,
+        "clips": [
+          "LinhCanh-Idle",
+          "LinhCanh-Walk"
+        ],
+        "leftFoot": "(3.76, 0.58, 9.78)",
+        "rightFoot": "(4.10, 0.55, 9.59)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(3.96, 1.22, 9.70)",
+        "boundsSize": "(0.84, 1.74, 0.91)",
+        "scale": "(133.22, 133.22, 133.22)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "NguoiCanhStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "MaGiamSinh",
+    "name": "MaGiamSinh",
+    "position": "(-1.39, 0.38, -17.30)",
+    "height": 1.79591966,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "MaGiamSinh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "MaGiamSinh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(-1.37, 0.55, -17.20)",
+        "rightFoot": "(-1.47, 0.55, -17.34)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-1.37, 1.26, -17.31)",
+        "boundsSize": "(1.12, 1.80, 1.43)",
+        "scale": "(144.95, 144.95, 144.95)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "MaGiamSinhStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Kieu",
+    "name": "ThuyKieu",
+    "position": "(0.00, 0.37, -18.15)",
+    "height": 1.5662756,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "Model",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "ThuyKieu_WalkAvatar",
+        "validAvatar": true,
+        "controller": "ThuyKieuStory",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(-0.15, 0.46, -18.24)",
+        "rightFoot": "(0.04, 0.42, -18.13)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "tripo_node_f1bebe54",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(0.00, 0.91, -18.13)",
+        "boundsSize": "(0.71, 1.57, 1.01)",
+        "scale": "(1.28, 1.28, 1.28)",
+        "mesh": "tripo_node_f1bebe54",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "ThuyKieu_Skin_URP",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          },
+          {
+            "name": "ThuyKieu_Hanfu_URP",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Khach",
+    "name": "KhachSanh",
+    "position": "(8.43, 0.35, -14.00)",
+    "height": 1.75452864,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "MaGiamSinh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "MaGiamSinh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Sitting Idle"
+        ],
+        "leftFoot": "(7.89, 0.52, -14.18)",
+        "rightFoot": "(7.87, 0.52, -13.84)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(8.41, 0.88, -14.00)",
+        "boundsSize": "(0.48, 1.75, 1.34)",
+        "scale": "(142.50, 142.50, 142.50)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "KhachSanhStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Khach",
+    "name": "CoTrenLau",
+    "position": "(-2.40, 3.40, -6.75)",
+    "height": 1.533176,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "LauXanh3_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "LauXanh3_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(-2.45, 3.58, -6.76)",
+        "rightFoot": "(-2.31, 3.58, -6.76)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-2.41, 4.23, -6.73)",
+        "boundsSize": "(0.76, 1.53, 0.50)",
+        "scale": "(121.96, 121.96, 121.96)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "CoTrenLauStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Khach",
+    "name": "CoRotTra",
+    "position": "(3.30, 0.35, -10.35)",
+    "height": 1.71923208,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "LauXanh1_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "LauXanh1_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(3.43, 0.57, -10.20)",
+        "rightFoot": "(3.18, 0.67, -10.22)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(3.29, 1.18, -10.35)",
+        "boundsSize": "(1.21, 1.72, 1.45)",
+        "scale": "(124.40, 124.40, 124.40)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "CoRotTraStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CoHong",
+    "name": "CoHong",
+    "position": "(16.00, 0.39, 2.20)",
+    "height": 1.5864805,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "LauXanh3_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "LauXanh3_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "LauXanh3Story",
+        "rootMotion": false,
+        "clips": [
+          "LauXanh3-Idle"
+        ],
+        "leftFoot": "(16.20, 0.56, 2.24)",
+        "rightFoot": "(15.98, 0.56, 2.23)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(16.00, 1.19, 2.20)",
+        "boundsSize": "(0.88, 1.59, 0.61)",
+        "scale": "(123.51, 123.51, 123.51)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "CoHongStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "TuBa",
+    "name": "TuBa",
+    "position": "(0.30, 0.38, -16.60)",
+    "height": 1.61999512,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "TuBa_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "TuBa_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "TuBaStory",
+        "rootMotion": false,
+        "clips": [
+          "TuBa-Idle"
+        ],
+        "leftFoot": "(0.44, 0.59, -16.58)",
+        "rightFoot": "(0.24, 0.59, -16.50)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(0.30, 1.19, -16.60)",
+        "boundsSize": "(0.97, 1.62, 0.71)",
+        "scale": "(125.36, 125.36, 125.36)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "TuBaStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "CoLam",
+    "name": "CoLam",
+    "position": "(-17.50, 0.39, -3.60)",
+    "height": 1.61166763,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "LauXanh1_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "LauXanh1_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "LauXanh1Story",
+        "rootMotion": false,
+        "clips": [
+          "LauXanh1-Idle"
+        ],
+        "leftFoot": "(-17.51, 0.67, -3.48)",
+        "rightFoot": "(-17.50, 0.67, -3.77)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-17.51, 1.19, -3.58)",
+        "boundsSize": "(0.95, 1.61, 1.03)",
+        "scale": "(125.97, 125.97, 125.97)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "CoLamStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "MaKieu",
+    "name": "MaKieu",
+    "position": "(-16.50, 0.16, 14.80)",
+    "height": 1.53149354,
+    "lying": false,
+    "agent": true,
+    "animators": [
+      {
+        "name": "ThuyKieu_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "ThuyKieu_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Idle"
+        ],
+        "leftFoot": "(-16.64, 0.38, 14.76)",
+        "rightFoot": "(-16.44, 0.37, 14.76)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(-16.53, 1.02, 14.81)",
+        "boundsSize": "(0.66, 1.53, 0.50)",
+        "scale": "(126.70, 126.70, 126.70)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "MaKieuStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "Khach",
+    "name": "KhachTra",
+    "position": "(2.64, 0.35, -11.20)",
+    "height": 1.72488666,
+    "lying": false,
+    "agent": false,
+    "animators": [
+      {
+        "name": "MaGiamSinh_Rigged",
+        "enabled": true,
+        "initialized": true,
+        "human": true,
+        "avatar": "MaGiamSinh_RiggedAvatar",
+        "validAvatar": true,
+        "controller": "StoryShared",
+        "rootMotion": false,
+        "clips": [
+          "Sitting Idle"
+        ],
+        "leftFoot": "(3.17, 0.51, -11.02)",
+        "rightFoot": "(3.19, 0.52, -11.35)"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "node_0",
+        "kind": "SkinnedMeshRenderer",
+        "boundsCenter": "(2.66, 0.87, -11.20)",
+        "boundsSize": "(0.47, 1.72, 1.32)",
+        "scale": "(140.06, 140.06, 140.06)",
+        "mesh": "node_0",
+        "missingBones": 0,
+        "materials": [
+          {
+            "name": "KhachTraStory",
+            "shader": "Universal Render Pipeline/Lit",
+            "supported": true
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,985 @@
+[
+  {
+    "time": 2.2999956854619086E-06,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-10.800, 0.050, 14.667)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Idle",
+              "KimTrong-Walk"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-10.823, 0.247, 14.788)",
+              "(-10.808, 0.247, 14.522)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-9.000, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-9.088, 0.107, 15.743)",
+              "(-8.977, 0.072, 15.560)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 0.2079128999976092,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-10.688, 0.050, 14.667)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Idle",
+              "KimTrong-Walk"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-10.756, 0.253, 14.809)",
+              "(-10.644, 0.262, 14.561)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-7.925, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 2.183085,
+            "feet": [
+              "(-7.870, 0.070, 15.621)",
+              "(-8.123, 0.142, 15.545)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 0.79493579999689246,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-10.440, 0.050, 14.667)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Idle",
+              "KimTrong-Walk"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-10.603, 0.270, 14.821)",
+              "(-10.279, 0.273, 14.606)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-7.568, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 2.19567752,
+            "feet": [
+              "(-7.686, 0.080, 15.623)",
+              "(-7.544, 0.078, 15.545)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 0.99657930000103079,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-9.618, 0.050, 14.744)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Idle",
+              "KimTrong-Walk"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-9.782, 0.264, 14.861)",
+              "(-9.486, 0.253, 14.660)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-6.452, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 2.1999383,
+            "feet": [
+              "(-6.299, 0.074, 15.622)",
+              "(-6.621, 0.100, 15.567)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 1.1999799999975949,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-9.341, 0.050, 14.848)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Idle",
+              "KimTrong-Walk"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-9.679, 0.311, 14.932)",
+              "(-9.082, 0.282, 14.883)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-6.027, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 2.199988,
+            "feet": [
+              "(-5.911, 0.071, 15.630)",
+              "(-6.253, 0.142, 15.566)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 1.4003631999948993,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-8.876, 0.050, 14.815)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-9.115, 0.428, 15.040)",
+              "(-8.818, 0.214, 14.918)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-5.606, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 2.19999743,
+            "feet": [
+              "(-5.736, 0.084, 15.634)",
+              "(-5.554, 0.074, 15.560)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 1.6047265000015614,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-8.347, 0.050, 14.761)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-8.074, 0.322, 14.799)",
+              "(-8.661, 0.277, 14.639)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-5.177, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 2.19999766,
+            "feet": [
+              "(-5.390, 0.114, 15.627)",
+              "(-5.014, 0.073, 15.573)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 1.806929799997306,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-7.824, 0.050, 14.724)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-7.707, 0.201, 14.737)",
+              "(-8.072, 0.412, 14.599)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-4.753, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 2.199998,
+            "feet": [
+              "(-4.810, 0.088, 15.645)",
+              "(-4.830, 0.073, 15.562)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 2.0106693999987328,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-7.294, 0.050, 14.700)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-7.524, 0.225, 15.198)",
+              "(-6.910, 0.241, 15.004)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-4.324, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.199998,
+            "feet": [
+              "(-4.134, 0.074, 15.620)",
+              "(-4.522, 0.104, 15.577)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 2.2144355999989784,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-6.652, 0.050, 14.676)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-6.840, 0.460, 15.167)",
+              "(-6.486, 0.139, 15.045)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-3.583, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.19999814,
+            "feet": [
+              "(-3.728, 0.038, 15.547)",
+              "(-3.533, 0.041, 15.483)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 2.4171248999991803,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-5.791, 0.050, 14.667)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-5.493, 0.320, 14.569)",
+              "(-6.173, 0.308, 14.473)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-2.647, 0.025, 15.600)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.19999814,
+            "feet": [
+              "(-2.586, -0.014, 15.580)",
+              "(-2.766, 0.025, 15.510)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 2.6193970999956946,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-4.829, 0.050, 14.667)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-4.879, 0.212, 14.762)",
+              "(-4.899, 0.457, 14.599)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-1.904, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.19999838,
+            "feet": [
+              "(-1.819, -0.006, 15.843)",
+              "(-1.976, 0.015, 15.725)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 2.8227865000008023,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-3.894, 0.050, 14.667)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-4.097, 0.250, 15.520)",
+              "(-3.366, 0.058, 15.413)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(-0.928, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.19999838,
+            "feet": [
+              "(-1.154, 0.012, 15.774)",
+              "(-0.732, -0.005, 15.777)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 3.0253949999969336,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-3.133, 0.050, 14.667)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-3.124, 0.493, 14.761)",
+              "(-3.377, 0.249, 14.616)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(0.046, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.19999838,
+            "feet": [
+              "(0.173, -0.029, 15.888)",
+              "(-0.125, 0.007, 15.757)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 3.2258875999978045,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-2.179, 0.050, 14.667)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-1.895, 0.146, 14.527)",
+              "(-2.471, 0.414, 14.395)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(1.011, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.19999886,
+            "feet": [
+              "(0.988, -0.015, 15.854)",
+              "(1.055, -0.010, 15.757)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 3.4283651000005193,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-1.340, 0.050, 14.712)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-1.613, 0.188, 15.340)",
+              "(-1.009, 0.234, 15.225)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(1.979, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.19999886,
+            "feet": [
+              "(1.894, -0.018, 15.858)",
+              "(2.137, -0.012, 15.806)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 3.6339496000000509,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(-0.533, 0.050, 14.981)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(-0.826, 0.506, 15.364)",
+              "(-0.518, 0.163, 15.332)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(2.959, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.19999886,
+            "feet": [
+              "(3.110, -0.028, 15.916)",
+              "(2.679, 0.032, 15.770)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 3.8380210999966948,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(0.294, 0.560, 15.285)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(0.667, 0.800, 15.286)",
+              "(0.004, 0.846, 14.931)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(3.945, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.19999886,
+            "feet": [
+              "(3.809, -0.006, 15.847)",
+              "(4.126, -0.014, 15.822)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 4.0418250000002445,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(1.173, 0.119, 15.341)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(1.014, 0.280, 15.506)",
+              "(1.171, 0.497, 15.358)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(4.895, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "ThuyKieu_Walk",
+              "ThuyKieu_Run"
+            ],
+            "speed": 2.19999886,
+            "feet": [
+              "(4.882, -0.009, 15.931)",
+              "(4.904, -0.010, 15.816)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 4.2452682000002824,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(1.958, 0.050, 15.233)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(1.815, 0.298, 16.089)",
+              "(2.487, 0.044, 15.966)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(5.200, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 1.86509871,
+            "feet": [
+              "(5.055, 0.146, 16.037)",
+              "(5.193, 0.078, 15.948)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 4.4481465999997454,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(2.515, 0.050, 15.049)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(2.608, 0.410, 15.121)",
+              "(2.248, 0.253, 15.042)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(5.249, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 1.19665515,
+            "feet": [
+              "(5.168, 0.114, 16.037)",
+              "(5.245, 0.071, 15.880)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 4.64883220000047,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(2.996, 0.050, 14.852)",
+        "moving": true,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(3.241, 0.184, 14.736)",
+              "(2.616, 0.375, 14.766)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(5.257, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 1.03930485,
+            "feet": [
+              "(5.174, 0.106, 16.002)",
+              "(5.271, 0.071, 15.826)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 4.8508195999966119,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(3.332, 0.050, 14.715)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Walk",
+              "KimTrong-Run"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(3.256, 0.251, 14.939)",
+              "(3.430, 0.300, 14.687)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(5.258, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 1.00797772,
+            "feet": [
+              "(5.173, 0.106, 15.994)",
+              "(5.279, 0.072, 15.813)"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "time": 5.0517859999963548,
+    "actors": [
+      {
+        "id": "KimTrong",
+        "position": "(3.443, 0.050, 14.669)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "KimTrong-Idle",
+              "KimTrong-Walk"
+            ],
+            "speed": 1.0,
+            "feet": [
+              "(3.353, 0.265, 14.847)",
+              "(3.530, 0.257, 14.533)"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "Kieu",
+        "position": "(5.259, 0.025, 15.850)",
+        "moving": false,
+        "anim": [
+          {
+            "clips": [
+              "Idle",
+              "ThuyKieu_Walk"
+            ],
+            "speed": 1.00156581,
+            "feet": [
+              "(5.171, 0.107, 15.993)",
+              "(5.281, 0.072, 15.810)"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

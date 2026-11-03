@@ -1,0 +1,8 @@
+AUTOPILOT PASS
+[0.0s] SCENE Chapter01_GiaBien
+[0.3s] TAG scene:VuongGia_DemMua
+[0.3s] TAG music:sad_strings
+[0.3s] SEQUENCE montage_c1_mo
+[0.4s] TAG gameplay:kieu_voice
+[0.5s] TAG music:sad_strings
+[0.5s] STOP at explore 1 · player (-0.64, 0.02, 1.69) · clues 0

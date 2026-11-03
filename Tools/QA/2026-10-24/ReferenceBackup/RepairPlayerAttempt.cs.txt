@@ -1,0 +1,22 @@
+var prefabPath = "Assets/_Game/Prefabs/Player/ThuyKieu.prefab";
+var avatar = UnityEditor.AssetDatabase.LoadAllAssetsAtPath("Assets/_Game/Art/Characters/ThuyKieu/Models/ThuyKieu_Walk.fbx").OfType<UnityEngine.Avatar>().First(a => a.isValid && a.isHuman);
+var controller = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.RuntimeAnimatorController>("Assets/_Game/Animations/Story/ThuyKieuStory.overrideController");
+if (controller == null) throw new System.InvalidOperationException("Story controller is missing.");
+var root = UnityEditor.PrefabUtility.LoadPrefabContents(prefabPath);
+try
+{
+    var animator = root.GetComponentInChildren<UnityEngine.Animator>(true);
+    animator.avatar = avatar;
+    animator.runtimeAnimatorController = controller;
+    animator.applyRootMotion = false;
+    var movement = new UnityEditor.SerializedObject(root.GetComponent<ThuyKieu.Player.PlayerMovement>());
+    movement.FindProperty("_animator").objectReferenceValue = animator;
+    movement.ApplyModifiedPropertiesWithoutUndo();
+    var material = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.Material>("Assets/_Game/Art/Characters/ThuyKieu/Materials/ThuyKieu_URP.mat");
+    if (material != null)
+        foreach (var renderer in root.GetComponentsInChildren<UnityEngine.SkinnedMeshRenderer>(true))
+            renderer.sharedMaterials = renderer.sharedMaterials.Select(_ => material).ToArray();
+    UnityEditor.PrefabUtility.SaveAsPrefabAsset(root, prefabPath);
+}
+finally { UnityEditor.PrefabUtility.UnloadPrefabContents(root); }
+return "Restored player avatar, story controller and appearance references.";

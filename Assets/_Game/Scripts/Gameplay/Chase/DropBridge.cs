@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using ThuyKieu.Core.Story;
 using ThuyKieu.Interaction;
@@ -48,7 +48,7 @@ namespace ThuyKieu.Gameplay.Chase
         public bool IsAvailable => Armed && !Dropped && _player != null && !_player.ControlLocked && OnFarBank(_player.transform.position)
                                    && (Ready == null || Ready());
 
-        public bool OnFarBank(Vector3 feet) => ChaseCourse.Inside(_farBank, feet + Vector3.up * 0.5f);
+        public bool OnFarBank(Vector3 feet) => ChaseCourse.Inside(_farBank, feet + Vector3.up * 0.5f) || (_stake != null && Vector3.Distance(feet, _stake.position) < 6.5f);
 
         private void Awake()
         {

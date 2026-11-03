@@ -271,17 +271,38 @@ namespace ThuyKieu.Gameplay.Chapters
             }
             else if (!_ma.IsMoving)
             {
-                _ma.FaceTowards(_servant.transform.position);
+                _ma.FaceTowards(_bench != null ? _bench.position : _ma.transform.position + Vector3.forward);
             }
+            if (atEnd)
+            {
+                Vector3 guardPost = _ma.transform.position - _ma.transform.forward * 0.35f + _ma.transform.right * 0.85f;
+                if (Flat(guardPost - _servant.transform.position) > 0.35f)
+                {
+                    _servant.MoveTo(guardPost, 1.8f);
+                }
+                else
+                {
+                    if (_servant.IsMoving) _servant.Stop();
+                    _servant.FaceTowards(_servant.transform.position + Vector3.back);
+                }
+            }
+            else
             if (!_retrievingPaper) FollowServant(true);
         }
 
         private void FollowServant(bool follow)
         {
-            Vector3 slot = _ma.transform.position - _ma.transform.forward * 1.7f + _ma.transform.right * 0.9f;
-            if (!follow || Flat(slot - _servant.transform.position) < 0.8f) { if (_servant.IsMoving && !follow) _servant.Stop(); return; }
-            // He is an attendant keeping formation, not a guard charging at Kiều.
-            _servant.MoveTo(slot, 1.35f);
+            Vector3 slot = _ma.transform.position - _ma.transform.forward * 0.25f + _ma.transform.right * 0.8f;
+            float lag = Flat(slot - _servant.transform.position);
+            if (!follow || lag < 0.25f)
+            {
+                if (_servant.IsMoving && !follow) _servant.Stop();
+                return;
+            }
+            bool rushing = _director.IsExploreAvailable("c2_eavesdrop") && (_paperDropped || !_director.IsExploreAvailable("c2_paper"));
+            float baseSpeed = rushing ? 2.35f : EscortSpeed;
+            float servantSpeed = lag > 0.6f ? baseSpeed * 1.35f : baseSpeed;
+            _servant.MoveTo(slot, servantSpeed);
         }
 
         /// <summary>
@@ -471,8 +492,10 @@ namespace ThuyKieu.Gameplay.Chapters
             // Bring the escort back beside Kiều so the restored state is readable.
             Vector3 player = _director.Player.transform.position;
             Vector3 forward = _director.Player.transform.forward;
-            _ma.Place(player + forward * 3f, Quaternion.LookRotation(forward));
-            _servant.Place(player + forward * 1.6f + Vector3.Cross(Vector3.up, forward) * 1.2f, Quaternion.LookRotation(forward));
+            Vector3 right = Vector3.Cross(Vector3.up, forward);
+            Vector3 maPos = player + forward * 3f;
+            _ma.Place(maPos, Quaternion.LookRotation(forward));
+            _servant.Place(maPos - forward * 0.25f + right * 0.8f, Quaternion.LookRotation(forward));
             _waypoint = ClosestWaypoint(_ma.transform.position);
         }
 

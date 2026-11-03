@@ -1,0 +1,369 @@
+AUTOPILOT FAIL: PASS · 30 errors
+[0.0s] SCENE Chapter00_Prologue
+[0.4s] TAG scene:LopHoc
+[0.4s] TAG music:classroom
+[0.6s] CHOICE 3/4: "Kiều cam chịu quá. Em không thích nhân vật này."
+[0.7s] TAG sfx:school_bell
+[0.8s] TAG gameplay:tutorial_classroom
+[1.0s] SEQUENCE tutorial_classroom
+[1.2s] EXPLORE pl_window
+[1.5s] EXPLORE pl_board
+[1.6s] TAG gameplay:lucbat_pl
+[1.7s] SEQUENCE lucbat_pl
+[2.1s] LUCBAT lucbat_pl tile ok · tone ok · score 3
+[2.4s] EXPLORE pl_book
+[2.5s] TAG gameplay:book_glow
+[2.7s] TAG gameplay:kieu_voice
+[2.8s] CHOICE 3/3: Gấp quyển sách lại.
+[2.9s] TAG sfx:memory
+[2.9s] TAG gameplay:into_room
+[3.0s] SEQUENCE into_room
+[3.2s] HITCH 193 ms
+[10.4s] HITCH 7170 ms
+[10.5s] TAG scene:PhongKieu
+[10.5s] TAG music:morning
+[10.5s] TAG gameplay:wake_room
+[10.6s] TAG gameplay:than_xac
+[10.7s] TAG gameplay:tutorial_room
+[10.7s] SEQUENCE tutorial_room
+[10.9s] EXPLORE pl_guong
+[11.2s] EXPLORE pl_dan
+[11.3s] TAG gameplay:dan_tu_do
+[11.4s] SEQUENCE dan_tu_do
+[11.8s] EXPLORE pl_tho
+[12.1s] EXPLORE pl_san
+[12.2s] TAG scene:VuongGia_San
+[12.3s] TAG sfx:gong
+[12.3s] TAG music:tension_low
+[12.4s] CHOICE 1/3: Lao ra chắn trước mặt cha.
+[12.6s] TAG gameplay:arrest
+[12.6s] TAG scene:VuongGia_Mua
+[12.6s] TAG music:sad_strings
+[12.7s] SEQUENCE montage_pl_mua
+[12.8s] TAG gameplay:kieu_voice
+[12.9s] CHAPTER 0 COMPLETE · lines 44 · choices 3
+[12.9s] FRAMES Chapter00_Prologue · avg 15 fps · 1% low 0 fps · worst 7170 ms · 162 frames · 1210x380
+   pl_che_kieu = 3
+   pl_vat = 3
+   pl_hanh_dong = 1
+   tinh_tao = 0
+   tu_trong = 2
+   clues = pl_guong, pl_thu_kim_trong
+[14.5s] SCENE Chapter01_GiaBien
+[24.8s] HITCH 11608 ms
+[24.9s] TAG scene:VuongGia_DemMua
+[24.9s] TAG music:sad_strings
+[24.9s] SEQUENCE montage_c1_mo
+[25.2s] TAG gameplay:kieu_voice
+[25.3s] TAG music:sad_strings
+[25.4s] EXPLORE c1_me
+[25.7s] EXPLORE c1_san
+[26.0s] EXPLORE c1_tu
+[26.1s] TAG sfx:creak
+[26.3s] EXPLORE c1_cong
+[26.5s] TAG scene:VuongGia_MaDen
+[26.5s] TAG sfx:knock
+[26.5s] TAG music:tension_low
+[26.7s] TAG scene:VuongGia_DamPhan
+[26.7s] TAG gameplay:tutorial_suspicion
+[26.8s] EXPLORE c1_tui_bac
+[27.2s] EXPLORE c1_hoi
+[27.3s] CHOICE 2/3: Hỏi thẳng: "Công tử đến hỏi ta, sao chưa hỏi ta lấy một câu?"
+[27.3s] TAG sfx:suspicion_up
+[27.6s] EXPLORE c1_khe
+[27.7s] TAG scene:VuongGia_BanKyKhe
+[27.7s] CHOICE 2/2: Ký ngay để bạc được đưa đi cứu cha.
+[27.7s] TAG gameplay:diem_chi
+[27.8s] SEQUENCE diem_chi
+[27.9s] TAG gameplay:kieu_voice
+[27.9s] TAG music:tension_low
+[28.0s] TAG scene:VuongGia_RaDi
+[28.0s] TAG music:sad_strings
+[28.0s] SEQUENCE montage_c1_sang
+[28.2s] EXPLORE c1_me_cuoi
+[28.6s] EXPLORE c1_ra_di
+[28.7s] SEQUENCE montage_c1_ra_di
+[28.7s] TAG gameplay:kieu_voice
+[28.8s] CHAPTER 1 COMPLETE · lines 39 · choices 2
+[28.8s] FRAMES Chapter01_GiaBien · avg 17 fps · 1% low 0 fps · worst 11608 ms · 267 frames · 1210x380
+   c1_viec = 3
+   c1_manh_moi = 4
+   c1_nghi_ngo = 20
+   tinh_tao = 2
+   tu_trong = 1
+   doc_ky_khe = False
+   c1_hoi_tien = True
+   c1_bac_truoc = False
+   c1_ma_lo = False
+   c1_ca_hai = True
+   nghi_ngo = 0
+   ts_hieu = 0
+   clues = pl_guong, pl_thu_kim_trong, c1_ba_moi, c1_so_hang, c1_don_kien, c1_bac_phuc_ky
+[30.0s] SCENE Chapter02_RoadToMaGiamSinh
+[30.1s] TAG scene:Road_Departure
+[30.1s] TAG music:road_dusk
+[30.1s] SEQUENCE montage_c2_mo
+[30.2s] TAG gameplay:tutorial_road
+[30.2s] SEQUENCE tutorial_road
+[30.4s] EXPLORE c2_ask
+[30.5s] CHOICE 3/3: Giả vờ than mệt: "Đường xa quá, thiếp mỏi chân rồi..."
+[30.8s] EXPLORE c2_observe
+[31.1s] EXPLORE c2_eavesdrop
+[31.2s] TAG scene:Road_RestStop
+[31.2s] TAG gameplay:eavesdrop_c2
+[31.2s] SEQUENCE eavesdrop_c2
+[33.7s] TAG music:none
+[33.7s] TAG gameplay:memory_flash
+[33.8s] CHOICE 1/2: Lật trang "Cò kè bớt một thêm hai...": cái giá đã có sẵn trong sách
+[33.8s] TAG gameplay:c2_page_deduction
+[33.9s] TAG music:tension_low
+[33.9s] CHOICE 1/2: Bỏ chạy ngay bây giờ, khi trời còn tối.
+[33.9s] TAG gameplay:c2_flee
+[34.0s] SEQUENCE c2_flee
+[34.1s] TAG scene:Road_MaskTest
+[34.1s] CHOICE 4/4: Hỏi vặn: "Công tử với người kia bàn chuyện gì mà phải giấu?"
+[34.3s] CHOICE 3/3: Lạnh nhạt: "Mong hay không thì có khác gì đâu."
+[34.4s] TAG scene:Road_LamTriGate
+[34.4s] TAG music:road_night
+[34.4s] SEQUENCE montage_c2_lam_tri
+[34.5s] CHAPTER 2 COMPLETE · lines 31 · choices 5
+[34.5s] FRAMES Chapter02_RoadToMaGiamSinh · avg 96 fps · 1% low 17 fps · worst 61 ms · 244 frames · 1210x380
+   nghi_ngo = 70
+   manh_moi = 3
+   suy_luan = 3
+   gia_vo = 0
+   c3_viec = 0
+   c3_khe_uoc = False
+   c3_bi_bat = 0
+   tra_loi_kieu_that = 0
+   clues = pl_guong, pl_thu_kim_trong, c1_ba_moi, c1_so_hang, c1_don_kien, c1_bac_phuc_ky, c2_lam_tri, c2_ban_tay, c2_tu_ba
+[35.7s] SCENE Chapter03_TuBaHouse
+[35.8s] TAG scene:TuBa_Arrival
+[35.8s] TAG music:tuba_warm
+[36.1s] TAG gameplay:tutorial_house
+[36.3s] EXPLORE c3_gate
+[36.4s] TAG gameplay:try_gate
+[36.4s] TAG sfx:lock_rattle
+[36.6s] EXPLORE c3_eavesdrop
+[36.7s] TAG gameplay:eavesdrop_c3
+[36.8s] SEQUENCE eavesdrop_c3
+[39.8s] EXPLORE c3_drawer
+[39.9s] TAG gameplay:search_drawer
+[40.1s] EXPLORE c3_box
+[40.2s] TAG gameplay:document_contract
+[40.4s] EXPLORE c3_girl_hong
+[40.6s] CHOICE 3/3: Hỏi: "Mẹ Tú là người thế nào?"
+[40.8s] EXPLORE c3_window
+[41.1s] EXPLORE c3_girl_lam
+[41.4s] TAG gameplay:lucbat_ch3
+[41.4s] SEQUENCE lucbat_ch3
+[42.0s] LUCBAT lucbat_ch3 tile ok · tone ok · score 3
+[42.1s] TAG gameplay:kieu_voice
+[42.3s] EXPLORE c3_makieu
+[42.4s] TAG scene:TuBa_MaKieu
+[42.4s] TAG music:none
+[42.6s] TAG gameplay:panic
+[42.7s] TAG gameplay:kieu_voice
+[42.8s] CHOICE 1/3: "...Không dễ chút nào. Ta đã sai khi phán xét ngươi."
+[42.9s] TAG music:resolve
+[42.9s] CHAPTER 3 COMPLETE · lines 71 · choices 2
+[42.9s] FRAMES Chapter03_TuBaHouse · avg 149 fps · 1% low 37 fps · worst 32 ms · 788 frames · 1210x380
+   nghi_ngo = 70
+   manh_moi = 3
+   suy_luan = 3
+   gia_vo = 0
+   c3_viec = 7
+   c3_khe_uoc = True
+   c3_bi_bat = 0
+   tra_loi_kieu_that = 1
+   clues = pl_guong, pl_thu_kim_trong, c1_ba_moi, c1_so_hang, c1_don_kien, c1_bac_phuc_ky, c2_lam_tri, c2_ban_tay, c2_tu_ba, c3_cong_khoa, c3_nghe_len, c3_so_no, c3_van_tu, c3_co_hong, c3_co_lam
+[43.6s] SCENE Chapter04_TuBaNight
+[43.7s] TAG scene:TuBa_Night
+[43.7s] TAG music:tension_low
+[43.9s] CHOICE 4/5: Hỏi khéo: "Thưa mẹ, con nợ mẹ bao nhiêu ạ?"
+[44.1s] TAG gameplay:tutorial_night
+[44.3s] EXPLORE c4_observe
+[44.6s] EXPLORE c4_ledger
+[44.7s] TAG gameplay:search_drawer
+[44.8s] TAG sfx:paper
+[45.0s] EXPLORE c4_colam
+[45.2s] CHOICE 4/4: Im lặng quay đi.
+[45.5s] EXPLORE c4_backdoor
+[45.6s] TAG sfx:dog
+[52.0s] EXPLORE c4_key
+[52.2s] TAG gameplay:pickpocket
+[52.2s] SEQUENCE pickpocket
+[54.0s] EXPLORE c4_cabinet
+[54.1s] TAG sfx:lock_open
+[54.2s] TAG gameplay:document_deal
+[54.4s] CHOICE 3/3: Để nguyên chỗ cũ — mụ sẽ không phát hiện sớm.
+[54.5s] CHOICE 1/3: Chỉ lấy vài lạng làm lộ phí.
+[54.5s] TAG sfx:lock_open
+[54.6s] EXPLORE c4_leave
+[54.7s] TAG scene:TuBa_BackDoor
+[54.7s] TAG music:none
+[54.8s] TAG gameplay:kieu_voice
+[54.8s] CHOICE 1/2: "Biết. Nhưng ở lại thì ta biết chắc điều gì chờ ta."
+[54.9s] TAG music:resolve
+[54.9s] CHAPTER 4 COMPLETE · lines 55 · choices 5
+[54.9s] FRAMES Chapter04_TuBaNight · avg 137 fps · 1% low 50 fps · worst 29 ms · 1273 frames · 1210x380
+   c4_viec = 5
+   c4_canh_giac = 1
+   c4_tien = 1
+   c4_van_tu = 0
+   c4_so_no = True
+   c4_ru_co_lam = False
+   c4_bi_bat = 0
+   clues = pl_guong, pl_thu_kim_trong, c1_ba_moi, c1_so_hang, c1_don_kien, c1_bac_phuc_ky, c2_lam_tri, c2_ban_tay, c2_tu_ba, c3_cong_khoa, c3_nghe_len, c3_so_no, c3_van_tu, c3_co_hong, c3_co_lam, c4_lich_tu_ba, c4_trang_no, c4_co_lam, c4_cua_sau, c4_chia_khoa, c4_giao_keo
+[55.9s] SCENE Chapter05_Escape
+[56.0s] TAG scene:Escape_Night
+[56.0s] TAG music:stealth
+[56.0s] TAG gameplay:tutorial_escape
+[56.1s] TAG gameplay:sneak_out
+[56.1s] SEQUENCE sneak_out
+[58.1s] TAG scene:Escape_Alarm
+[58.1s] TAG sfx:gong
+[58.2s] TAG music:chase
+[58.2s] TAG gameplay:chase_alley
+[58.3s] SEQUENCE chase_alley
+[59.7s] chase_alley nearest pursuer 4.5 m
+[59.8s] TAG music:chase
+[59.8s] TAG gameplay:chase_forest
+[59.9s] SEQUENCE chase_forest
+[65.2s] TAG scene:Escape_Rain
+[65.2s] TAG music:none
+[65.4s] TAG music:resolve
+[65.4s] TAG gameplay:kieu_voice
+[65.7s] CHAPTER 5 COMPLETE · lines 29 · choices 0
+[65.7s] FRAMES Chapter05_Escape · avg 72 fps · 1% low 20 fps · worst 56 ms · 563 frames · 1210x380
+   c5_lang_le = 3
+   c5_duong = 1
+   c5_xo_do = 2
+   c5_qte = 2
+   c5_co_lam_thoat = False
+   c5_bi_bat = 0
+   clues = pl_guong, pl_thu_kim_trong, c1_ba_moi, c1_so_hang, c1_don_kien, c1_bac_phuc_ky, c2_lam_tri, c2_ban_tay, c2_tu_ba, c3_cong_khoa, c3_nghe_len, c3_so_no, c3_van_tu, c3_co_hong, c3_co_lam, c4_lich_tu_ba, c4_trang_no, c4_co_lam, c4_cua_sau, c4_chia_khoa, c4_giao_keo
+[66.8s] SCENE Chapter06_KimTrong
+[67.0s] TAG scene:Temple_Dawn
+[67.0s] TAG music:temple
+[67.2s] CHOICE 4/4: "Chàng có tin... ta không còn là Kiều mà chàng từng quen?"
+[67.3s] TAG gameplay:document_deal_kt
+[67.4s] SEQUENCE document_deal_kt
+[67.4s] CHOICE 2/2: Thẳng thắn: "Tự trách chẳng cứu được ai. Giúp ta đi."
+[67.6s] TAG scene:KimTrong_Study
+[67.6s] TAG music:study
+[67.6s] TAG gameplay:doi_chieu
+[67.7s] SEQUENCE doi_chieu
+[67.8s] TAG scene:LamTri_Street
+[67.8s] TAG music:street
+[67.8s] TAG gameplay:tutorial_street
+[68.0s] EXPLORE c6_ba_nuoc
+[68.2s] CHOICE 2/3: Đưa khế ước Mã–Tú Bà.
+[68.2s] CHOICE 1/2: Nhắc lại câu nghe được sau vách tre: "Tú Bà đã chuẩn bị chưa?"
+[68.4s] EXPLORE c6_thu_lai
+[68.6s] CHOICE 1/2: Đưa khế ước Mã–Tú Bà, chỉ vào ngày lập: tháng Giêng.
+[68.7s] CHOICE 1/1: Nói rằng mình là con gái Vương viên ngoại.
+[68.9s] EXPLORE c6_dossier
+[69.0s] TAG scene:KimTrong_Night
+[69.0s] TAG music:study
+[69.0s] TAG gameplay:ho_so
+[69.1s] TAG gameplay:lucbat_ch6
+[69.2s] SEQUENCE lucbat_ch6
+[69.7s] LUCBAT lucbat_ch6 tile ok · tone ok · score 3
+[69.9s] CHOICE 2/2: "Họ kể chàng chỉ là một nhân vật trong sách."
+[70.0s] TAG gameplay:kieu_voice
+[70.1s] TAG sfx:knock
+[70.2s] TAG music:resolve
+[70.2s] CHAPTER 6 COMPLETE · lines 54 · choices 7
+[70.2s] FRAMES Chapter06_KimTrong · avg 138 fps · 1% low 25 fps · worst 40 ms · 192 frames · 1210x380
+   kt_tin_tuong = 3
+   kt_biet_xuyen_khong = True
+   c6_doi_chieu = 0
+   ev_nhan_chung = 1
+   ev_giay_no = True
+   ev_tien = False
+   c6_ho_so = 3
+   clues = pl_guong, pl_thu_kim_trong, c1_ba_moi, c1_so_hang, c1_don_kien, c1_bac_phuc_ky, c2_lam_tri, c2_ban_tay, c2_tu_ba, c3_cong_khoa, c3_nghe_len, c3_so_no, c3_van_tu, c3_co_hong, c3_co_lam, c4_lich_tu_ba, c4_trang_no, c4_co_lam, c4_cua_sau, c4_chia_khoa, c4_giao_keo, c6_ba_hang_nuoc
+[71.0s] SCENE Chapter07_HuyenDuong
+[71.1s] TAG scene:HuyenDuong_Cong
+[71.1s] TAG music:resolve
+[71.2s] TAG gameplay:tutorial_gate
+[71.4s] EXPLORE c7_trong
+[71.5s] TAG sfx:drum
+[71.5s] TAG scene:HuyenDuong_CongDuong
+[71.5s] TAG music:trial
+[71.6s] TAG gameplay:tutorial_trial
+[71.7s] TAG gameplay:trial_1
+[71.7s] SEQUENCE trial_1
+[72.3s] TRIAL r1 proved statement 2 with kim_trong
+[72.7s] TRIAL r1 wrong evidence on statement 3
+[73.0s] TRIAL r1 proved statement 1 with khe_hon
+[73.4s] TRIAL r1 proved statement 4 with giao_keo (key)
+[73.6s] TRIAL r1 done · score 3 · trust 85
+[73.7s] TAG gameplay:trial_2
+[73.7s] SEQUENCE trial_2
+[73.9s] TRIAL r2 proved statement 3 with giao_keo (key)
+[74.2s] TRIAL r2 done · score 1 · trust 100
+[74.4s] TAG gameplay:trial_3
+[74.4s] SEQUENCE trial_3
+[74.6s] TRIAL r3 proved statement 1 with giao_keo (key)
+[74.9s] TRIAL r3 done · score 1 · trust 100
+[74.9s] TAG gameplay:lucbat_ch7
+[75.0s] SEQUENCE lucbat_ch7
+[75.5s] LUCBAT lucbat_ch7 tile ok · tone ok · score 3
+[75.6s] TAG music:resolve
+[75.7s] TAG sfx:gavel
+[76.0s] TAG sfx:fire
+[76.0s] TAG scene:HuyenDuong_DoanTu
+[76.0s] TAG music:family
+[76.1s] CHOICE 1/2: Ôm chầm lấy cha.
+[76.3s] TAG music:spirit
+[76.3s] TAG scene:HuyenDuong_AnhSang
+[76.3s] TAG gameplay:kieu_voice
+[76.5s] CHOICE 2/2: Lắc đầu.
+[76.6s] TAG sfx:memory
+[76.6s] TAG gameplay:light
+[76.7s] CHAPTER 7 COMPLETE · lines 64 · choices 2
+[76.7s] FRAMES Chapter07_HuyenDuong · avg 125 fps · 1% low 31 fps · worst 40 ms · 462 frames · 1210x380
+   c7_viec = 0
+   c7_nhan_chung_vung = False
+   c7_ke_hoach_kt = False
+   c7_biet_hoi_lo = False
+   c7_lui = 2
+   c7_r1 = 3
+   c7_r2 = 1
+   c7_r3 = 1
+   c7_diem = 5
+   c7_long_tin = 100
+   c7_thua_vong = 0
+   c7_ket = 3
+   clues = pl_guong, pl_thu_kim_trong, c1_ba_moi, c1_so_hang, c1_don_kien, c1_bac_phuc_ky, c2_lam_tri, c2_ban_tay, c2_tu_ba, c3_cong_khoa, c3_nghe_len, c3_so_no, c3_van_tu, c3_co_hong, c3_co_lam, c4_lich_tu_ba, c4_trang_no, c4_co_lam, c4_cua_sau, c4_chia_khoa, c4_giao_keo, c6_ba_hang_nuoc
+[77.7s] SCENE Chapter08_Epilogue
+[77.8s] TAG scene:LopHoc_HoangHon
+[77.8s] TAG music:epilogue
+[77.8s] TAG gameplay:wake_class
+[77.9s] TAG gameplay:tutorial_epilogue
+[78.1s] EXPLORE ep_book
+[78.2s] TAG gameplay:open_book
+[78.2s] SEQUENCE open_book
+[78.4s] CHOICE 2/3: "Mai tao kể cho mày nghe. Dài lắm."
+[78.5s] TAG music:epilogue
+[78.5s] TAG gameplay:thank_you
+[78.5s] TAG gameplay:ending
+[78.6s] SEQUENCE ending
+[78.7s] ENDING tone 3 · verdict 135 · soul 6 · fate 20 · bond 0 · trial 5 · dossier 3
+[78.7s] CHAPTER 8 COMPLETE · lines 16 · choices 1
+[78.7s] FRAMES Chapter08_Epilogue · no frames
+   c7_ket = 3
+   pl_che_kieu = 3
+   c7_diem = 5
+   clues = pl_guong, pl_thu_kim_trong, c1_ba_moi, c1_so_hang, c1_don_kien, c1_bac_phuc_ky, c2_lam_tri, c2_ban_tay, c2_tu_ba, c3_cong_khoa, c3_nghe_len, c3_so_no, c3_van_tu, c3_co_hong, c3_co_lam, c4_lich_tu_ba, c4_trang_no, c4_co_lam, c4_cua_sau, c4_chia_khoa, c4_giao_keo, c6_ba_hang_nuoc
+ERROR Exception: NullReferenceException: Object reference not set to an instance of an object @ ThuyKieu.Gameplay.Chapters.PrologueWorld.HoldLute (UnityEngine.Transform lute, UnityEngine.Transform hand, UnityEngine.Pose rest, UnityEngine.Pose held, System.Single lift) (at Assets/_Game/Scripts/Gameplay/Chapters/PrologueWorld.cs:782)
+ERROR Exception: NullReferenceException: Object reference not set to an instance of an object @ ThuyKieu.Gameplay.Chapters.PrologueWorld.HoldLetter (ThuyKieu.Gameplay.Chapters.PrologueWorld+Carry carried, ThuyKieu.Gameplay.Chapters.HandReachPose pose, UnityEngine.Transform body, UnityEngine.Pose held, System.Single lift) (at Assets/_Game/Scripts/Gameplay/Chapters/PrologueWorld.cs:879)
+ERROR Exception: InvalidOperationException: Avatar is null. @ UnityEngine.Animator.GetBoneTransform (UnityEngine.HumanBodyBones humanBoneId) (at <3d5112a0e4144f39906d819f83fb2def>:0)
+ERROR Error: Problem detected while opening the Scene file: 'Assets/_Game/Scenes/Chapter06_KimTrong.unity'.
+Check the following logs for more details. @ 
+ERROR Error: Prefab instance problem. Missing Prefab Asset: 'talking (Missing Prefab with guid: 1642730a819bd6a4a884f1cf7396294c)' @ 
+ERROR Error: Prefab instance problem. Missing Prefab Asset: 'Talking (Missing Prefab with guid: 253ce132c2c7b2140a2842b707196a49)' @ 
+ERROR Error: Prefab instance problem. Missing Prefab Asset: 'Talking (Missing Prefab with guid: 43739568ccb6c824892c63883ed53226)' @ 
+ERROR Error: Prefab instance problem. Missing Prefab Asset: 'Talking (Missing Prefab with guid: fae8fe42d3c7e7a43a0391e64a790bce)' @ 

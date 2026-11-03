@@ -24,6 +24,46 @@ namespace ThuyKieu.Core.Editor
 
         public static float RoadX(float z) => 6f * Mathf.Sin(z / 22f);
 
+        [InitializeOnLoadMethod]
+        private static void AutoApplyBaHangNuoc()
+        {
+            EditorApplication.delayCall += () =>
+            {
+                if (EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isCompiling || EditorApplication.isUpdating) return;
+                const string texPath = "Assets/_Game/Art/Characters/BaHangNuoc/Textures/texture_pbr_20250901.png";
+                var targetTex = AssetDatabase.LoadAssetAtPath<Texture2D>(texPath);
+                var existingMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/_Game/Materials/Story/BaHangNuocStory.mat");
+                if (targetTex != null && existingMat != null && existingMat.GetTexture("_BaseMap") == targetTex && existingMat.GetColor("_BaseColor") == Color.white)
+                    return;
+                string prevScene = UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().path;
+                UpdateTeaHouse();
+                if (!string.IsNullOrEmpty(prevScene) && prevScene != ScenePath && System.IO.File.Exists(prevScene))
+                    UnityEditor.SceneManagement.EditorSceneManager.OpenScene(prevScene, UnityEditor.SceneManagement.OpenSceneMode.Single);
+            };
+        }
+
+        [MenuItem("ThuyKieu/Chapter 2/Update Tea House")]
+        public static void UpdateTeaHouse()
+        {
+            var ch2 = UnityEditor.SceneManagement.EditorSceneManager.OpenScene(ScenePath, UnityEditor.SceneManagement.OpenSceneMode.Single);
+            AssetFolder = MaterialFolder;
+            var world = GameObject.Find("World").transform;
+            var oldTea = GameObject.Find("World/TeaHouse");
+            var oldWay = GameObject.Find("World/TeaWaystation");
+            var oldLife = GameObject.Find("World/RoadsideLife");
+            if (oldTea != null) Object.DestroyImmediate(oldTea);
+            if (oldWay != null) Object.DestroyImmediate(oldWay);
+            if (oldLife != null) Object.DestroyImmediate(oldLife);
+            TeaHouse(world, out Transform bench, out BoxCollider listenZone);
+            var ch2World = Object.FindAnyObjectByType<Chapter02World>();
+            if (ch2World != null) Set(ch2World, "_bench", bench);
+            var eavesGo = GameObject.Find("StorySystems/Sequences/eavesdrop_c2");
+            var eavesdrop = eavesGo != null ? eavesGo.GetComponent<EavesdropSequence>() : null;
+            if (eavesdrop != null) { Set(eavesdrop, "_zone", listenZone); Set(eavesdrop, "_start", bench); }
+            UnityEditor.SceneManagement.EditorSceneManager.SaveScene(ch2);
+            AssetDatabase.SaveAssets();
+        }
+
         [MenuItem("ThuyKieu/Chapter 2/Create playable scene")]
         public static void Create()
         {

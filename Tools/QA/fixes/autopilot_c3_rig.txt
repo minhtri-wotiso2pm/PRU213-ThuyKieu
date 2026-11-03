@@ -1,0 +1,113 @@
+AUTOPILOT PASS
+[4.3s] NAVMESH built in 62 ms · 388 sources
+[0.0s] SCENE Chapter03_LauTuBa
+[2.2s] TAG scene:Lau_Arrival
+[2.2s] TAG music:tuba_warm
+[2.3s] HITCH 157 ms
+  L000 Narrator cam (0.00, 2.98, -22.65) head - root -
+[3.8s] HITCH 203 ms
+  L001 TuBa cam (0.37, 1.71, -19.68) head (0.27, 1.82, -16.55) root (0.30, 0.38, -16.60)
+  L002 TuBa cam (0.36, 1.71, -19.69) head (0.33, 1.81, -16.52) root (0.30, 0.38, -16.60)
+  L003 TrangSach cam (0.85, 1.63, -15.95) head - root -
+  L004 NoiTam cam (0.84, 1.63, -15.96) head - root -
+  L005 MaGiamSinh cam (1.23, 1.71, -18.23) head (-1.47, 1.96, -17.27) root (-1.39, 0.38, -17.30)
+  L006 Narrator cam (1.23, 1.71, -18.23) head - root -
+  L007 Kieu cam (-2.34, 2.08, -17.18) head (-0.07, 1.59, -18.17) root (0.00, 0.37, -18.15)
+[14.0s] TAG sfx:gate_bar
+  L008 Narrator cam (-2.34, 2.08, -17.18) head - root -
+  L009 TuBa cam (0.23, 1.71, -19.73) head (0.27, 1.82, -16.55) root (0.30, 0.38, -16.60)
+  L010 NoiTam cam (0.84, 1.63, -15.95) head - root -
+[18.4s] TAG scene:Lau_Explore
+[18.4s] TAG gameplay:tutorial_lau
+  L011 NoiTam cam (0.84, 1.63, -15.96) head - root -
+[19.9s] SEQUENCE tutorial_lau
+[21.1s] HITCH 202 ms
+[23.3s] HITCH 233 ms
+[24.5s] HITCH 229 ms
+[25.3s] HITCH 251 ms
+  L012 Narrator cam (-15.00, 3.12, 1.89) head - root -
+  L013 NoiTam cam (-20.62, 1.63, 4.48) head - root -
+  L014 NoiTam cam (-20.62, 1.63, 4.47) head - root -
+  L015 NoiTam cam (-20.62, 1.63, 4.47) head - root -
+[32.9s] HITCH 214 ms
+[34.4s] HITCH 164 ms
+[35.1s] HITCH 167 ms
+[35.3s] TAG sfx:lock_rattle
+  L016 Narrator cam (2.63, 2.65, -18.69) head - root -
+  L017 TuBa cam (-2.22, 1.85, -14.69) head (-2.65, 1.82, -12.46) root (-2.60, 0.38, -12.50)
+  L018 TuBa cam (-2.34, 1.86, -14.66) head (-2.61, 1.81, -12.43) root (-2.60, 0.38, -12.50)
+  L019 TuBa cam (-2.31, 1.85, -14.62) head (-2.60, 1.73, -12.61) root (-2.60, 0.38, -12.50)
+  L020 NoiTam cam (-1.15, 1.61, -15.53) head - root -
+[46.5s] HITCH 253 ms
+  L021 Narrator cam (8.39, 2.41, 12.54) head - root -
+[47.9s] TAG gameplay:document_contract
+  L022 Narrator cam (8.39, 2.41, 12.54) head - root -
+[49.3s] SEQUENCE document_contract
+[50.4s] HITCH 162 ms
+  L023 NoiTam cam (13.30, 1.63, 11.87) head - root -
+[52.4s] HITCH 168 ms
+  L024 Kieu cam (13.00, 1.63, 11.88) head (11.06, 1.59, 12.45) root (11.00, 0.37, 12.40)
+  L025 NoiTam cam (13.28, 1.63, 11.92) head - root -
+  L026 CoLam cam (-15.29, 1.73, -1.79) head (-17.40, 1.84, -3.58) root (-17.50, 0.39, -3.60)
+  L027 Kieu cam (-18.38, 1.96, -4.89) head (-16.47, 1.59, -3.09) root (-16.45, 0.37, -3.01)
+  L028 CoLam cam (-15.37, 1.71, -1.88) head (-17.39, 1.83, -3.58) root (-17.50, 0.39, -3.60)
+  L029 Narrator cam (-15.37, 1.71, -1.88) head - root -
+  L030 NoiTam cam (-18.77, 1.63, -2.68) head - root -
+[62.8s] TAG gameplay:lucbat_ch3
+  L031 Kieu cam (-18.44, 1.93, -5.08) head (-16.47, 1.59, -3.09) root (-16.45, 0.37, -3.01)
+[64.3s] SEQUENCE lucbat_ch3
+[65.4s] HITCH 291 ms
+[66.7s] LUCBAT lucbat_ch3 tile ok · tone ok · score 3
+  L032 CoLam cam (-15.49, 1.71, -1.77) head (-17.41, 1.83, -3.48) root (-17.50, 0.39, -3.60)
+  L033 NoiTam cam (-18.77, 1.63, -2.69) head - root -
+[74.1s] HITCH 163 ms
+[81.1s] TAG scene:Lau_Overhear
+[81.1s] TAG music:none
+[81.1s] C3 overhear started
+  L034 MaGiamSinh cam (15.93, 1.60, 18.30) head (9.89, 1.97, 16.62) root (9.90, 0.38, 16.70)
+  L035 TuBa cam (15.88, 1.60, 18.42) head (9.37, 1.72, 15.12) root (9.31, 0.38, 15.03)
+  L036 MaGiamSinh cam (15.88, 1.60, 18.43) head (9.91, 1.96, 16.73) root (9.90, 0.38, 16.70)
+  L037 TuBa cam (15.88, 1.60, 18.42) head (9.27, 1.81, 14.96) root (9.31, 0.38, 15.03)
+  L038 MaGiamSinh cam (15.88, 1.60, 18.43) head (9.97, 1.96, 16.74) root (9.90, 0.38, 16.70)
+  L039 TuBa cam (15.88, 1.60, 18.42) head (9.38, 1.72, 15.13) root (9.31, 0.38, 15.03)
+  L040 NoiTam cam (15.88, 1.60, 18.41) head - root -
+[91.2s] TAG scene:Lau_Locked
+[91.2s] TAG sfx:lock_open
+  L041 Narrator cam (15.88, 1.60, 18.41) head - root -
+  L042 NoiTam cam (15.88, 1.60, 18.43) head - root -
+[94.8s] TAG scene:Lau_End
+[94.8s] TAG music:none
+[94.8s] TAG sfx:latch_drop
+  L043 Narrator cam (-15.00, 2.60, 7.61) head - root -
+  L044 MaKieu cam (-15.41, 1.63, 2.23) head (-10.83, 1.81, 5.54) root (-10.90, 0.38, 5.60)
+  L045 Kieu cam (-12.94, 1.63, 4.57) head (-14.94, 1.59, 4.41) root (-15.00, 0.37, 4.40)
+  L046 MaKieu cam (-12.80, 1.63, 4.58) head (-10.83, 1.81, 5.54) root (-10.90, 0.38, 5.60)
+  L047 Kieu cam (-12.94, 1.63, 4.57) head (-14.96, 1.59, 4.47) root (-15.00, 0.37, 4.40)
+  L048 MaKieu cam (-12.82, 1.63, 4.63) head (-10.83, 1.81, 5.54) root (-10.90, 0.38, 5.60)
+[103.4s] TAG gameplay:panic
+  L049 NoiTam cam (-12.66, 1.63, 4.65) head - root -
+  L050 NoiTam cam (-12.66, 1.63, 4.64) head - root -
+  L051 NoiTam cam (-12.66, 1.63, 4.64) head - root -
+  L052 NoiTam cam (-12.66, 1.63, 4.64) head - root -
+[109.1s] TAG gameplay:kieu_voice
+  L053 KieuThat cam (-12.66, 1.63, 4.65) head - root -
+[112.4s] CHOICE 1/4: "...Không dễ chút nào. Ta đã sai khi phán xét ngươi."
+[112.4s] HITCH 185 ms
+  L054 Kieu cam (-12.94, 1.63, 4.56) head (-14.95, 1.59, 4.47) root (-15.00, 0.37, 4.40)
+  L055 KieuThat cam (-12.68, 1.63, 4.70) head - root -
+  L056 MaKieu cam (-12.80, 1.63, 4.61) head (-10.90, 1.81, 5.57) root (-10.90, 0.38, 5.60)
+  L057 MaKieu cam (-12.80, 1.63, 4.61) head (-10.84, 1.81, 5.54) root (-10.90, 0.38, 5.60)
+[118.2s] TAG music:resolve
+  L058 Kieu cam (-12.94, 1.63, 4.56) head (-14.96, 1.59, 4.47) root (-15.00, 0.37, 4.40)
+  L059 Kieu cam (-12.97, 1.63, 4.59) head (-14.91, 1.60, 4.38) root (-15.00, 0.37, 4.40)
+[122.5s] CHAPTER 3 COMPLETE · lines 60 · choices 1
+[122.5s] FRAMES Chapter03_LauTuBa · avg 81 fps · 1% low 9 fps · worst 291 ms · 9765 frames · 603x496 · median 11.0 ms · p99 36.6 ms · under 60 fps 8.8% · load 4.4 s (first frame 4140 ms) · warm-up worst 706 ms
+   nghi_ngo = 0
+   manh_moi = 0
+   suy_luan = 0
+   gia_vo = 0
+   c3_viec = 5
+   c3_khe_uoc = True
+   c3_bi_bat = 0
+   tra_loi_kieu_that = 1
+   clues = c3_cong_khoa, c3_van_tu, c3_co_lam, c3_nghe_len

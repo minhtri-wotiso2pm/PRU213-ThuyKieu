@@ -1,0 +1,10 @@
+{
+  "mcp": {
+    "servers": {
+      "unity-mcp": {
+        "command": "uvx",
+        "args": ["unity-mcp-server@10.2.0"]
+      }
+    }
+  }
+}
