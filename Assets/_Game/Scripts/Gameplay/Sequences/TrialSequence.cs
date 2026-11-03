@@ -54,11 +54,13 @@ namespace ThuyKieu.Gameplay.Sequences
         private const float StartTrust = 0.6f, RecoverTrust = 0.4f, LostTrust = 0.1f, WrongCost = 0.2f, ProofGain = 0.15f, BribedCost = 0.15f;
         private const int ForesightCost = 10, LostRoundFate = 10;
         private const int PatienceMax = 100, WrongPatience = 25, IdlePressPatience = 10;
+        private const int ResolveMax = 3;
         private static bool _lifelineUsed;
 
         private StoryDirector _director;
         private float _trust;
         private int _patience;
+        private readonly HashSet<string> _usedWitnesses = new HashSet<string>();
 
         private static Line Say(string speaker, string text) => new Line { Speaker = speaker, Text = text };
 
@@ -69,6 +71,7 @@ namespace ThuyKieu.Gameplay.Sequences
             director.CameraController.SetCursorLocked(false);
             if (director.Audio != null) director.Audio.PlayMusic("trial");
             if (_round == 1) _lifelineUsed = false;
+            _usedWitnesses.Clear();
             // Each round is a fresh hearing: the magistrate starts patient again, whatever the last witness cost him.
             _patience = PatienceMax;
             director.SetInt("c7_kien_nhan", _patience);
@@ -131,6 +134,7 @@ namespace ThuyKieu.Gameplay.Sequences
                 {
                     statement.Disproved = true;
                     score += proof.Points;
+                    bool witnessSpent = DrainWitness(proof.Evidence);
                     _trust = Mathf.Min(1f, _trust + ProofGain * proof.Points);
                     _view.SetTrust(_trust);
                     if (director.Audio != null) director.Audio.PlaySfx("objection");
@@ -138,6 +142,7 @@ namespace ThuyKieu.Gameplay.Sequences
                     StoryAutopilot.Note("TRIAL r" + _round + " proved statement " + (selected + 1) + " with " + proof.Evidence + (statement.Key ? " (key)" : ""));
                     yield return _view.Stamp(statement.Key ? "BÁC BỎ!" : "MÂU THUẪN!", statement.Key ? StoryUIBuilder.Vermilion : StoryUIBuilder.Gold, director.Autopilot ? 0.1f : 1.1f);
                     foreach (var line in proof.Lines) yield return Speak(line, 0.4f);
+                    if (witnessSpent) yield return Speak(Say("NoiTam", "Người ấy đã nói cạn phần mình. Họ rời phòng — thẻ của họ không còn trong cặp hồ sơ nữa."), 0.3f);
                     Refresh(statements, selected);
                     continue;
                 }
@@ -197,6 +202,7 @@ namespace ThuyKieu.Gameplay.Sequences
             director.SetInt("c7_r" + _round, score);
             director.SetInt("c7_diem", director.GetInt("c7_r1") + director.GetInt("c7_r2") + director.GetInt("c7_r3"));
             director.SetInt("c7_long_tin", Mathf.Clamp(Mathf.RoundToInt(_trust * 100f), 1, 100));
+            RecoverWitnesses();
             StoryAutopilot.Note("TRIAL r" + _round + (lost ? " lost" : " done") + " · score " + score + " · trust " + Mathf.RoundToInt(_trust * 100f));
             yield return new WaitForSecondsRealtime(director.Autopilot ? 0f : 0.8f);
             _view.Close();
@@ -210,6 +216,44 @@ namespace ThuyKieu.Gameplay.Sequences
             _patience = Mathf.Max(0, _patience - amount);
             _director.SetInt("c7_kien_nhan", _patience);
             _view.SetPatience(_patience);
+        }
+
+        /// <summary>Maps a witness card to the Ink variable that holds how much courage they have left.</summary>
+        private static string ResolveVar(string evidence) =>
+            evidence == "co_lam" ? "nc_tin_co_lam" : evidence == "ba_nuoc" ? "nc_tin_ba_nuoc" : evidence == "thu_lai" ? "nc_tin_thu_lai" : null;
+
+        /// <summary>1 = chị Lam · 2 = bà hàng nước · 3 = thư lại, the same order Chapter 7 uses for c7_lui.</summary>
+        private static int RetreatOf(string evidence) => evidence == "co_lam" ? 1 : evidence == "ba_nuoc" ? 2 : evidence == "thu_lai" ? 3 : 0;
+
+        /// <summary>
+        /// A witness's testimony is courage: every card the player lands spends one point. At zero the witness leaves
+        /// the room, their card leaves the case for the rest of the trial, and c7_lui records who walked out.
+        /// </summary>
+        private bool DrainWitness(string evidence)
+        {
+            string variable = ResolveVar(evidence);
+            if (variable == null) return false;
+            _usedWitnesses.Add(variable);
+            int before = _director.GetInt(variable);
+            if (before <= 0) return false;
+            int value = before - 1;
+            _director.SetInt(variable, value);
+            if (value > 0) return false;
+            _director.SetInt("c7_lui", RetreatOf(evidence));
+            StoryAutopilot.Note("TRIAL r" + _round + " witness " + evidence + " out of resolve → leaves");
+            return true;
+        }
+
+        /// <summary>A witness who was not called on this round recovers one point of courage, up to three.</summary>
+        private void RecoverWitnesses()
+        {
+            foreach (var evidence in new[] { "co_lam", "ba_nuoc", "thu_lai" })
+            {
+                string variable = ResolveVar(evidence);
+                if (_usedWitnesses.Contains(variable)) continue;
+                int value = _director.GetInt(variable);
+                if (value > 0) _director.SetInt(variable, Mathf.Min(ResolveMax, value + 1));
+            }
         }
 
         /// <summary>
@@ -486,9 +530,9 @@ namespace ThuyKieu.Gameplay.Sequences
             if (d.GetBool("c6_so_bac")) list.Add(new Evidence { Id = "so_bac", Title = "Sổ hiệu bạc Phúc Ký", Body = "14 tháng Tư: người nhà Tú Bà giao 450 lạng cho \"Mã công tử\", có điểm chỉ." });
             if (d.GetBool("giu_mau_giay")) list.Add(new Evidence { Id = "mau_giay", Title = "Mẩu giấy trên đường", Body = "\"Bà T. ở Lâm Tri nhận hàng — giá 450 lạng.\"" });
             if (d.GetBool("c7_biet_hoi_lo")) list.Add(new Evidence { Id = "hoi_lo", Title = "Túi gấm đổi tay", Body = "Sáng nay, trước cổng: Tú Bà dúi túi gấm cho một nha dịch." });
-            if (d.GetBool("nc_ba_nuoc") && retreated != 2) list.Add(new Evidence { Id = "ba_nuoc", Title = "Nhân chứng: bà hàng nước", Body = "Nghe Mã và tùy tùng nói chuyện \"giao hàng\" cho Tú Bà sau vách quán." });
-            if (d.GetBool("nc_thu_lai") && retreated != 3) list.Add(new Evidence { Id = "thu_lai", Title = "Nhân chứng: thư lại", Body = "Sổ hôn thú của huyện: Mã \"cưới vợ\" bốn lần một năm; bằng giám sinh là bằng mua." });
-            if (d.GetBool("nc_co_lam") && retreated != 1) list.Add(new Evidence { Id = "co_lam", Title = "Nhân chứng: chị Lam", Body = "Ba năm ở lầu Tú Bà, một món nợ không bao giờ trả hết." });
+            if (d.GetBool("nc_ba_nuoc") && d.GetInt("nc_tin_ba_nuoc") > 0 && retreated != 2) list.Add(new Evidence { Id = "ba_nuoc", Title = "Nhân chứng: bà hàng nước", Body = "Nghe Mã và tùy tùng nói chuyện \"giao hàng\" cho Tú Bà sau vách quán." });
+            if (d.GetBool("nc_thu_lai") && d.GetInt("nc_tin_thu_lai") > 0 && retreated != 3) list.Add(new Evidence { Id = "thu_lai", Title = "Nhân chứng: thư lại", Body = "Sổ hôn thú của huyện: Mã \"cưới vợ\" bốn lần một năm; bằng giám sinh là bằng mua." });
+            if (d.GetBool("nc_co_lam") && d.GetInt("nc_tin_co_lam") > 0 && retreated != 1) list.Add(new Evidence { Id = "co_lam", Title = "Nhân chứng: chị Lam", Body = "Ba năm ở lầu Tú Bà, một món nợ không bao giờ trả hết." });
             if (d.GetInt("kt_tin_tuong") >= 3) list.Add(new Evidence { Id = "kim_trong", Title = "Lời Kim Trọng", Body = "Gặp Kiều ở cổng chùa Bạch Vân, đêm nàng trốn khỏi lầu." });
             return list;
         }

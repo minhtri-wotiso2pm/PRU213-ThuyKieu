@@ -117,6 +117,9 @@ VAR c6_co_lam_xong = false
 VAR nc_ba_nuoc = false
 VAR nc_thu_lai = false
 VAR nc_co_lam = false
+VAR nc_tin_co_lam = 0    // can đảm của chị Lam, 0–3: dùng lời làm chứng −1, nghỉ một vòng +1; 0 = rời phòng
+VAR nc_tin_ba_nuoc = 0   // can đảm của bà hàng nước, 0–3
+VAR nc_tin_thu_lai = 0    // can đảm của thư lại, 0–3
 VAR c6_ho_so = 0          // 0–4: số nhóm bằng chứng đã đủ
 
 // --- Hồ sơ cho Chương 7 ---
