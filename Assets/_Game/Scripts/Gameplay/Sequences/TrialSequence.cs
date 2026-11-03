@@ -84,6 +84,7 @@ namespace ThuyKieu.Gameplay.Sequences
             string witness = statements[0].Claim.Speaker;
             _view.Open("ĐỐI CHẤT · VÒNG " + _round + " / 3", "Lời khai của " + SpeakerCatalog.Get(witness).DisplayName + " · bằng chứng trong tay: " + evidence.Count);
             _view.SetTrust(_trust);
+            _view.SetPatience(_patience);
             ShowHelp();
             int score = 0, selected = 0, mistakes = 0;
             bool lost = false;
@@ -208,6 +209,7 @@ namespace ThuyKieu.Gameplay.Sequences
         {
             _patience = Mathf.Max(0, _patience - amount);
             _director.SetInt("c7_kien_nhan", _patience);
+            _view.SetPatience(_patience);
         }
 
         /// <summary>

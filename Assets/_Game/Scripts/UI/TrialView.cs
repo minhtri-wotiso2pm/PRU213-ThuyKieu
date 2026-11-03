@@ -34,9 +34,9 @@ namespace ThuyKieu.UI
 
         private GameObject _root, _stamp, _press, _present, _evidence;
         private Image _actionsPanel;
-        private TMP_Text _title, _subtitle, _actionHeader, _help, _lineName, _lineText, _stampText;
-        private RectTransform _trustFill, _rows;
-        private Image _trustImage;
+        private TMP_Text _title, _subtitle, _actionHeader, _help, _lineName, _lineText, _stampText, _patienceLabel;
+        private RectTransform _trustFill, _rows, _patienceFill;
+        private Image _trustImage, _patienceImage;
         private Button _rowTemplate, _cardTemplate;
         private readonly List<Button> _rowButtons = new List<Button>();
         private readonly List<Button> _cardButtons = new List<Button>();
@@ -61,6 +61,9 @@ namespace ThuyKieu.UI
             _subtitle = StoryUIBuilder.Find<TMP_Text>(trial, "Top/Subtitle");
             _trustFill = StoryUIBuilder.Find<RectTransform>(trial, "Top/Track/Fill");
             _trustImage = _trustFill.GetComponent<Image>();
+            _patienceLabel = StoryUIBuilder.Find<TMP_Text>(trial, "Top/PatienceLabel");
+            _patienceFill = StoryUIBuilder.Find<RectTransform>(trial, "Top/PatienceTrack/Fill");
+            _patienceImage = _patienceFill.GetComponent<Image>();
             _rows = StoryUIBuilder.Find<RectTransform>(trial, "Testimony/Rows");
             _rowTemplate = StoryUIBuilder.Find<Button>(trial, "Testimony/Rows/Template");
             _actionHeader = StoryUIBuilder.Find<TMP_Text>(trial, "Actions/Header");
@@ -94,6 +97,15 @@ namespace ThuyKieu.UI
         {
             _trustFill.anchorMax = new Vector2(Mathf.Clamp01(value), 1f);
             _trustImage.color = value > 0.5f ? new Color(0.62f, 0.86f, 0.58f) : value > 0.25f ? StoryUIBuilder.Gold : new Color(0.9f, 0.3f, 0.25f);
+        }
+
+        /// <summary>Patience is the round's clock: 100 at the start, 25 per wrong card, 10 per pointless press.</summary>
+        public void SetPatience(int value)
+        {
+            value = Mathf.Clamp(value, 0, 100);
+            _patienceFill.anchorMax = new Vector2(value / 100f, 1f);
+            _patienceImage.color = value > 50 ? new Color(0.62f, 0.86f, 0.58f) : value > 25 ? StoryUIBuilder.Gold : new Color(0.9f, 0.3f, 0.25f);
+            _patienceLabel.text = "Kiên nhẫn của quan · " + value + "/100";
         }
 
         public void SetSubtitle(string text) => _subtitle.text = text;

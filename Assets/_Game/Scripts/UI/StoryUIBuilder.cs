@@ -280,9 +280,12 @@ namespace ThuyKieu.UI
             var title = Text(top, "Title", "", 30, new Vector2(0.02f, 0.4f), new Vector2(0.55f, 0.98f), Gold);
             title.fontStyle = FontStyles.Bold;
             Text(top, "Subtitle", "", 19, new Vector2(0.02f, 0.02f), new Vector2(0.55f, 0.45f), new Color(1, 1, 1, 0.6f));
-            Text(top, "TrustLabel", "Lòng tin của quan huyện", 19, new Vector2(0.58f, 0.52f), new Vector2(0.98f, 0.98f), new Color(1, 1, 1, 0.75f)).alignment = TextAlignmentOptions.MidlineRight;
-            var track = Image(Rect(top, "Track", new Vector2(0.58f, 0.18f), new Vector2(0.98f, 0.42f)), new Color(1, 1, 1, 0.14f));
+            Text(top, "TrustLabel", "Lòng tin của quan huyện", 18, new Vector2(0.58f, 0.56f), new Vector2(0.98f, 0.98f), new Color(1, 1, 1, 0.75f)).alignment = TextAlignmentOptions.MidlineRight;
+            var track = Image(Rect(top, "Track", new Vector2(0.58f, 0.44f), new Vector2(0.98f, 0.55f)), new Color(1, 1, 1, 0.14f));
             Image(Rect(track.transform, "Fill", Vector2.zero, new Vector2(0.6f, 1f)), Gold);
+            Text(top, "PatienceLabel", "Kiên nhẫn của quan", 18, new Vector2(0.58f, 0.22f), new Vector2(0.98f, 0.42f), new Color(1, 1, 1, 0.75f)).alignment = TextAlignmentOptions.MidlineRight;
+            var patience = Image(Rect(top, "PatienceTrack", new Vector2(0.58f, 0.08f), new Vector2(0.98f, 0.19f)), new Color(1, 1, 1, 0.14f));
+            Image(Rect(patience.transform, "Fill", Vector2.zero, new Vector2(1f, 1f)), Gold);
 
             var left = Panel(trial, "Testimony", new Vector2(0.025f, 0.16f), new Vector2(0.52f, 0.855f), new Color(0.04f, 0.03f, 0.035f, 0.76f), 22);
             var header = Text(left, "Header", "LỜI KHAI", 24, new Vector2(0.05f, 0.9f), new Vector2(0.95f, 0.98f), Vermilion);
