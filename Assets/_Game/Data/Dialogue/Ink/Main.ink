@@ -117,6 +117,9 @@ VAR c6_co_lam_xong = false
 VAR nc_ba_nuoc = false
 VAR nc_thu_lai = false
 VAR nc_co_lam = false
+VAR nc_tin_co_lam = 0    // can đảm của chị Lam, 0–3: dùng lời làm chứng −1, nghỉ một vòng +1; 0 = rời phòng
+VAR nc_tin_ba_nuoc = 0   // can đảm của bà hàng nước, 0–3
+VAR nc_tin_thu_lai = 0    // can đảm của thư lại, 0–3
 VAR c6_ho_so = 0          // 0–4: số nhóm bằng chứng đã đủ
 
 // --- Hồ sơ cho Chương 7 ---
@@ -138,6 +141,9 @@ VAR c7_r3 = 0
 VAR c7_diem = 0           // tổng điểm đối chất (Unity ghi)
 VAR c7_long_tin = 0       // lòng tin của quan huyện khi kết thúc, 0–100 (Unity ghi)
 VAR c7_thua_vong = 0      // số vòng đối chất bị thua: quan mất kiên nhẫn, tự xét giấy tờ (Unity ghi)
+VAR c7_dung_so_bac = 0    // đã nộp sổ hiệu bạc Phúc Ký trong phiên tòa (Unity ghi)
+VAR c7_dung_giao_keo = 0  // đã nộp giao kèo Mã – Tú Bà trong phiên tòa (Unity ghi)
+VAR c7_kien_nhan = 100    // kiên nhẫn của quan trong vòng đang xét, 0–100: nộp sai −25, hỏi vặn vô ích −10 (Unity ghi)
 VAR c7_diem_pq = 0        // điểm phán quyết = lòng tin + bảo lãnh + nhân chứng + lục bát − vòng thua
 VAR c7_ket = 0            // kết: 0 thua kiện (nguyên tác) · 1 chật vật · 2 ấm · 3 trọn vẹn
 VAR ket_hon = 0           // kết Nghịch Mệnh: 1 hai linh hồn chia tay · 2 cùng sống trong một thân

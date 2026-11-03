@@ -18,7 +18,9 @@ namespace ThuyKieu.Gameplay.Sequences
     /// Mistakes earn hints (an inner-voice nudge, then a marked statement and the card to use). At zero trust Kim Trọng
     /// speaks up once (if the plan was made at the gate); after that the round is lost — never replayed: the magistrate
     /// reads the papers himself, the story goes on, and the round scores nothing.
-    /// Writes c7_r&lt;round&gt;, c7_diem, c7_long_tin and c7_thua_vong.
+    /// The magistrate also has patience (c7_kien_nhan, 100 at the start of each round): a wrong card costs 25 and
+    /// pressing a statement that has nothing more to say costs 10. At zero he cuts the round at once, with no hint.
+    /// Writes c7_r&lt;round&gt;, c7_diem, c7_long_tin, c7_kien_nhan and c7_thua_vong.
     /// </summary>
     public class TrialSequence : StorySequence
     {
@@ -51,10 +53,17 @@ namespace ThuyKieu.Gameplay.Sequences
 
         private const float StartTrust = 0.6f, RecoverTrust = 0.4f, LostTrust = 0.1f, WrongCost = 0.2f, ProofGain = 0.15f, BribedCost = 0.15f;
         private const int ForesightCost = 10, LostRoundFate = 10;
+        private const int PatienceMax = 100, WrongPatience = 25, IdlePressPatience = 10;
+        private const int ResolveMax = 3;
         private static bool _lifelineUsed;
 
         private StoryDirector _director;
         private float _trust;
+        private int _patience;
+        private readonly HashSet<string> _usedWitnesses = new HashSet<string>();
+        // Static like _lifelineUsed: rounds 1-3 are three components, and a witness who walked out must stay out.
+        private static readonly HashSet<string> LeftWitnesses = new HashSet<string>();
+        private static readonly string[] Witnesses = { "co_lam", "ba_nuoc", "thu_lai" };
 
         private static Line Say(string speaker, string text) => new Line { Speaker = speaker, Text = text };
 
@@ -64,7 +73,15 @@ namespace ThuyKieu.Gameplay.Sequences
             yield return null; // after DialogueCursorController re-locks on dialogue end
             director.CameraController.SetCursorLocked(false);
             if (director.Audio != null) director.Audio.PlayMusic("trial");
-            if (_round == 1) _lifelineUsed = false;
+            if (_round == 1) { _lifelineUsed = false; LeftWitnesses.Clear(); }
+            _usedWitnesses.Clear();
+            // c7_lui holds one name only, so the trial remembers the rest itself. Re-reading it every round also picks
+            // up the witness Ink makes retreat at the gate.
+            foreach (var witnessId in Witnesses)
+                if (director.GetInt("c7_lui") == RetreatOf(witnessId)) LeftWitnesses.Add(witnessId);
+            // Each round is a fresh hearing: the magistrate starts patient again, whatever the last witness cost him.
+            _patience = PatienceMax;
+            director.SetInt("c7_kien_nhan", _patience);
             // A lost round leaves the magistrate cold, but the next witness still gets a fair hearing.
             _trust = _round == 1 ? StartTrust : Mathf.Max(RecoverTrust, director.GetInt("c7_long_tin") / 100f);
             // Định Mệnh ≥ 85: the magistrate has taken Tú Bà's gift. Seeing the bribe at the gate cancels it.
@@ -77,6 +94,8 @@ namespace ThuyKieu.Gameplay.Sequences
             string witness = statements[0].Claim.Speaker;
             _view.Open("ĐỐI CHẤT · VÒNG " + _round + " / 3", "Lời khai của " + SpeakerCatalog.Get(witness).DisplayName + " · bằng chứng trong tay: " + evidence.Count);
             _view.SetTrust(_trust);
+            _view.SetPatience(_patience);
+            ShowResolve();
             ShowHelp();
             int score = 0, selected = 0, mistakes = 0;
             bool lost = false;
@@ -105,7 +124,16 @@ namespace ThuyKieu.Gameplay.Sequences
                 }
                 Refresh(statements, selected);
                 var statement = statements[selected];
-                if (action == 1) { yield return PressStatement(statement); Refresh(statements, selected); continue; }
+                if (action == 1)
+                {
+                    bool hadMoreToSay = statement.Revision.Text != null;
+                    yield return PressStatement(statement);
+                    // Pressing a statement that cannot change wastes the court's time.
+                    if (!hadMoreToSay) DrainPatience(IdlePressPatience);
+                    Refresh(statements, selected);
+                    if (_patience <= 0) { lost = true; break; }
+                    continue;
+                }
                 if (action == 3) { yield return TurnPage(statements); Refresh(statements, selected); ShowHelp(); continue; }
 
                 var proof = card >= 0 && (!statement.NeedsRevision || statement.Revised)
@@ -114,6 +142,10 @@ namespace ThuyKieu.Gameplay.Sequences
                 {
                     statement.Disproved = true;
                     score += proof.Points;
+                    bool witnessSpent = DrainWitness(proof.Evidence);
+                    if (proof.Evidence == "so_bac") director.SetInt("c7_dung_so_bac", 1);
+                    if (proof.Evidence == "giao_keo") director.SetInt("c7_dung_giao_keo", 1);
+                    ShowResolve();
                     _trust = Mathf.Min(1f, _trust + ProofGain * proof.Points);
                     _view.SetTrust(_trust);
                     if (director.Audio != null) director.Audio.PlaySfx("objection");
@@ -121,6 +153,7 @@ namespace ThuyKieu.Gameplay.Sequences
                     StoryAutopilot.Note("TRIAL r" + _round + " proved statement " + (selected + 1) + " with " + proof.Evidence + (statement.Key ? " (key)" : ""));
                     yield return _view.Stamp(statement.Key ? "BÁC BỎ!" : "MÂU THUẪN!", statement.Key ? StoryUIBuilder.Vermilion : StoryUIBuilder.Gold, director.Autopilot ? 0.1f : 1.1f);
                     foreach (var line in proof.Lines) yield return Speak(line, 0.4f);
+                    if (witnessSpent) yield return Speak(Say("NoiTam", "Người ấy đã nói cạn phần mình. Họ rời phòng — thẻ của họ không còn trong cặp hồ sơ nữa."), 0.3f);
                     Refresh(statements, selected);
                     continue;
                 }
@@ -128,12 +161,15 @@ namespace ThuyKieu.Gameplay.Sequences
                 // Wrong evidence (or evidence against a statement that is still true).
                 _trust -= WrongCost;
                 mistakes++;
+                DrainPatience(WrongPatience);
                 _view.SetTrust(_trust);
                 if (director.Audio != null) director.Audio.PlaySfx("wrong");
                 if (director.Fx != null) director.Fx.Shake(0.15f, 0.3f);
                 StoryAutopilot.Note("TRIAL r" + _round + " wrong evidence on statement " + (selected + 1));
                 Shot("CU_QuanHuyen");
                 yield return Speak(Wrong(), 0.5f);
+                // Out of patience: the magistrate cuts the round at once, without the usual hint.
+                if (_patience <= 0) { lost = true; break; }
                 if (_trust > 0.001f)
                 {
                     yield return Hint(statements, evidence, mistakes);
@@ -177,12 +213,81 @@ namespace ThuyKieu.Gameplay.Sequences
             director.SetInt("c7_r" + _round, score);
             director.SetInt("c7_diem", director.GetInt("c7_r1") + director.GetInt("c7_r2") + director.GetInt("c7_r3"));
             director.SetInt("c7_long_tin", Mathf.Clamp(Mathf.RoundToInt(_trust * 100f), 1, 100));
+            RecoverWitnesses();
+            ShowResolve();
             StoryAutopilot.Note("TRIAL r" + _round + (lost ? " lost" : " done") + " · score " + score + " · trust " + Mathf.RoundToInt(_trust * 100f));
             yield return new WaitForSecondsRealtime(director.Autopilot ? 0f : 0.8f);
             _view.Close();
         }
 
         // ------------------------------------------------------------------ hints
+
+        /// <summary>Takes patience away and mirrors the value into Ink for the HUD and the save file.</summary>
+        private void DrainPatience(int amount)
+        {
+            _patience = Mathf.Max(0, _patience - amount);
+            _director.SetInt("c7_kien_nhan", _patience);
+            _view.SetPatience(_patience);
+        }
+
+        /// <summary>Maps a witness card to the Ink variable that holds how much courage they have left.</summary>
+        private static string ResolveVar(string evidence) =>
+            evidence == "co_lam" ? "nc_tin_co_lam" : evidence == "ba_nuoc" ? "nc_tin_ba_nuoc" : evidence == "thu_lai" ? "nc_tin_thu_lai" : null;
+
+        /// <summary>1 = chị Lam · 2 = bà hàng nước · 3 = thư lại, the same order Chapter 7 uses for c7_lui.</summary>
+        private static int RetreatOf(string evidence) => evidence == "co_lam" ? 1 : evidence == "ba_nuoc" ? 2 : evidence == "thu_lai" ? 3 : 0;
+
+        /// <summary>True once the witness has left the room: their card is out of the case for the rest of the trial.</summary>
+        private bool Left(string evidence) => LeftWitnesses.Contains(evidence) || _director.GetInt("c7_lui") == RetreatOf(evidence);
+
+        /// <summary>
+        /// A witness's testimony is courage: every card the player lands spends one point. At zero the witness leaves
+        /// the room, their card leaves the case for the rest of the trial, and c7_lui records who walked out.
+        /// </summary>
+        private bool DrainWitness(string evidence)
+        {
+            string variable = ResolveVar(evidence);
+            if (variable == null) return false;
+            _usedWitnesses.Add(variable);
+            int before = _director.GetInt(variable);
+            if (before <= 0) return false;
+            int value = before - 1;
+            _director.SetInt(variable, value);
+            if (value > 0) return false;
+            LeftWitnesses.Add(evidence);
+            _director.SetInt("c7_lui", RetreatOf(evidence));
+            StoryAutopilot.Note("TRIAL r" + _round + " witness " + evidence + " out of resolve → leaves");
+            return true;
+        }
+
+        /// <summary>A witness who was not called on this round recovers one point of courage, up to three.</summary>
+        private void RecoverWitnesses()
+        {
+            foreach (var evidence in Witnesses)
+            {
+                string variable = ResolveVar(evidence);
+                if (_usedWitnesses.Contains(variable) || Left(evidence)) continue;
+                int value = _director.GetInt(variable);
+                if (value > 0) _director.SetInt(variable, Mathf.Min(ResolveMax, value + 1));
+            }
+        }
+
+        /// <summary>The left panel's courage line: recruited witnesses only, with the ones who walked out marked.</summary>
+        private void ShowResolve()
+        {
+            var parts = new List<string>();
+            Witness(parts, "co_lam", "nc_tin_co_lam", "chị Lam");
+            Witness(parts, "ba_nuoc", "nc_tin_ba_nuoc", "bà hàng nước");
+            Witness(parts, "thu_lai", "nc_tin_thu_lai", "thư lại");
+            _view.SetResolve(parts.Count == 0 ? "Chưa có nhân chứng nào trong phòng." : "Can đảm nhân chứng · " + string.Join(" · ", parts));
+        }
+
+        private void Witness(List<string> parts, string evidence, string variable, string name)
+        {
+            if (!_director.GetBool("nc_" + evidence)) return;
+            int value = _director.GetInt(variable);
+            parts.Add(value > 0 && !Left(evidence) ? name + " " + value + "/" + ResolveMax : "<color=#F07A6A>" + name + " đã rời phòng</color>");
+        }
 
         /// <summary>
         /// After a mistake: the first nudges towards the statement that ends the round; from the second on, that
@@ -421,17 +526,35 @@ namespace ThuyKieu.Gameplay.Sequences
                 card = Card(statements[selected], evidence);
                 return;
             }
-            if (roll < 0.93f || StoryAutopilot.EndingTarget == "nghich_menh") { selected = open[Random.Range(0, open.Count)]; action = 1; return; }
+            if (roll < 0.93f || StoryAutopilot.EndingTarget == "nghich_menh")
+            {
+                // A press on a statement with nothing more to say only burns the magistrate's patience, so the bot
+                // presses something that can still change whenever one is left.
+                var pressable = revisable.Count > 0 ? revisable : open;
+                selected = pressable[Random.Range(0, pressable.Count)];
+                action = 1;
+                return;
+            }
             selected = open[Random.Range(0, open.Count)];
             card = WrongCard(statements[selected], evidence);
             if (card < 0) action = 1;
         }
 
+        /// <summary>The strongest card that breaks this statement, so QA scores the way a careful player would. On a tie
+        /// the newest card wins, which is how the derived Vòng nợ 450 gets exercised instead of being shadowed by an
+        /// older paper.</summary>
         private static int Card(Statement statement, List<Evidence> evidence)
         {
             if (statement.NeedsRevision && !statement.Revised) return -1;
-            for (int i = 0; i < evidence.Count; i++) if (statement.Proofs.Any(p => p.Evidence == evidence[i].Id)) return i;
-            return -1;
+            int best = -1, bestPoints = 0;
+            for (int i = 0; i < evidence.Count; i++)
+            {
+                var proof = statement.Proofs.FirstOrDefault(p => p.Evidence == evidence[i].Id);
+                if (proof == null || proof.Points < bestPoints) continue;
+                best = i;
+                bestPoints = proof.Points;
+            }
+            return best;
         }
 
         private static int WrongCard(Statement statement, List<Evidence> evidence)
@@ -445,7 +568,6 @@ namespace ThuyKieu.Gameplay.Sequences
         private List<Evidence> Available()
         {
             var d = _director;
-            int retreated = d.GetInt("c7_lui");
             var list = new List<Evidence>
             {
                 new Evidence { Id = "khe_hon", Title = "Tờ khế hôn ước", Body = "Tháng Tư. Mã Giám Sinh xin cưới Vương Thúy Kiều làm vợ, sính lễ 400 lạng." },
@@ -456,11 +578,14 @@ namespace ThuyKieu.Gameplay.Sequences
             if (d.GetBool("ev_giay_no")) list.Add(new Evidence { Id = "so_no", Title = "Trang sổ nợ", Body = "Vương Thúy Kiều nợ tiền mua 450 lạng. Áo lụa 30, son phấn 10. Chưa trả." });
             if (d.GetInt("c4_tien") == 2) list.Add(new Evidence { Id = "tui_bac", Title = "Túi bạc dấu \"T.\"", Body = "450 lạng nén, mỗi nén đóng dấu lầu Lâm Tri. Chưa tiêu một đồng." });
             if (d.GetBool("c6_so_bac")) list.Add(new Evidence { Id = "so_bac", Title = "Sổ hiệu bạc Phúc Ký", Body = "14 tháng Tư: người nhà Tú Bà giao 450 lạng cho \"Mã công tử\", có điểm chỉ." });
+            // Both papers in court turn the same 450 into a loop: paid once to Mã, charged again to Kiều.
+            if (d.GetInt("c7_dung_so_bac") > 0 && d.GetInt("c7_dung_giao_keo") > 0)
+                list.Add(new Evidence { Id = "vong_no", Title = "Vòng nợ 450", Body = "Giao kèo: Tú Bà trả Mã 450 lạng mỗi người. Sổ hiệu bạc: đúng 450 lạng ấy đã giao. Cùng một số bạc quay một vòng — trả một lần, thu hai lần." });
             if (d.GetBool("giu_mau_giay")) list.Add(new Evidence { Id = "mau_giay", Title = "Mẩu giấy trên đường", Body = "\"Bà T. ở Lâm Tri nhận hàng — giá 450 lạng.\"" });
             if (d.GetBool("c7_biet_hoi_lo")) list.Add(new Evidence { Id = "hoi_lo", Title = "Túi gấm đổi tay", Body = "Sáng nay, trước cổng: Tú Bà dúi túi gấm cho một nha dịch." });
-            if (d.GetBool("nc_ba_nuoc") && retreated != 2) list.Add(new Evidence { Id = "ba_nuoc", Title = "Nhân chứng: bà hàng nước", Body = "Nghe Mã và tùy tùng nói chuyện \"giao hàng\" cho Tú Bà sau vách quán." });
-            if (d.GetBool("nc_thu_lai") && retreated != 3) list.Add(new Evidence { Id = "thu_lai", Title = "Nhân chứng: thư lại", Body = "Sổ hôn thú của huyện: Mã \"cưới vợ\" bốn lần một năm; bằng giám sinh là bằng mua." });
-            if (d.GetBool("nc_co_lam") && retreated != 1) list.Add(new Evidence { Id = "co_lam", Title = "Nhân chứng: chị Lam", Body = "Ba năm ở lầu Tú Bà, một món nợ không bao giờ trả hết." });
+            if (d.GetBool("nc_ba_nuoc") && d.GetInt("nc_tin_ba_nuoc") > 0 && !Left("ba_nuoc")) list.Add(new Evidence { Id = "ba_nuoc", Title = "Nhân chứng: bà hàng nước", Body = "Nghe Mã và tùy tùng nói chuyện \"giao hàng\" cho Tú Bà sau vách quán." });
+            if (d.GetBool("nc_thu_lai") && d.GetInt("nc_tin_thu_lai") > 0 && !Left("thu_lai")) list.Add(new Evidence { Id = "thu_lai", Title = "Nhân chứng: thư lại", Body = "Sổ hôn thú của huyện: Mã \"cưới vợ\" bốn lần một năm; bằng giám sinh là bằng mua." });
+            if (d.GetBool("nc_co_lam") && d.GetInt("nc_tin_co_lam") > 0 && !Left("co_lam")) list.Add(new Evidence { Id = "co_lam", Title = "Nhân chứng: chị Lam", Body = "Ba năm ở lầu Tú Bà, một món nợ không bao giờ trả hết." });
             if (d.GetInt("kt_tin_tuong") >= 3) list.Add(new Evidence { Id = "kim_trong", Title = "Lời Kim Trọng", Body = "Gặp Kiều ở cổng chùa Bạch Vân, đêm nàng trốn khỏi lầu." });
             return list;
         }
@@ -558,6 +683,8 @@ namespace ThuyKieu.Gameplay.Sequences
                 {
                     P("so_bac", 1, Say("Kieu", "Mười ngày sau, chính ngươi nhận lại bốn trăm năm mươi lạng của Tú Bà, có điểm chỉ trong sổ hiệu bạc. \"Ân nhân\" lãi năm mươi lạng."),
                         Say("MaGiamSinh", "Đó... đó là tiền ta cho mụ vay!")),
+                    P("vong_no", 1, Say("Kieu", "Bốn trăm lạng ngươi đưa, bốn trăm năm mươi lạng mụ trả lại. Giao kèo và sổ hiệu bạc khớp nhau từng ngày. Ngươi không lỗ một đồng — còn ta thành món nợ."),
+                        Say("QuanHuyen", "Một vòng bạc khép kín. Ghi vào biên bản.")),
                     P("van_tu", 1, Say("Kieu", "Mười ngày sau đám cưới, ngươi đứng tên người bán trên văn tự này. Bán chính người vợ ngươi vừa cưới."),
                         Say("QuanHuyen", "Cưới tháng Tư, bán cũng tháng Tư..."))
                 }
@@ -601,7 +728,9 @@ namespace ThuyKieu.Gameplay.Sequences
                     P("giao_keo", 1, Say("Kieu", "Bốn trăm năm mươi lạng, đúng bằng giá bà trả cho Mã Giám Sinh trên giao kèo. Đó không phải nợ của ta. Đó là giá bà mua ta."),
                         Say("TuBa", "Thì... thì cũng là tiền tôi bỏ ra!")),
                     P("van_tu", 1, Say("Kieu", "Văn tự ghi rõ: bốn trăm năm mươi lạng là giá bà trả cho người bán. Người bị bán không ký vào món nợ nào cả."),
-                        Say("QuanHuyen", "Giá mua người lại biến thành nợ của người bị mua. Hay cho cái sổ sách!"))
+                        Say("QuanHuyen", "Giá mua người lại biến thành nợ của người bị mua. Hay cho cái sổ sách!")),
+                    P("vong_no", 2, Say("Kieu", "Đây không phải món nợ. Sổ hiệu bạc ghi bà trả Mã bốn trăm năm mươi lạng; giao kèo ghi đúng số ấy cho mỗi người bà mua. Cùng một số bạc quay một vòng: bà trả một lần, rồi bắt ta trả lại lần nữa."),
+                        Say("QuanHuyen", "Một vòng nợ... cùng một số bạc, hai lần thu. Bản quan chưa từng thấy sổ sách nào trơ trẽn thế."))
                 }
             },
             new Statement

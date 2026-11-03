@@ -186,7 +186,8 @@ namespace ThuyKieu.Core.Editor
                 "• Mỗi người khai bốn câu. Chọn câu bằng <color=#E8C27A>1–4</color> hoặc chuột.\n" +
                 "• <color=#E8C27A>Q — Hỏi vặn:</color> người khai nói thêm, đôi khi tự sửa lời.\n" +
                 "• <color=#E8C27A>E — Đưa bằng chứng:</color> chọn giấy tờ hay nhân chứng chứng minh câu đó sai.\n" +
-                "• Đúng: lòng tin của quan tăng. Sai: quan mất kiên nhẫn. Hết lòng tin thì phải làm lại vòng.\n" +
+                "• Đúng: lòng tin tăng. Sai: lòng tin giảm và quan mất 25 kiên nhẫn; hỏi vặn câu không còn gì để nói: mất 10.\n" +
+                "• Hết lòng tin hay hết kiên nhẫn: quan tự xét giấy tờ, vòng ấy mất — không làm lại được.\n" +
                 "• Bác bỏ được <color=#E8C27A>câu then chốt</color> là qua vòng. Vạch thêm các chỗ sai khác để phán quyết trọn vẹn hơn.",
                 "1–4: chọn lời khai · Q: hỏi vặn · E: đưa bằng chứng · Backspace: cất hồ sơ · Esc: tạm dừng");
             var view = s.Hud.GetComponent<TrialView>();
