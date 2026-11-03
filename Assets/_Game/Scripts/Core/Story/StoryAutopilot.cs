@@ -284,7 +284,7 @@ namespace ThuyKieu.Core.Story
                 : _director.ChapterNumber == 4 ? new[] { "c4_viec", "c4_canh_giac", "c4_tien", "c4_van_tu", "c4_so_no", "c4_ru_co_lam", "c4_bi_bat" }
                 : _director.ChapterNumber == 5 ? new[] { "c5_so_khanh", "c5_bi_bat", "c5_vap", "c5_loi", "c5_giay", "c5_co_lam_thoat" }
                 : _director.ChapterNumber == 6 ? new[] { "kt_tin_tuong", "kt_biet_xuyen_khong", "c6_doi_chieu", "ev_nhan_chung", "ev_giay_no", "ev_tien", "c6_ho_so" }
-                : _director.ChapterNumber == 7 ? new[] { "c7_viec", "c7_nhan_chung_vung", "c7_ke_hoach_kt", "c7_biet_hoi_lo", "c7_lui", "c7_r1", "c7_r2", "c7_r3", "c7_diem", "c7_long_tin", "c7_thua_vong", "c7_ket" }
+                : _director.ChapterNumber == 7 ? new[] { "c7_viec", "c7_nhan_chung_vung", "c7_ke_hoach_kt", "c7_biet_hoi_lo", "c7_lui", "c7_r1", "c7_r2", "c7_r3", "c7_diem", "c7_long_tin", "c7_kien_nhan", "c7_thua_vong", "c7_dung_so_bac", "c7_dung_giao_keo", "nc_tin_co_lam", "nc_tin_ba_nuoc", "nc_tin_thu_lai", "c7_ket" }
                 : new[] { "c7_ket", "pl_che_kieu", "c7_diem" };
             foreach (string variable in variables)
                 Add("   " + variable + " = " + _director.Story.variablesState[variable]);

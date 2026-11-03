@@ -191,6 +191,26 @@ namespace ThuyKieu.Core.Editor
             return prefab;
         }
 
+        /// <summary>
+        /// Rebuilds the shared canvas in place (same path, same GUID) after StoryUIBuilder gains or moves nodes.
+        /// Every chapter scene instances this prefab, so without this step a new HUD element exists only in code.
+        /// </summary>
+        [MenuItem("ThuyKieu/Story/Rebuild shared story canvas")]
+        public static void RebuildUIPrefab()
+        {
+            var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
+            var root = StoryUIBuilder.Build(font);
+            PrefabUtility.SaveAsPrefabAsset(root, UIPrefabPath);
+            UnityEngine.Object.DestroyImmediate(root);
+            AssetDatabase.SaveAssets();
+        }
+
+        public static void RebuildUIPrefabBatch()
+        {
+            try { RebuildUIPrefab(); EditorApplication.Exit(0); }
+            catch (Exception exception) { Debug.LogException(exception); EditorApplication.Exit(1); }
+        }
+
         // The shared TMP font is dynamic: glyphs are added at runtime, so the asset is only checked, never rewritten.
         private static void PrepareFont()
         {

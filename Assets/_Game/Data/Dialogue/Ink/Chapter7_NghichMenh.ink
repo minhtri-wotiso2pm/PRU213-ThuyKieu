@@ -63,6 +63,21 @@ Trong sách, Kiều chưa bao giờ được bước vào một công đường 
 # gameplay:tutorial_gate
 Trống kêu oan treo dưới mái cổng. Đánh trống rồi thì không còn đường lùi.
 
+// Can đảm nhân chứng: người đã hứa làm chứng ở Chương 6 bước vào với 2 phần can đảm,
+// người không được chiêu mộ thì 0. Động viên ở cổng cộng thêm 1 (xem c7_nhan_chung).
+~ nc_tin_co_lam = 0
+~ nc_tin_ba_nuoc = 0
+~ nc_tin_thu_lai = 0
+{nc_co_lam:
+    ~ nc_tin_co_lam = 2
+}
+{nc_ba_nuoc:
+    ~ nc_tin_ba_nuoc = 2
+}
+{nc_thu_lai:
+    ~ nc_tin_thu_lai = 2
+}
+
 -> c7_cong
 
 
@@ -80,6 +95,16 @@ Trống kêu oan treo dưới mái cổng. Đánh trống rồi thì không còn
 === c7_nhan_chung ===
 ~ c7_nhan_chung_vung = true
 ~ c7_viec += 1
+// Động viên không làm nhân chứng can đảm hơn mức tối đa, nhưng ai cũng thêm một phần.
+{nc_co_lam && nc_tin_co_lam < 3:
+    ~ nc_tin_co_lam += 1
+}
+{nc_ba_nuoc && nc_tin_ba_nuoc < 3:
+    ~ nc_tin_ba_nuoc += 1
+}
+{nc_thu_lai && nc_tin_thu_lai < 3:
+    ~ nc_tin_thu_lai += 1
+}
 # speaker:Narrator
 # camera:Witnesses
 Những người đã hứa làm chứng đứng nép dưới mái hiên, ai cũng xanh mặt khi nghe tiếng Tú Bà.
