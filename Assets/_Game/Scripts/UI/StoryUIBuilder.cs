@@ -290,7 +290,8 @@ namespace ThuyKieu.UI
             var left = Panel(trial, "Testimony", new Vector2(0.025f, 0.16f), new Vector2(0.52f, 0.855f), new Color(0.04f, 0.03f, 0.035f, 0.76f), 22);
             var header = Text(left, "Header", "LỜI KHAI", 24, new Vector2(0.05f, 0.9f), new Vector2(0.95f, 0.98f), Vermilion);
             header.fontStyle = FontStyles.Bold;
-            var rows = Rect(left, "Rows", new Vector2(0.04f, 0.04f), new Vector2(0.96f, 0.89f));
+            Text(left, "Resolve", "", 18, new Vector2(0.05f, 0.008f), new Vector2(0.95f, 0.052f), new Color(1, 1, 1, 0.72f));
+            var rows = Rect(left, "Rows", new Vector2(0.04f, 0.06f), new Vector2(0.96f, 0.89f));
             var layout = rows.gameObject.AddComponent<VerticalLayoutGroup>();
             layout.spacing = 10; layout.childControlHeight = true; layout.childControlWidth = true; layout.childForceExpandHeight = false;
             var row = Panel(rows, "Template", Vector2.zero, Vector2.one, new Color(1, 1, 1, 0.05f), 14);

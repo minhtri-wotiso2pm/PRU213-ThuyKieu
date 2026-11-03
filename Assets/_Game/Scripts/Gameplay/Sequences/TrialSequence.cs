@@ -88,6 +88,7 @@ namespace ThuyKieu.Gameplay.Sequences
             _view.Open("ĐỐI CHẤT · VÒNG " + _round + " / 3", "Lời khai của " + SpeakerCatalog.Get(witness).DisplayName + " · bằng chứng trong tay: " + evidence.Count);
             _view.SetTrust(_trust);
             _view.SetPatience(_patience);
+            ShowResolve();
             ShowHelp();
             int score = 0, selected = 0, mistakes = 0;
             bool lost = false;
@@ -135,6 +136,7 @@ namespace ThuyKieu.Gameplay.Sequences
                     statement.Disproved = true;
                     score += proof.Points;
                     bool witnessSpent = DrainWitness(proof.Evidence);
+                    ShowResolve();
                     _trust = Mathf.Min(1f, _trust + ProofGain * proof.Points);
                     _view.SetTrust(_trust);
                     if (director.Audio != null) director.Audio.PlaySfx("objection");
@@ -203,6 +205,7 @@ namespace ThuyKieu.Gameplay.Sequences
             director.SetInt("c7_diem", director.GetInt("c7_r1") + director.GetInt("c7_r2") + director.GetInt("c7_r3"));
             director.SetInt("c7_long_tin", Mathf.Clamp(Mathf.RoundToInt(_trust * 100f), 1, 100));
             RecoverWitnesses();
+            ShowResolve();
             StoryAutopilot.Note("TRIAL r" + _round + (lost ? " lost" : " done") + " · score " + score + " · trust " + Mathf.RoundToInt(_trust * 100f));
             yield return new WaitForSecondsRealtime(director.Autopilot ? 0f : 0.8f);
             _view.Close();
@@ -254,6 +257,23 @@ namespace ThuyKieu.Gameplay.Sequences
                 int value = _director.GetInt(variable);
                 if (value > 0) _director.SetInt(variable, Mathf.Min(ResolveMax, value + 1));
             }
+        }
+
+        /// <summary>The left panel's courage line: recruited witnesses only, with the ones who walked out marked.</summary>
+        private void ShowResolve()
+        {
+            var parts = new List<string>();
+            Witness(parts, "nc_co_lam", "nc_tin_co_lam", "chị Lam");
+            Witness(parts, "nc_ba_nuoc", "nc_tin_ba_nuoc", "bà hàng nước");
+            Witness(parts, "nc_thu_lai", "nc_tin_thu_lai", "thư lại");
+            _view.SetResolve(parts.Count == 0 ? "Chưa có nhân chứng nào trong phòng." : "Can đảm nhân chứng · " + string.Join(" · ", parts));
+        }
+
+        private void Witness(List<string> parts, string recruited, string variable, string name)
+        {
+            if (!_director.GetBool(recruited)) return;
+            int value = _director.GetInt(variable);
+            parts.Add(value > 0 ? name + " " + value + "/" + ResolveMax : "<color=#F07A6A>" + name + " đã rời phòng</color>");
         }
 
         /// <summary>

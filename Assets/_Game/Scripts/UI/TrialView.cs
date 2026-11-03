@@ -34,7 +34,7 @@ namespace ThuyKieu.UI
 
         private GameObject _root, _stamp, _press, _present, _evidence;
         private Image _actionsPanel;
-        private TMP_Text _title, _subtitle, _actionHeader, _help, _lineName, _lineText, _stampText, _patienceLabel;
+        private TMP_Text _title, _subtitle, _actionHeader, _help, _lineName, _lineText, _stampText, _patienceLabel, _resolve;
         private RectTransform _trustFill, _rows, _patienceFill;
         private Image _trustImage, _patienceImage;
         private Button _rowTemplate, _cardTemplate;
@@ -66,6 +66,7 @@ namespace ThuyKieu.UI
             _patienceImage = _patienceFill.GetComponent<Image>();
             _rows = StoryUIBuilder.Find<RectTransform>(trial, "Testimony/Rows");
             _rowTemplate = StoryUIBuilder.Find<Button>(trial, "Testimony/Rows/Template");
+            _resolve = StoryUIBuilder.Find<TMP_Text>(trial, "Testimony/Resolve");
             _actionHeader = StoryUIBuilder.Find<TMP_Text>(trial, "Actions/Header");
             _help = StoryUIBuilder.Find<TMP_Text>(trial, "Actions/Help");
             _press = trial.Find("Actions/Press").gameObject;
@@ -109,6 +110,9 @@ namespace ThuyKieu.UI
         }
 
         public void SetSubtitle(string text) => _subtitle.text = text;
+
+        /// <summary>One line under the testimony list: who is still standing and how much courage they have left.</summary>
+        public void SetResolve(string text) => _resolve.text = text;
 
         /// <summary>Rebuilds the testimony list with the selected row highlighted.</summary>
         public void ShowRows(IList<Row> rows, int selected)
